@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Pile：用于语言建模的 800GB 多样化文本数据集 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">The Pile：用于语言建模的 800GB 多样化文本数据集</div><div class="document-meta">The Pile: An 800GB Dataset of Diverse Text for Language Modeling<br>首次提交：2020-12-31 · 译文版本：arXiv:2101.00027v1（2020-12-31） · 页码覆盖 39/39 页<br><a href="https://arxiv.org/abs/2101.00027v1">原论文</a> · <a href="https://arxiv.org/pdf/2101.00027v1">原文 PDF</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · 本文为中文翻译，图表保留原文。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a></div></nav><section class="page" id="page-1"><header><h1>The Pile：用于语言建模的 800GB 多样化文本数据集</h1><p class="names">Leo Gao　Stella Biderman　Sid Black　Laurence Golding<br>Travis Hoppe　Charles Foster　Jason Phang　Horace He<br>Anish Thite　Noa Nabeshima　Shawn Presser　Connor Leahy</p><p>EleutherAI<br><a href="mailto:contact@eleuther.ai">contact@eleuther.ai</a></p></header>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Pile：用于语言建模的 800GB 多样化文本数据集 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">The Pile：用于语言建模的 800GB 多样化文本数据集</div><div class="document-meta">The Pile: An 800GB Dataset of Diverse Text for Language Modeling<br>首次提交：2020-12-31 · 译文版本：arXiv:2101.00027v1（2020-12-31） · 页码覆盖 39/39 页<br><a href="https://arxiv.org/abs/2101.00027v1">原论文</a> · <a href="https://arxiv.org/pdf/2101.00027v1">原文 PDF</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · 本文为中文翻译，图表保留原文。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a></div></nav><section class="page" id="page-1"><header><h1>The Pile：用于语言建模的 800GB 多样化文本数据集</h1><p class="names">Leo Gao　Stella Biderman　Sid Black　Laurence Golding<br>Travis Hoppe　Charles Foster　Jason Phang　Horace He<br>Anish Thite　Noa Nabeshima　Shawn Presser　Connor Leahy</p><p>EleutherAI<br><a href="mailto:contact@eleuther.ai">contact@eleuther.ai</a></p></header>
 <h2>摘要</h2>
 <p>近期研究表明，提高训练数据集的多样性能够增强大规模语言模型的一般跨领域知识与下游泛化能力。基于这一认识，我们提出 The Pile：一个面向大规模语言模型训练的 825 GiB 英文文本语料库。The Pile 由 22 个多样化的高质量子集构成，既包含已有子集，也包含新构建的子集，其中许多来自学术或专业来源。我们在 The Pile 上评估 GPT-2 和 GPT-3 未经调优时的表现，发现这些模型在许多组成部分上表现不佳，例如学术写作。相反，在 The Pile 上训练的模型在 The Pile 的所有组成部分上均显著优于在 Raw CC 和 CC-100 上训练的模型，同时在下游评估中也取得了更好的表现。通过深入的探索性分析，我们为潜在用户记录了数据中可能引发担忧的方面。我们公开了构建该数据集所使用的代码。<sup>1</sup></p>
 <h2>1　引言</h2>
@@ -8,7 +8,7 @@
 <p>我们推出了从以下来源构建的新数据集：PubMed Central、ArXiv、GitHub、FreeLaw Project、Stack Exchange、美国专利商标局、PubMed、Ubuntu IRC、HackerNews、YouTube、PhilPapers 和 NIH ExPorter。我们还推出了 OpenWebText2 和 BookCorpus2，分别是原始 OpenWebText（Gokaslan and Cohen, 2019）与 BookCorpus（Zhu et al., 2015; Kobayashi, 2018）数据集的扩展。</p>
 <p>此外，我们纳入了若干已有的高质量数据集：Books3（Presser, 2020）、Project Gutenberg（PG-19）（Rae et al., 2019）、OpenSubtitles（Tiedemann, 2016）、英文 Wikipedia、DM Mathematics（Saxton et al., 2019）、EuroParl（Koehn, 2005）和 Enron Emails 语料库（Klimt and Yang, 2004）。为了补充这些数据集，我们还推出了——<span class="muted">（接原文第 2 页）</span></p>
 <p class="footnote"><sup>1</sup> <a href="https://pile.eleuther.ai/">https://pile.eleuther.ai/</a></p>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img decoding="async" loading="lazy" alt="原文第 2 页图表或样本" src="assets/images/6dc892de8fc3984c4436bae8d725e729f918c680cf7b99bc4ffeccd22737c0c2.png"></figure>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img height="930" width="1386" decoding="async" loading="lazy" alt="原文第 2 页图表或样本" src="assets/images/6dc892de8fc3984c4436bae8d725e729f918c680cf7b99bc4ffeccd22737c0c2.png"></figure>
 <p>——Common Crawl 的一个新的过滤子集 Pile-CC，其提取质量得到了改善。</p>
 <p>通过分析，我们确认 The Pile 与纯 Common Crawl 数据存在显著差异。此外，我们的评估表明，现有 GPT-2 和 GPT-3 模型在 The Pile 的许多组成部分上表现不佳，而在 The Pile 上训练的模型显著优于使用原始与过滤后的 Common Crawl 训练的模型。作为性能评估的补充，我们还对 The Pile 内的文本进行了探索性分析，以详细展示数据的情况。我们希望，对 The Pile 构建方式和特征的广泛记录能够帮助研究者就潜在下游应用作出明智决策。</p>
 <p>最后，我们公开了 The Pile 各组成数据集的预处理代码，以及构建其他版本的代码。<sup>2</sup>为了支持可复现性，我们还尽可能详细地记录了对每个数据集以及 The Pile 整体所做的全部处理。有关各数据集处理方式的更多细节，请参见第 2 节和附录 C。</p>
@@ -16,7 +16,7 @@
 <ol><li>推出一个用于语言建模的 825.18 GiB 英文数据集，结合了 22 个多样化来源。</li><li>推出 14 个新的语言建模数据集，我们预计这些数据集本身也会引起研究者的兴趣。</li><li>通过评估证明，相比在 CC-100 和原始 Common Crawl 上训练，在这一新数据集上训练的 GPT-2 规模模型在许多领域都取得了显著改善。</li><li>对这一数据集进行调查与记录，希望帮助研究者更好地了解如何使用它，并促使他们对自己的数据开展类似调查。</li></ol>
 <h2>2　The Pile 数据集</h2><p>The Pile 由 22 个子数据集构成，如表 1 所示。遵循 Brown et al.（2020）的做法，我们提高了高质量组成部分的权重；在完整遍历 The Pile 一次时，Wikipedia 等部分高质量数据集最多会被遍历 3 次（“epoch”）。<span class="muted">（本句跨原文第 2—3 页，已在此合并。）</span></p>
 <p class="footnote"><sup>2</sup> <a href="https://github.com/EleutherAI/the-pile">https://github.com/EleutherAI/the-pile</a></p>
-<footer>原文第 2 页</footer></section><section class="page" id="page-3"><figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或样本" src="assets/images/f1c705d0c8c60f82fab1135fd8437ed0005487a09b2c1a2a73b0c924ea0b051d.png"></figure>
+<footer>原文第 2 页</footer></section><section class="page" id="page-3"><figure><img height="1266" width="1386" decoding="async" loading="lazy" alt="原文第 3 页图表或样本" src="assets/images/f1c705d0c8c60f82fab1135fd8437ed0005487a09b2c1a2a73b0c924ea0b051d.png"></figure>
 <p>关于每个数据集构建方式的详细信息见附录 C。</p>
 <h3>2.1　Pile-CC</h3><p>Common Crawl 是从 2008 年起收集的网页抓取数据，包含原始网页、元数据和提取文本。由于数据集未经充分处理，Common Crawl 的优势是包含来自不同领域的文本，但代价是数据质量参差不齐。因此，使用 Common Crawl 通常需要精心设计的提取与过滤流程。我们基于 Common Crawl 构建的数据集 Pile-CC 使用 jusText（Endrédy and Novák, 2013）对 Web Archive 文件（包含页面 HTML 的原始 HTTP 响应）进行提取，得到的输出质量高于直接使用 WET 文件（提取后的纯文本）。</p>
 <h3>2.2　PubMed Central</h3><p>PubMed Central（PMC）是 PubMed 在线生物医学论文库的一个子集，由美国国家生物技术信息中心（NCBI）运营，为近五百万篇出版物提供开放的全文访问。PMC 收录的大多数出版物都较新；依据 NIH 公共访问政策，自 2008 年起，所有 NIH 资助的研究都必须被收录。我们纳入 PMC，希望它能够有益于医学领域的潜在下游应用。</p>
@@ -49,12 +49,12 @@
 <h3>3.2　使用 GPT-2 和 GPT-3 测量测试集 PPL</h3><p>我们使用 GPT-2（Radford et al., 2019）和 GPT-3（Brown et al., 2020）计算 The Pile 各组成数据集的测试集 PPL，如图 2 所示。我们使用所有可用版本的 GPT-2，以及通过 OpenAI API 提供的全部四个版本的 GPT-3。由于使用 OpenAI API 存在成本，我们对大多数组成数据集仅在各自测试集的十分之一上评估。我们将报告的 PPL 换算为每个 UTF-8 编码字节的比特数（BPB）。需要强调的是，我们通过独立评估每个数据集内的各篇文档来计算 PPL，而不是像在大语料库上计算 PPL 的常见做法那样，将所有文档拼接起来。</p>
 <p>PPL 计算的完整细节见附录 E.2。</p>
 <p>不出所料，较大的语言模型通常比较小的模型取得更低的 PPL。近期研究越来越关注语言模型的经验 scaling laws（Kaplan et al., 2020; Henighan et al., 2020）。因此，我们研究了 GPT-2 与 GPT-3 模型系列在 The Pile 上进行 PPL 评估时的 scaling law。GPT-3 模型系列的 scaling law 关系如图 2 所示。<sup>10</sup>图中的最佳拟合直线系数为 -0.1674，截距为 2.5516。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或样本" src="assets/images/7c23a21cb6bba8039d02a2921bfb2a58027adb00261476fc31aa64707e24d511.png"></figure>
+<figure><img height="618" width="669" decoding="async" loading="lazy" alt="原文第 6 页图表或样本" src="assets/images/7c23a21cb6bba8039d02a2921bfb2a58027adb00261476fc31aa64707e24d511.png"></figure>
 <p>有趣的是，虽然 GPT-2 和 GPT-3 未在 The Pile 上训练，但仍然呈现出清晰的 scaling law，而且没有边际收益递减。我们推测，这源于这些模型固有的泛化能力。我们将更严格的零样本 scaling laws 分析留待后续研究。<span class="muted">（末句跨原文第 6—7 页，已在此合并。）</span></p>
 <p class="footnote"><sup>10</sup>虽然 OpenAI API 中 GPT-3 模型的规模尚未公布，但这里我们假定 ada、babbage、curie 和 davinci 分别对应 2.7B、6.7B、13B 和 175B 参数模型。</p>
 <footer>原文第 6 页</footer></section><section class="page" id="page-7"><h3>3.3　GPT-3 在 The Pile 各组成部分上的相对表现</h3><p>确定 GPT-3 在哪些组成部分上表现不佳，可以告诉我们哪些 The Pile 组成部分与 GPT-3 训练所用的文本分布（网页和图书）差异最大。因此，这些组成部分尤其适合作为补充 GPT-3 训练数据的候选。这些结果对于确定未来 The Pile 迭代应侧重哪些类型的数据集，也具有价值。</p>
 <p>由于不同数据集的熵不同，直接比较 GPT-3 在不同 The Pile 组成部分上的 PPL，并不能准确反映相对表现。理想情况下，我们应在 The Pile 上从头训练一个 GPT-3 模型，再比较其与原始 GPT-3 在各数据集上 loss 的差异。受资源限制，我们改用一个在 The Pile 上从头训练的 GPT-2 模型（见第 4 节），构建代理度量。为了构建这一代理指标，我们首先测量每个组成部分上从 GPT-2-Pile 模型到 GPT-3 的改善幅度。随后，我们将 OpenWebText2 上的变化设为零，对结果进行归一化。计算方式如下：</p>
-<figure class="formula"><img decoding="async" loading="lazy" alt="原文第 7 页图表或样本" src="assets/images/cd6156bde3deae3e4daf52fe833a01099fc08b523b2a96661afc28c62d926fbe.png"></figure>
+<figure class="formula"><img height="159" width="471" decoding="async" loading="lazy" alt="原文第 7 页图表或样本" src="assets/images/cd6156bde3deae3e4daf52fe833a01099fc08b523b2a96661afc28c62d926fbe.png"></figure>
 <p>由于 GPT2-Pile 同时在 OWT2 和被评估的数据集上训练，我们预计 \(\Delta_{\mathrm{set}}\) 中的第二项反映两个数据集内在难度的差异。因此，\(\Delta_{\mathrm{set}}\) 的总值反映了：相对于 OWT2，被评估数据集对 GPT-3 更难多少，再减去这两个任务的相对难度。由于 GPT-3 在与 OWT2 非常相似的数据上训练，这为我们提供了一个代理指标，衡量如果 GPT-3 在 The Pile 上训练，其表现会改善多少。</p>
 <p>结果见图 3。作为合理性检查，我们观察到，包含在 GPT-3 训练集中或与之极其相似的数据集（Books3、Wikipedia（en）、Pile-CC 和 Project Gutenberg），在我们的指标上得分接近零。</p>
 <p>GPT-3 似乎在以下数据集上表现不佳：PubMed Central、PubMed Abstracts 和 ArXiv 等研究或学术写作数据集；FreeLaw、HackerNews 和 USPTO Backgrounds 等特定领域数据集；以及 GitHub 和 DM Mathematics 等主要包含不同于自然语言的文本的数据集。此外，大多数数据集上的改善幅度小于 OpenWebText2。因此，我们预计，在 The Pile 上训练的 GPT-3 规模模型，在研究相关任务、软件任务与符号操作任务上会显著优于基础模型。此外，这一实验也提供了证据，表明 The Pile 的大多数组成部分并不与主要基于网页的 GPT-3 训练数据重复。</p>
@@ -62,25 +62,25 @@
 <h2>4　评估</h2><p>为确认 The Pile 对改善语言建模质量的有效性，我们基于 Brown et al.（2020）的模型，在不同数据集上训练架构相同、参数量为 13 亿的模型，并使用 WikiText 与 LAMBADA 任务作为语言建模能力的基准进行评估。我们还报告在 The Pile 上的结果，以衡量更广泛的跨领域泛化能力。</p>
 <h3>4.1　方法</h3><p>为确保不同规模数据集之间的比较公平，我们采用与 Brown et al.（2020）相同的 13-gram 重叠过滤方法，清除所有评估集实例，并将数据下采样至 40GB，以控制数据集规模。由于控制了数据集规模，我们强调，这一评估对 CC-100（en）是宽松的，因为它实际上只有 The Pile 大约三分之一的规模。</p>
 <p>我们比较以下数据集：The Pile、CC-100 数据集的英文部分<sup>11</sup>（Wenzek et al., 2019; Conneau et al., 2020），以及仅保留英文的原始 CC WET 文件样本。<span class="muted">（本句跨原文第 7—8 页，已在此合并。）</span></p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或样本" src="assets/images/484550cb12f0a45db7acb459134e2dd4e42fb2bcd2e1672143cd65f3597ca3e7.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img height="1092" width="1386" decoding="async" loading="lazy" alt="原文第 8 页图表或样本" src="assets/images/484550cb12f0a45db7acb459134e2dd4e42fb2bcd2e1672143cd65f3597ca3e7.png"></figure>
 <h3>4.2　结果</h3><p>在传统语言建模基准上，The Pile 在 WikiText 上取得显著改善，而在 LAMBADA 上的变化可以忽略。不过，在 The Pile 上训练的模型，在 The Pile 的全部组成部分上均显著优于使用 Raw CC 和 CC-100 训练的模型，如表 4 所示。这说明，在 The Pile 上训练的模型具有更强的跨领域泛化能力，同时不会牺牲传统基准上的表现。</p>
 <p>各数据集上相对 CC-100 的改善幅度见图 4。不出所料，在 Pile-CC 上几乎没有改善。然而，在 ArXiv、PubMed Central、FreeLaw 和 PhilPapers 等学术数据集上，The Pile 训练的模型显著优于另外两个模型。它在 GitHub 和 StackExchange 等编程相关数据集上也取得了显著改善；在 EuroParl 上的改善源于另外两个数据集都缺乏多语言文本；在 DM Mathematics 上的改善则表明数学能力显著增强。</p>
 <p>令人意外的是，尽管原始 Common Crawl 在 LAMBADA 和 WikiText 上明显落后于 CC-100，但在 The Pile BPB 上表现更好。我们推测，这是由 CC-100 使用的基于 PPL 的过滤造成的：先在 Wikipedia 上训练一个语言模型，再丢弃 PPL 过高或过低的全部数据。这实际上会丢弃任何与 Wikipedia 过于相似或过于不同的数据，严重限制所收集数据的多样性。这一结果表明，未来使用 Common Crawl 的研究应谨慎过滤，以保留其多样性。</p>
 <h2>5　结构统计</h2><p>本节介绍数据集的结构统计，为 The Pile 提供更粗粒度的统计信息。在第 6 节中，我们会更深入地调查并记录 The Pile 数据集内的文本内容。<span class="muted">（末句跨原文第 8—9 页，已在此合并。）</span></p>
 <p class="footnote"><sup>11</sup>数据来自 <a href="http://data.statmt.org/cc-100/">http://data.statmt.org/cc-100/</a>。</p>
-<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或样本" src="assets/images/34dc651401023496589f2de953a39a6f008b81557e7fe8bf3d5d05138fc74bfb.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或样本" src="assets/images/243e555f63367c0308d76a9ba22c71c1e52154630c782772e26835da5b5bdbe4.png"></figure>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img height="786" width="1386" decoding="async" loading="lazy" alt="原文第 9 页图表或样本" src="assets/images/34dc651401023496589f2de953a39a6f008b81557e7fe8bf3d5d05138fc74bfb.png"></figure>
+<figure><img height="441" width="1386" decoding="async" loading="lazy" alt="原文第 9 页图表或样本" src="assets/images/243e555f63367c0308d76a9ba22c71c1e52154630c782772e26835da5b5bdbe4.png"></figure>
 <h3>5.1　文档长度与 tokenization</h3><p>每个数据集都由大量文档组成。我们分析文档长度的分布，以及使用 GPT-2 tokenizer 时每个 token 的字节数，以为消融实验提供背景。</p>
 <p>虽然 The Pile 中大多数文档较短，但非常长的文档形成了一条长尾（图 5）。</p>
 <p>由于 GPT-2 BPE tokenizer 在 WebText 上训练，平均每个 token 的字节数也可以非常粗略地反映 The Pile 各组成部分与 WebText 在句法上的差异。例如，NIH ExPorter、OpenWebText2 和 Books3 等数据集主要由与 WebText 分布相似的普通文本构成，因而每个 token 的字节数较多。另一方面，每个 token 字节数最低的许多数据集，主要由非文本内容（GitHub、ArXiv、Stack Exchange 和 DM Mathematics）或非英语语言（EuroParl）构成。</p>
 <h3>5.2　语言与方言</h3><p>虽然全球只有 13% 的人口说英语，但绝大多数 NLP 研究都针对英语。对于 The Pile，我们采用了与 Brown et al.（2020）所用数据集类似的方法，主要关注英文，同时在自行收集数据时并未显式过滤其他语言。评估一个多语言数据集时，我们的主要纳入标准是：仅凭其中的英文部分，是否就值得将它纳入。我们计划在后续工作中构建 The Pile 的完整多语言扩展。<span class="muted">（末句跨原文第 9—10 页，已在此合并。）</span></p>
-<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或样本" src="assets/images/857e1bbea6df9367bfda1fdb79581534ff04b787bd2f45d2fb2c4398fcec5a49.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或样本" src="assets/images/937ce35518f58299285c28616f0d9c66df776dac61aa8df6c1c6b214772a6580.png"></figure>
+<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img height="765" width="1386" decoding="async" loading="lazy" alt="原文第 10 页图表或样本" src="assets/images/857e1bbea6df9367bfda1fdb79581534ff04b787bd2f45d2fb2c4398fcec5a49.png"></figure>
+<figure><img height="849" width="684" decoding="async" loading="lazy" alt="原文第 10 页图表或样本" src="assets/images/937ce35518f58299285c28616f0d9c66df776dac61aa8df6c1c6b214772a6580.png"></figure>
 <p>使用 fasttext（Suárez et al., 2019a），我们确定 The Pile 中英文占 97.4%。我们指出，由于语言识别存在问题，尤其是在罕见语言上（Caswell et al., 2020），这一方法只能提供英文内容占比的粗略估计，无法对低资源语言得出可靠结论。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或样本" src="assets/images/f83baacef7fab697727c43304fded0be1d55ef4fc21ff05155bdceeb274a0dba.png"></figure>
+<figure><img height="639" width="678" decoding="async" loading="lazy" alt="原文第 10 页图表或样本" src="assets/images/f83baacef7fab697727c43304fded0be1d55ef4fc21ff05155bdceeb274a0dba.png"></figure>
 <h2>6　调查与记录数据集</h2><p>随着机器学习研究规模扩大，人们开始审视模型训练所使用的日益庞大的数据集（Prabhu and Birhane, 2020; Biderman and Scheirer, 2020）。</p>
 <p>虽然 AI 伦理与偏见研究中已经提出这一问题（Hovy and Spruit, 2016; Hutchinson et al., 2020; Blodgett et al., 2020），但它尚未成为语言建模界关注的重点。尽管探索和记录数据集问题的研究不断涌现（Gebru et al., 2018; Bender and Friedman, 2018; Jo and Gebru, 2020），尚无任何面向超大语言模型训练的数据集得到其创建者的认真记录。<sup>12</sup>因此，我们的分析有两个目标：回应有关 The Pile 的伦理顾虑，并推广和常态化与 AI 伦理文献开展对话的实践。<span class="muted">（后两句跨原文第 10—11 页，已在此合并。）</span></p>
-<footer>原文第 10 页</footer></section><section class="page" id="page-11"><figure><img decoding="async" loading="lazy" alt="原文第 11 页图表或样本" src="assets/images/6a458293fec9b8952a47f738703134ea846fe562ea1ec5af6124ef6e933579c3.png"></figure>
+<footer>原文第 10 页</footer></section><section class="page" id="page-11"><figure><img height="702" width="684" decoding="async" loading="lazy" alt="原文第 11 页图表或样本" src="assets/images/6a458293fec9b8952a47f738703134ea846fe562ea1ec5af6124ef6e933579c3.png"></figure>
 <p>自然语言处理技术应用广泛，可以用于极其不同的情境。因此，哪些数据适合训练、哪些不适合，可能随应用情境而产生巨大差异。在我们看来，最佳做法是记录数据集中可能引发担忧的方面，而不是将其删除，<sup>13</sup>尤其考虑到 The Pile 的目的是训练通用语言模型。因此，我们开展记录工作的主要目标，是帮助 NLP 研究者作出明智决策。</p>
 <h3>6.1　记录方法</h3><p>为记录 The Pile，我们选择实施方法论研究者和伦理研究者提出的两个框架。第一个是 datasheets 方法（Gebru et al., 2018），这是一种通用方法，得到多位方法论研究者的推荐（Raji and Yang, 2019; Biderman and Scheirer, 2020），而且实践者似乎比其他替代方法更经常使用它（Seck et al., 2018; Costa-jussà et al., 2020; Thieme et al., 2020）。第二个是 data statements 方法（Bender and Friedman, 2018），它专为自然语言处理提出，受到 NLP 社区的良好认可。我们的 datasheet 和 data statement 将放在保存 The Pile 代码的 GitHub 仓库中，也将作为独立文档发布到 arXiv（Biderman et al., 2021; Biderman, 2021）。</p>
 <p>除了 datasheet 和 data statement 之外，还有一些这些文档未涵盖的信息，可能对训练语言模型的人有所帮助。在本节余下部分，我们会更详细地调查并记录其中一些额外背景信息。</p>
@@ -100,8 +100,8 @@
 <p>此外，我们还计算了各数据集中与性别代词共现词语的平均情感（Baccianella et al., 2010），如图 13 所示。总体而言，我们没有发现显著偏向男性或女性的情感偏见。当然，这并不意味着数据集不存在性别偏见，我们的共现检验就显示存在偏见。</p>
 <h4>6.4.2　宗教</h4><p>我们对宗教进行了类似的共现分析，结果见表 11。与性别类似，我们发现这些共现情况反映了这些术语在某些网络讨论中的使用方式。例如，“radical”（激进的）与“muslim”（穆斯林）高频共现，而“rational”（理性的）经常与“atheist”（无神论者）共现。这项分析也展示了纯粹基于共现的分析的一些局限。例如，“religious”（宗教的）经常与“atheist”共现，这可能反映的是“atheist”一词经常出现于何种对话，而不是对“atheist”的描述。</p>
 <p class="footnote"><sup>14</sup>作为简化假设，我们选择只研究男性和女性代词。研究“they”需要将其单数用法单独识别出来。</p>
-<footer>原文第 12 页</footer></section><section class="page" id="page-13"><figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或样本" src="assets/images/f411829b6a99badfa064b1b582deb9d60a3e16c5a578e014516db2eb5f7b5e43.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或样本" src="assets/images/45344b3fb9f7fac2d8062020773384a38272e7c750b912a1b6047ee14179780b.png"></figure>
+<footer>原文第 12 页</footer></section><section class="page" id="page-13"><figure><img height="762" width="1386" decoding="async" loading="lazy" alt="原文第 13 页图表或样本" src="assets/images/f411829b6a99badfa064b1b582deb9d60a3e16c5a578e014516db2eb5f7b5e43.png"></figure>
+<figure><img height="759" width="684" decoding="async" loading="lazy" alt="原文第 13 页图表或样本" src="assets/images/45344b3fb9f7fac2d8062020773384a38272e7c750b912a1b6047ee14179780b.png"></figure>
 <p>此外，我们计算了每个组成数据集中共现词语的平均情感，如图 14 所示。在整个数据集中，我们发现“Buddhist”（佛教徒）的情感得分最高，其次是“Hindu”（印度教徒）、“Christian”（基督徒）、“Atheist”（无神论者）和“Muslim”（穆斯林）。值得注意的是，“Jew”（犹太人）最低，这可能反映了它在历史上被用作贬称。</p>
 <h4>6.4.3　种族</h4><p>最后，我们对种族群体进行了相同分析。这里，由于“black”或“white”等标识词往往不指种族，我们改为计算与“black man”（黑人男性）或“white woman”（白人女性）等短语的共现。</p>
 <p>表 12 展示了对各人口群体偏向最强的 15 个词。我们再次发现，共现情况反映了这些术语的使用情境。例如，对“black”偏向最强的 4 个词是“unarmed”（未携带武器的）、“civil”（民事的／公民的）、“criminal”（犯罪的）和“scary”（可怕的）。</p>
@@ -116,7 +116,7 @@
 <p>The Pile 包含五个数据集，其收集与分发方式不符合 ToS，而且作者无法对其数据被使用表示同意。这些数据集都在 NLP 文献及更广泛的世界中得到广泛使用。除 YouTube Subtitles 数据集外，这些数据集均由研究者发布，并在互联网上自由传播。YouTube Subtitles 数据集由我们为本项目创建，使用一个十分流行的非官方 API；该 API 被广泛使用，而且可以在 Pip、Conda、GitHub 等地方方便获取。考虑到已进行的处理，以及在 The Pile 中识别具体文件的难度，我们认为，使用这些数据集，相对于其广泛发布已造成的影响，不会显著增加伤害。</p>
 <h2>7　含义与更广泛的影响</h2><p>The Pile 是将模型和数据集不断扩大、增强能力这一道路上的又一块踏脚石。对于逐渐变强的 AI 系统将如何影响更广泛的世界，存在许多严重顾虑（Brundage et al., 2018; Amodei et al., 2016; Bostrom and Yudkowsky, 2014; Bostrom, 2014; Critch and Krueger, 2020），我们认为这些问题值得认真思考。本节讨论 The Pile 的法律影响，再从两个角度考虑其对 AI 对齐的影响：加速 AI 发展时间线，以及未对齐语言模型带来的危险。</p>
 <h3>7.1　内容的合法性</h3><p>虽然机器学习界已开始讨论在受版权保护的数据上训练模型是否合法，但鲜有人承认：处理和分发他人拥有的数据也可能违反版权法。作为朝这一方向迈出的一步，我们讨论为何认为自己对受版权保护数据的使用符合美国版权法。<sup>16</sup><span class="muted">（末句跨原文第 14—15 页，已在此合并。）</span></p>
-<footer>原文第 14 页</footer></section><section class="page" id="page-15"><figure><img decoding="async" loading="lazy" alt="原文第 15 页图表或样本" src="assets/images/7389eaf74f204cdf55a21050136402195f261b9166262baf89781f47b7d4db0c.png"></figure>
+<footer>原文第 14 页</footer></section><section class="page" id="page-15"><figure><img height="1041" width="684" decoding="async" loading="lazy" alt="原文第 15 页图表或样本" src="assets/images/7389eaf74f204cdf55a21050136402195f261b9166262baf89781f47b7d4db0c.png"></figure>
 <p>根据 pre（1984），以及 aff（2013）、Google（2015）等后续裁决的确认，对受版权保护媒体的非商业、非营利用途原则上属于合理使用。此外，我们的使用具有转换性：原始形式的数据不能有效服务于我们的目的，而我们形式的数据也不能有效服务于原文档的目的。虽然我们使用受版权保护作品的全文，但当完整作品是必要的时，这并不必然构成不符合条件的理由（ful, 2003）。在我们的情形中，自然语言的长程依赖要求使用全文，以产生最佳结果（Dai et al., 2019; Rae et al., 2019; Henighan et al., 2020; Liu et al., 2018）。</p>
 <p>版权法因国家而异，在特定司法辖区内，部分作品还可能受到额外限制。为便于遵守当地法律，我们提供了 The Pile 的复现代码，可用于排除不适合用户的某些组成部分。遗憾的是，我们没有确定哪些具体文本受版权保护所必需的元数据，因此只能在组成部分层面进行排除。所以，这应被视为启发式判断，而不是精确判定。</p>
 <h3>7.2　加速 AI 发展时间线</h3><p>人们严重担忧，AI 系统可能很快就在所有相关经济任务上显著超越人类（Grace et al., 2018; Yudkowsky, 2013）。与此相关，如何将如此强大的 AI 系统正确地与人类利益对齐（Bostrom and Yudkowsky, 2014; Russell, 2019; Bostrom, 2014; Amodei et al., 2016），以及如何在总体上避免道德层面的灾难性结果（Sotala and Gloor, 2017; Shulman and Bostrom, 2020），仍存在严重的未解决问题。因此，有观点认为，在这些顾虑得到更充分处理之前，加速发展如此强大的 AI 系统可能并不可取（Bostrom, 2014）。</p>
@@ -157,7 +157,7 @@
 <p>我们使用 pycld2 而非 fasttext，是因为它能直接从 HTML 中识别语言，而且 jusText 在提取前需要知道网页语言。此外，pycld2 显著快于 jusText；仅对 pycld2 判定为英文的文档使用 jusText 处理，使所需计算减少了约一半。</p>
 <p>为语言建模从网站提取文本，尤其是为多语言语料库提取文本，是非常不简单的任务；我们将此类提取的改进留待后续研究。</p>
 <h4>C.1.4　过滤</h4><p>为按质量过滤 CC，我们遵循 Brown et al.（2020），训练分类器区分已知高质量数据集与 CC。我们使用 fasttext，n-gram 大小为 2。我们分别尝试以整个 The Pile 和仅 OpenWebText2 作为正例；在未见过的 CC 数据上的得分分布如图 9 所示。最终 CC 数据仅使用 OpenWebText2 作为正例，因为使用完整 The Pile 时灵敏度较低。<span class="muted">（末句跨原文第 22—23 页，已在此合并。）</span></p>
-<footer>原文第 22 页</footer></section><section class="page" id="page-23"><figure><img decoding="async" loading="lazy" alt="原文第 23 页图表或样本" src="assets/images/3a5a32502034c7663e9c1aca71c520af54904097f7c2acc3737b31ff586c2f02.png"></figure>
+<footer>原文第 22 页</footer></section><section class="page" id="page-23"><figure><img height="552" width="684" decoding="async" loading="lazy" alt="原文第 23 页图表或样本" src="assets/images/3a5a32502034c7663e9c1aca71c520af54904097f7c2acc3737b31ff586c2f02.png"></figure>
 <p>我们使用与 Brown et al.（2020）相同的 Pareto 分布阈值法，取 \(\alpha=3\)。选择 \(\alpha\) 时，我们以将 CC 子集过滤到所需规模的必要过滤比例为目标。\(\alpha\) 对过滤比例的影响如表 6 所示。</p>
 <h3>C.2　PubMed Central</h3><p>我们使用 pandoc 1.19.2.4（MacFarlane, 2006–2020），将 PMC 提供的 JATS 格式数据转换为 Markdown。随后，移除以 <code>:::</code> 开头的所有行，pandoc 使用这种标记在 Markdown 中表示 HTML 类。</p>
 <h3>C.3　Books3</h3><p>没有其他细节。</p>
@@ -169,8 +169,8 @@
 <h3>C.6　GitHub</h3><p>我们将数据收集分为两步：</p><ol><li>收集所需仓库及其元数据的列表。</li><li>从每个仓库提取对语言建模有用的全部文本数据。</li></ol>
 <p>第一步中，我们借鉴 WebText 数据集的做法，用 GitHub 的 star 数作为质量代理指标，仅收集超过 100 个 star 的仓库。出于实际原因，我们还将收集范围限制为文件总量小于 1GB 的仓库。由于 GitHub API 将搜索结果数量限制为 1000，为了全面收集所有仓库，我们需要创建许多小查询，每个查询返回少于 1000 个结果，并确保每个目标仓库至少被一个查询返回。为此，我们最初按规模限定搜索，只返回大小下界为 0、上界为 5 字节的仓库。撰写本文时，这会返回 965 个结果。下一步，将下界设为前一上界加 1，再利用上一次查询结果估计一个仍应返回少于 1000 个结果的新上界：\(\mathrm{lowerbound}+1000/(n/r)\)，其中 \(n\) 是前一次结果数，\(r\) 是前一步上下界的范围。<span class="muted">（末句跨原文第 23—24 页，已在此合并。）</span></p>
 <p class="footnote"><sup>18</sup> <a href="https://arxiv.org/help/bulk_data_s3">https://arxiv.org/help/bulk_data_s3</a></p>
-<footer>原文第 23 页</footer></section><section class="page" id="page-24"><figure><img decoding="async" loading="lazy" alt="原文第 24 页图表或样本" src="assets/images/d7a60e215081b218907d3a4a69868f64db8d00432f7aee922b02c9d9cb340f33.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 24 页图表或样本" src="assets/images/bed1f7a8e3a374481457e7e6e07de891752d953edc2dc7981968a3d99985fcb1.png"></figure>
+<footer>原文第 23 页</footer></section><section class="page" id="page-24"><figure><img height="489" width="1386" decoding="async" loading="lazy" alt="原文第 24 页图表或样本" src="assets/images/d7a60e215081b218907d3a4a69868f64db8d00432f7aee922b02c9d9cb340f33.png"></figure>
+<figure><img height="525" width="684" decoding="async" loading="lazy" alt="原文第 24 页图表或样本" src="assets/images/bed1f7a8e3a374481457e7e6e07de891752d953edc2dc7981968a3d99985fcb1.png"></figure>
 <p>这种方法通常不会超出结果数限制，因为 GitHub 仓库的大小遵循幂律分布；但如果超出，我们就利用新查询返回的仓库数量，重新估计上界。</p>
 <p>使用收集到的仓库列表，我们逐个克隆仓库，提取所有基于文本的文件，并丢弃其余内容。由于某些仓库的克隆或提取所需时间长得不切实际，我们为 git 克隆和文本提取两个步骤都设定了 300 秒的硬性时间限制。因此，某些较大仓库可能仅被部分提取。我们还为提取的文件设置 100kB 大小限制，因为我们发现超过这一大小的文件，多数通常是高度重复的自动生成源文件或数据文件；设定这一文件大小限制，是将数据限制为代码的一种有效清洗步骤。</p>
 <p>因为我们希望限制整个 The Pile 的规模，所以从总共收集的 630.64 GiB GitHub 数据中，随机抽取了 95.0 GiB，并将质量过滤留待后续研究。</p>
@@ -218,118 +218,118 @@
 <h2>E　数据调查</h2><h3>E.1　13-Gram 分析</h3><p>作为探索性分析的一部分，我们计算了整个 Common Crawl 中所有 13-gram 的出现次数。由于此前工作使用过这一取值（Brown et al., 2020），我们选择 \(n=13\)。该数据集中总共有 40,216,231,078 种不同的 13-gram。最常见的 1000 种，其出现次数从 1,100 万次到 2 万次不等。</p>
 <p>最频繁出现的 13-gram，是用于样式的字符重复，例如“<code>-- --</code>”“<code>* * * *</code>”“<code>! ! ! !</code>”，分别出现 1,100 万次、580 万次和 110 万次。以这种方式使用的其他字符包括“<code># . &gt; ?</code>”。在 26.4 万次这一数量级，我们看到格式有误的 HTML 转义字符重复，例如“<code>; &amp;nbsp</code>”“<code>; amp</code>”。标准论坛软件的样板文本出现约 18 万次，例如“<code>select the forum that you want to visit from the selection below</code>”（从下面的选项中选择你希望访问的论坛）。</p>
 <p>总体而言，前 1000 种中包含大量常见 HTML 和 CSS，以及 Amazon Affiliate Advertising、TripAdvisor、SimplyHired、Associated Press、PostMedia、FCC 等来源的样板文本。PHP 错误消息和密码登录提示也有出现。Portal 的爱好者可能会感兴趣：“<code>the cake is a lie .</code>”（蛋糕是个谎言。）的重复出现次数很高。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 28 页图表或样本" src="assets/images/24954aefae9ba4dd8b46dc9b2fb1cd8339b31fd61265e63e7d228e7e6174aafe.png"></figure>
+<figure><img height="1101" width="615" decoding="async" loading="lazy" alt="原文第 28 页图表或样本" src="assets/images/24954aefae9ba4dd8b46dc9b2fb1cd8339b31fd61265e63e7d228e7e6174aafe.png"></figure>
 <h3>E.2　基准 PPL 的计算</h3><p>为计算给定数据集的 PPL，我们分别对每篇文档进行 tokenization，将文档拆为不超过模型最大序列长度的片段（GPT-2 为 1024 个 token，GPT-3 为 2048 个），并预测每个片段的 logits。模型输入是紧邻之前的 token，例如，为给第 1 至 1024 个 token 评分，输入上下文提供第 0 至 1023 个 token。相应语言模型实现会处理因果 attention 掩码。这确保数据集中的每个 token 都恰好被评分一次。这也意味着有些 token 比其他 token 拥有更多输入上下文。随后，我们在整个数据集上聚合，并计算最终 PPL 得分。<span class="muted">（末句跨原文第 28—29 页，已在此合并。）</span></p>
 <footer>原文第 28 页</footer></section><section class="page" id="page-29"><p>整个 The Pile 的 PPL 通过对各组成数据集进行聚合计算，即按数据集规模加权，而不是简单平均各数据集的 PPL。GPT-2 和 GPT-3 使用相同的 tokenizer 和词表，因此 PPL 得分可以直接比较。我们使用 Hugging Face（Wolf et al., 2020）的 GPT-2 实现，以及 OpenAI API 中的 GPT-3。OpenAI API 的 davinci 模型被假定对应 175B 参数版本的 GPT-3。</p>
 <p>表 8 展示了测试集 PPL，即没有像表 2 那样按 UTF-8 长度归一化的值。由于使用 OpenAI API 存在成本，在表 8 和表 2 中，我们仅对测试集的十分之一计算 PPL。具体而言，除 Ubuntu IRC、BookCorpus2 和 PhilPapers 三个数据集外，我们从每个数据集中随机抽取十分之一的文档。表 9 展示了所有 GPT-2 模型在完整测试集上计算的测试 PPL。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 29 页图表或样本" src="assets/images/85fc2168333faa2c1d4060f28ebeeaab938ba0cdae3cc6c554b3f3a057b1ed31.png"></figure>
+<figure><img height="714" width="684" decoding="async" loading="lazy" alt="原文第 29 页图表或样本" src="assets/images/85fc2168333faa2c1d4060f28ebeeaab938ba0cdae3cc6c554b3f3a057b1ed31.png"></figure>
 <h3>E.3　贬损性内容</h3><p>最初，我们决定将贬损性内容分为四组：性相关术语、侮辱性称呼、不属于这两类，以及同时属于这两类。我们调整了一份公开的“不雅词语”列表，并将它们分到这些类别，意在观察每个数据集中各类别的比例。不过，这带来了许多问题。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 29 页图表或样本" src="assets/images/368738a826b1131a5e1d10d39480d4cf08fc2ff9c639b9c39135f0f280d3b522.png"></figure>
+<figure><img height="756" width="672" decoding="async" loading="lazy" alt="原文第 29 页图表或样本" src="assets/images/368738a826b1131a5e1d10d39480d4cf08fc2ff9c639b9c39135f0f280d3b522.png"></figure>
 <p>首先，任何词语黑名单都很难捕捉全部贬损性内容，因为故意拼错词语可以绕过审查，同时仍达到预期效果。此外，词语及其意图不断演变，因此任何建立的列表很可能始终过时。另一个问题是将词语分到各类别。词语高度依赖上下文，因此同一个词在不同上下文中会改变类别。</p>
 <h2>F　数据样本</h2><p>以下内容由从 The Pile 各组成数据集的验证划分中随机抽取的两个 512 字节样本构成，未经挑选。</p>
 <h3>F.1　Pile-CC</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 29 页图表或样本" src="assets/images/5958f247c25ffa3ffda2298ac255db594bf78f1b0993438390ae6121ee8b6c34.png"></figure>
+<figure><img height="468" width="591" decoding="async" loading="lazy" alt="原文第 29 页图表或样本" src="assets/images/5958f247c25ffa3ffda2298ac255db594bf78f1b0993438390ae6121ee8b6c34.png"></figure>
 <p>样本 1：……热门话题及其相关报道。首先，视觉设计有了一点变化。此前，点击热门话题会突出显示某一家出版机构的一篇报道，你必须向下滚过直播视频区域才能看到相关报道。Facebook 正在用一个简单的轮播组件替代这一系统，这能更好地展示不同的报道选项。需要明确的是，Facebook 表示，这项变化并不影响报道的来源方式。仍然是同一个算法在挑选……</p>
 <p>样本 2：……公众安全。他说，列车经过时，这座桥能为通勤者省下两三分钟，而这些时间可能至关重要。“如果你只是下班开车回家，两三分钟也许算不了什么；但如果你正等救护车、消防车或警车赶到家中，这两三分钟可能意味着生与死的区别，”Sharp 说。“这就是这个项……”</p>
 <h3>F.2　PubMed Central</h3><p class="muted">样本见原文第 30 页。</p>
 <footer>原文第 29 页</footer></section><section class="page" id="page-30"><h3>F.2　PubMed Central（续）</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/f1b35c2c7664b5e291ad0faaa9b9561c75eb4f26f8dfbb5846a7a5d1d8900f2b.png"></figure>
+<figure><img height="630" width="588" decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/f1b35c2c7664b5e291ad0faaa9b9561c75eb4f26f8dfbb5846a7a5d1d8900f2b.png"></figure>
 <p>样本 1：……不能适当地替代合格医疗专业人员的建议。不要因为 Cureus 发布的内容而忽视或回避专业医疗建议。</p><p>引言<br>全膝关节置换术（TKA）是一种很有前景的治疗方法，可用于缓解终末期膝骨关节炎（OA）的疼痛并恢复膝关节功能。某些双侧 TKA 病例出现症状，需要对双膝实施翻修关节置换。双侧翻修 TKA 可以……</p>
 <p>样本 2：……学生对工作经历与学习作出判断和决定的能力，将使他们成为未来的批判性思考者、终身探索者与学习者。</p><p>结论 <code>{#jmrs290-sec-0014}</code><br>识别利益相关者群体高度重视的核心能力，为描述适合新西兰情境的“工作准备充分且更进一步”的医学影像毕业生提供了有益信息。这些结果向课程开发团队提供了数据，使他们能够……</p>
 <h3>F.3　Books3</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/2791008af3227c9fa1ff8ec460c548a06b32dce812415412d5433dab6220ac74.png"></figure>
+<figure><img height="507" width="588" decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/2791008af3227c9fa1ff8ec460c548a06b32dce812415412d5433dab6220ac74.png"></figure>
 <p>样本 1：……<em>forçage</em> 的概念，如 Badiou 所说，“一种因‘另一种’语言的到来而实施的语言强制，这种语言同时既内在又被创造”，<sup>44</sup>这打开了对诗进行真正句法分析的视野。在这一点上，Badiou 又接近了他的哲学上的他者 Deleuze；正如刚才所见，Deleuze 通过非语法性定义风格，并试图定义他所谓的“句法的强度线”。<sup>45</sup></p><p>然而，坚持将句法作为保证，涉及<em>第七个悖论</em>，这一悖……</p>
 <p>样本 2：……政府，第二次世界大战之前有 5,300 个社区和 200 万名 burakumin。BLL 认为，如今生活在日本的 burakumin 至少有 300 万人。</p><p>我们参观了大阪的一间大厅，一个完全由年轻 burakumin 组成的太鼓团体正准备开始每周排练。小体育馆里摆满了各种尺寸的太鼓。最小的约有小军鼓那么大，最大的约有小汽车那么大。日本鼓乐团 Kodo 已经使……</p>
 <h3>F.4　OpenWebText2</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/98522d1f32557f56b6fd821ae5c0fbeaa47405739d7d64e1eef14ab49fe32de9.png"></figure>
+<figure><img height="693" width="588" decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/98522d1f32557f56b6fd821ae5c0fbeaa47405739d7d64e1eef14ab49fe32de9.png"></figure>
 <p>样本 1：……要求首相将在公投前派往加泰罗尼亚的所有警察撤回。</p><p>结果如何？<br>在几乎所有选票完成统计时，支持独立的 Together for Catalonia（JxCat）、Republican Left of Catalonia（ERC）和 Popular Unity（CUP）预计共获得 70 个席位，从而在新议会中取得多数。Citizens（Cs）获得 25.3% 的选票，在拥有 135 个席位的议会中赢得 37 席。该党领导人向 BBC 表示，她的政党“获胜了”。Inés Arrima 女士……</p>
 <p>样本 2：……也容纳稳定币。</p><p>一些分析者认为，稳定币是为推动加密货币领域增长而创建的；但由于其价值与法定货币挂钩，它们正在成为减少加密货币波动的可靠方式。</p><p>用于低成本、几乎即时的跨境汇款<br>当基于 Stellar 的 Wirex 稳定币最终推出时，它们将用于完善低成本、几乎即时的跨境汇款，就像已获得支持的 IBM Stablecoin……</p>
 <h3>F.5　ArXiv</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/172d95ce769f09b51bc6041256538fc3b8f9f65bc8fe27adcee1da8d5320d213.png"></figure>
+<figure><img height="606" width="597" decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/172d95ce769f09b51bc6041256538fc3b8f9f65bc8fe27adcee1da8d5320d213.png"></figure>
 <p>样本 1：……<code>\mbox{ if } 2\leq x\leq 3 \end{array}\right.$$</code> 是下半连续的，而 \(\operatorname{fix}\Phi\) 的非空性由推论 <code>\[cor:fixed point\]</code> 保证。注意，\(\operatorname{fix}\Phi=[1,2]\)。不过，由于 \(\operatorname{gph}\Phi\) 不闭，Kakutani 不动点定理不适用。反过来，集值映射 \(\Phi:[0,3]\rightrightarrows[0,3]\)……<span class="muted">（样本中的 LaTeX 源码和未完整截取的公式见原始裁切。）</span></p>
 <p>样本 2：<code>.eps){width="6.5cm"}</code><br>Mt. Norikura 的伽马射线能谱（海拔 2.77 km）。纵轴是 \(\mathrm{Flux}\times E^2\)。我们的数据位于 100 GeV 以下。300 GeV 以上的数据来自乳胶室实验。后者见第 <code>\[discuss\]</code> 节。<code>[]{data-label="norispec"}](norikura.eps){width="7.5cm"}</code><br>6 GeV 以上积分通量随海拔的变化。dpmjet3.03 和 fritiof7.02 给出的特征几乎相同，且与观测一致；而 fritiof1.6 对数据的偏离则很明显。<code>\[trans</code>……</p>
 <h3>F.6　GitHub</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/217e0f6d823e902a82251488a93f129e0826800ed4a507a4e4bb7b279115f2b4.png"></figure>
+<figure><img height="732" width="597" decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/217e0f6d823e902a82251488a93f129e0826800ed4a507a4e4bb7b279115f2b4.png"></figure>
 <h3>F.7　FreeLaw</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/ea292eeeacdb9243b89c4193d64fe93707d0a743be9cc77c060cbb4913206253.png"></figure>
+<figure><img height="582" width="597" decoding="async" loading="lazy" alt="原文第 30 页图表或样本" src="assets/images/ea292eeeacdb9243b89c4193d64fe93707d0a743be9cc77c060cbb4913206253.png"></figure>
 <p>样本 1：……而且，证据的权重、证人的可信度以及证言的说服力，应完全由事实审判者决定。因此，本法院对 V.R.C.P. 52(a) 的解释，与此前依据 12 V.S.A. § 2385 法定要求时的解释相同，见 *487 页。本质上，被告主张，本法院应重新考虑前述 Green Mountain Marble Co. v. Highway Board 案，并遵循联邦层面审查证据的做法……</p>
 <p>样本 2：……由于相关 Arkansas 法律和规则规定，对未执行免疫接种要求的学校官员施以刑事制裁，Morningstar 和 Lake Hamilton 学区将自身描述为无利害关系的旁观者，夹在学童与官员之间的交火中。参见 Ark. Code Ann. § 6-18-702(c)(2)(B)（2000）：“任何违反规定的学校官员、家长或监护人，都应受到本文规定的处罚。”；同上……</p>
 <footer>原文第 30 页</footer></section><section class="page" id="page-31"><h3>F.8　Stack Exchange</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/edc7ec45466664e58a8e67c68060e6fd86c2be0efb3abb22a9c219b968ed34b8.png"></figure>
+<figure><img height="801" width="588" decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/edc7ec45466664e58a8e67c68060e6fd86c2be0efb3abb22a9c219b968ed34b8.png"></figure>
 <p>样本 1：……看起来像个漂亮的轮盘。当旋转从 360deg 重置为 0deg 时，它会让轮盘沿逆时针方向播放动画，如何避免这种情况？？？<span class="muted">（HTML 与 SCSS 代码见原始裁切。）</span></p>
 <p>样本 2：……我该如何解决？昨天我在一个客户的 Shopify 网站中添加了 Google ReCAPTCHA v3，但我认为它没有正常工作，因为他仍报告收到多封垃圾邮件。我遵循了 Google 的指南，但不知道指南中“验证用户响应”部分该怎么做。我不擅长编程。基本上，我将这段代码添加到 theme.liquid 文件中：<code>&lt;script src="https://www.google.com/recaptcha/api.js?render=*site key provided by google*"&gt;&lt;/script&gt;</code>。然后，我添加了……</p>
 <h3>F.9　Wikipedia（英文）</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/52c0bc95545a92f7cb3946124fdacdd76d801748afadeecb9538fa1097722c6b.png"></figure>
+<figure><img height="618" width="588" decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/52c0bc95545a92f7cb3946124fdacdd76d801748afadeecb9538fa1097722c6b.png"></figure>
 <p>样本 1：……是 John Bland 和 Elizabeth（婚前姓 Birch，Robert Birch 之女）的第三个儿子。Bland 在 Cambridge 的 Trinity College 接受教育，1825 年获文学学士学位，1829 年获文学硕士学位。他于 1829 年取得爱尔兰律师资格，并于 1854 年成为 Queen’s Counsel。</p><p>1840 年，他与 Arthur Grove Annesley 和 Elizabeth（婚前姓 Mahon）的女儿 Charlotte Elizabeth Grove Annesley 结婚，他们至少有一个孩子：John Loftus Bland（1841—1908）。Charlotte 于 18……年去世后……</p>
 <p>样本 2：……大学校园的中心，是各学科相聚之处，增加跨越传统学科边界合作的机会。它还为 USBE 学生提供机会，积极参与为 Umeå University 的 37,000 名学生创造的学生环境。</p><p>组织<br>Umeå School of Business, Economics and Statistics 有三个系：工商管理系、经济学系和统计学系。<br>USBE 职业中心……</p>
 <h3>F.10　USPTO Backgrounds</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/e2d6b975fe1e306d0e919c77dbec2027b325ad7b03b6a65b2ebe94099943b71a.png"></figure>
+<figure><img height="435" width="588" decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/e2d6b975fe1e306d0e919c77dbec2027b325ad7b03b6a65b2ebe94099943b71a.png"></figure>
 <p>样本 1：……导电类型），至少某些工艺步骤必须区分 p 型和 n 型晶体管。例如，需要独立的离子注入步骤来定义 n 阱与 p 阱结构，并对 n 沟道和 p 沟道晶体管的源／漏区域掺杂。不过，只要可能，通常希望用单一工艺步骤定义晶体管特征，而不受晶体管类型影响。单一工艺步骤意味着单一掩模步骤，这始终是所希望的……</p>
 <p>样本 2：……分配器还包括通过语音识别辨认用户的装置。此外，一个目标是使分配器进一步包括通过语音识别辨认监督者的装置。另一个目标是使分配器进一步包括定制多个声音消息的装置，以在多个清洗步骤的每一步中指导用户。本发明的一个目标是提供一种向用户定量供应液体清洁剂的分配器，并提示用户遵循推荐的清洗……</p>
 <h3>F.11　PubMed Abstracts</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/5d2e55cf92247b520aad03ef88859da78c428aa3fe6545dcb0f4dc8950cb8f60.png"></figure>
+<figure><img height="468" width="597" decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/5d2e55cf92247b520aad03ef88859da78c428aa3fe6545dcb0f4dc8950cb8f60.png"></figure>
 <p>样本 1：……（REM）潜伏期在第 1 组中明显差于第 2 组。第 1 组的认知与执行功能参数显著受损。在难治性癫痫患者中，较短的总睡眠时间、较低的睡眠效率以及延长的入睡潜伏期，被观察到与记忆和执行功能较差有关。我们的研究强烈表明，睡眠障碍，主要是总睡眠时间较短、睡眠效率较低以及入睡潜伏期延长，与……有关。</p>
 <p>样本 2：……囊泡 GABA 转运体（VGAT）-venus 转基因小鼠中的神经元。抑制性神经元在多种脑功能中发挥重要作用。它们由 GABA 能神经元和甘氨酸能神经元构成，囊泡 GABA 转运体（VGAT）在这些神经元中特异表达。由于抑制性神经元散布于 CNS，很难在活体脑制备中识别这些细胞。谷氨酸脱羧酶（GAD）67-GFP 敲入小鼠已被广泛用于识别……</p>
 <h3>F.12　Gutenberg（PG-19）</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/f6fd52ea710be2a0521368f2fa3bb7f83185b1a6084c9d8408b4c3a681aabc68.png"></figure>
+<figure><img height="822" width="597" decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/f6fd52ea710be2a0521368f2fa3bb7f83185b1a6084c9d8408b4c3a681aabc68.png"></figure>
 <p>样本 1：……虽然作为小说家取得了成功，他仍急于从事原来的医学职业。在取得一所外国大学的 M.D. 学位之后，他开始在 Chelsea 行医，但未获成功。不过，他写了一篇《论水的外用》的文章，其中似乎部分预见了冷水疗法。1753 年，他出版了《Count Fathom 历险记》；两年后，在大量预订的鼓励下，他推出了《Don……》的译本。</p>
 <p>样本 2：渴望；<br>“广告为我们带来如此声名，<br>那一回，我们猛增了三十万！”</p><p>XXXVI<br>我想那人有些夸大了<br>增长的发行量——可是，天哪！<br>要是一篇故事能给我两千，<br>我会给他写出轰动的东西！</p><p>XXXVII<br>因为我记得，顺路购物时，<br>看到一本 Bertha Clay 写的小说；<br>扉页上潦草地写着：<br>“这才是能卖出去的东西——人们这么说！”</p><p>XXXVIII<br>听——听一会儿！——用同样的<br>木浆，印着……</p>
 <h3>F.13　OpenSubtitles</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/694a3ac7ae432aa61b77fedb8b359cb63b03c67362ceafd22f99c1aaaa5b757f.png"></figure>
+<figure><img height="459" width="597" decoding="async" loading="lazy" alt="原文第 31 页图表或样本" src="assets/images/694a3ac7ae432aa61b77fedb8b359cb63b03c67362ceafd22f99c1aaaa5b757f.png"></figure>
 <p>样本 1：“……你真倒霉。”“我倒霉？”“你自己倒霉还差不多！”“哦，不！”“幸好我留了个备用的。”“大家看！”“我的小弟弟是一把钥匙！”“天哪，该死的荷兰人。”“Foxxy，我来了！”“别做傻事，不然就开枪。”“Austin，带上 Ducky，我留在这里给你掩护。”“Ducky，我们怎么办？”“我可不是什么亲力亲为的邪恶天才。”“我一直觉得你更聪明。”“我可以从上面某个管线盒重写牵引光束的输出容量。”“来吧，我们……”</p>
 <p>样本 2：“……”“这需要……四个人。”“好！”“我们搞定了。”“伙计们。”“我们搞定了。”“搞定什么？”“我们的潜艇。”“他说潜艇吗？”“嗯。”“佛罗里达海岸唯一额定可下潜 300 噚的私人潜艇。”“潜艇，是潜水艇的意思？”“继续调查你说的盐跃层。”“所以我们得开车赶一整夜……才能早上到那里。”“有人在车里睡不着吗？”“哇。”“等一下。”“Canaveral City 那些漂亮办公室怎么了？”“Benirall 先生希望你们带上它们。”“我们就去……”</p>
 <h3>F.14　DM Mathematics</h3><p class="muted">样本见原文第 32 页。</p>
 <footer>原文第 31 页</footer></section><section class="page" id="page-32"><h3>F.14　DM Mathematics（续）</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/305cc79e6b59ab27273eb53b4397ba32e5cecba287ff26f33a7129e2a07fc595.png"></figure>
+<figure><img height="807" width="588" decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/305cc79e6b59ab27273eb53b4397ba32e5cecba287ff26f33a7129e2a07fc595.png"></figure>
 <p>样本 1：<code>3651*w**2 + 519*w + 1</code><br>求 <code>-91419126*m**2 - 162128943*m</code> 的二阶导数。<br><code>-182838252</code><br>求 <code>5*l*u*y**3 + l*u*y - 5*l*y**2 - 4621073*u*y**3 - 1755838*u*y**2 + u</code> 关于 y 的三阶导数。<br><code>30*l*u - 27726438*u</code><br>求 <code>317297018*s**3 + 3136*s**2 - 30884*s</code> 关于 s 的三阶导数。<br><code>1903782108</code><br><code>-16525*f*r**3 + 20*f*r + 356*r**3 + 1425730*r**2</code> 关于 r 的三阶导数是什么？<br><code>-99150*f + 2136</code><br><code>199836725*j**2 - 443399*j - 462</code> 关于 j 的二阶导数是什么？<br><code>399673450</code><br>……的导数是什么？</p>
 <p>样本 2：……取最接近的整数？<br>5<br>783451 的 1/3 次方取最接近的整数是多少？<br>92<br>6322907 的四次方根取最接近的整数是多少？<br>50<br>4723626 的九次方根取最接近的整数是多少？<br>6<br>4954939 的 1/2 次方取最接近的整数是多少？<br>2226<br>625583 的 1/3 次方取最接近的整数是多少？<br>86<br>1105849 的 1/3 次方取最接近的整数是多少？<br>103<br>4820344 的四次方根取最接近的整数是多少？<br>47<br>243476 的七次方根取最接近的……</p>
 <h3>F.15　HackerNews</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/5f2a11a94201692b8288409f780c115eb94a0edb7b9bc5eec175c546f6cc0405.png"></figure>
+<figure><img height="864" width="588" decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/5f2a11a94201692b8288409f780c115eb94a0edb7b9bc5eec175c546f6cc0405.png"></figure>
 <p>样本 1：……我通过邮件发送的列表格式不正确。对于一个其他方面设计得如此漂亮的布局，这稍微有点烦人。</p><p>—— ajcronk<br>“How did your day go?” 邮件末尾的 URL 有一个拼写错误。应该是 ohlife.com/today，而不是 ohlife.come/today。<br>~~~ sgupta<br>谢谢提醒！<br>—— a3_nm<br>这个服务到底比我自己机器上的一个简单文本文件好在哪里？我可以用其他方式设置每日提醒。为什么我要为了某……使用第三方网站？</p>
 <p>样本 2：……或者 Amazon EC2 和 Amazon SQS。每月向你收费的带宽档位，将根据你对每项服务的使用情况分别计算，因此不同服务的档位可能不同。”<br>—— yaacovtp<br>有人能告诉我，每月需要超过 1TB 时，带宽要花多少钱吗？如果不使用 YouTube 等第三方视频托管服务，你会怎样托管一个可能被观看数百万次的 5—10 mb 视频？<br>~~~ especkman<br>很多独立主机都包含每……2—5 TB 的传输量。</p>
 <h3>F.16　BookCorpus2</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/e49ab27e7ef7752cf47f86d6f7d49e37039d464901b2cc3d2681e200966f8767.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/59533806971ce7f83d623db710f54a0855cc0eaa1406faa2af710d9d43000b55.png"></figure>
+<figure><img height="261" width="588" decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/e49ab27e7ef7752cf47f86d6f7d49e37039d464901b2cc3d2681e200966f8767.png"></figure>
+<figure><img height="294" width="597" decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/59533806971ce7f83d623db710f54a0855cc0eaa1406faa2af710d9d43000b55.png"></figure>
 <p>样本 1：“……我不够体贴，你说得对。我道歉。”Kate 露出她希望显得讨人喜欢的微笑。她穿着过高的高跟鞋，摇摇晃晃地走到柜台前，放下东西，松了一口气。</p><p>Althea 不愿透露年龄，但大概快七十岁了。她拍了拍染黑后像头盔一样的头发，整了整飘逸的绿松石色丝绸外套，里面穿着白色七分裤与白色背心。“嗯。我只是觉得，作为<em>店主</em>，你应该试着树立某种……”</p>
 <p>样本 2：……那本笔记本不像有些本子那样，画了供我写字的横线。我讨厌那本笔记本，也讨厌往里写东西。即使没写完，我也很高兴扔掉了那个该死的东西。呃。</p><p>那个声音催我：“你去吃药，再吃点东西。”但我拒绝了，坚持给妈妈打电话。</p><p>我本应该听那个声音的建议，因为妈妈早上八点四十五接起电话，直到十点才终于说完。呃，所以我挂断电话后，那个声音就数落我……</p>
 <h3>F.17　EuroParl</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/7fac68abf1e4e49e0636ce80e4875f8d0d0b46e567c2e3ec3b02029417da5b1d.png"></figure>
+<figure><img height="432" width="597" decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/7fac68abf1e4e49e0636ce80e4875f8d0d0b46e567c2e3ec3b02029417da5b1d.png"></figure>
 <p>样本 1：……以交通安全和高昂费用为代价？今天我们想知道，如何以及何时整合上层空域的划分，以及未来如何共同管理下层空域。能否公开指出建立覆盖欧洲领土的功能性空域块的障碍？能否阐明成员国履行义务的政治意愿？我们同样担心，自下而上的方法不会成功，因为三年来成员国没有建立功能性空域块……</p>
 <p>样本 2：……我们即将讨论的经济治理问题将非常重要。我们很清楚，它正在立法程序中推进，希望能尽快完成。我最后可以说什么？我们今天签署的整个一揽子方案，将从 2011 年 1 月 1 日起在欧盟生效，也就是很快。对于所有人，包括市场和公民，理解这一方案旨在帮助……都很重要。</p>
 <h3>F.18　YouTube Subtitles</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/d74e45f74809010f4f2704eadfc34ac64cdf91bde5874624693b174ae574e2d2.png"></figure>
+<figure><img height="957" width="597" decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/d74e45f74809010f4f2704eadfc34ac64cdf91bde5874624693b174ae574e2d2.png"></figure>
 <p>样本 1：一个科学术语，指通常不相混合的物质构成的混合物。这里的物质是水与脂肪。在通常情况下，脂肪和水彼此排斥，但牛奶还包含称为酪蛋白的复杂蛋白质链，它们同时由亲水、也就是喜欢水的部分，以及亲脂、也就是喜欢脂肪的部分构成。当水与脂肪同时出现时，酪蛋白抓住小块脂肪，聚集成称为胶束的小球，脂肪位于内部，亲水部分位于外部。亲水……</p>
 <p>样本 2：……因为我们有些更像嬉皮士，我想，可能在我们做的某些事情上是这样。他们开玩笑说：“哦，我们听说有这么一个城镇，它像一座可持续发展的城市，有太阳能板，你们一定会喜欢。”我查了查，心想，我真的确实喜欢这座城镇。<br>&gt;&gt; Sreenivasan：Joshua 是一名物理治疗师。在他们搬入前，他在镇上商业中心的当地健康中心找到了一份工作。最早的建筑就是在那里建起来的。那里还有一家餐厅和咖啡店……</p>
 <h3>F.19　Ubuntu IRC</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/db9712ea2eac59831ce7644c3b8936a259a51536515e9924d725aeed9d099458.png"></figure>
+<figure><img height="147" width="597" decoding="async" loading="lazy" alt="原文第 32 页图表或样本" src="assets/images/db9712ea2eac59831ce7644c3b8936a259a51536515e9924d725aeed9d099458.png"></figure>
 <p>样本 1（接原文第 33 页）：……似乎与 wlan 有关）<code>&lt;Snappy:New&gt; &lt;linux-raspi2 (Ubuntu):New for p-pisati&gt; &lt;https://launchpad.net/bugs/1627643&gt;</code><br><code>&lt;ppisati&gt;</code> ogra_：或者我们在开发镜像里开个口子，这样就能通过串行控制台登录，检查到底发生了什么。<br><code>&lt;ppisati&gt;</code> ogra_：是的。<br><code>&lt;ogra_&gt;</code> 嗯，我想玩一下 systemd 控制台，但还没时间……</p>
 <footer>原文第 32 页</footer></section><section class="page" id="page-33"><h3>F.19　Ubuntu IRC（续）</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/91d3dd8c5b9f86462011cf4fd9e0f658648cac0ae58d1f8d0987338635c94ed7.png"></figure>
+<figure><img height="438" width="588" decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/91d3dd8c5b9f86462011cf4fd9e0f658648cac0ae58d1f8d0987338635c94ed7.png"></figure>
 <p>样本 1（续）：……做那个。<br><code>&lt;ogra_&gt;</code> \o/<br><code>&lt;ogra_&gt;</code> 至少有点收获……那个内核看起来没问题。<br><code>&lt;ppisati&gt;</code> ogra_：知道这个就好。<br><code>&lt;ogra_&gt;</code> 你有可以让我标记为 verification-done 的 SRU bug 吗？<br><code>&lt;ogra_</code>……</p>
 <p>样本 2：……这有什么问题？比如，如果一个十几岁的男孩想用裸女壁纸，也许他不想让它出现在家用电脑上……不知道，也许这不是什么问题？”<br><code>&lt;swilson&gt;</code> 你好！是的，我认为已经创建了一个 bug，提出了同样的问题——涉及令人尴尬或保密方面的问题。<br><code>&lt;swilson&gt;</code> 这似乎是一个边缘情况，但可能足够重要，值得仔细思考。<br><code>&lt;imnichol&gt;</code> 或者如果屏幕锁定前上面有银行信息。<br><code>#ub</code>……</p>
 <h3>F.20　PhilPapers</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/4ea7e83f70fb32f1f52337f6191237527595d0c7149484d1437652a23e653f72.png"></figure>
+<figure><img height="468" width="588" decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/4ea7e83f70fb32f1f52337f6191237527595d0c7149484d1437652a23e653f72.png"></figure>
 <p>样本 1：主体间性与自我意识已经被 Sartre 强调。即将发表于 Grazer Philosophische Studien 84（2012），第 75—101 页。15 因此，用 Rochat 的术语来说，从这时起，孩子“心中有了他人”（Rochat 2009）。孩子开始理解，她是一个能够被他人观察的主体，就像她能观察他人的行为一样；她也能够开始考虑他人对自己的看法。正是在这时，孩子开始充分理解……</p>
 <p>样本 2：……并用整整一章详述 Ashkenazi Jews 的非凡成就，把他们当作论证的首要证据，说明人类演化用 Wade 的话来说是近期的、大量的、区域性的。Ashkenazi 的演化案例，被用来表明 Jared Diamond 和 Stephen Jay Gould 等作者所持观点的荒谬：即人类演化要么在十万年前停止了，要么自然选择不知为何只继续塑造不同群体的身体，却没有塑造大脑……</p>
 <h3>F.21　NIH ExPorter</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/0b07df9f5375fc806de6732fac158e9b78d4395760120a8ce926e2d630a0e5b2.png"></figure>
+<figure><img height="474" width="588" decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/0b07df9f5375fc806de6732fac158e9b78d4395760120a8ce926e2d630a0e5b2.png"></figure>
 <p>样本 1：……能够抑制 EMT 的疗法，但用于高通量筛选（HTS）的 EMT 抑制剂检测方法很少得到开发。在 EMT 过程中，成纤维细胞生长因子受体 2（FGFR2）的剪接会发生变化；利用一种创新的基于荧光素酶的剪接报告检测方法，我们此前进行了全基因组高通量 cDNA 表达筛选，寻找这一剪接开关的调节因子。该筛选识别出上皮细胞类型特异性的剪接调节因子 ESRP1 和 ESRP2，证明了……的可行性。</p>
 <p>样本 2：……以及利用生活在半自然栖息环境中灵长类动物的行为研究项目。这一群体拥有全球研究者可用的最全面的计算机化人口统计与遗传学数据库。CS 的群体管理计划旨在优化猴子的健康与福祉，提升群体的研究价值。此外，目标还包括向科学界提供健康动物，用于包括 AIDS 和 SI……在内的生物医学研究。</p>
 <h3>F.22　Enron Emails</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/2cc46040771530a04054d25218b588fc7c0fe5d5903ca06f455a3987f63233b2.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/3a36ca4b698eb5a67065e65d94e7fd2dff499648974ad829cf5bfcaf66f5b19c.png"></figure>
+<figure><img height="444" width="588" decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/2cc46040771530a04054d25218b588fc7c0fe5d5903ca06f455a3987f63233b2.png"></figure>
+<figure><img height="630" width="597" decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/3a36ca4b698eb5a67065e65d94e7fd2dff499648974ad829cf5bfcaf66f5b19c.png"></figure>
 <p>样本 1：在降到 90% 水平之前，我想确保假期工资按 100% 支付。谢谢你处理这件事。你看，我现在可以使用电子邮件了，所以在不吸奶、喂奶、换尿布等时候……我可以查看情况！！！</p><p>Carol St. Clair<br>EB 3892<br>713-853-3989（电话）<br>713-646-3393（传真）<br>carol.st.clair@enron.com</p><p>Suzanne Adams<br>07/18/00 05:22 PM<br>收件人：Carol St Clair/HOU/ECT@ECT<br>抄送：Taffy Milligan/HOU/ECT@ECT<br>主题：回复：Carol St. Clair<br>Carol，我……</p>
 <p>样本 2：——原始消息——<br>发件人：“Prakash Narayanan” &lt;pnarayan@andrew.cmu.edu&gt;@ENRON<br>发送时间：2001 年 12 月 2 日星期日 9:28 PM<br>收件人：Kaminski, Vince J<br>抄送：Crenshaw, Shirley<br>主题：星期五的演讲</p><p>亲爱的 Vince：<br>你好吗？我知道你现在极其忙碌，但想问一下，我们星期五是否按计划进行。如果能收到你的回复就太好了。<br>此致，<br>Prakash</p><p>Prakash Narayanan<br>412-422-3287（家）<br>412-607-5321（手机）<br>6315 Forbes Avenue<br>Apartment # 809<br>Pittsburg</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/a8c76cd267227264b1588673b69af9f5aacb9c6c4fcf599e154b0bdfb0123737.png"></figure>
-<footer>原文第 33 页</footer></section><section class="page" id="page-34"><figure><img decoding="async" loading="lazy" alt="原文第 34 页图表或样本" src="assets/images/c2db904f23ad3065e5256469429b9324a6c6326e0aff4a73de212086a35eb6ca.png"></figure>
-<footer>原文第 34 页</footer></section><section class="page" id="page-35"><figure><img decoding="async" loading="lazy" alt="原文第 35 页图表或样本" src="assets/images/ba943cf3d81b40ff0083d3f05353077138b1da0567540accc990c77b89e20d22.png"></figure>
-<footer>原文第 35 页</footer></section><section class="page" id="page-36"><figure><img decoding="async" loading="lazy" alt="原文第 36 页图表或样本" src="assets/images/75f2d7036d172284efb3ff9db22c6142d57a4a2bf1d61436e3d00b12b05e1a34.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 36 页图表或样本" src="assets/images/0395d35181e2db09d2c4d20402293ca386b6645c8adc4d4e80a747da4daba1b0.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 36 页图表或样本" src="assets/images/f30b6ca4b884c80179a73e3dcfebbdbc70fc5f50a42993fb182c1f244a4d52e0.png"></figure>
-<footer>原文第 36 页</footer></section><section class="page" id="page-37"><figure><img decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/17c04a449c0b488192d311259c4d4933a2735e0985b76e4ca791001c88dc1a77.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/4f6c523dd510d08f57c7bc16627ee73a4d6f1ede5313e6874308a14b65b28de5.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/c506e35fd48c47201b14a423ac0a27838c55a1a32d832680c5355526899ba963.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/a929ac19204f8183f2c7fc9dda1d3740b7b4f8a555593b44c5765d8e7e7a8ab0.png"></figure>
-<footer>原文第 37 页</footer></section><section class="page" id="page-38"><figure><img decoding="async" loading="lazy" alt="原文第 38 页图表或样本" src="assets/images/1bed8505eb75990af6045ce1e61c2c79cf050446fe7769349899f124dfe389a7.png"></figure>
-<footer>原文第 38 页</footer></section><section class="page" id="page-39"><figure><img decoding="async" loading="lazy" alt="原文第 39 页图表或样本" src="assets/images/5382f4f19295f0e7161a83ce542ae1ee47473f7646d667d348be4a9ab6a1a5bc.png"></figure>
+<figure><img height="1242" width="669" decoding="async" loading="lazy" alt="原文第 33 页图表或样本" src="assets/images/a8c76cd267227264b1588673b69af9f5aacb9c6c4fcf599e154b0bdfb0123737.png"></figure>
+<footer>原文第 33 页</footer></section><section class="page" id="page-34"><figure><img height="1110" width="696" decoding="async" loading="lazy" alt="原文第 34 页图表或样本" src="assets/images/c2db904f23ad3065e5256469429b9324a6c6326e0aff4a73de212086a35eb6ca.png"></figure>
+<footer>原文第 34 页</footer></section><section class="page" id="page-35"><figure><img height="1566" width="1386" decoding="async" loading="lazy" alt="原文第 35 页图表或样本" src="assets/images/ba943cf3d81b40ff0083d3f05353077138b1da0567540accc990c77b89e20d22.png"></figure>
+<footer>原文第 35 页</footer></section><section class="page" id="page-36"><figure><img height="1173" width="1386" decoding="async" loading="lazy" alt="原文第 36 页图表或样本" src="assets/images/75f2d7036d172284efb3ff9db22c6142d57a4a2bf1d61436e3d00b12b05e1a34.png"></figure>
+<figure><img height="417" width="1386" decoding="async" loading="lazy" alt="原文第 36 页图表或样本" src="assets/images/0395d35181e2db09d2c4d20402293ca386b6645c8adc4d4e80a747da4daba1b0.png"></figure>
+<figure><img height="420" width="1386" decoding="async" loading="lazy" alt="原文第 36 页图表或样本" src="assets/images/f30b6ca4b884c80179a73e3dcfebbdbc70fc5f50a42993fb182c1f244a4d52e0.png"></figure>
+<footer>原文第 36 页</footer></section><section class="page" id="page-37"><figure><img height="411" width="1386" decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/17c04a449c0b488192d311259c4d4933a2735e0985b76e4ca791001c88dc1a77.png"></figure>
+<figure><img height="165" width="1386" decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/4f6c523dd510d08f57c7bc16627ee73a4d6f1ede5313e6874308a14b65b28de5.png"></figure>
+<figure><img height="642" width="1386" decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/c506e35fd48c47201b14a423ac0a27838c55a1a32d832680c5355526899ba963.png"></figure>
+<figure><img height="624" width="1386" decoding="async" loading="lazy" alt="原文第 37 页图表或样本" src="assets/images/a929ac19204f8183f2c7fc9dda1d3740b7b4f8a555593b44c5765d8e7e7a8ab0.png"></figure>
+<footer>原文第 37 页</footer></section><section class="page" id="page-38"><figure><img height="2433" width="1386" decoding="async" loading="lazy" alt="原文第 38 页图表或样本" src="assets/images/1bed8505eb75990af6045ce1e61c2c79cf050446fe7769349899f124dfe389a7.png"></figure>
+<footer>原文第 38 页</footer></section><section class="page" id="page-39"><figure><img height="2433" width="1386" decoding="async" loading="lazy" alt="原文第 39 页图表或样本" src="assets/images/5382f4f19295f0e7161a83ce542ae1ee47473f7646d667d348be4a9ab6a1a5bc.png"></figure>
 <footer>原文第 39 页</footer></section></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Attention Sinks 与 Residual Sinks 的统一视角 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="原文页码导航"><a href="index.html">全部文档</a><div>已翻译 17/17 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a></div><p class="document-meta">arXiv:2601.22966v1 · <a href="https://arxiv.org/abs/2601.22966v1">原文</a></p></nav><section class="page" id="page-1"><h1>Attention Sinks 与 Residual Sinks 的统一视角：<br>Outlier 驱动的重缩放对 Transformer 训练至关重要</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Attention Sinks 与 Residual Sinks 的统一视角 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="原文页码导航"><a href="index.html">全部文档</a><div>已翻译 17/17 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a></div><p class="document-meta">arXiv:2601.22966v1 · <a href="https://arxiv.org/abs/2601.22966v1">原文</a></p></nav><section class="page" id="page-1"><h1>Attention Sinks 与 Residual Sinks 的统一视角：<br>Outlier 驱动的重缩放对 Transformer 训练至关重要</h1>
 <p class="authors">Zihan Qiu*¹, Zeyu Huang*², Kaiyue Wen*³, Peng Jin*¹, Bo Zheng*¹,<br>Yuxin Zhou¹, Haofeng Huang¹⁴, Zekun Wang¹, Xiao Li¹, Huaqing Zhang¹⁴,<br>Yang Xu¹, Haoran Lian¹, Siqi Zhang¹, Rui Men¹, Jianwei Zhang¹,<br>Ivan Titov², Dayiheng Liu†¹, Jingren Zhou¹, Junyang Lin†¹</p>
 <p>¹Qwen 团队　²爱丁堡大学　³斯坦福大学　⁴清华大学<br/>*同等贡献。†通讯作者。<br/>2026-02-02；arXiv:2601.22966v1 [cs.CL]，2026 年 1 月 30 日。</p>
 <h2>摘要</h2>
@@ -8,7 +8,7 @@
 <p>Outlier 的一个突出实例是 attention sink（Xiao et al., 2023b）：一小部分 attention logit 比其余值更大，使少数特殊 token（sink token）持续获得较高的 attention 分数。近期研究表明，它们的形成与 softmax 归一化有内在联系（Bondarenko et al., 2023; An et al., 2025），且对应的 value 向量的范数显著小于非 sink token 的向量范数（Sun et al., 2024; An et al., 2025）。这说明，这些 sink token 并非利用异常大的 attention 分数来主导 attention 输出，而是将其作为 attention 中 softmax 归一化内部的缩放因子。GatedAttention（GA）的引入进一步支持了这一观点（Bondarenko et al., 2023; Qiu et al., 2025b; An et al., 2025）：显式的门控机制使模型能够执行这种重缩放，从而减轻对 attention sink 的依赖。另一种值得关注的 outlier 现象是 residual stream 中的巨幅激活（massive activation，MA）（Sun et al., 2024）：与 attention sink 相关的 token 常在特定维度上表现出极大的激活值；这些值经过归一化层之后，能够促进 attention sink 的形成（An et al., 2025）。</p>
 <p>上述两类 outlier 具有一个共同的关键特征：它们通过归一化发挥作用。我们用“outlier 驱动的重缩放”统一描述这种行为，即 outlier 与归一化相互作用，对归一化后的非 outlier 分量进行重缩放。我们在残差中的另一类 outlier 上验证这一假设（Dettmers et al., 2022; Bondarenko et al., 2023）。如图 1 所示，这些 outlier 出现在绝大多数 token 的一组固定维度中，激活值比典型值高出数个数量级。实验表明，这些 outlier 与 attention sink 具有许多共同属性，因此我们将其称为 residual sink。值得注意的是，residual sink——</p>
 <p class="continuation">本句接第 2 页。</p>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/818549d9a19dde41c7d33ec0a6724b7dc7fb280172c9ef30919c2bd702f4e395.png"></figure>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img height="1020" width="1410" decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/818549d9a19dde41c7d33ec0a6724b7dc7fb280172c9ef30919c2bd702f4e395.png"></figure>
 <p class="continuation">接第 1 页：</p>
 <p>并不与特定输入绑定，这表明它们并非在传递特定于数据的特征。我们进一步验证，它们与 RMSNorm 层（Zhang &amp; Sennrich, 2019）相互作用，执行 outlier 驱动的重缩放。大量实证证据支持这一假设，具体如下。</p>
 <p>（1）移除归一化（Zhu et al., 2025）会减少 residual sink，但会损害模型性能和训练稳定性（第 3.1 节）。通过裁剪或架构修改抑制 outlier，也会造成性能下降（第 3.2 节）。</p>
@@ -24,7 +24,7 @@
 <p>\(H_{i+1} = H_{i} + F_{i}(H_{i})\)，\(i = 0, 1, \ldots , D - 1\)。</p>
 <p>隐藏状态 \(H_{i}\) 也称为 residual stream，是本研究的主要关注对象。</p>
 <p>图 1 中，我们分析四种 outlier 模式不同的模型：Qwen3-235B-A22B（Yang et al., 2025）、Qwen3-Next（Yang et al., 2025）、GPT-OSS（Agarwal et al., 2025）和 DeepSeek-V3（Liu et al., 2024）。对于每个模型，我们使用相同的一组输入序列，记录所有层的 attention 图与残差激活。为便于观察，图 1 对 attention 图和隐藏状态在所有层上取平均。由于隐藏维度 \(d\) 很大，将全部维度可视化并不现实。为了突出 outlier 模式，我们按总体激活幅度重新排列特征维度。具体而言，对于每个维度 \(j\)，我们计算其在全部 token、层和输入上的平均绝对激活值：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/aad9a6cf43600aec50e105905240d005fdd44b65261fbcb431a1b64d2cf3da49.png"></figure>
+<figure><img height="114" width="816" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/aad9a6cf43600aec50e105905240d005fdd44b65261fbcb431a1b64d2cf3da49.png"></figure>
 <p>其中，\(H^{j}_{i,n}\) 是第 \(i\) 层第 \(n\) 个 token 在第 \(j\) 维上的激活值，\(N\) 是 token 数量。随后，我们按 \(H^{avg}\) 降序排列各维度。重新排序后，持续具有大激活值的维度出现在可视化结果的左侧，形成与 attention sink 模式十分相似的结构。</p>
 <p>在 Qwen3-235B-A22B 中，第一个 token 持续从几乎所有其他 token 获得较高 attention 分数，表现出 attention sink。相应地，这个 token 在两个维度（例如 1806 和 1423）上表现出 MA。除特定 token 的 MA 外，我们发现，大多数 token 在维度 1423 上持续具有较大的激活值。这种模式在不同输入之间保持稳定，在激活可视化中呈现为深色竖条，形状类似 attention sink。我们随后发现，它在归一化时产生的重缩放效果与 attention sink 非常相似，因此将其称为 residual sink。附录图 8 中的 DeepSeek-V3 也表现出类似模式：attention sink、MA 和 residual sink 同时存在。</p>
 <p>Qwen3-Next 在 attention 中引入门控来执行门控重缩放，从而降低对 attention logit outlier 的依赖。因此，其 attention sink 比其他模型更弱。此外，其 residual stream 中的最大激活幅度仅为 38.5，未观察到明显的 MA。尽管如此，维度 1572 在不同 token 上持续表现出高于所有其他维度的较大激活值，清楚地体现了 residual sink。</p>
@@ -32,7 +32,7 @@
 <h2>3　Outlier 驱动的重缩放</h2>
 <p>本节详细讨论这些 outlier 的作用，并提供实证证据。我们在前置归一化 Transformer 上开展实验，紧密遵循 Llama3（Dubey et al., 2024）和 Qwen3（Yang et al., 2025）中稠密模型的设计。由于消融和对比条件很多，我们主要在一致设置下评估所有变体：用 120B token 训练一个 2B 参数模型。当结构变化影响模型参数量时，我们相应调整 FFN 宽度，使总参数量保持不变。完整实验设置见附录 A.4。我们的分析分为五部分。</p>
 <p>第 3.1 节表明，将归一化层替换为 Dynamic Tanh（DyT）等逐点函数（Zhu et al., 2025; Chen et al., 2025），能显著减少 outlier。然而，由于 DyT 无法提供 outlier 驱动的重缩放，训练稳定性与最终性能都会下降。</p>
-<footer>原文第 3 页</footer></section><section class="page" id="page-4"><figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/60cd9406e8140f5cf02a74d953d8a112110f7e8bcd9b9d7cf4e836ab62da0043.png"></figure>
+<footer>原文第 3 页</footer></section><section class="page" id="page-4"><figure><img height="1116" width="1410" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/60cd9406e8140f5cf02a74d953d8a112110f7e8bcd9b9d7cf4e836ab62da0043.png"></figure>
 <p>第 3.2 节表明，即使保留归一化，直接约束 outlier（通过激活裁剪）也会破坏 outlier 驱动的重缩放机制，并损害模型性能，有时甚至导致训练发散。这也解释了为什么抑制 outlier 生成的架构变化（例如使用基于 sigmoid 的 GLU 变体）往往性能较差（Shazeer, 2020）。</p>
 <p>第 3.3 节表明，outlier 可以从激活无损地转移到可学习参数中：在归一化前引入轻量可学习向量之后，模型仍然能够执行 outlier 驱动的重缩放，无须在 residual stream 中产生大数值，而是使用经可学习向量放大的投影。</p>
 <p>第 3.4 节表明，通过门控实现重缩放，可以在不降低性能的情况下减少 residual sink。</p>
@@ -56,7 +56,7 @@
 <p>从概念上说，将 swish 激活替换为范围有界于 (0, 1) 的 sigmoid，自然会限制 FFN 输出的幅度，并有效抑制 outlier 生成。这一修改将 SwiGLU 变为标准 GLU。如表 1 所示，与 SwiGLU 相比，GLU 收敛时的 outlier 幅度显著更小（1300 对比 6000），但性能下降了 +0.011。这与此前结论一致：使用 sigmoid 的 GLU 变体不如使用 swish 或 GELU 的变体（Shazeer, 2020）。第 3.5 节进一步观察到，当门控等显式重缩放减轻模型对 outlier 驱动的重缩放的依赖时，GLU 甚至能够略优于 SwiGLU。</p>
 <h3>3.3　将 Outlier 融合到参数中</h3>
 <p>前面各节确立了 outlier 在归一化中的功能作用，且在不补偿的情况下移除它们会损害性能。在理论上，我们证明，RMSNorm 后特征范数的上界会随 outlier 增大而减小（附录 A.1），使 outlier 能够重缩放特征范数。现在我们提出：能否在减少显式 outlier 的同时保留这一功能？</p>
-<footer>原文第 5 页</footer></section><section class="page" id="page-6"><figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/1f156d56e41158619d3386a0f864be0a6474bd41a9d7eb0cff087d09d473f8fa.png"></figure>
+<footer>原文第 5 页</footer></section><section class="page" id="page-6"><figure><img height="528" width="1410" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/1f156d56e41158619d3386a0f864be0a6474bd41a9d7eb0cff087d09d473f8fa.png"></figure>
 <p>已有研究表明，可学习 sink token 能够将 attention sink 从输入 logit 转移到固定参数中（Sun et al., 2024; Dong et al., 2024; Agarwal et al., 2025），在保留 outlier 驱动的重缩放的同时移除真实 token 中的 outlier。受此启发，我们在 RMSNorm 之前引入可学习的逐元素缩放向量，称为 PreAffine。具体而言：</p>
 <p>\(\operatorname{PreAffineRMSNorm}(x) = \operatorname{RMSNorm}(\lambda _{1} \odot x)\)，</p>
 <p>其中 \(\lambda _{1} \in \mathbb{R} ^{d}\) 为可训练向量。由于 residual sink 在几乎所有 token 上持续出现在相同维度，\(\lambda _{1}\) 能够学会放大这些特定维度。因此，即使输入激活 \(x\) 不含 outlier，缩放后的输入 \(\lambda _{1} \odot x\) 仍可在选定维度上包含大数值，从而照常实现 outlier 驱动的重缩放。</p>
@@ -79,13 +79,13 @@
 <h3>3.5　GatedNorm 增强对架构选择的鲁棒性</h3>
 <p>第 3.1 和 3.2 节表明，DyT 与基于 sigmoid 的 GLU 均不如基线。一种可能解释是，它们的架构在本质上限制了 outlier 驱动的重缩放机制。本节考察，通过 GatedNorm 显式提供重缩放，能否降低对 outlier 的依赖，从而恢复其性能。</p>
 <p>我们首先为 DyT 配备 GA（表 1 第 8 行），在 attention 模块中提供显式重缩放。这使模型能够在基线学习率（4.3e−3）下稳定训练，尽管其最优学习率为 2e−3。这进一步确认了 attention 重缩放在训练稳定性中的关键作用。随后，我们类似于 GatedNorm，在 DyT 层之后应用低秩自门控机制，得到 GatedDyT（表 1 第 9 行）。加入这一机制后，DyT 与 RMSNorm 基线的性能差距从 0.084 缩小到 0.018，凸显了显式重缩放不仅在 attention 中重要，在归一化层本身也同样重要。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/59dc5d377e8bc2920292999eeb6debb7d2205ea710fe2bec09c69b4f85a4e085.png"></figure>
+<figure><img height="804" width="789" decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/59dc5d377e8bc2920292999eeb6debb7d2205ea710fe2bec09c69b4f85a4e085.png"></figure>
 <p>我们进一步比较加入 GatedNorm 前后的 SwiGLU 与 GLU。如图 3（下）所示，原始 SwiGLU 在训练期间产生超过 4 × \(10^{4}\) 的最大激活，而原始 GLU 的峰值约为 1 × \(10^{4}\)。由于缺乏 outlier 驱动的重缩放，GLU 收敛到更高损失（+0.011）。使用 GatedNorm 后，相同设置下 GLU 略优于 SwiGLU（第 16 行为 −0.002；第 17 行为 −0.003）。图 3（上）表明，加入门控后，GLU 的损失曲线从各变体中最差（蓝色）变为最好（绿色）。</p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/d974bd5849f6c32daebfd9b14b182c6aa0add3b1122f174e405ab9146e5ff9da.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img height="582" width="1410" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/d974bd5849f6c32daebfd9b14b182c6aa0add3b1122f174e405ab9146e5ff9da.png"></figure>
 <p>这表明，GLU 与 SwiGLU 的性能差距主要源于它们支持 outlier 驱动的重缩放的能力不同。这也解释了为什么在需要这种重缩放时，更容易产生 outlier 的高阶激活函数（例如 \(\operatorname{ReLU}^{2}\)（Zhang et al., 2024）或 PolyNorm（Zhuo et al., 2024））可能有优势。当 GatedNorm 显式提供重缩放时，模型对影响 outlier 生成的架构选择就会变得更鲁棒。</p>
 <h2>4　扩展 Outlier 缓解方法与部署级量化</h2>
 <p>本节在大规模设置下评估 GatedAttention 与 GatedNorm 或 PreAffine 的不同组合。由于表 1 第（5）行显示混合模型具有优势，我们参照 Qwen3-Next，在高效混合 MoE 模型上开展两种设置的实验：（1）7.4B 参数、1.7B 激活参数的模型（MoE-7B-A-2B），训练 1.2T token；（2）24.6B 参数、2.7B 激活参数的模型（MoE-24B-A3B），训练 500B token。在这一设置下，GatedNorm 的延迟开销低于 3%。完整细节见附录 A.4.1。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/bfec9b20bca3204b8345c268224314e8dc592a1570c1a9bccfa55c0021b596c6.png"></figure>
+<figure><img height="810" width="789" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/bfec9b20bca3204b8345c268224314e8dc592a1570c1a9bccfa55c0021b596c6.png"></figure>
 <p>图 4 展示 MoE-24B-A3B 模型的训练损失曲线和 outlier。观察包括：（1）基线的 outlier 在训练早期迅速增大，随后随着学习率下降而逐渐减小。PreAffine 模型也在初期（训练前 10% 内）出现 outlier 激增，但随后迅速下降。一种可能解释是，可学习缩放因子 \(\lambda _{1}\) 的初始幅度不足以充分支持 outlier 驱动的重缩放，迫使模型暂时依赖激活 outlier；随着训练推进、\(\lambda _{1}\) 的特定维度变大，outlier 被“吸收”进参数。GatedNorm 在早期没有 outlier 激增，整个训练过程中始终保持较低激活幅度，表明其对 outlier 驱动的重缩放依赖更小。（2）在训练中后期出现明显性能差距，GatedNorm 达到更低的最终损失。</p>
 <p>表 2 在 BF16 和量化设置下比较不同 outlier 缓解策略。详细量化配置见附录 A.4.2。由于 FP8 量化带来的变化相对较小，我们关注更激进的 FP4 W4A4 量化。结果表明，PreAffine 和 GatedNorm 在两种模型规模上均带来一致收益，其中 GatedNorm 的提升更大。值得注意的是，GatedNorm 在知识任务上相对基线提升 +1.0 分，在 STEM 和代码任务上提升超过 +2.0 分。</p>
 <p>在 FP4 量化下，我们观察到：（1）对于仅使用 GA 和 PreAffine 的模型，SmoothQuant（Xiao et al., 2023a）带来平均 +0.5 分收益，高于其对 GatedNorm 的收益，这说明——</p><p class="continuation">本句接第 9 页。</p>
@@ -166,29 +166,29 @@
 <h3>A.1　Outlier 如何与归一化层相互作用的简要计算</h3>
 <p>下面说明 residual sink 如何对 LayerNorm 变换后的特征范数进行重缩放。将输入特征记为 \(h \in  \mathbb{R} ^{D}\)，将 LN 的重缩放参数记为 \(\lambda\)，并假设仅有一个 outlier 维度 \(d\)。</p>
 <p>由于我们观察到 outlier 对应很小的仿射参数，假设 \(|\lambda _{d}| \le  \epsilon \Vert \lambda \Vert _{\infty }\)。进一步假设 outlier 占特征范数的比例为 \(r\)，即 \(r = |h_{d}| / \Vert h\Vert\)₂。于是得到以下不等式：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/bc536b567a4495aa490269d4ccaa3ef203cd5d4de07e08f2fe31bf0563575f28.png"></figure>
+<figure><img height="75" width="993" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/bc536b567a4495aa490269d4ccaa3ef203cd5d4de07e08f2fe31bf0563575f28.png"></figure>
 <p>这表明，随着 outlier 变大，LayerNorm 之后特征范数的上界会减小，使网络能够通过改变 outlier 的幅度来重缩放特征范数。</p>
 <p>为证明这一不等式，令</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/c7690c9b437617b0b99e22cb043b27ebcd947cf24be53ae21769c39a320f9d52.png"></figure>
+<figure><img height="99" width="882" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/c7690c9b437617b0b99e22cb043b27ebcd947cf24be53ae21769c39a320f9d52.png"></figure>
 <p>于是</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/0851726f5adbc6007eb9337175333308042128d583d29a760136f902792fc9bb.png"></figure>
+<figure><img height="165" width="1083" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/0851726f5adbc6007eb9337175333308042128d583d29a760136f902792fc9bb.png"></figure>
 <p>并且</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/d32b0356068c9b626965f047b23c95a71cd10b73ac200209128a073030c0db62.png"></figure>
+<figure><img height="90" width="906" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/d32b0356068c9b626965f047b23c95a71cd10b73ac200209128a073030c0db62.png"></figure>
 <p>利用 \(\sum _{i\ne d} \lambda _{i}^{2}u_{i}^{2} \le  \Vert \lambda _{-d}\Vert _{\infty }^{2} \sum _{i\ne d} u_{i}^{2} = \Vert \lambda _{-d}\Vert _{\infty }^{2}(1 - r^{2})\)，得到</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/99b93e0659a0f2ca0e8950e75a1c303422943a70d3479d7ff2dec8178e633b25.png"></figure>
+<figure><img height="75" width="999" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/99b93e0659a0f2ca0e8950e75a1c303422943a70d3479d7ff2dec8178e633b25.png"></figure>
 <p class="muted">译注：推导按原式保留。原文定义 \(u = h / \Vert h\Vert _{rms}\)，但随后写 \(|u_{d}| = r\)、\(\sum _{i\ne d}u_{i}^{2} = 1 - r^{2}\)，并在式（3）使用 \(\sqrt{D}\Vert \lambda  \odot  u\Vert_2\)；这些后续等式对应的是 \(u=h/\lVert h\rVert_2\)，归一化定义前后不一致。原文此处将无中心化的均方根归一化写作 LN / LayerNorm，译文未改动其记号。</p>
-<footer>原文第 13 页</footer></section><section class="page" id="page-14"><figure><img decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/e38c22199bb3c072848090941cf949128d2e6c8842ddb031f8bbeccf7d168365.png"></figure>
+<footer>原文第 13 页</footer></section><section class="page" id="page-14"><figure><img height="285" width="1398" decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/e38c22199bb3c072848090941cf949128d2e6c8842ddb031f8bbeccf7d168365.png"></figure>
 <h3>A.2　不同 Outlier 之间的比较</h3>
 <p>表 3 从 outlier 驱动的重缩放视角总结了 attention sink 与 residual sink 之间的对应关系。两种现象均出现在归一化层：attention sink 对应 softmax，residual sink 对应 RMSNorm。它们充当调制器，控制非 outlier 分量的尺度。虽然表现不同——attention sink 针对特定 token，residual sink 针对特定维度——但功能作用类似。二者均能够对下游表示进行重缩放。关键在于，两类 outlier 完成重缩放功能后都会受到主动抑制。Attention sink 的 value 向量范数较小，以及 residual sink 的 RMSNorm 仿射权重较小，为此提供了证据。移除归一化的架构修改能够消除这些 outlier，但会降低性能或稳定性。反过来，显式提供其他重缩放路径，例如 Gated Attention 或 GatedNorm，能够有效降低对 outlier 的依赖，同时保留甚至增强模型性能。</p>
 <h3>A.3　GatedNorm 的效率分析</h3>
 <p>我们在一个 8 层稠密 Transformer 上评估本方法的端到端训练开销，使用 Megatron-LM（Shoeybi et al., 2019）中的 ZeRO-1 优化器配置。我们改变隐藏维度，同时将门控机制的低秩维度固定为 16。对于 PreAffine 变体，我们使用 Triton 实现自定义融合 kernel，以确保执行效率。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/f5b5c60f779b7c7eb146afc692459ce4127d684b7f5b88dd7759b8caf5364f5b.png"></figure>
+<figure><img height="276" width="1398" decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/f5b5c60f779b7c7eb146afc692459ce4127d684b7f5b88dd7759b8caf5364f5b.png"></figure>
 <p>如表所示，相对开销随着模型规模增大而迅速下降。这一趋势由两个因素解释。首先，GatedNorm 的计算成本随隐藏维度线性增长，对低秩维度仅有较弱依赖（通过常数因子）；相比之下，attention 与 FFN 层中的主要 GEMM 运算随隐藏维度二次增长。因此，GatedNorm 在总计算量中的占比随着规模增大而愈加微不足道。</p>
 <p>其次，kernel 启动开销在隐藏维度较小时更显著。在这种情况下，GatedNorm 包含多个轻量 kernel，其启动延迟可能造成执行气泡并降低硬件利用率。随着隐藏维度增大，每个 kernel 的工作量足以摊薄启动成本，从而改善流水线效率，并进一步降低相对开销。</p>
 <p>第三，在 MoE 设置下，GatedNorm 的相对开销更小。MoE 模型具有显著的通信和路由成本，这些成本主导训练步耗时。由于 GatedNorm 仅引入轻量的局部计算，其对总步耗时的贡献在这种情况下被进一步摊薄，因此相对开销低于类似规模的稠密模型。</p>
 <h3>A.4　实验设置</h3><h4>A.4.1　规模扩展设置</h4>
 <p><strong>模型架构。</strong>我们在一组具有不同架构的 LLM 上评估方法，包括稠密与 MoE 变体。架构规格汇总于表 5。所有模型的 softmax attention head 维度均为 256，隐藏维度均为 2048。2B 模型是标准稠密 Transformer。相比之下，7B-A2B 和 24B-A3B 模型采用 MoE 架构，以混合配置结合线性与 softmax attention：softmax attention——</p><p class="continuation">本句接第 15 页。</p>
-<footer>原文第 14 页</footer></section><section class="page" id="page-15"><figure><img decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/2c958cb102a380892c42c7d4fbac0731629159a9828d378df38b024d788367d4.png"></figure>
+<footer>原文第 14 页</footer></section><section class="page" id="page-15"><figure><img height="693" width="1398" decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/2c958cb102a380892c42c7d4fbac0731629159a9828d378df38b024d788367d4.png"></figure>
 <p class="continuation">接第 14 页：</p><p>每隔 4 层应用一次，其余层使用线性 attention。</p>
 <p>MoE 模型采用大量专家（7B-A2B 为 128 个，24B-A3B 为 256 个），使用 top-k 路由（分别为 \(k = 6\) 和 \(k = 8\)），并设置一个共享专家来保证基础容量。训练时使用全局负载均衡损失（Qiu et al., 2025a）。遵循大型稀疏架构的常见做法，稠密 2B 模型绑定 embedding 权重，MoE 模型则不绑定。FFN 扩展比例有显著差异：稠密模型使用宽 FFN（6144 维），而 MoE 模型中每个专家的 FFN 小得多（分别为 384 和 512），通过 EP 予以补偿。线性 attention head 使用较小维度（128），并采用独立的 query/key 与 value 投影，详见表格。</p>
 <p><strong>评估。</strong>我们在广泛的基准上评估模型性能，涵盖知识、推理、STEM、代码生成与多语言能力。具体而言，我们报告 MMLU-Redux 和 MMLU-Pro 的通用知识结果，SuperGPQA 和 GPQA-Diamond 的专家级科学推理结果，GSM8K 和 MATH 的数学问题求解结果，CruxEval、MultiPL-E 和 MBPP 的代码生成结果，以及 MMMLU 和 MGSM 的多语言理解结果。</p>
@@ -199,11 +199,11 @@
 <ul><li><strong>FP8（W8A8）：</strong>采用 E4M3 格式。权重使用 128 × 128 的逐块缩放策略量化，激活使用动态逐 token 量化。</li>
 <li><strong>FP4（W4A4）：</strong>采用 NVIDIA FP4（Abecassis et al., 2025）格式，使用分层的两阶段缩放。权重按 16 个值一组分块，共享浮点缩放因子（第一阶段）在进行 4 位映射（第二阶段）之前对范围归一化。对于激活，我们将第一阶段的缩放从静态改为动态逐 token 缩放，以保留保真度。</li></ul>
 <footer>原文第 15 页</footer></section><section class="page" id="page-16"><h3>A.5　更多可视化结果</h3><h4>A.5.1　RMSNorm 可视化</h4>
-<figure><img decoding="async" loading="lazy" alt="原文第 16 页图表或公式" src="assets/images/30b5756da13290de4934604fb4872cefde4381d2c2c05e44f38ae4f633ca994f.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 16 页图表或公式" src="assets/images/8cdef4bea0383fbc8879005b02794d5948c678d440e0a2c02d47e2b619c99d59.png"></figure>
+<figure><img height="921" width="1251" decoding="async" loading="lazy" alt="原文第 16 页图表或公式" src="assets/images/30b5756da13290de4934604fb4872cefde4381d2c2c05e44f38ae4f633ca994f.png"></figure>
+<figure><img height="924" width="1251" decoding="async" loading="lazy" alt="原文第 16 页图表或公式" src="assets/images/8cdef4bea0383fbc8879005b02794d5948c678d440e0a2c02d47e2b619c99d59.png"></figure>
 <h4>A.5.2　其他模型中的 Outlier</h4>
 <p class="continuation">图 8 见第 17 页；第 17 页上方图 7 接续本页 A.5.1 的 RMSNorm 可视化。</p>
-<footer>原文第 16 页</footer></section><section class="page" id="page-17"><figure><img decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/0aa32915b00ddeb74660f24bbaef18169f6cc56c598f57a0f8bb36cc259eccfc.png"></figure>
+<footer>原文第 16 页</footer></section><section class="page" id="page-17"><figure><img height="951" width="1398" decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/0aa32915b00ddeb74660f24bbaef18169f6cc56c598f57a0f8bb36cc259eccfc.png"></figure>
 <p class="muted">译注：图 7 的原英文图注将 0.73 称为“相对 1 的最大偏离”，图内标注的是权重值；按原图保留。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/b96370a09d42e6751263879c900752bca9e76cdd83fa09420ce8b31876c0b94e.png"></figure>
+<figure><img height="687" width="1398" decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/b96370a09d42e6751263879c900752bca9e76cdd83fa09420ce8b31876c0b94e.png"></figure>
 <footer>原文第 17 页</footer></section></body></html>

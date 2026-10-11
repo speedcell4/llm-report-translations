@@ -35,6 +35,12 @@ def extract(source, folder):
     def lazy(match):
         tag = match[0]
         if 'assets/images/' in tag:
+            src = re.search(r'src=["\'](assets/images/[^"\']+)["\']', tag)[1]
+            with Image.open(folder / src) as image:
+                width, height = image.size
+            for name, value in [('width', width), ('height', height)]:
+                if not re.search(r'\b' + name + r'\s*=', tag):
+                    tag = tag.replace('<img', f'<img {name}="{value}"', 1)
             for name, value in [('loading', 'lazy'), ('decoding', 'async')]:
                 if not re.search(r'\b' + name + r'\s*=', tag):
                     tag = tag.replace('<img', f'<img {name}="{value}"', 1)

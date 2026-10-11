@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FineWeb 数据集：大规模提炼优质网页文本 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">FineWeb 数据集：从网络中大规模提炼最优质的文本数据</div><div class="document-meta">The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale<br>首次提交：2024-06-25 · 译文版本：arXiv:2406.17557v2（2024-10-31） · 页码覆盖 38/38 页<br><a href="https://arxiv.org/abs/2406.17557v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2406.17557v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a></div></nav><section class="page" id="page-1"><h1>FineWeb 数据集：从网络中大规模提炼最优质的文本数据</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FineWeb 数据集：大规模提炼优质网页文本 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">FineWeb 数据集：从网络中大规模提炼最优质的文本数据</div><div class="document-meta">The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale<br>首次提交：2024-06-25 · 译文版本：arXiv:2406.17557v2（2024-10-31） · 页码覆盖 38/38 页<br><a href="https://arxiv.org/abs/2406.17557v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2406.17557v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a></div></nav><section class="page" id="page-1"><h1>FineWeb 数据集：从网络中大规模提炼最优质的文本数据</h1>
 <p class="authors cover-info">Guilherme Penedo　Hynek Kydlíček　Loubna Ben allal　Anton Lozhkov<br>Margaret Mitchell　Colin Raffel　Leandro Von Werra　Thomas Wolf</p>
 <p class="affiliations cover-info">Hugging Face</p>
 <p class="meta cover-info"><a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb">FineWeb 数据集</a><br/><a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu">FineWeb-Edu 数据集</a><br/>arXiv:2406.17557v2 · 2024 年 10 月 31 日</p>
@@ -31,13 +31,13 @@
 <p>……我们选择了 CommonSense QA [42]、HellaSwag [43]、OpenBook QA [44]、PIQA [45]、SIQA [46]、WinoGrande [47]、ARC [11] 和 MMLU [10] 等基准数据集，并将大型基准截断为 1000 个样本，以便在训练过程中高效评估。我们公开发布了<a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb/blob/main/lighteval_tasks.py">准确的评估设置</a>。</p>
 <h3>3.2 文本提取</h3>
 <p>Common Crawl 数据有两种格式：WARC 和 WET。WARC（Web ARChive 格式）文件包含抓取的原始数据，包括完整页面 HTML 和请求元数据。WET（WARC Encapsulated Text）文件使用 htmlparser [48] 提供抓取网站的纯文本版本。虽然 WET 文件通常被用作创建数据集的起点，但与 Gao 等人 [29] 类似，我们发现 WET 文件保留了过多模板化文本和菜单文本。因此，我们尝试使用开源 trafilatura 库 [49] 从 WARC 文件提取文本内容；通过目视检查结果发现，与其他可用库相比，它能提供较好的提取质量，模板化文本和菜单文本较少。定制文本提取的成本相对较高，但其作用体现在模型性能上：图 1 展示了消融模型分别在对 WARC 数据应用 trafilatura 后得到的文本，以及 WET 数据上训练的性能。实验只施加了最少的额外过滤，即使用 fastText 语言识别保留英语为概率最高标签的样本，没有去重。使用 trafilatura 从 WARC 文件提取的文本显然能训练出性能更好的模型，因此后续所有实验均使用基于 WARC 的数据。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/73fc5e664e5ba6b5a7469d981453d82f05b118f329cd740d8864144bc0a1126d.png" class="image-width-935"></figure>
+<figure><img height="522" width="1230" decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/73fc5e664e5ba6b5a7469d981453d82f05b118f329cd740d8864144bc0a1126d.png" class="image-width-935"></figure>
 <h3>3.3 基础过滤</h3>
 <p>作为过滤的起点，我们使用 RefinedWeb [50] 的部分设置，应用基础过滤流水线。具体而言，我们使用屏蔽列表 [51] 进行 URL 过滤以移除成人内容，应用 fastText 语言分类器 [52, 26] 仅保留分数 \(\ge 0.65\) 的英语文本，并使用 MassiveText [41] 的质量与重复过滤器，沿用原始阈值。对撰写时可用的全部 96 个快照中提取的 WARC 文本应用这些过滤步骤后，使用 GPT-2 tokenizer 得到约 36 万亿 token 的数据。如图 2 所示，这些步骤带来了性能提升。</p>
 <h3>3.4 去重</h3>
 <p>网络上有许多聚合网站、镜像、模板化页面，以及分散在不同域名和网页中的其他重复内容。移除这些重复内容（去重）与模型性能提升 [5] 和预训练数据记忆减少 [53, 54] 相关。识别乃至定义重复数据的方法有很多。常见方法依赖哈希技术，或后缀数组等高效数据结构 [55]。方法还可分为通过相似度指标进行的“模糊”去重，以及检查两个文本片段是否完全匹配的“精确”去重 [56]。</p>
 <footer>原文第 4 页</footer></section><section class="page" id="page-5"><p>遵循 RefinedWeb [50]，我们试验了 MinHash：一种基于哈希的模糊去重技术，能够高效扩展到多个 CPU 节点，并允许通过控制桶数和每桶哈希数调节相似度阈值，以及通过控制 n-gram 大小调节所考虑的子序列长度。我们使用英语词 tokenizer [57] 收集每个文档的 5-gram，使用总计 112 个哈希函数计算 MinHash，并将其分成 14 个桶、每桶 8 个哈希，目标是识别至少有 75% 相似度的文档。在任意桶内具有相同 8 个 MinHash 的文档被视为彼此重复。随后执行传递性聚类：若 A 与 C 重复，B 与 C 重复，那么文档 A、B、C 将被分入同一个重复簇，即使 A 与 B 在任何桶中都没有相同的 8 个 MinHash。每个重复簇随机保留一个文档，其余重复文档被移除。附录 E.1 进一步讨论去重参数。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 5 页原始图表或公式" src="assets/images/e3b785abb1e1d0648058868d353672ddff2208eb4a4b40fef5d8218ae5642ab9.png" class="image-width-935"></figure>
+<figure><img height="502" width="1230" decoding="async" loading="lazy"  alt="第 5 页原始图表或公式" src="assets/images/e3b785abb1e1d0648058868d353672ddff2208eb4a4b40fef5d8218ae5642ab9.png" class="image-width-935"></figure>
 <p>我们的第一种方法是对整个数据集（全部 96 个快照）执行全局 MinHash 去重。我们以迭代方式实施：从最新快照开始（实验执行时为 2023-50），按时间向过去推进，直到最旧快照。应用于最旧快照时，这个过程移除了多达 90% 的原始基础过滤数据，因为它们要与大量其他快照去重。以此方式对整个数据集去重后，得到 4 万亿 token。然而，在随机采样的 3500 亿 token 子集上训练时，我们的消融模型相比未去重数据上训练的模型几乎没有提升；如图 3 所示，在任务汇总指标上的分数远低于 RefinedWeb。</p>
 <p>这挑战了我们最初的假设，即全局去重必然带来更高的基准分数。因此，我们进行了额外实验来研究剩余数据的质量。我们在较早的 2013-48 快照的两个切片上训练两个模型：（a）完全去重后剩余的约 310 亿 token，即原先保留的数据；（b）从迭代去重过程中从该快照移除的约 4600 亿 token 中，通过单独去重、不考虑其他抓取快照，得到的 1710 亿 token，即原先移除的数据。结果见图 4。它们表明，单独考虑这个较早的抓取快照时，保留的数据（原始数据的 10%）质量实际上比移除的 90% 数据更差。目视检查证实了这一点：与原先移除的数据相比，原先保留的数据包含更多广告、不连贯的关键词列表，以及总体上排版更差的文本。</p>
 <p>因此，我们尝试了另一种方法：使用与之前相同的参数，单独对每个快照去重，彼此独立。这得到 20 万亿 token 的数据。在此数据集的随机样本上训练时（从所有快照中采样数据），其性能与 RefinedWeb 相当，如图 5 所示。</p>
@@ -46,16 +46,16 @@
 <footer>原文第 5 页</footer></section><section class="page" id="page-6"><p class="continuation">接第 5 页末段。</p>
 <p>……可能损害性能。对于这部分数据，针对数据质量长尾的更具体过滤，可能比去重更合适。</p>
 <p>为尝试在对每个快照单独去重的基础上进一步改进，我们还试验了“更轻量”的全局去重技术。最终，这些技术均未优于独立的逐快照去重。这些方法及其结果的完整说明见附录 E.3。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 6 页原始图表或公式" src="assets/images/be1cdd60a8b84248e481fcc69bfebc6e9de3e12d227b886571a2b4d6caff4053.png" class="image-width-454"></figure>
+<figure><img height="505" width="597" decoding="async" loading="lazy"  alt="第 6 页原始图表或公式" src="assets/images/be1cdd60a8b84248e481fcc69bfebc6e9de3e12d227b886571a2b4d6caff4053.png" class="image-width-454"></figure>
 <h3>3.5 加入 C4 的过滤器</h3>
 <p>至此，通过基础过滤和独立 MinHash 去重，我们已达到与 RefinedWeb [50] 相同的性能。然而，我们注意到，C4 数据集 [15] 虽然小于 FineWeb，在评估套件中的部分基准上仍表现更强，尤其是 HellaSwag [43]，它是任务汇总组中信噪比最高的基准之一。尽管 C4 是最早的大规模 LLM 训练数据集之一，它仍经常被用于 Llama 1 [2] 等近期模型的预训练数据混合。我们开始探索能够达到或超越 C4 性能的额外过滤步骤。一个自然的起点是研究 C4 自身的处理过程。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 6 页原始图表或公式" src="assets/images/d1918d6d68e8136eba8888210242e1b24d919c2dddc43bb4d630709c3c7fbdf0.png" class="image-width-935"></figure>
+<figure><img height="492" width="1230" decoding="async" loading="lazy"  alt="第 6 页原始图表或公式" src="assets/images/d1918d6d68e8136eba8888210242e1b24d919c2dddc43bb4d630709c3c7fbdf0.png" class="image-width-935"></figure>
 <p>C4 是对 2019-18 抓取快照应用启发式过滤器构建的，过滤器包括：丢弃不以句末标点结尾、提及 javascript 或含有“使用条款”/“cookie 政策”声明的行，以及丢弃过短或包含“lorem ipsum”或花括号（{）的文档。我们尝试将这些过滤器应用于经过基础过滤和单独去重的 2019-18 抓取快照基线，并额外将结果与 C4 本身比较。</p>
 <p>图 6 显示，应用所有过滤器（All filters）使我们达到 C4 的 HellaSwag 性能；花括号过滤器（Curly bracket filter）和词长过滤器（Word lengths filter）仅带来小幅提升，分别移除 2.8% 和 4.3% 的 token；句末标点过滤器（Terminal punctuation filter）单独使用时带来的提升最大，但移除了约 30% 的全部 token；lorem_ipsum、javascript 和 policy 规则各自移除的训练 token 均少于 0.5%，因此我们没有分别针对它们训练模型；除句末标点以外的所有过滤器（All but terminal punct）比单独使用 terminal_punct 表现更好，同时移除的总量更少（约 7%）。我们决定应用上述所有 C4 过滤器，但不使用句末标点过滤器，因为它移除了过多数据。</p>
 <footer>原文第 6 页</footer></section><section class="page" id="page-7"><h3>3.6 开发额外的启发式过滤器</h3>
 <p>以往工作主要通过检查数据来开发启发式过滤器 [15]。在这项工作中，我们设计了更系统的流程，用于设计启发式过滤器并调节阈值。首先，我们在高质量和低质量网页数据集上收集 50 多项高层统计量，范围从文档级指标（如行数、平均行长/词长等）到文档间重复指标（受 MassiveText [1] 启发）。具体而言，我们分别使用 2013-48 快照的单独去重版本和全局去重版本（此前在第 3.4 节提及）作为“高质量”与“低质量”数据集。随后，我们找出在两个数据集间数值分布差异显著的指标，检查两种分布的直方图，并根据经验选择阈值，使过滤针对直方图中低质量数据集频率高于对应高质量数据集的区段。例如，图 8 展示了“以标点结尾的行所占比例”这一指标的分布。可以看到，总体而言，高质量数据集在指标值较大的区域具有更高的文档密度；尤其在数值 &lt; 0.12 时，低质量数据集的文档密度高得多。因此，我们认为以标点结尾的行比例 &lt; 0.12 的文档通常质量较低，并使用该值作为过滤文档的暂定阈值。对所有指标执行这一流程，得到 16 个候选指标与阈值组合。</p>
 <p>随后，我们在 2019-18 抓取快照上进行了多次 280 亿 token 消融训练，以评估这 16 个新过滤器的有效性。这些实验的完整细节见附录 E.4。在全部实验中，我们识别出三个能显著提高基准汇总分数的过滤器，其消融实验见图 7。具体而言，选出的过滤器移除满足以下条件的文档：以标点结尾的行比例 \(\le 0.12\)（移除 10.14% 的 token，而原始 C4 句末标点过滤器移除 30%）；重复行中字符所占比例 \(\ge 0.1\)（移除 12.47% 的 token；MassiveText 对此比例的原始阈值为 \(\ge 0.2\)）；和/或长度少于 30 个字符的行比例 \(\ge 0.67\)（移除 3.73% 的 token）。同时使用三者时，约 22% 的 token 被移除，280 亿 token 消融实验中的汇总分数增加约 1%。这些过滤器使我们进一步提升性能，尤其是在过滤较小比例数据的同时超越了 C4 数据集的性能。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 7 页原始图表或公式" src="assets/images/67d10d35c94d283c70084c413ee763e90908e9f7674f225e42060a05fbe41020.png" class="image-width-454"></figure>
+<figure><img height="565" width="597" decoding="async" loading="lazy"  alt="第 7 页原始图表或公式" src="assets/images/67d10d35c94d283c70084c413ee763e90908e9f7674f225e42060a05fbe41020.png" class="image-width-454"></figure>
 <p class="footnote">译者注：原文此处重复行字符比例阈值写为 0.1，第 24 页表 2 对应阈值写为 0.01；此处与原表分别保留原值。原文短行过滤的阈值及移除比例与表 2 的对应记录也存在差异，均按原文保留。</p>
 <h3>3.7 最终 FineWeb 数据集</h3>
 <p>结合前述各节的选择，将所得流水线应用于 96 个 Common Crawl 快照，即得到包含 15 万亿 token 的 FineWeb 数据集。具体而言，我们从 WARC 文件提取文本（第 3.2 节），应用基础过滤（第 3.3 节），执行逐抓取快照独立 MinHash 去重（第 3.4 节），应用选定的 C4 过滤器（第 3.5 节），最后应用定制过滤器（第 3.6 节）。如图 9 所示，每个步骤均在我们的基准任务组上带来相对性能提升。对于公开发布的数据集，我们还通过对电子邮件地址和公网 IP 地址匿名化来移除个人身份信息（PII）。</p>
@@ -64,7 +64,7 @@
 <p class="footnote"><sup>1</sup> RedPajama2 包含 40 多种质量标注，但实际上仅使用 CCNet 流水线 [28] 过滤。</p>
 <footer>原文第 7 页</footer></section><section class="page" id="page-8"><p class="continuation">接第 7 页末段。</p>
 <p>……我们的设计选择。请注意，为训练这些模型，我们从每个数据集中随机采样 3500 亿 token，没有对任何单独的 Common Crawl 快照进行上采样。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 8 页原始图表或公式" src="assets/images/0d38d02fcbd523e0767db751b41bd882e577c30a6a256129a977e7a99d124b7b.png" class="image-width-935"></figure>
+<figure><img height="532" width="1230" decoding="async" loading="lazy"  alt="第 8 页原始图表或公式" src="assets/images/0d38d02fcbd523e0767db751b41bd882e577c30a6a256129a977e7a99d124b7b.png" class="image-width-935"></figure>
 <h2>4 FineWeb-Edu</h2>
 <p>最近出现了一种有趣的 LLM 训练数据集过滤方法：使用合成数据开发识别教育内容的分类器。这项技术尤其被用于 Llama 3 [6] 和 Phi-3 [8] 未公开的预训练数据集，但它对网页数据过滤的大规模影响尚未得到公开探索。我们将这一技术应用于 FineWeb，使用基于 Llama-3-70B-Instruct [62] 生成的合成标注开发的教育质量分类器进行过滤。所得 FineWeb-Edu 数据集包含 1.3 万亿 token。FineWeb-Edu 专门针对教育内容优化，在 MMLU、ARC 和 OpenBookQA 等多个推理与知识密集型基准上，显著优于所有开放可访问的基于网页的数据集。</p>
 <p>为构建合成标注，我们使用 Llama-3-70B-Instruct，对从 FineWeb 的 CC-MAIN-2024-10 快照随机采样的 460,000 个网页，按 0 到 5 分评价教育质量。我们探索了多种提示词格式，以使用 LLM 自动提取教育评分，发现既有工作 Yuan 等人 [63] 使用的累加评分尺度效果最佳。它允许 LLM 评估每项标准并逐步构建分数，而单一评级尺度 [64] 则根据预定义类别直接赋予固定分数。为避免 LLM 偏好 arXiv 摘要和投稿等高度技术性的页面，我们在提示词中要求它聚焦小学和初中水平的知识。合成标注使用的提示词见附录 F.1。</p>
@@ -75,14 +75,14 @@
 <footer>原文第 8 页</footer></section><section class="page" id="page-9"><p class="continuation">接第 8 页末段。</p>
 <p>如图 10 和图 11 所示，我们观察到 FineWeb-Edu 超越 FineWeb 及所有其他开放网页数据集，在 MMLU、ARC 和 OpenBookQA 等教育类基准上提升尤其显著。具体而言，MMLU 分数从 33% 增至 37%，相对提升约 12%；ARC 分数从 46% 增至 57%，提升约 24%。</p>
 <p>在 MMLU 上，FineWeb-Edu 用近乎少 10 倍的 token 就能达到 Matrix 的最终性能，展示了在 LLM 标注上训练的分类器用于大规模数据过滤的有效性。更多评估图见附录 F.2。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 9 页原始图表或公式" src="assets/images/f4d59532ba6894a64aeb830eea7b9c412822177f8a6f28eddcf13f9a538068a3.png" class="image-width-454"></figure>
+<figure><img height="547" width="597" decoding="async" loading="lazy"  alt="第 9 页原始图表或公式" src="assets/images/f4d59532ba6894a64aeb830eea7b9c412822177f8a6f28eddcf13f9a538068a3.png" class="image-width-454"></figure>
 <h3>4.1 主题分布</h3>
 <p>为检查教育分类器可能如何使数据集偏向某些主题，我们使用 sentence-transformers [68] 模型 all-MiniLM-L6-v2，对 FineWeb 的 50,000 个样本和 FineWeb-Edu 的 50,000 个样本进行 embedding [67]，随后使用 UMAP [69] 将其投影到二维空间。最后，我们使用 DBSCAN [70] 聚类，在两个数据集的并集中找到密度最高的 100 个主题簇，并使用 Llama 3.1 70B [6] 为其标注。为比较两个数据集，图 18 展示各簇在 FineWeb-Edu 与 FineWeb 中所占比例（相对于整个数据集）的差异。教育分类器强烈偏好“教育、学习、教学”或“历史、文化、政治”等主题，同时对“商业、金融、法律”“娱乐、电影、戏剧”和“地点、旅行、房地产”等主题进行下采样。</p>
 <h3>4.2 领域拟合</h3>
 <p>我们在 Paloma [71] 的各领域上，评估 FineWeb 和 FineWeb-Edu 消融模型的六个 checkpoint 的宏平均 PPL。我们使用 [71] 提供的代码库，但有意不进行数据去污染，以比较各数据集对不同领域的覆盖程度。结果见图 12。FineWeb 模型通常在 C4、mC4、Falcon、Dolma V1.5 或 RedPajama 的 CommonCrawl 子集等广泛的网页来源上，以及 Twitter AAE、Manosphere、Gab、reddit（100 Subreddits）或 4chan 上，显示较低的 PPL。FineWeb-Edu 倾向于更适合包含 Wikipedia 的来源（WikiText-103 和 M2D2 Wikipedia），或学术内容占比较高的来源（包含 Semantic Scholar 论文的 M2D2 S2ORC，以及 RedPajama 的 Arxiv 子集）。FineWeb-Edu 对编程内容（100 PLs）的覆盖似乎也比 FineWeb 更好。附录 F.4 包含其中部分来源的逐子集结果。</p>
 <h2>5 偏差分析</h2>
 <p>众所周知，语言模型会反映预训练数据集中的偏差 [72–77]。为简要展示 FineWeb 与 FineWeb-Edu 中的数据集偏差，我们关注在英语国家被认定为“敏感”或“受保护”的子群体。这些群体是历史上受到歧视的群体的一部分，并不成比例地成为刻板印象等负面社会规范的对象；这些现象也反映在数据集所收录的文本语言中。我们发现 FineWeb 数据集中，反映主导性规范的词语相对过度出现，而这些词语已知在网络文本中也过度出现 [72]，例如 ‘man’ 和 ‘christian’。虽然所检查的性别、宗教和年龄子群体间偏差不强，但宗教词语与亲密关系之间的关联最为偏斜，例如 ‘christian dating’ 和 ‘jewish singles’。相应地，与 FineWeb 相比，FineWeb-Edu 捕捉到的关联与亲密关系联系较少，更符合历史和健康类教育内容的预期，例如 ‘man’ 与 ‘king’ 相关，‘woman’ 与 ‘pregnancy’ 相关。更多细节见附录 G。</p>
-<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img decoding="async" loading="lazy"  alt="第 10 页原始图表或公式" src="assets/images/4b5b0e83d507ba76b27af963e9194af2b34bd436e7dc3db591b1acdb3692d2ae.png" class="image-width-935"></figure>
+<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img height="1017" width="1230" decoding="async" loading="lazy"  alt="第 10 页原始图表或公式" src="assets/images/4b5b0e83d507ba76b27af963e9194af2b34bd436e7dc3db591b1acdb3692d2ae.png" class="image-width-935"></figure>
 <h2>6 结论</h2>
 <p>本文开发了 FineWeb 数据集，这是一组能够训练出高性能 LLM 的大规模 LLM 预训练数据集。具体而言，我们发布了 FineWeb：一个从 96 个 Common Crawl 快照获取、包含 15 万亿 token 的数据集；以及 FineWeb-Edu：FineWeb 中包含 1.3 万亿 token 的教育内容数据集。FineWeb 的创建经过一系列实验，为文本提取策略、去重流程和内容过滤器的选择提供了实证依据。两个数据集均已公开发布，同时发布的还有我们使用的代码和处理库，以及在数据集消融实验中训练的所有模型。</p>
 <p>虽然 FineWeb 和 FineWeb-Edu 在公开 LLM 预训练数据集中取得了最先进的性能，我们仍识别出多条进一步改进路径。首先，两个数据集完全由 Common Crawl 抓取的网页内容构成。向任一数据集加入其他数据类型（书籍、语音转录等），可能进一步提升性能。此外，由于计算资源限制，我们的大多数实验规模较小。在更现实的规模下设计数据集，可能提供更可靠的指导。我们的评估设置也受实际条件所限，仅考察学术基准上的性能，没有进行后续指令微调或对齐。更贴近 LLM 当前使用方式的评估设置可能也更可靠。我们希望所发布的数据集、代码和模型有助于进一步提升关于高性能 LLM 预训练数据集的公共知识，并推进其开发。</p>
@@ -98,7 +98,7 @@
 
 <p class="footnote">代码示例保留原文；换行接续箭头为论文中的排版符号。</p>
 <details><summary>原始数据说明表（保留英文排版）</summary>
-<figure><img decoding="async" loading="lazy"  alt="第 17 页原始图表或公式" src="assets/images/c5a69823e09c79264333294aa3964f77bd8689f69941375959febf6a6a8dc768.png" class="image-width-935"></figure>
+<figure><img height="1520" width="1230" decoding="async" loading="lazy"  alt="第 17 页原始图表或公式" src="assets/images/c5a69823e09c79264333294aa3964f77bd8689f69941375959febf6a6a8dc768.png" class="image-width-935"></figure>
 </details><footer>原文第 17 页</footer></section><section class="page" id="page-18"><h3>数据集结构（续）</h3>
 <p><strong>数据字段：</strong></p>
 <ul><li><code>text</code>（string）：主要文本内容。</li><li><code>id</code>（string）：此样本在 CommonCrawl 中的原始唯一标识符。</li><li><code>dump</code>（string）：此样本所属的 CommonCrawl 抓取 batch/快照。</li><li><code>url</code>（string）：文本所在原始页面的 URL。</li><li><code>date</code>（string）：抓取日期，来自 CommonCrawl。</li><li><code>file_path</code>（string）：包含此样本的单个 CommonCrawl WARC 文件的 S3 路径。</li><li><code>language</code>（string）：本数据集中所有样本均为 <code>en</code>。</li><li><code>language_score</code>（float）：fastText 语言分类器报告的语言预测分数（0.0–1.0）。</li><li><code>token_count</code>（int）：对该样本应用 gpt2 tokenizer 得到的 token 数量。</li></ul>
@@ -113,7 +113,7 @@
 <p class="footnote">译者注：原文此处先写 tokens_count，后写 token_count；字段定义为 token_count，译文保留原文区别。</p>
 <p><strong>个人与敏感信息：</strong>我们使用正则表达式模式对电子邮件地址和公网 IP 地址匿名化。</p>
 <details><summary>原始数据说明表（保留英文排版）</summary>
-<figure><img decoding="async" loading="lazy"  alt="第 18 页原始图表或公式" src="assets/images/3795bb5b2297b8fdc3020a12384b9fe6bc018224a0b73fc6c8e6e41eae7277c5.png" class="image-width-935"></figure>
+<figure><img height="1610" width="1230" decoding="async" loading="lazy"  alt="第 18 页原始图表或公式" src="assets/images/3795bb5b2297b8fdc3020a12384b9fe6bc018224a0b73fc6c8e6e41eae7277c5.png" class="image-width-935"></figure>
 </details><footer>原文第 18 页</footer></section><section class="page" id="page-19"><h3>数据使用注意事项</h3>
 <p><strong>数据集的社会影响：</strong>通过发布 FineWeb，我们希望用以下方式让机器学习社区更容易开展 LLM 训练：</p>
 <p>（a）分享包括所用代码库在内的完整处理设置，使数据集创建过程更加透明。</p>
@@ -124,18 +124,18 @@
 <p>FineWeb 数据集以 Open Data Commons Attribution License（ODC-By）v1.0 发布。许可证全文见 <a href="https://opendatacommons.org/licenses/by/1-0/">https://opendatacommons.org/licenses/by/1-0/</a>。使用本数据集还须遵守 <a href="https://commoncrawl.org/terms-of-use">CommonCrawl 的使用条款</a>。</p>
 <p>FineWeb 数据集托管于 <a href="https://huggingface.co/">HuggingFace Hub</a>，在可预见的未来将持续可用。我们计划在新的 CommonCrawl 快照发布后，定期用它们更新数据集。</p>
 <details><summary>原始数据说明表（保留英文排版）</summary>
-<figure><img decoding="async" loading="lazy"  alt="第 19 页原始图表或公式" src="assets/images/48e5fba9ed0c6dc50e02b98d455d794c1df9b601c1b704beb5ea1e4b108cca0d.png" class="image-width-935"></figure>
+<figure><img height="1052" width="1230" decoding="async" loading="lazy"  alt="第 19 页原始图表或公式" src="assets/images/48e5fba9ed0c6dc50e02b98d455d794c1df9b601c1b704beb5ea1e4b108cca0d.png" class="image-width-935"></figure>
 </details><footer>原文第 19 页</footer></section><section class="page" id="page-20"><h2>C 相关资源链接</h2>
-<figure><img decoding="async" loading="lazy"  alt="第 20 页原始图表或公式" src="assets/images/8118ed72f62ec2b18c6c640951b5f1f446939d5d47472cbef96d43ea9d7f2119.png" class="image-width-935"></figure>
+<figure><img height="767" width="1230" decoding="async" loading="lazy"  alt="第 20 页原始图表或公式" src="assets/images/8118ed72f62ec2b18c6c640951b5f1f446939d5d47472cbef96d43ea9d7f2119.png" class="image-width-935"></figure>
 <p class="footnote">原表的链接见下方中文资源列表。</p>
 <ul><li><a href="https://hf.co/datasets/HuggingFaceFW/fineweb">FineWeb 仓库</a>（DOI 10.57967/hf/2493）。</li><li><a href="https://hf.co/api/datasets/HuggingFaceFW/fineweb/croissant">FineWeb Croissant 元数据</a>。</li><li><a href="https://hf.co/datasets/HuggingFaceFW/fineweb-edu">FineWeb-Edu 仓库</a>（DOI 10.57967/hf/2497）。</li><li><a href="https://hf.co/api/datasets/HuggingFaceFW/fineweb-edu/croissant">FineWeb-Edu Croissant 元数据</a>。</li><li><a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu-llama3-annotations">FineWeb Llama3 标注</a>。</li><li><a href="https://huggingface.co/HuggingFaceFW/fineweb-edu-classifier">教育内容分类器</a>。</li><li><a href="https://hf.co/collections/HuggingFaceFW/comparison-models-662457b0d213e8c14fe47f32">数据集比较模型</a>。</li><li><a href="https://hf.co/collections/HuggingFaceFW/data-experiments-665ed849020d8b66a5d9896f">消融模型</a>。</li><li><a href="https://github.com/huggingface/datatrove/blob/main/examples/fineweb.py">复现 FineWeb 的 Datatrove 处理代码</a>。</li><li><a href="https://hf.co/datasets/HuggingFaceFW/fineweb/blob/main/lighteval_tasks.py">评估设置</a>。</li></ul>
 <h2>D 数据消融设置</h2>
 <h3>D.1 模型架构</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 20 页原始图表或公式" src="assets/images/41dea019a55b3167dfbd313240c7595399e6daccb54685867a0f70153109c4fb.png" class="image-width-935"></figure>
+<figure><img height="645" width="1230" decoding="async" loading="lazy"  alt="第 20 页原始图表或公式" src="assets/images/41dea019a55b3167dfbd313240c7595399e6daccb54685867a0f70153109c4fb.png" class="image-width-935"></figure>
 <footer>原文第 20 页</footer></section><section class="page" id="page-21"><h3>D.2 分布式训练设置</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 21 页原始图表或公式" src="assets/images/c0f134bfea454209ae0d956f857b00c170180a26eb9e06e4e24b54f79b2c92a8.png" class="image-width-935"></figure>
+<figure><img height="317" width="1230" decoding="async" loading="lazy"  alt="第 21 页原始图表或公式" src="assets/images/c0f134bfea454209ae0d956f857b00c170180a26eb9e06e4e24b54f79b2c92a8.png" class="image-width-935"></figure>
 <h3>D.3 优化器配置</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 21 页原始图表或公式" src="assets/images/5b5df0df3ebb74d7ac4a7858797e1368e7e8ff45face8d78e8a53944c1f307f6.png" class="image-width-935"></figure>
+<figure><img height="490" width="1230" decoding="async" loading="lazy"  alt="第 21 页原始图表或公式" src="assets/images/5b5df0df3ebb74d7ac4a7858797e1368e7e8ff45face8d78e8a53944c1f307f6.png" class="image-width-935"></figure>
 <h2>E 去重</h2>
 <h3>E.1 去重参数</h3>
 <p>如第 3.4 节所述，我们使用 5-gram 和 112 个哈希函数进行 MinHash 去重。每个 5-gram 都由全部 112 个哈希函数分别计算哈希，对每个哈希函数取所有 5-gram 中的 MinHash 值（minhash），从而得到文档签名。我们进一步将所得 112 个 minhash 分为 14 个桶，每桶 8 个哈希。如果文档在 14 个桶中的至少一个桶内具有相同的 8 个 minhash，就被判定为匹配。</p>
@@ -143,20 +143,20 @@
 <p>图 13 比较了我们使用 112 个哈希的设置，以及 RefinedWeb 使用 9000 个哈希、分为 450 个桶、每桶 20 个哈希的设置的匹配概率。</p>
 <p>虽然 RefinedWeb 使用大量哈希函数能够形成更陡峭、更明确的截断边界，使相似度接近阈值的文档对更可能被正确识别，但这些……</p>
 <p class="continuation">本段接第 22 页。</p>
-<footer>原文第 21 页</footer></section><section class="page" id="page-22"><figure><img decoding="async" loading="lazy"  alt="第 22 页原始图表或公式" src="assets/images/c6882cee4367da10c764ed1d71fb2a1ac90927200f83246be2b1bb02acbd7c2a.png" class="image-width-935"></figure>
+<footer>原文第 21 页</footer></section><section class="page" id="page-22"><figure><img height="595" width="1230" decoding="async" loading="lazy"  alt="第 22 页原始图表或公式" src="assets/images/c6882cee4367da10c764ed1d71fb2a1ac90927200f83246be2b1bb02acbd7c2a.png" class="image-width-935"></figure>
 <p class="continuation">接第 21 页末段。</p>
 <p>……更多的哈希函数也需要显著更多的计算资源，因为每个哈希都必须计算、存储，并与其他文档的哈希比较。我们认为，计算和存储方面的节省足以补偿阈值附近文档的较高不确定性。</p>
 <h3>E.2 衡量去重的影响</h3>
 <p>鉴于去重的性质，它的效果并非总能在数据集的较小切片中体现出来，例如我们过滤消融实验使用的 280 亿 token。此外，在不同 Common Crawl 抓取 batch 之间去重时，会出现一些特定效应，因为部分 URL 和网页会在相邻快照之间被再次抓取。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 22 页原始图表或公式" src="assets/images/5e2de954ae88100872bea216728439612a8d8381b6d8b8a17f9114a873ce014a.png" class="image-width-935"></figure>
+<figure><img height="672" width="1230" decoding="async" loading="lazy"  alt="第 22 页原始图表或公式" src="assets/images/5e2de954ae88100872bea216728439612a8d8381b6d8b8a17f9114a873ce014a.png" class="image-width-935"></figure>
 <footer>原文第 22 页</footer></section><section class="page" id="page-23"><p>为直观展示衡量去重影响时增加训练 token 数量的效果，我们模拟了从完整数据集中随机采样文档、创建不同大小子集的过程，采用以下极端条件：共有 100 个快照，每个快照由唯一文档构成，总量为 2000 亿 token，从而得到第 3.4 节中的总计 20 万亿 token；每个快照又都是其他快照的精确副本，即快照间重复的最坏情况。在图 14 中可以看到，对于 10 亿 token 子集，几乎所有文档都唯一（#duplicates = 1），尽管每个文档在完整数据集中重复了 100 次。在 1000 亿 token 规模（总数据集的 0.5%）时，开始有更多文档重复两次，少数甚至重复 4–8 次。在更大的 1 万亿 token 规模（总数据集的 5%）时，大多数文档最多重复 8 次，部分最多重复 16 次。这一模拟展示了，在移除最大重复簇之后，衡量去重对更大型 LLM 训练的影响所固有的困难。我们对去重数据的性能评估使用 3500 亿 token 规模；在这一理论情景下，其中很大一部分文档会最多重复 8 次。</p>
 <h3>E.3 其他全局去重方法</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 23 页原始图表或公式" src="assets/images/93f77cc85be2870b69db8bc4e76f284d5a9cf9b1f60211a24dd2af7068387f7a.png" class="image-width-935"></figure>
+<figure><img height="652" width="1230" decoding="async" loading="lazy"  alt="第 23 页原始图表或公式" src="assets/images/93f77cc85be2870b69db8bc4e76f284d5a9cf9b1f60211a24dd2af7068387f7a.png" class="image-width-935"></figure>
 <p>为尝试在每个快照独立去重的基础上提升性能，我们试验了对所有已分别进行 MinHash 去重的快照（包含 20 万亿 token）应用其他“更轻量”的全局去重方法。</p>
 <p>我们探索了 URL 去重：每个规范化为小写的 URL 仅保留一个文档（移除 71.5% 的 token，剩余 5.6 万亿），称为 FineWeb URL dedup。我们还考虑了不同的行级去重变体：每个重复行随机保留一次出现，其他全部移除（丢弃 77.8% 的 token，剩余 4.4 万亿），称为 FineWeb line dedup；与上一个方法相同，但只移除至少有 10 个词的重复行，并丢弃去重后少于 3 个句子的文档（丢弃 85% 的 token，剩余 2.9 万亿），称为 FineWeb line dedup w/ min words；以及每段连续 3 行重复文本仅保留一次出现，在查找重复时将所有数字视为 0（移除 80.9% 的 token，剩余 3.7 万亿），称为 FineWeb 3-line dedup。</p>
 <p>如图 15 所示，在各方法处理的数据上训练的模型性能均持续低于原始逐快照独立去重数据上的模型，尽管下降程度不同。因此，除逐快照独立的基于 MinHash 的去重外，我们没有应用任何额外去重。</p>
 <footer>原文第 23 页</footer></section><section class="page" id="page-24"><h3>E.4 考虑过的其他过滤器</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 24 页原始图表或公式" src="assets/images/cf7825946d92fd9309a6a32567ce7c597dca1bb7902cb04d1e1299f4e1e68f43.png" class="image-width-935"></figure>
+<figure><img height="835" width="1230" decoding="async" loading="lazy"  alt="第 24 页原始图表或公式" src="assets/images/cf7825946d92fd9309a6a32567ce7c597dca1bb7902cb04d1e1299f4e1e68f43.png" class="image-width-935"></figure>
 <p class="footnote">译者注：表 2 的 duplicated-line-char-ratio 阈值为 \(\le 0.01\)，正文第 7 页写为移除比例 \(\ge 0.1\) 的文档；原文的短行过滤阈值与移除比例也有不同记录。表格与正文均保留原值，未据此替作者作出修正。</p>
 <footer>原文第 24 页</footer></section><section class="page" id="page-25"><h2>F FineWeb-Edu</h2>
 <h3>F.1 标注提示词</h3>
@@ -167,23 +167,23 @@
 <p class="footnote">译者注：提示词原文使用 primary school 和 grade school 两种小学表述；正文第 8 页另提到小学与初中。占位符与评分输出格式保留英文。</p>
 <h3>F.2 更多结果</h3>
 <p>图 16 使用在 3500 亿 token 上训练的 17.1 亿参数模型，在 9 个基准上比较 FineWeb-Edu 与其他开放网页数据集。此外，图 17 展示了使用在 280 亿 token 上训练的 17.1 亿参数模型，对构建 FineWeb-Edu 时采用不同过滤阈值所进行的实验结果。我们的发现表明，阈值 3 能取得最佳平均性能。</p>
-<footer>原文第 25 页</footer></section><section class="page" id="page-26"><figure><img decoding="async" loading="lazy"  alt="第 26 页原始图表或公式" src="assets/images/111b27c790b0101b22735b0d7218d31133e3cdf1f19b9945c68bc10250027b40.png" class="image-width-935"></figure>
-<footer>原文第 26 页</footer></section><section class="page" id="page-27"><figure><img decoding="async" loading="lazy"  alt="第 27 页原始图表或公式" src="assets/images/c8cf2c1abe11db55e75fbee5010ab3f4a30c59d5123947616482982acde56fef.png" class="image-width-935"></figure>
+<footer>原文第 25 页</footer></section><section class="page" id="page-26"><figure><img height="882" width="1230" decoding="async" loading="lazy"  alt="第 26 页原始图表或公式" src="assets/images/111b27c790b0101b22735b0d7218d31133e3cdf1f19b9945c68bc10250027b40.png" class="image-width-935"></figure>
+<footer>原文第 26 页</footer></section><section class="page" id="page-27"><figure><img height="840" width="1230" decoding="async" loading="lazy"  alt="第 27 页原始图表或公式" src="assets/images/c8cf2c1abe11db55e75fbee5010ab3f4a30c59d5123947616482982acde56fef.png" class="image-width-935"></figure>
 <footer>原文第 27 页</footer></section><section class="page" id="page-28"><h3>F.3 主题分布</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 28 页原始图表或公式" src="assets/images/43acc42b67a3918e9b3cfa4199daa37344201fb03faefb0d609ac5bb4301e20d.png" class="image-width-935"></figure>
+<figure><img height="1375" width="1230" decoding="async" loading="lazy"  alt="第 28 页原始图表或公式" src="assets/images/43acc42b67a3918e9b3cfa4199daa37344201fb03faefb0d609ac5bb4301e20d.png" class="image-width-935"></figure>
 <footer>原文第 28 页</footer></section><section class="page" id="page-29"><h3>F.4 领域拟合</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 29 页原始图表或公式" src="assets/images/8866acf85f990dc8a3c13deba03c05bcaa5f05d6ab87293549f8045edf846d48.png" class="image-width-935"></figure>
+<figure><img height="1582" width="1230" decoding="async" loading="lazy"  alt="第 29 页原始图表或公式" src="assets/images/8866acf85f990dc8a3c13deba03c05bcaa5f05d6ab87293549f8045edf846d48.png" class="image-width-935"></figure>
 <p class="continuation">表 3 接第 30 页，按原文保留全部领域名称和数值。</p>
 <footer>原文第 29 页</footer></section><section class="page" id="page-30"><p class="continuation">表 3，接第 29 页。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 30 页原始图表或公式" src="assets/images/afc1cb75c85237450c941fb345ee9be42b759ab2cf7413333557c0170741cf72.png" class="image-width-935"></figure>
+<figure><img height="1600" width="1230" decoding="async" loading="lazy"  alt="第 30 页原始图表或公式" src="assets/images/afc1cb75c85237450c941fb345ee9be42b759ab2cf7413333557c0170741cf72.png" class="image-width-935"></figure>
 <footer>原文第 30 页</footer></section><section class="page" id="page-31"><h2>G 偏差分析</h2>
 <h3>G.1 分布分析</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 31 页原始图表或公式" src="assets/images/bcf62df5b9465673fc28cfbbca8cdadb2bc039045c9804bf0ae7228a64007b07.png" class="image-width-935"></figure>
-<figure><img decoding="async" loading="lazy"  alt="第 31 页原始图表或公式" src="assets/images/33277d0ccb4908e7d77ff8dcba9ba4eeec90412fe77c0136bd1315a0f4d398af.png" class="image-width-935"></figure>
-<figure><img decoding="async" loading="lazy"  alt="第 31 页原始图表或公式" src="assets/images/5b8248f34ba664f944794c89979ca862097e2b92bcec6eea0b5795c6782cfa42.png" class="image-width-935"></figure>
+<figure><img height="217" width="1230" decoding="async" loading="lazy"  alt="第 31 页原始图表或公式" src="assets/images/bcf62df5b9465673fc28cfbbca8cdadb2bc039045c9804bf0ae7228a64007b07.png" class="image-width-935"></figure>
+<figure><img height="485" width="1230" decoding="async" loading="lazy"  alt="第 31 页原始图表或公式" src="assets/images/33277d0ccb4908e7d77ff8dcba9ba4eeec90412fe77c0136bd1315a0f4d398af.png" class="image-width-935"></figure>
+<figure><img height="492" width="1230" decoding="async" loading="lazy"  alt="第 31 页原始图表或公式" src="assets/images/5b8248f34ba664f944794c89979ca862097e2b92bcec6eea0b5795c6782cfa42.png" class="image-width-935"></figure>
 <p>首先，我们检查 FineWeb 和 FineWeb-Edu 子集中性别（图 19）、年龄（图 20）和宗教（图 21）子群体词语的分布。这些子集从整个数据集随机采样，大小约为 100 亿 GPT-2 token，分别称为 FineWeb 10BT 和 FineWeb-Edu 10BT。所用词语见表 4，在本分析中均规范化为小写。</p>
 <p>我们发现，‘man’ 的出现频率远高于 ‘woman’ 和 ‘non-binary’，而 ‘christian’ 的出现频率远高于其他所有受测宗教词语。</p>
-<footer>原文第 31 页</footer></section><section class="page" id="page-32"><figure><img decoding="async" loading="lazy"  alt="第 32 页原始图表或公式" src="assets/images/d74bd87e79128401d173d5724cdb0566ca91c8073d222505ea70b70a439ea869.png" class="image-width-935"></figure>
+<footer>原文第 31 页</footer></section><section class="page" id="page-32"><figure><img height="552" width="1230" decoding="async" loading="lazy"  alt="第 32 页原始图表或公式" src="assets/images/d74bd87e79128401d173d5724cdb0566ca91c8073d222505ea70b70a439ea869.png" class="image-width-935"></figure>
 <h3>G.2 关联分析</h3>
 <p>接下来，我们使用 TF-IDF [78] 衡量不同子群体词语的偏斜。这一方法被描述为能够捕捉数据集中词语的特异性，此处将其应用于词语相对于不同子群体词语的特异性。这提供了一种方法，用于量化各子群体词语相对于与其共现词语的“偏差”程度。具体而言，给定数据集和所关注子群体的词语，我们：</p>
 <ol><li>构建包含数据集中所有至少出现两次的词语的词汇表。</li><li>提取出现该子群体词语的所有数据实例。</li><li>对词汇表中与给定子群体词语出现在同一文档的所有词语，计算 TF-IDF。</li><li>计算给定子群体词语的 TF-IDF 与其共现的所有其他词语平均 TF-IDF 之间的差异。</li><li>提取与给定子群体词语共现且 TF-IDF 大于 0 的词语。</li></ol>
@@ -193,12 +193,12 @@
 <p>在整个分析中，我们看到词语偏向与网络亲密关系相关的词汇：‘online’、‘singles’、‘sex’、‘mature’、‘girls’。如图 27 所示，‘jewish’ 尤其与 ‘dating’ 和 ‘singles’ 相关。‘muslim’、‘jewish’、‘hindu’ 和 ‘buddhist’ 略微偏向与 ‘women’ 共现；‘sex’ 则偏向与 ‘muslim’、‘christian’、‘jewish’ 共现；‘girl’ 偏向与 ‘muslim’、‘jewish’、‘hindu’ 共现。</p>
 <h3>G.2.3 年龄</h3>
 <p>‘young’ 一词偏向与 ‘women’ 共现，这与英语社会中将女性幼儿化、过度强调女性年轻程度的问题倾向一致 [79, 80]。我们也看到预期中的偏斜，例如 ‘young’ 与 ‘children’ 和 ‘school’ 等词语共现。</p>
-<footer>原文第 32 页</footer></section><section class="page" id="page-33"><figure><img decoding="async" loading="lazy"  alt="第 33 页原始图表或公式" src="assets/images/1b8f893e09021fb5ea0c70768e7a6eaa22d2155b47f21221ac26aac4b394ff93.png" class="image-width-935"></figure>
-<footer>原文第 33 页</footer></section><section class="page" id="page-34"><figure><img decoding="async" loading="lazy"  alt="第 34 页原始图表或公式" src="assets/images/cc550ca773b740ac2308a3b1a49e974cb08c3745623ebecf1b184f0468e4c3b2.png" class="image-width-935"></figure>
-<figure><img decoding="async" loading="lazy"  alt="第 34 页原始图表或公式" src="assets/images/d7e13363dcc3387f92af9e0a07bf1612debc6ea96c71719805bd72170c0ba21f.png" class="image-width-935"></figure>
-<footer>原文第 34 页</footer></section><section class="page" id="page-35"><figure><img decoding="async" loading="lazy"  alt="第 35 页原始图表或公式" src="assets/images/fc61801571c5730b5307b2b3f6473cea084670bb2a085b77ea54347cbf7b266c.png" class="image-width-935"></figure>
-<figure><img decoding="async" loading="lazy"  alt="第 35 页原始图表或公式" src="assets/images/c502f7205fad1c2854a8ca23241b8a9ad724217cabb204286a086b659c6fa864.png" class="image-width-935"></figure>
-<footer>原文第 35 页</footer></section><section class="page" id="page-36"><figure><img decoding="async" loading="lazy"  alt="第 36 页原始图表或公式" src="assets/images/4bf6180ec9b638a5130cb8e57a198a0cf18f64a63584f53cf8629dd07d06cccd.png" class="image-width-935"></figure>
-<footer>原文第 36 页</footer></section><section class="page" id="page-37"><figure><img decoding="async" loading="lazy"  alt="第 37 页原始图表或公式" src="assets/images/571115eb64799b5662e8d1b893cddb2e6813ccf5415b4c322d55aaa3bd343989.png" class="image-width-935"></figure>
-<footer>原文第 37 页</footer></section><section class="page" id="page-38"><figure><img decoding="async" loading="lazy"  alt="第 38 页原始图表或公式" src="assets/images/1ea73140e67380503a2bdf56af1c058cd7329b7a846360ed63c4d64bf72cde4e.png" class="image-width-935"></figure>
+<footer>原文第 32 页</footer></section><section class="page" id="page-33"><figure><img height="1560" width="1230" decoding="async" loading="lazy"  alt="第 33 页原始图表或公式" src="assets/images/1b8f893e09021fb5ea0c70768e7a6eaa22d2155b47f21221ac26aac4b394ff93.png" class="image-width-935"></figure>
+<footer>原文第 33 页</footer></section><section class="page" id="page-34"><figure><img height="787" width="1230" decoding="async" loading="lazy"  alt="第 34 页原始图表或公式" src="assets/images/cc550ca773b740ac2308a3b1a49e974cb08c3745623ebecf1b184f0468e4c3b2.png" class="image-width-935"></figure>
+<figure><img height="720" width="1230" decoding="async" loading="lazy"  alt="第 34 页原始图表或公式" src="assets/images/d7e13363dcc3387f92af9e0a07bf1612debc6ea96c71719805bd72170c0ba21f.png" class="image-width-935"></figure>
+<footer>原文第 34 页</footer></section><section class="page" id="page-35"><figure><img height="842" width="1230" decoding="async" loading="lazy"  alt="第 35 页原始图表或公式" src="assets/images/fc61801571c5730b5307b2b3f6473cea084670bb2a085b77ea54347cbf7b266c.png" class="image-width-935"></figure>
+<figure><img height="755" width="1230" decoding="async" loading="lazy"  alt="第 35 页原始图表或公式" src="assets/images/c502f7205fad1c2854a8ca23241b8a9ad724217cabb204286a086b659c6fa864.png" class="image-width-935"></figure>
+<footer>原文第 35 页</footer></section><section class="page" id="page-36"><figure><img height="1037" width="1230" decoding="async" loading="lazy"  alt="第 36 页原始图表或公式" src="assets/images/4bf6180ec9b638a5130cb8e57a198a0cf18f64a63584f53cf8629dd07d06cccd.png" class="image-width-935"></figure>
+<footer>原文第 36 页</footer></section><section class="page" id="page-37"><figure><img height="945" width="1230" decoding="async" loading="lazy"  alt="第 37 页原始图表或公式" src="assets/images/571115eb64799b5662e8d1b893cddb2e6813ccf5415b4c322d55aaa3bd343989.png" class="image-width-935"></figure>
+<footer>原文第 37 页</footer></section><section class="page" id="page-38"><figure><img height="1137" width="1230" decoding="async" loading="lazy"  alt="第 38 页原始图表或公式" src="assets/images/1ea73140e67380503a2bdf56af1c058cd7329b7a846360ed63c4d64bf72cde4e.png" class="image-width-935"></figure>
 <footer>原文第 38 页</footer></section></body></html>

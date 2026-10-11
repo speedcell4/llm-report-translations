@@ -1,19 +1,19 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QwenLong-L1：通过强化学习迈向长上下文大推理模型 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script defer src="assets/katex/katex.min.js"></script><script defer src="assets/katex/auto-render.min.js"></script><script defer src="assets/inline-math.js"></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">QwenLong-L1：通过强化学习迈向长上下文大推理模型</div><div class="document-meta">QwenLong-L1: Towards Long-Context Large Reasoning Models with Reinforcement Learning<br>首次提交：2025-05-23 · 译文版本：arXiv:2505.17667v2（2025-05-27） · 页码覆盖 23/23 页<br><a href="https://arxiv.org/abs/2505.17667v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2505.17667v2">原文 PDF</a></div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a></div></nav><section class="page" id="page-1"><h1>QwenLong-L1：通过强化学习迈向长上下文大推理模型</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QwenLong-L1：通过强化学习迈向长上下文大推理模型 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script defer src="assets/katex/katex.min.js"></script><script defer src="assets/katex/auto-render.min.js"></script><script defer src="assets/inline-math.js"></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">QwenLong-L1：通过强化学习迈向长上下文大推理模型</div><div class="document-meta">QwenLong-L1: Towards Long-Context Large Reasoning Models with Reinforcement Learning<br>首次提交：2025-05-23 · 译文版本：arXiv:2505.17667v2（2025-05-27） · 页码覆盖 23/23 页<br><a href="https://arxiv.org/abs/2505.17667v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2505.17667v2">原文 PDF</a></div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a></div></nav><section class="page" id="page-1"><h1>QwenLong-L1：通过强化学习迈向长上下文大推理模型</h1>
 <p class="authors cover-info">Fanqi Wan, Weizhou Shen, Shengyi Liao, Yingcheng Shi, Chenliang Li,<br>Ziyi Yang, Ji Zhang, Fei Huang, Jingren Zhou, Ming Yan*</p>
 <p class="affiliations cover-info">Alibaba Group，通义实验室</p>
 <p class="meta cover-info"><a href="https://github.com/Tongyi-Zhiwen/QwenLong-L1">https://github.com/Tongyi-Zhiwen/QwenLong-L1</a><br><a href="https://huggingface.co/Tongyi-Zhiwen/QwenLong-L1-32B">https://huggingface.co/Tongyi-Zhiwen/QwenLong-L1-32B</a><br><a href="https://modelscope.cn/models/iic/QwenLong-L1-32B">https://modelscope.cn/models/iic/QwenLong-L1-32B</a></p>
 <h2>摘要</h2>
 <p>近期的大推理模型（LRM）通过强化学习（RL）展现出了强大的推理能力。这些提升主要出现在短上下文推理任务中。相比之下，通过 RL 扩展 LRM，使其有效处理长上下文输入并基于这些输入进行推理，仍是一个尚未解决的关键挑战。为了弥合这一差距，我们首先形式化长上下文推理 RL 范式，并识别出训练效率欠佳和优化过程不稳定这两项关键挑战。为解决这些问题，我们提出 QwenLong-L1，这是一个通过渐进式上下文扩展，将短上下文 LRM 适配到长上下文场景的框架。具体而言，我们利用 warmup 监督微调（SFT）阶段建立稳健的初始策略，随后采用课程引导的分阶段 RL 技术稳定策略演化，并通过难度感知的回顾采样策略进一步激励策略探索。在七个长上下文文档问答基准上的实验表明，QwenLong-L1-32B 超过了 OpenAI-o3-mini 和 Qwen3-235B-A22B 等旗舰 LRM，达到了与 Claude-3.7-Sonnet-Thinking 相当的性能，在最先进的 LRM 中表现领先。这项工作推进了实用长上下文 LRM 的发展，使其能够在信息密集环境中进行稳健推理。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 1 页图表或公式" src="assets/images/59ccf55faaafb608299669cdde1311caa832bf91e703bfd053e260dc7d6de0e1.png"></figure>
+<figure><img height="546" width="1203" decoding="async" loading="lazy" alt="原文第 1 页图表或公式" src="assets/images/59ccf55faaafb608299669cdde1311caa832bf91e703bfd053e260dc7d6de0e1.png"></figure>
 <p class="footnote">* 通讯作者。</p>
 <p class="footnote">预印本。工作进行中。</p>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/3f35b72c47a8ab5247a15d39468950898c37614f8730c68846b2081822728d0a.png"></figure>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img height="483" width="1203" decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/3f35b72c47a8ab5247a15d39468950898c37614f8730c68846b2081822728d0a.png"></figure>
 <h2>1 引言</h2>
 <p>近期大推理模型（LRM）的突破展示出推理能力的显著提升，在复杂问题求解场景中实现了与人类专家相当的性能 [49]。以 OpenAI-o1 [26, 15]、DeepSeek-R1 [6, 11] 和 Qwen-QwQ [41, 43] 为代表的这些进展，激发了大量研究，通过强化学习（RL）探索并增强广泛的推理任务，从基础逻辑推理 [29, 47] 到编程 [8, 7] 和数学 [24, 39] 中的高阶挑战，RL 算法的创新不断推动推理质量的提升 [3, 55, 23, 54]。</p>
 <p>经过 RL 微调后，LRM 会出现一种类似人类“慢思考”的现象 [4]，其特征是在扩展的思维链（CoT）推理输出中涌现分治与回溯机制等复杂问题求解策略 [46]。虽然这一过程提升了短上下文任务（例如 4K token）的推理表现 [45, 22]，但它能否扩展到需要稳健上下文依据与多步推理的长上下文场景（例如 120K token），仍未得到探索。这一局限对需要与外部知识交互的实际应用构成重大障碍，例如深度研究 [38, 27, 40]，其中 LRM 必须从知识密集环境中收集和处理信息。</p>
 <p>为阐明这一问题，我们首先引入长上下文推理 RL 的概念。短上下文推理 RL 主要依赖存储在模型参数中的内部知识，与之不同，长上下文推理 RL 要求 LRM 从长上下文输入中检索并定位相关信息，再基于所整合的信息生成推理链 [12, 30, 52]。为说明短上下文与长上下文推理 RL 的差异，我们进行了初步实验，对比图 2 中的训练动态。结果显示，相比短上下文推理 RL，长上下文推理 RL 的训练效率欠佳，表现为（a）奖励收敛延迟。这种差异源于（b）处理长上下文输入时输出熵明显降低，限制了策略优化过程中的探索行为。此外，我们发现优化过程不稳定，表现为（c）KL 散度间歇性地出现尖峰。这种不稳定性来自于（d）异质输入长度分布下更长的输出长度所带来的固有方差放大，导致策略更新期间的变动更大。</p>
 <p>为应对这些挑战，我们提出 QwenLong-L1，这是一个旨在促进 LRM 从擅长短上下文转向稳健长上下文泛化的新型 RL 框架，如图 3 所示。受近期预训练阶段上下文扩展研究 [9, 48, 10] 的启发，我们的框架在 RL 训练期间通过渐进式上下文扩展增强短上下文 LRM。该框架包括三个核心组件：初始化稳健策略的 warmup SFT 阶段、促进从短上下文向长上下文稳定适配的课程引导 RL 阶段，以及通过调整各阶段训练复杂度来激励策略探索的难度感知回顾采样机制。利用 GRPO [34] 和 DAPO [54] 等近期 RL 算法，我们的框架整合了将基于规则和基于模型的二元结果奖励结合起来的混合奖励函数，以平衡精确率与召回率。通过策略优化期间有策略地利用组相对优势，它引导 LRM——</p>
-<footer>原文第 2 页</footer></section><section class="page" id="page-3"><figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/4bfdbcabeb775e768c8565763cc964800de7e1bf68b58e7b118088bbe8af806b.png"></figure>
+<footer>原文第 2 页</footer></section><section class="page" id="page-3"><figure><img height="411" width="1203" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/4bfdbcabeb775e768c8565763cc964800de7e1bf68b58e7b118088bbe8af806b.png"></figure>
 <p class="continuation">（接第 2 页）学习长上下文推理场景所必需的有效推理模式，从而实现稳健的长上下文信息定位与出色的推理能力。</p>
 <p>在实验中，我们将文档问答（DocQA）[51, 17, 13] 作为具有代表性的现实长上下文推理任务。具体而言，我们引入 DOCQA-RL-1.6K，这是一个专门的 RL 训练数据集，包含 1.6K 个涵盖数学、逻辑和多跳推理领域的 DocQA 问题。在七个长上下文 DocQA 基准上的实验结果证明，QwenLong-L1 优于多种专有和开源 LRM。值得关注的是，QwenLong-L1-14B 超过 Gemini-2.0-Flash-Thinking 和 Qwen3-32B，而 QwenLong-L1-32B 超过 OpenAI-o3-mini、Qwen3-235B-A22B，甚至与 Claude-3.7-Sonnet-Thinking 相当。我们的分析进一步发现长上下文推理 RL 优化中的几个关键认识：（1）渐进式上下文扩展促进更高的熵并稳定 KL 散度，从而提升训练效率；（2）SFT 是提升性能的经济方式，而 RL 释放实现最优性能的潜力；（3）RL 自然促进专门的长上下文推理行为，从而提升最终性能，但在 SFT 中模仿这些行为并不会带来收益。我们的主要贡献总结如下：</p>
 <ul><li>我们提出长上下文推理 RL 范式的概念，并识别其独有挑战，进一步推进实用长上下文 LRM 的发展，使其能够在复杂的现实推理场景中定位并整合信息。</li><li>我们提出 QwenLong-L1，这是首个为长上下文 LRM 设计的 RL 框架。通过渐进式上下文扩展，QwenLong-L1 利用组相对 RL 优化和混合奖励机制，实现从短上下文到长上下文的稳定适配。</li><li>我们通过在七个长上下文文档问答基准上的全面实验，展示 QwenLong-L1 的有效性。结果显示，相比最前沿的 LRM，QwenLong-L1 实现了显著的性能提升，为长上下文推理优化提供了基础配方与实践。</li></ul>
@@ -21,58 +21,58 @@
 <p>虽然现有工作已经探索利用强化学习（RL）增强短上下文推理任务 [14, 56, 16]，但将其扩展到长上下文推理 RL 仍是一个未解决的挑战。为此，我们引入 QwenLong-L1，这是首个专门针对长上下文推理设计的 RL 框架。本节先介绍基础知识，再详述实现，包括用于长上下文推理的 RL 算法、用于稳定优化的渐进式上下文扩展策略，以及平衡评估精确率与召回率的混合奖励机制。</p>
 <h3>2.1 基础知识</h3>
 <p>语言模型的标准 RL 目标优化经过 KL 正则化的期望奖励 [32]：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/876df445e31ab0470a737210e01fa476a3235ad9c35dc822e3f7b0ba105fbf49.png"></figure>
+<figure><img height="78" width="1146" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/876df445e31ab0470a737210e01fa476a3235ad9c35dc822e3f7b0ba105fbf49.png"></figure>
 <p>其中，\(r_{\phi }(x, y)\) 表示策略模型 \(\pi _{\theta }\) 对输入 \(x\) 生成输出 \(y\) 时得到的奖励，\(\pi _{\mathrm{ref}}\) 表示用于 \(D_{\mathrm{KL}}\) 正则化的参考模型。</p>
 <footer>原文第 3 页</footer></section><section class="page" id="page-4"><p>与先前工作不同，先前输入 \(x\) 通常是一个短问题，要求策略模型 \(\pi _{\theta }\) 根据参数化知识生成输出 \(y\)，而我们将这一形式扩展为包含额外的长上下文 \(c\)。因此，策略模型 \(\pi _{\theta }\) 需要先从 \(c\) 中定位相关信息，再提供推理链来解决问题 \(x\)：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/4246bce7365262b39f56ce3c12448e0ef4ab491ae5d08a3dbcc1cfc642d93bb1.png"></figure>
+<figure><img height="57" width="1071" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/4246bce7365262b39f56ce3c12448e0ef4ab491ae5d08a3dbcc1cfc642d93bb1.png"></figure>
 <p>上下文 \(c\) 和问题 \(x\) 通过以下 prompt 模板拼接：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/5414b62eb55420f525d752d3d4ee615f66d3cdc5aad3e6ef9ccf4af354d13b4b.png"></figure>
+<figure><img height="168" width="1203" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/5414b62eb55420f525d752d3d4ee615f66d3cdc5aad3e6ef9ccf4af354d13b4b.png"></figure>
 <h3>2.2 RL 算法</h3>
 <p><strong>代理策略优化（Proxy Policy Optimization，PPO）。</strong>为利用上述目标优化策略模型 \(\pi _{\theta }\)，PPO [33] 算法提出最大化经过 clipping 的代理目标：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/7d18a8330b63a1bb4c7ba632712a278df08445d097274e3f2c5cd9e40557d9df.png"></figure>
+<figure><img height="156" width="1203" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/7d18a8330b63a1bb4c7ba632712a278df08445d097274e3f2c5cd9e40557d9df.png"></figure>
 <p>其中，\(\pi _{\theta }\) 为当前策略模型，\(\pi _{\theta_{\mathrm{old}}}\) 为更新前的旧策略模型，\(\varepsilon\) 为 clipping 超参数，\(A_{t}\) 为第 \(t\) 个 token 的优势估计值。对于给定的输入上下文 \(c\) 和问题 \(x\)，\(\pi _{\theta_{\mathrm{old}}}\) 首先生成序列输出 \(y\)，然后利用学习得到的价值函数 \(V_{\phi }\)，通过广义优势估计（GAE）[31] 计算 \(A_{t}\)，用于更新 \(\pi _{\theta }\)。</p>
 <p>对于长上下文输入，attention 机制的二次复杂度使价值网络训练在计算上难以承受。因此，我们选择包括 GRPO [34] 和 DAPO [54] 在内的组相对 RL 算法，通过组内归一化的奖励来估计优势，而不使用额外的价值网络。</p>
 <p><strong>组相对策略优化（GRPO）。</strong>在 GRPO 中，给定上下文 \(c\) 和问题 \(x\)，旧策略模型 \(\pi _{\theta_{\mathrm{old}}}\) 生成一组 \(G\) 个输出 \(\{y_{i}\}_{i=1}^{G}\)，由奖励函数计算对应奖励 \(\{r_{i}\}_{i=1}^{G}\)。策略模型 \(\pi _{\theta }\) 的优化目标变为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/954e133fd7cb1c76938e95d337c923b834cbcb8744f918977f6ad9216e1cfcfe.png"></figure>
+<figure><img height="195" width="1203" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/954e133fd7cb1c76938e95d337c923b834cbcb8744f918977f6ad9216e1cfcfe.png"></figure>
 <p>其中，token \(y_{i,t}\) 的优势通过对组级奖励进行归一化来估计：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/03f9de0055a4e68ca2686a345d5b38db7f73cf1627b40a4e8585bf1922f9d4f3.png"></figure>
+<figure><img height="87" width="786" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/03f9de0055a4e68ca2686a345d5b38db7f73cf1627b40a4e8585bf1922f9d4f3.png"></figure>
 <p>在我们的实现中，遵循近期工作中的常见建议 [14, 23, 54]，我们去掉 GRPO 目标中的 KL 项，以鼓励策略模型的探索能力。</p>
 <p><strong>解耦 clipping 与动态采样策略优化（DAPO）。</strong>DAPO 整合数种技术以确保 RL 过程更加稳定高效：（1）使用更高的 clipping 阈值避免熵崩塌，（2）利用动态采样策略移除奖励方差为零的样本，（3）采用 token 级损失减轻长度偏差，以及（4）通过超长奖励塑形避免过长输出。策略模型 \(\pi _{\theta }\) 的优化目标为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/03aa0ab98b60891855bb09414745e65c29fe7c9876af26b9adcf1094806c87b7.png"></figure>
+<figure><img height="201" width="1203" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/03aa0ab98b60891855bb09414745e65c29fe7c9876af26b9adcf1094806c87b7.png"></figure>
 <footer>原文第 4 页</footer></section><section class="page" id="page-5"><p>其中，\(\varepsilon _{\mathrm{low}}\) 和 \(\varepsilon _{\mathrm{high}}\) 分别为下限和上限 clipping 阈值。动态采样策略确保样本具有非零奖励方差，token 级损失则在损失计算时为输出中的每个 token 赋予相同权重。超长奖励塑形设置如下软长度奖励惩罚：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/5b14775604391a2205d82eecd45ef5155aa37ab973c6a1f93088192306b7b7eb.png"></figure>
+<figure><img height="162" width="1071" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/5b14775604391a2205d82eecd45ef5155aa37ab973c6a1f93088192306b7b7eb.png"></figure>
 <p>其中，\(L_{\mathrm{max}}\) 为最大序列长度，\(L_{\mathrm{cache}}\) 为逐步施加长度惩罚的缓冲区。与 GRPO 不同，DAPO 中 \(y_{i,t}\) 的最终优势变为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/53d3517f930ad71bf2a01607ceec92a29733b59dc970cc70e642ab4452f22a24.png"></figure>
+<figure><img height="96" width="825" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/53d3517f930ad71bf2a01607ceec92a29733b59dc970cc70e642ab4452f22a24.png"></figure>
 <h3>2.3 渐进式上下文扩展</h3>
 <p>针对长上下文推理训练 LRM 会出现不稳定的优化动态。为解决这些问题，我们提出渐进式上下文扩展框架，包括用于稳定从短到长上下文优化的课程引导 RL 策略、优先探索复杂样本的难度感知回顾采样机制，以及在 RL 训练之前提供稳健初始化的 warmup SFT 阶段。</p>
 <p><strong>课程引导的分阶段强化学习。</strong>RL 过程被划分为 \(K\) 个离散阶段，各阶段的目标上下文长度为 \(L_{k}\)。从初始输入长度 \(L_{1}\) 开始，每个后续阶段都会增加输入长度，直到达到最大目标长度 \(L_{K}\)。在阶段 \(k\) 中，策略模型 \(\pi _{\theta }\) 仅在满足以下条件的样本上训练：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/0397500c3458d3b8cb8dae0a75f7cd6b6a2e2c5aaeece8e50eae73854dbb2294.png"></figure>
+<figure><img height="72" width="840" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/0397500c3458d3b8cb8dae0a75f7cd6b6a2e2c5aaeece8e50eae73854dbb2294.png"></figure>
 <p>其中，\(|x|\) 和 \(|c|\) 分别表示问题长度和支持上下文长度。</p>
 <p><strong>难度感知的回顾采样。</strong>基于先前数据选择研究中样本难度的关键作用 [59, 19]，我们采用难度感知的回顾采样方法，有策略地纳入先前阶段的样本。具体而言，我们使用按难度分数加权的重要性采样来筛选回顾样本：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/80263349f4fb1e9d0cf4235e741a5166edf2483e1a4cf5d14d95c500deec2c37.png"></figure>
+<figure><img height="93" width="786" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/80263349f4fb1e9d0cf4235e741a5166edf2483e1a4cf5d14d95c500deec2c37.png"></figure>
 <p>其中，\(\operatorname{diff}(\cdot)\) 表示难度函数，其值由基础模型生成的一组输出所获得的奖励 \(\{r_{i}\}_{i=1}^{G}\) 的均值倒数来量化。较低的平均奖励对应较高的难度分数，使回顾采样优先选取有挑战性的样本。</p>
 <p><strong>Warmup 监督微调。</strong>在开始 RL 训练之前，我们采用 warmup SFT 阶段，建立一个能够从长上下文输入中定位信息的稳健初始策略模型。这一关键准备阶段确保策略模型在接触不稳定的 RL 优化之前，具备上下文理解、推理链生成与答案提取的基本能力。</p>
 <p>SFT 过程使用从教师 LRM 蒸馏得到的高质量示范 \(D_{\mathrm{SFT}}\)，每个样本包含问题 \(x\)、支持上下文 \(c\) 和经验证正确的标准推理路径 \(y^{*}\)。为与渐进式扩展课程一致，我们在课程引导 RL 的初始输入长度 \(L_{1}\) 范围内构建 \(D_{\mathrm{SFT}}\)。模型通过最小化标准负对数似然目标进行训练：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/6b95e07556d0edc1de619fd816acc745bd8f808554ef7d3efa6f7532dc2dea15.png"></figure>
+<figure><img height="135" width="990" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/6b95e07556d0edc1de619fd816acc745bd8f808554ef7d3efa6f7532dc2dea15.png"></figure>
 <p>所得 SFT 模型作为 RL 训练的初始策略 \(\pi _{\theta }\)，提供稳定的起始参数。在第 4.2 节中，我们展示了所提出的三种策略在推理 RL 中稳定地将上下文从短扩展到长的有效性。</p>
 <footer>原文第 5 页</footer></section><section class="page" id="page-6"><h3>2.4 混合奖励机制</h3>
 <p>以往数学、编程和逻辑推理中的短上下文推理任务 [24, 7, 47] 通常使用基于规则的奖励函数，通过严格答案匹配和格式验证优先保证精确率，以缓解 reward hacking 风险 [35]。然而，开放域问答等长上下文推理任务由于答案本身具有多样性，存在独特挑战。在这种情况下，过度严格的基于规则的奖励可能限制有效答案的变体，从而损害整体表现。为解决这些局限，我们提出一种混合奖励机制，将基于规则的验证 [11] 与 LLM-as-a-Judge [58] 结合，通过互补评估平衡精确率与召回率。</p>
 <p><strong>基于规则的验证。</strong>基于规则的组件 \(r_{\mathrm{rule}}\) 通过验证是否严格遵守特定任务的正确性标准来保证精确率。对于问答任务，我们首先利用与表 1 结构化 prompt 模板一致的正则表达式，从模型生成的 \(y\) 中提取最终答案 \(y_{\mathrm{ans}}\)，然后与标准答案 \(y_{\mathrm{gold}}\) 进行精确字符串匹配：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/c92d280a882401c92a819e92f13c9c5ea954f76a602e05cd742503f985293cca.png"></figure>
+<figure><img height="69" width="756" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/c92d280a882401c92a819e92f13c9c5ea954f76a602e05cd742503f985293cca.png"></figure>
 <p>其中，\(I\) 表示指示函数。特别是，我们有意省略用于答案提取的格式奖励，因为基础模型已经表现出充分的内在格式遵循能力；过多的格式奖励可能使学习目标过于简单，进而阻碍模型探索推理链的能力 [56, 16]。</p>
 <p><strong>LLM-as-a-Judge。</strong>为补充以精确率为导向的规则组件，并处理字符串匹配中可能出现的假阴性，我们引入基于 LLM 的评估器 \(r_{\mathrm{LLM}}\)，评估生成答案与标准答案之间的语义等价性：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/3918b4da2e4ba4bec14eb635546daf08950eeae67c06ed843099fd3c314bec05.png"></figure>
+<figure><img height="69" width="810" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/3918b4da2e4ba4bec14eb635546daf08950eeae67c06ed843099fd3c314bec05.png"></figure>
 <p>其中，LLM 裁判依据以下评估模板给出二元正确性分数：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/e492db2219cf607ad18af87ccbb87896f42ca186e464a16ad6dcbc1eba61c10d.png"></figure>
+<figure><img height="381" width="1203" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/e492db2219cf607ad18af87ccbb87896f42ca186e464a16ad6dcbc1eba61c10d.png"></figure>
 <p class="note">表 2 的 prompt 译文：你是验证两个答案是否相同的专家。你的输入是一个问题和两个答案，即答案 1 和答案 2。你需要检查它们是否等价。你的任务是确定两个答案是否等价，不要尝试解决原始问题。比较答案以验证它们是否表示相同的数值或含义，即使它们采用了不同的形式或记法。你的输出必须遵循以下格式：1）解释为什么这两个答案等价或不等价。2）然后以下列形式给出最终答案：[[YES]] 或 [[NO]]。问题：question；答案 1：predicted answer；答案 2：gold answer。</p>
 <p><strong>组合奖励形式。</strong>整合后的奖励函数通过取最大值，将基于规则的验证与 LLM-as-a-Judge 结合：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/485fca8e042e1acb1c20e75128a7c863f0ad0e1b180c8fb9864ad058b949ad26.png"></figure>
+<figure><img height="48" width="834" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/485fca8e042e1acb1c20e75128a7c863f0ad0e1b180c8fb9864ad058b949ad26.png"></figure>
 <p>鉴于答案比较任务相对简单，我们采用较小的模型，例如 Qwen2.5-1.5B-Instruct [50]，并将 temperature 设为零，以获得确定性评分。这种配置在保持评估可靠性的同时，能够在在线 RL 训练中高效计算奖励。</p>
 <h2>3 实验设置</h2>
 <p>在实验中，我们使用文档问答（DocQA）作为长上下文推理能力的主要评估任务，因为它天然需要上下文信息定位与多步推理。本节详细介绍训练和评估的实验设置。</p>
 <h3>3.1 训练数据集</h3>
 <p><strong>RL 数据集。</strong>为构建一个具有挑战性的、用于可验证长上下文推理的 RL 数据集，我们开发 DOCQA-RL-1.6K，包含三个推理领域的 1.6K 个 DocQA 问题：（1）——</p>
-<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/568df5a000208824d93bd6bdd63e28b72ee560c57772b647bf17e540b9b337ea.png"></figure>
+<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img height="234" width="1203" decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/568df5a000208824d93bd6bdd63e28b72ee560c57772b647bf17e540b9b337ea.png"></figure>
 <p class="continuation">（接第 6 页）（1）<strong>数学推理：</strong>我们使用 DocMath [57] 数据集中的 600 个问题，要求跨财务报告等长篇专业文档进行数值推理<sup>2</sup>；（2）<strong>逻辑推理：</strong>我们使用 DeepSeek-R1 [11]，基于我们整理的真实文档集合合成 600 个选择题，要求对法律、金融、保险和生产领域的文档进行逻辑分析；（3）<strong>多跳推理：</strong>我们从 MultiHopRAG [36] 中采样 200 个样本，并从 Musique [44] 中采样 200 个样本，重点考察跨文档推理。</p>
 <p><strong>SFT 数据集。</strong>为建立稳健的 RL 优化起点，我们通过 DeepSeek-R1 [11] 蒸馏 5.3K 个高质量的问题—文档—答案三元组。与近期针对 LRM 的数据整理方法 [25, 53] 一致，我们依据质量、复杂度和多样性对问题进行清洗与过滤。此外，我们控制文档质量和长度，确保上下文信息准确。表 3 给出 RL 与 SFT 数据集的统计信息。</p>
 <h3>3.2 训练细节</h3>
@@ -89,12 +89,12 @@
 <p class="footnote"><sup>2</sup> 对于 DocMath，我们从 valid split 的每个子集中采样 75% 的条目用于训练，25% 用于评估。</p>
 <p class="footnote"><sup>3</sup> 我们排除 7B/1.5B 变体，因为它们具有继承自 Qwen2.5-Math [50] 的数学推理特性。</p>
 <p class="footnote"><sup>4</sup> 对于 2WikiMultihopQA、HotpotQA、Musique、NarrativeQA 和 Qasper，我们使用 LongBench [2] 的数据。</p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/7cdd15b26337954eb61dab23bd3915bbd2bdd9de35d084f3beadf62fb480336f.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/7190132cac389f9542743b9729cbcfff68382256de39c617e1e70f5e265869fd.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img height="990" width="1203" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/7cdd15b26337954eb61dab23bd3915bbd2bdd9de35d084f3beadf62fb480336f.png"></figure>
+<figure><img height="639" width="1203" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/7190132cac389f9542743b9729cbcfff68382256de39c617e1e70f5e265869fd.png"></figure>
 <h2>4 实验结果与分析</h2>
 <h3>4.1 主要结果</h3>
 <p>表 4 展示 QwenLong-L1 在七个长上下文文档问答（DocQA）基准上的整体表现。关键发现如下：</p>
-<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/e307ab685d181c6574673ae2a353fb27f9d285779914b81c4803f43b28d972e2.png"></figure>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img height="639" width="1203" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/e307ab685d181c6574673ae2a353fb27f9d285779914b81c4803f43b28d972e2.png"></figure>
 <p><strong>SFT 对长上下文推理的效果有限。</strong>由于基础模型 R1-Distill-Qwen 主要针对数学、编程和科学领域的短上下文推理任务进行优化，我们按照第 2.3 节的说明，在 RL 训练前进行 SFT，使其适配长上下文推理。尽管采取这一干预，SFT 模型在 14B 上的平均增益仅为 0.8 分，在 32B 上仅为 3.2 分。此外，不同基准上的提升差异显著，表明 SFT 方法在长上下文推理场景中的泛化能力有限。</p>
 <p><strong>整合 RL 带来显著提升。</strong>通过整合 RL，QwenLong-L1 的长上下文推理表现取得了显著进展。具体而言，QwenLong-L1-14B 使用 DAPO 和 GRPO 时，相比基础模型分别平均提升 4.1 和 4.0 分，大幅超过 SFT 基线的 0.4 分提升。此外，扩展到 32B 基础模型时，QwenLong-L1-32B 使用 DAPO 和 GRPO 时，性能甚至分别提升 5.1 和 4.7 分。这些结果凸显 RL 方法通过组相对优势估计与对 on-policy 采样输出的激励，调整输出分布以应对复杂、依赖上下文的推理问题的卓越能力。</p>
 <p><strong>在旗舰 LRM 中表现领先。</strong>我们的评估显示，QwenLong-L1 相比领先的专有和开源 LRM 具有更好的表现。具体而言，QwenLong-L1-14B 的平均得分为 68.3，超过 Gemini-2.0-Flash-Thinking、R1-Distill-Qwen-32B 和 Qwen3-32B，同时达到与 QwQ-32B 相当的表现。此外，QwenLong-L1-32B 的平均得分为 70.7，超过 QwQ-Plus、Qwen3-Plus、Qwen3-235B-A22B 和 OpenAI-o3-mini，甚至与 Claude-3.7-Sonnet-Thinking 相当，在最先进的旗舰 LRM 中表现领先。</p>
@@ -107,10 +107,10 @@
 <p><strong>难度感知的回顾采样。</strong>为维持对困难样本的广泛探索，我们引入难度感知回顾采样策略，将先前训练阶段的一部分困难样本整合到当前训练数据中。如图 5（a）所示，这一策略在分阶段 RL 基础上带来进一步的性能增强。具体而言，图 5（d）显示，尽管这些保留的困难样本已经经历阶段 I 的 RL 训练，它们仍带来显著更低的奖励和更高的策略熵，从而激励策略模型加强探索过程。</p>
 <h3>4.3 补充分析</h3>
 <p>本节考察长上下文 LRM 发展相关的问题，重点关注优化长上下文推理能力时 SFT 与 RL 之间的权衡，以及训练期间长上下文推理行为的涌现和动态。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/f4ec4e62703fc844628a4c3aa280acc97567d2bee10ac85e2ac9ac2ca4ae05c8.png"></figure>
+<figure><img height="546" width="495" decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/f4ec4e62703fc844628a4c3aa280acc97567d2bee10ac85e2ac9ac2ca4ae05c8.png"></figure>
 <p><strong>优化中 SFT 与 RL 的权衡。</strong>如第 4.2 节所述，SFT 为 RL 训练提供稳健初始化。然而，由于实验中的初始 SFT 阶段依赖短上下文训练数据，一个关键问题随之出现：长上下文 SFT 的作用是什么，它会如何影响 RL？为此，我们使用从 DeepSeek-R1 蒸馏出的 10K 个上下文—问题—答案三元组训练长上下文 SFT 模型，保持与短上下文 SFT 阶段相同的数据分布。该长上下文 SFT 模型作为单阶段 RL 训练的起点；由于它本身已具备长上下文能力，训练不采用渐进式上下文扩展。</p>
 <p>如图 6 所示，长上下文 SFT 模型超过基础模型 2.6 分，超过短上下文 SFT 模型 2.1 分。尽管需要更多训练数据，SFT 在实践中仍有明显优势，包括更低的计算复杂度、更少的基础设施需求，以及更低的专业技术依赖，因此是一种经济的性能提升策略 [11]。然而，在长上下文 SFT 模型上进一步施加 RL，只带来有限提升，增益仅 0.3 分，最终得分为 67.4，明显低于在短上下文 SFT 模型上进行 RL 时的 3.2 分提升与 68.2 最终得分。这些结果揭示了长上下文 LRM 发展的两点认识：（1）SFT 与 RL 有不同但互补的目的：SFT 用较少投入获得可接受的性能，而 RL 对于取得最优结果不可或缺；</p>
-<footer>原文第 10 页</footer></section><section class="page" id="page-11"><figure><img decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/f4093443343a87e7185cacc531b3e06498d6cfa8d435cf9f192d9f7b592ed778.png"></figure>
+<footer>原文第 10 页</footer></section><section class="page" id="page-11"><figure><img height="468" width="1203" decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/f4093443343a87e7185cacc531b3e06498d6cfa8d435cf9f192d9f7b592ed778.png"></figure>
 <p class="continuation">（接第 10 页）（2）最大化性能需要优先考虑 RL 而非 SFT，因为过度关注 SFT 可能使模型陷入局部最优，从而限制 RL 提升的机会。</p>
 <p><strong>长上下文推理行为的涌现与动态。</strong>推理行为对 LRM 的推理轨迹和奖励具有关键影响 [11, 14]。为考察这些动态，我们遵循近期研究 [56, 23]，分析 SFT 与 RL 训练期间推理行为的演变。具体而言，我们使用 DeepSeek-V3 [21] 提取并跟踪四种核心推理行为的平均出现次数随训练步数的变化，包括长上下文特有的信息定位，以及三种通用推理行为：子目标设定、回溯和验证：</p>
 <ul><li><strong>信息定位：</strong>模型回忆长上下文中的相关信息，以支持后续推理，例如“让我查阅给定文本，寻找……”。</li><li><strong>子目标设定：</strong>模型将复杂问题拆分成多个可处理的子目标，逐步解决，例如“要解决这个问题，我们首先需要……”。</li><li><strong>回溯：</strong>模型识别生成内容中的错误，并返回迭代修正方法，例如“这个方法行不通，因为……”。</li><li><strong>验证：</strong>模型通过自我反思系统地验证预测答案，确保解答正确，例如“让我们通过……验证这个结果”。</li></ul>

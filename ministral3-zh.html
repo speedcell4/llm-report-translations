@@ -1,6 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ministral 3 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="原文页码导航">已翻译 14/14 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a><div class="nav-links"><a href="index.html">全部文档</a><a href="https://arxiv.org/abs/2601.08584v1">arXiv:2601.08584v1（2026-01-13）</a><a href="https://arxiv.org/pdf/2601.08584v1">原文 PDF</a></div><p class="document-meta">页码覆盖 14/14 页</p></nav><section class="page" id="page-1"><h1>Ministral 3</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ministral 3 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="原文页码导航">已翻译 14/14 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a><div class="nav-links"><a href="index.html">全部文档</a><a href="https://arxiv.org/abs/2601.08584v1">arXiv:2601.08584v1（2026-01-13）</a><a href="https://arxiv.org/pdf/2601.08584v1">原文 PDF</a></div><p class="document-meta">页码覆盖 14/14 页</p></nav><section class="page" id="page-1"><h1>Ministral 3</h1>
 <p class="note">原文版本：arXiv:2601.08584v1，2026 年 1 月 13 日。</p>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 1 页图表或代码" src="assets/images/dd4637ed002deda35f4695be646d9cc541475f62084caaf43d312264130034d0.png"></figure>
+<figure><img height="330" width="975" decoding="async" loading="lazy" alt="Ministral 3 原文第 1 页图表或代码" src="assets/images/dd4637ed002deda35f4695be646d9cc541475f62084caaf43d312264130034d0.png"></figure>
 <h2>摘要</h2>
 <p class="abstract">我们介绍 Ministral 3 系列，这是一个参数高效的稠密语言模型家族，面向计算和内存受限的应用，提供三种参数规模：3B、8B 和 14B。对于每种模型规模，我们发布三个变体：用于通用用途的预训练基础模型、经过指令微调的模型，以及用于复杂问题求解的推理模型。此外，我们介绍通过级联蒸馏得到 Ministral 3 模型的方法：这是一种迭代剪枝并通过蒸馏继续训练的技术。每个模型都具备图像理解能力，全部采用 Apache 2.0 许可证。</p>
 <p>网页：<a href="https://mistral.ai/news/mistral-3">https://mistral.ai/news/mistral-3</a><br>模型：<a href="https://huggingface.co/collections/mistralai/ministral-3">https://huggingface.co/collections/mistralai/ministral-3</a></p>
@@ -10,13 +10,13 @@
 <p>Ministral 3 的一个关键组成部分是我们的级联蒸馏训练策略，这是一种迭代剪枝与蒸馏方法，将大型父模型的预训练知识逐步迁移到一组紧凑子模型中。我们的方法使模型能够达到与训练预算大得多的模型相竞争的表现。例如，Ministral 3 14B Base 模型的表现接近 Mistral Small 3.1 Base，但规模小了超过 40%，训练历程也短得多。</p>
 <p>后训练后，我们取得了与相近规模的开放权重模型相竞争的结果，例如 Gemma 3 [Kamath et al., 2025]、Qwen 3 [Yang et al., 2025, Bai et al., 2025] 和 Mistral Small 3.2 2506。</p>
 <p class="footnote"><sup>1</sup> <a href="https://mistral.ai/news/mistral-small-3-1">https://mistral.ai/news/mistral-small-3-1</a></p>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/fdfc34fda4aff3b904062213a57dab18bc069d2f4c16f56d3f37ae39a04f2056.png"></figure>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img height="936" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/fdfc34fda4aff3b904062213a57dab18bc069d2f4c16f56d3f37ae39a04f2056.png"></figure>
 <p>主要贡献可以概括如下：</p>
 <ul><li>我们介绍 Ministral 3，一个由 9 个稠密语言模型组成的家族：在 14B、8B 和 3B 每种参数规模上各提供一个预训练模型、一个指令微调模型和一个推理模型。所有 Ministral 3 模型（3 种规模 \(\times  3\) 种变体）均在 Apache 2.0 许可证下开放权重。</li>
 <li>我们介绍一种计算高效的预训练方法——级联蒸馏，使这些模型的预训练成本仅为从头预训练所需成本的一小部分。</li>
 <li>我们独立验证了先前工作的发现：(a) 存在“容量差距”，在预训练中，更强的教师不会产生更强的学生模型，但后训练仍能受益于更强的教师；(b) 在对学生模型进行预训练时，从后训练教师蒸馏，相较于从预训练教师蒸馏，会得到更好的基准分数；(c) 从经过人类偏好优化的教师蒸馏，优于从仅经过 SFT 后训练的教师蒸馏。</li></ul>
 <h2>2　模型架构</h2>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/cd67f347a38e896e4d1b4a89732aa4aa3556cd2d6b2fccd10089beb2a2c2b947.png"></figure>
+<figure><img height="258" width="939" decoding="async" loading="lazy" alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/cd67f347a38e896e4d1b4a89732aa4aa3556cd2d6b2fccd10089beb2a2c2b947.png"></figure>
 <p>Ministral 3 家族基于仅解码器 transformer 架构 [Vaswani et al., 2017]。所有模型共享共同的架构基础，并按各自规模进行缩放。如表 1 所示，该家族包含 3B、8B 和 14B 三种参数规模，分别具有 26、34 和 40 层。（句子接下一页。）</p>
 <footer>原文第 2 页</footer></section><section class="page" id="page-3"><p class="continuation">（接上一页：各规模模型的层数已在上一页列出。）</p>
 <p>其他架构选择包括具有 32 个 query head 和 8 个 key-value head 的分组查询 attention（Grouped Query Attention）[Ainslie et al., 2023]、RoPE [Su et al., 2021] 位置 embeddings、SwiGLU 激活 [Shazeer, 2020] 和 RMSNorm [Zhang and Sennrich, 2019]。对于长上下文扩展，我们使用 YaRN [Peng et al., 2023]，以及 attention 层中基于位置的 softmax 温度缩放 [Nakanishi, 2025, MetaAI, 2025]。3B 模型共享输入与输出 embeddings，以避免 embedding 参数在总参数量中占据主导。所有模型均使用含 131K token 的词表，并支持最长 256K token 的上下文。</p>
@@ -25,7 +25,7 @@
 <p>图 1 展示了 Ministral 3 模型的训练流程，其中包含预训练，以及随后两个不同的后训练阶段，分别产生指令微调和推理变体。</p>
 <h3>3.1　预训练</h3>
 <p>算法 1：级联蒸馏。</p>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 3 页图表或代码" src="assets/images/ba3d8f5c78554e610960603ab6c364c80f6b6962a641f9172f56537aade695cc.png"></figure>
+<figure><img height="516" width="1236" decoding="async" loading="lazy" alt="Ministral 3 原文第 3 页图表或代码" src="assets/images/ba3d8f5c78554e610960603ab6c364c80f6b6962a641f9172f56537aade695cc.png"></figure>
 <p><strong>级联蒸馏。</strong>Ministral 3 模型的预训练从 Mistral Small 3.1 Base（MS3.1）模型开始。我们采用级联蒸馏，一种将 MS3.1 剪枝并蒸馏成更小后继模型的迭代方法。给定一个较大的预训练父模型，级联蒸馏是一种对目标规模逐步减小的子模型进行预训练的计算高效流程。如算法 1 所概括，它依赖于迭代的“剪枝—蒸馏—重复”方法：</p>
 <ol><li>剪枝：通过剪枝更大的预训练模型，初始化子模型的权重。</li><li>蒸馏：通过教师模型 logits 的蒸馏，对刚完成剪枝的模型继续训练。</li><li>重复：反复应用这一策略，将子模型缩小到更小的规模。</li></ol>
 <p>各阶段的模型剪枝采用与 Minitron 和 Wanda [Sun et al., 2023, Sreenivas et al., 2024, Muralidharan et al., 2024] 相似的方法，所有变体的蒸馏教师均为 Mistral Small 3.1。剪枝和蒸馏的细节见后续段落。</p>
@@ -36,7 +36,7 @@
 <li><strong>前馈维度剪枝：</strong>对于具有 SwiGLU [Shazeer, 2020] 等门控线性激活函数的 MLP，给定一个非常大的 batch \(x\)，其表达式为 \(W_{2}(SiLU(W_{1}x) \ast  W_{3}x)\)，我们剪枝矩阵 \(W_{1}\)、\(W_{2}\)、\(W_{3}\) 的维度。为确定保留 \(W_{1}\)、\(W_{3}\) 的哪些列，我们计算重要性分数，其定义为上述表达式每个维度绝对值的平均值。然后，我们仅保留 \(W_{2}\) 中与上述索引对应的行。</li></ul>
 <p>算法 2 提供了我们剪枝策略的更多细节：</p>
 <p><strong>算法 2：</strong>级联蒸馏的剪枝阶段。其输入为一个预训练模型，以及要剪枝到的目标规模配置。我们使用 <code>input_x</code> 和 <code>output_x</code> 表示大型校准 batch 的激活。</p>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 4 页图表或代码" src="assets/images/6a2fe4d23919c7eb15936331b53d79f212414752eae662d2bd6aa786c78c89d9.png"></figure>
+<figure><img height="834" width="1242" decoding="async" loading="lazy" alt="Ministral 3 原文第 4 页图表或代码" src="assets/images/6a2fe4d23919c7eb15936331b53d79f212414752eae662d2bd6aa786c78c89d9.png"></figure>
 <p><strong>蒸馏。</strong>权重初始化后，每个子模型在纯文本数据及文本与图像交错数据的混合上训练，并从教师模型进行 logit 蒸馏。我们发现，仅使用前向 KL 蒸馏目标进行训练，优于调节分别赋予蒸馏目标和下一个 token 预测目标不同权重的目标函数系数。对于所有阶段和模型规模，我们都使用父模型作为教师模型（更多细节见 §5.1）。</p>
 <p>预训练阶段由两个阶段组成：</p>
 <p>(1) <strong>短上下文阶段</strong>，上下文窗口长度为 16,384。该阶段的输出是下一个子模型剪枝阶段的输入。</p>
@@ -70,24 +70,24 @@
 <p>在表 2 中，我们将 Ministral 3 Base 模型与来自 Gemma 3 家族和 Qwen 3 家族、规模相近的其他开放权重模型进行比较。</p>
 <p>在 14B 规模，Ministral 3 展现出强大性能，在 TriviaQA 和 MATH 上超过 Qwen 3 14B，同时在其他基准上具有竞争力。我们的 14B 模型在所有基准上也明显优于 Gemma 12B。在 8B 规模，我们观察到类似趋势。还值得指出，Ministral 3 8B 在大多数评估中超过规模更大的 Gemma 12B（TrivaiQA 除外），凸显了 Ministral 3 模型很高的参数效率。</p>
 <p class="footnote"><sup>2</sup> <a href="https://huggingface.co/datasets/mistralai/MM-MT-Bench">https://huggingface.co/datasets/mistralai/MM-MT-Bench</a></p>
-<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/dc0915414b586fbac23df1ded1b51165be1f5793e1e7e4182a149e58d39a5ee5.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/89e7e34a984ae43fb59a9a313c735c0589709fb8ec3ac592b0fcb2e69b1199d9.png"></figure>
+<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img height="531" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/dc0915414b586fbac23df1ded1b51165be1f5793e1e7e4182a149e58d39a5ee5.png"></figure>
+<figure><img height="978" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/89e7e34a984ae43fb59a9a313c735c0589709fb8ec3ac592b0fcb2e69b1199d9.png"></figure>
 <p>在 3B 规模，整体趋势仍然相同，但模型间的性能差距更加明显。表 3 提供了 Ministral 3 Base 模型以及教师模型的更多预训练评估结果。</p>
 <h3>4.2　后训练结果</h3>
 <p>在表 4 中，我们将 Ministral 3 Instruct 模型与来自 Gemma 3 家族和 Qwen 3 家族的 Instruct 模型进行比较。对于 Qwen 3，我们报告最新支持视觉的 instruct 变体（Qwen3-VL）的结果。</p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/1c4433ff9d2fe9b4c2db2fb8a848842dc8f1ef9fc1e553c88b495dbcdafea66f.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/8d891346d202133e58f4c10d529430ac19b6e54897f99cbebb1aab7289ef6a8a.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img height="507" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/1c4433ff9d2fe9b4c2db2fb8a848842dc8f1ef9fc1e553c88b495dbcdafea66f.png"></figure>
+<figure><img height="384" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/8d891346d202133e58f4c10d529430ac19b6e54897f99cbebb1aab7289ef6a8a.png"></figure>
 <p>在表 5 中，我们将 Ministral 3 Reasoning 模型与 Qwen 3 家族的推理模型进行比较。为确保公平比较，所有模型都使用相同的评估流程。为降低方差，我们报告 pass@16，但 LiveCodeBench 使用 pass@5 评估。</p>
 <h2>5　讨论</h2>
 <h3>5.1　蒸馏教师模型的选择</h3>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/14fb768b8beb5ce435abb66ef88e82f843ee9048e81b6a472859f05f0c06f447.png"></figure>
+<figure><img height="498" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/14fb768b8beb5ce435abb66ef88e82f843ee9048e81b6a472859f05f0c06f447.png"></figure>
 <p>在为蒸馏流程选择合适的教师模型时，我们发现了几个值得关注的现象，它们显著影响了我们的设计选择：</p>
 <footer>原文第 8 页</footer></section><section class="page" id="page-9"><p><strong>更强的教师不会带来更好的结果：</strong>对于预训练，即便在未匹配 FLOPs 的设置下，从 Mistral Small 3.1 蒸馏也优于从强大得多的 Mistral Medium 3<sup>3</sup> 蒸馏，这与 Busbridge et al. [2025] 的观察相似（图 3）。然而，在后训练期间，Ministral 3 模型会受益于从能力更强的 Mistral Medium 3.1 蒸馏。</p>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/3b9427a9aa2833538a25676cf94cd6a353a30f6c589d28e4b9fcdbfd4e8cbb39.png"></figure>
+<figure><img height="504" width="1209" decoding="async" loading="lazy" alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/3b9427a9aa2833538a25676cf94cd6a353a30f6c589d28e4b9fcdbfd4e8cbb39.png"></figure>
 <p><strong>教师版本（base／instruct）的选择很重要：</strong>与 Goyal et al. [2025] 一致，我们发现，在预训练阶段从经过后训练的教师蒸馏，相较于从预训练教师蒸馏，会产生更强的模型（图 4）。特别是，这对数学（MATH）和代码能力有显著影响，对多模态评估（例如 MMMU）有较小但一致的影响，对知识指标（MMLU／Trivia-QA）的影响则可以忽略不计。</p>
 <p><strong>经过人类偏好调优的模型是更好的教师：</strong>我们使用 Mistral Medium 3 的两个内部版本来回答这个问题：在 SFT 期间，从 SFT checkpoint 蒸馏还是从经过偏好调优的 checkpoint 蒸馏更好？我们发现，从经过偏好调优的 checkpoint 蒸馏始终明显更好。即便学生模型经历了自身的偏好调优阶段，这些收益仍然存在。</p>
 <h3>5.2　模型的冗长程度</h3>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/c347a624d30c4488b143c6a181516713028f8667a5da767ff7ec72623335d942.png"></figure>
+<figure><img height="600" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/c347a624d30c4488b143c6a181516713028f8667a5da767ff7ec72623335d942.png"></figure>
 <p>我们对 Ministral 3 Instruct 的后训练与 Qwen 3 不同：它不在“通用 RL”阶段之前进行“推理 RL”（见 Yang et al. [2025] 的图 1）。这很可能导致两个模型的冗长程度不同，如图 5 所示。</p>
 <p class="footnote"><sup>3</sup> <a href="https://docs.mistral.ai/models/mistral-medium-3-1-25-08">https://docs.mistral.ai/models/mistral-medium-3-1-25-08</a></p>
 <footer>原文第 9 页</footer></section><section class="page" id="page-10"><p>在一项试图让 Ministral 3 Instruct 模型产生更长 chain-of-thought 的实验中，我们研究了向 SFT 训练数据中加入不同比例的长 chain-of-thought（CoT）推理轨迹，并配以精心整理的系统提示。提高这类长 CoT 数据的比例改善了 STEM 基准表现；然而，这也会导致过度反思、内心独白和回溯行为（如下所示），对于通用聊天模型而言，这些行为是不希望出现且不自然的。</p>
@@ -99,7 +99,7 @@
 <p>因此，有效进制为 21 和 49。这些进制之和为：</p><p>21 + 49 = 70</p>
 <p>所以，答案是 <strong>70</strong>。</p></blockquote>
 <h3>5.3　Ministral 3 Reasoning 的 ODPO</h3>
-<figure><img decoding="async" loading="lazy" alt="Ministral 3 原文第 10 页图表或代码" src="assets/images/ea8ca11a6bfca34f712731c09aed412a116432d90ead690f566abbea069b7650.png"></figure>
+<figure><img height="618" width="1209" decoding="async" loading="lazy" alt="Ministral 3 原文第 10 页图表或代码" src="assets/images/ea8ca11a6bfca34f712731c09aed412a116432d90ead690f566abbea069b7650.png"></figure>
 <p>推理模型虽然更擅长解决有挑战性的问题，但往往在通用对话质量方面落后，我们在 Ministral 3 推理变体上也观察到了这一模式。为解决这个问题，我们在经过 RL 训练的 checkpoint 之上进行了 ODPO 训练。如图 6 所示，这显著改善了 14B 和 8B 模型在对齐基准上的表现。然而，3B 模型在这一阶段后未在公开基准上展现出显著提升<sup>4</sup>。尽管如此，该模型在我们内部的人工评估中表现更好，因此我们选择 ODPO checkpoint 作为发布候选。</p>
 <p class="footnote"><sup>4</sup> 我们还发现，在微调中，3B 基础模型比 14B 和 8B 对超参数选择更加敏感。</p>
 <footer>原文第 10 页</footer></section><section class="page" id="page-11"><h2>6　结论</h2>

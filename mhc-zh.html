@@ -1,11 +1,11 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>mHC: Manifold-Constrained Hyper-Connections · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>mHC: Manifold-Constrained Hyper-Connections · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">
               mHC: Manifold-Constrained Hyper-Connections
             </div><div class="document-meta">首次提交：2025-12-31 · 译文版本：arXiv:2512.24880v2（2026-01-05） · 页码覆盖 19/19 页<br><a href="https://arxiv.org/abs/2512.24880v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2512.24880v2">原文 PDF</a></div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a></div></nav><section class="page" id="page-1"><h1>mHC: Manifold-Constrained Hyper-Connections</h1>
 <p class="authors">Zhenda Xie*†, Yixuan Wei*, Huanqi Cao*,<br>Chenggang Zhao, Chengqi Deng, Jiashi Li, Damai Dai, Huazuo Gao, Jiang Chang,<br>Kuai Yu, Liang Zhao, Shangyan Zhou, Zhean Xu, Zhengyan Zhang, Wangding Zeng,<br>Shengding Hu, Yuqing Wang, Jingyang Yuan, Lean Wang, Wenfeng Liang</p>
 <p class="affiliations">DeepSeek-AI</p>
 <h2>摘要</h2>
 <p>近期，以 Hyper-Connections（HC）为代表的研究，通过扩展 residual stream 宽度并使连接模式多样化，拓展了过去十年确立并被广泛采用的残差连接范式。尽管带来了显著的性能提升，这种多样化却从根本上破坏了残差连接固有的恒等映射性质，造成严重的训练不稳定和受限的可扩展性，同时还引入了显著的内存访问开销。为应对这些挑战，我们提出 Manifold-Constrained Hyper-Connections（mHC），这是一个通用框架，将 HC 的残差连接空间投影到特定流形上，以恢复恒等映射性质，并结合严谨的基础设施优化来保证效率。实证实验表明，mHC 能够有效支持大规模训练，带来切实的性能改进和更优的可扩展性。我们期待 mHC 作为 HC 的一种灵活而实用的扩展，能够促进对拓扑架构设计的深入理解，并为基础模型的演进指明有前景的方向。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 1 页图表或公式" src="assets/images/349f5db7ccc8fb4e5f4df74a5c1af3c23c571ac52678cc20cb9e245d81ff7d98.png"></figure>
+<figure><img height="945" width="1380" decoding="async" loading="lazy" alt="原文第 1 页图表或公式" src="assets/images/349f5db7ccc8fb4e5f4df74a5c1af3c23c571ac52678cc20cb9e245d81ff7d98.png"></figure>
 <p class="footnote">*核心贡献者。†通讯作者：<a href="mailto:xie.zhenda@deepseek.com">xie.zhenda@deepseek.com</a></p>
 <p class="metadata">arXiv:2512.24880v2 [cs.CL] · 2026 年 1 月 5 日 · <a href="https://arxiv.org/abs/2512.24880v2">原论文</a></p>
 <footer>原文第 1 页</footer></section><section class="page" id="page-2"><h2>目录</h2>
@@ -19,16 +19,16 @@
 </ul>
 <footer>原文第 2 页</footer></section><section class="page" id="page-3"><h2>1. 引言</h2>
 <p>自 ResNet（He et al., 2016a）问世以来，深度神经网络架构经历了快速演进。如图 1(a) 所示，单层的结构可以表述如下：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/5df9dfdd0395268040a26bac7315dcc4250e47017c6c7e471809cae0b29e016c.png"></figure>
+<figure><img height="45" width="1380" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/5df9dfdd0395268040a26bac7315dcc4250e47017c6c7e471809cae0b29e016c.png"></figure>
 <p>其中，\(x_{l}\) 和 \(x_{l+1}\) 分别表示第 \(l\) 层的 \(C\) 维输入和输出，\(\mathcal{F}\) 表示残差函数。尽管过去十年中残差函数 \(\mathcal{F}\) 已经演进，涵盖卷积、attention 机制和 FFN 等各种运算，但残差连接范式始终保持其原始形式。伴随 Transformer（Vaswani et al., 2017）架构的发展，这一范式如今已成为 LLM 的基础设计要素（Brown et al., 2020; Liu et al., 2024b; Touvron et al., 2023）。</p>
 <p>这种成功主要归功于残差连接的简洁形式。更重要的是，早期研究（He et al., 2016b）表明，残差连接的恒等映射性质能够在大规模训练中维持稳定性和效率。将残差连接递归地扩展到多个层，式 (1) 可得：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/09c6a69ad58777ed91d0be3aead4f9919a092197707b7c376ce940c1354f8336.png"></figure>
+<figure><img height="123" width="1380" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/09c6a69ad58777ed91d0be3aead4f9919a092197707b7c376ce940c1354f8336.png"></figure>
 <p>其中，\(L\) 和 \(l\) 分别对应较深层和较浅层。恒等映射一词指的是 \(x_{l}\) 这一分量本身，强调较浅层的信号无需任何修改便可直接映射到较深层的性质。</p>
 <p>近期，以 Hyper-Connections（HC）（Zhu et al., 2024）为代表的研究，为残差连接引入了新的维度，并通过实证展示了其性能潜力。HC 的单层架构如图 1(b) 所示。通过扩展 residual stream 的宽度并增强连接的复杂性，HC 显著提升了拓扑复杂性，而不改变单个计算单元以 FLOPs 衡量的计算开销。形式上，HC 的单层传播定义为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/fb7e68ff24a13344e616e5ce941c3fdd69c72187e477d47ea7ba23f6123a5a3a.png"></figure>
+<figure><img height="66" width="1380" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/fb7e68ff24a13344e616e5ce941c3fdd69c72187e477d47ea7ba23f6123a5a3a.png"></figure>
 <p>其中，\(x_{l}\) 和 \(x_{l+1}\) 分别表示第 \(l\) 层的输入和输出。与式 (1) 的表述不同，\(x_{l}\) 和 \(x_{l+1}\) 的特征维度从 \(C\) 扩展为 \(n \times  C\)，其中 \(n\) 是扩展率。\(H^{res}_{l} \in  \mathbb{R} ^{n\times n}\) 表示在 residual stream 内混合特征的可学习映射。同样作为可学习映射，\(H^{pre}_{l} \in  \mathbb{R} ^{1\times n}\) 将 \(nC\) 维流的特征聚合为 \(C\) 维层输入；反过来，\(H^{post}_{l} \in  \mathbb{R} ^{1\times n}\) 将层输出映射回 residual stream。</p>
 <p>然而，随着训练规模增大，HC 引入了潜在的不稳定风险。首要问题在于，当架构扩展到多个层时，HC 的无约束性破坏了恒等映射性质。在包含多个并行流的架构中，理想的恒等映射充当守恒机制，确保各流的平均信号强度在前向和反向传播过程中均保持不变。通过式 (3) 将 HC 递归扩展到多个层，可得：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/874aa64402086eab1998f8ba059709964f6afbe1899176580ef2f3ba9c01f742.png"></figure>
+<figure><img height="156" width="1380" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/874aa64402086eab1998f8ba059709964f6afbe1899176580ef2f3ba9c01f742.png"></figure>
 <p class="continuation">式 (4) 的说明接下一页。</p>
 <footer>原文第 3 页</footer></section><section class="page" id="page-4"><p class="continuation">接上一页式 (4)。</p>
 <p>其中，\(L\) 和 \(l\) 分别表示较深层和较浅层。与式 (2) 相比，HC 中的复合映射 \(\prod _{i=1}^{L-l} H^{res}_{L-i}\) 无法保持特征的全局均值。这一差异导致信号被无界放大或衰减，从而引发大规模训练中的不稳定性。另一个需要考虑的问题是，虽然 HC 在 FLOPs 层面保持了计算效率，但原始设计并未解决加宽 residual stream 的内存访问成本所涉及的硬件效率问题。这些因素共同限制了 HC 的实际可扩展性，并阻碍其在大规模训练中的应用。</p>
@@ -46,26 +46,26 @@
 <h2>3. 预备知识</h2>
 <p>首先，我们确立本文使用的记号。在 HC 的表述中，第 \(l\) 层的输入 \(x_{l} \in  \mathbb{R} ^{1\times C}\) 被扩展 \(n\) 倍，以构造隐藏矩阵 \(x_{l} = (x^{\top}_{l,0}, \ldots , x^{\top}_{l,n-1})^{\top} \in  \mathbb{R} ^{n\times C}\)，它可视为 \(n\) 路 residual stream。这一操作有效地拓宽了 residual stream 的宽度。为控制该流的读出、写入和更新过程，HC 引入三个可学习的线性映射：\(H^{pre}_{l}\)、\(H^{post}_{l} \in  \mathbb{R} ^{1\times n}\)，以及 \(H^{res}_{l} \in  \mathbb{R} ^{n\times n}\)。这些映射修改了式 (1) 所示的标准残差连接，得到式 (3) 给出的表述。</p>
 <p>在 HC 的表述中，可学习映射由两部分系数组成：依赖输入的部分和全局部分，分别称为动态映射和静态映射。形式上，HC 按以下方式计算系数：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/05c80fa1f1c70d9fcb24c15f3861243fdbd4383c67d9ea084161ac3ee6d4c51d.png"></figure>
+<figure><img height="204" width="1380" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/05c80fa1f1c70d9fcb24c15f3861243fdbd4383c67d9ea084161ac3ee6d4c51d.png"></figure>
 <p>其中，RMSNorm(·)（Zhang and Sennrich, 2019）应用于最后一个维度，标量 \(\alpha ^{pre}_{l}\)、\(\alpha ^{post}_{l}\) 和 \(\alpha ^{res}_{l} \in  \mathbb{R}\) 是初始化为较小值的可学习门控因子。动态映射<span class="continuation">（接下一页）</span></p>
 <footer>原文第 5 页</footer></section><section class="page" id="page-6"><p class="continuation">接上一页“动态映射”。</p>
 <p>通过由 \(\theta ^{pre}_{l}\)、\(\theta ^{post}_{l} \in  \mathbb{R} ^{1\times C}\) 和 \(\theta ^{res}_{l} \in  \mathbb{R} ^{n\times C}\) 参数化的线性投影得到，而静态映射则由可学习偏置 \(b^{pre}_{l}\)、\(b^{post}_{l} \in  \mathbb{R} ^{1\times n}\) 和 \(b^{res}_{l} \in  \mathbb{R} ^{n\times n}\) 表示。</p>
 <p>值得注意的是，引入这些映射——\(H^{pre}_{l}\)、\(H^{post}_{l}\) 和 \(H^{res}_{l}\)——带来的计算开销可以忽略不计，因为典型的扩展率 \(n\)（例如 4）远小于输入维度 \(C\)。通过这一设计，HC 有效地将 residual stream 的信息容量与层的输入维度解耦，而后者与模型的计算复杂度（FLOPs）高度相关。因此，HC 提供了一条通过调整 residual stream 宽度进行扩展的新途径，补充了预训练 scaling laws（Hoffmann et al., 2022）中讨论的模型 FLOPs 和训练数据规模这两个传统扩展维度。</p>
 <p>尽管 HC 需要三个映射来处理 residual stream 与层输入之间的维度不匹配，但表 1 中的初步实验表明，残差映射 \(H^{res}_{l}\) 带来的性能提升最为显著。这一发现强调了 residual stream 内部有效信息交换的关键重要性。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/854b71ab1763559d4463d058acb1e803252ec4197f0505c1bee53e519acb604e.png"></figure>
+<figure><img height="432" width="1380" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/854b71ab1763559d4463d058acb1e803252ec4197f0505c1bee53e519acb604e.png"></figure>
 <h3>3.1. 数值不稳定性</h3>
 <p>虽然残差映射 \(H^{res}_{l}\) 对性能至关重要，但依次应用它会对数值稳定性构成显著风险。如式 (4) 所详述，当 HC 扩展到多个层时，从第 \(l\) 层到第 \(L\) 层的有效信号传播由复合映射 \(\prod _{i=1}^{L-l} H^{res}_{L-i}\) 支配。由于可学习映射 \(H^{res}_{l}\) 不受约束，这一复合映射不可避免地偏离恒等映射。因此，信号幅度在前向传播和反向传播中都容易爆炸或消失。这种现象破坏了残差学习依赖畅通信号流的基本前提，从而使更深或更大规模模型的训练过程变得不稳定。</p>
 <p>实证证据支持这一分析。我们在大规模实验中观察到不稳定的损失行为，如图 2 所示。以 mHC 为基准，HC 在约 12k 步时出现意料之外的损失骤增，这与 gradient 范数的不稳定高度相关。此外，对 \(H^{res}_{l}\) 的分析验证了这种不稳定性的机制。为量化复合映射 \(\prod _{i=1}^{L-l} H^{res}_{L-i}\) 如何沿 residual stream 放大信号，我们采用两个指标。第一个指标基于复合映射行和的最大绝对值，刻画前向传播中最坏情况下的放大。第二个指标基于列和的最大绝对值，对应反向传播。我们将这些指标称为复合映射的 Amax 增益幅度。如图 3(b) 所示，Amax 增益幅度出现极端值，峰值达到 3000，与 1 相差悬殊，证实了 residual stream 爆炸的存在。</p>
-<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/2f9551d0e287128724d9e1937b09d4139301de28eb47adb31feb38ea25f9a368.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/635e6ef793aeec2cdc52db13ac65a4850e5f98462bcc084afbc5d4177caecff1.png"></figure>
+<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img height="555" width="1380" decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/2f9551d0e287128724d9e1937b09d4139301de28eb47adb31feb38ea25f9a368.png"></figure>
+<figure><img height="693" width="1380" decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/635e6ef793aeec2cdc52db13ac65a4850e5f98462bcc084afbc5d4177caecff1.png"></figure>
 <h3>3.2. 系统开销</h3>
 <p>虽然额外映射的线性性质使 HC 的计算复杂度仍然可控，但系统层面的开销构成了不容忽视的挑战。具体而言，内存访问（I/O）成本往往是现代模型架构的主要瓶颈之一，通常被称为“内存墙”（Dao et al., 2022）。这一瓶颈在架构设计中经常被忽视，却对运行效率有决定性的影响。</p>
 <p>针对广泛采用的 pre-norm Transformer（Vaswani et al., 2017）架构，我们分析 HC 固有的 I/O 模式。表 2 总结了 \(n\) 路 residual stream 设计在单个残差层中引入的每 token 内存访问开销。分析表明，HC 将内存访问成本提高了一个与 \(n\) 近似成正比的倍数。如果没有融合内核加以缓解，这种过量的 I/O 需求会显著降低训练吞吐量。此外，由于 \(H^{pre}_{l}\)、\(H^{post}_{l}\) 和 \(H^{res}_{l}\) 涉及可学习参数，它们的中间激活需要用于反向传播。这会大幅增加 GPU 内存占用，通常需要gradientcheckpoint才能维持可行的内存用量。另外，HC 在 PP（Qi et al., 2024）中需要 \(n\) 倍的通信成本，导致更大的气泡并降低训练吞吐量。</p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/380ff708dbbf10998bc5d33316fc0874159426d9c56c4401c5a4724b0963e793.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img height="624" width="1380" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/380ff708dbbf10998bc5d33316fc0874159426d9c56c4401c5a4724b0963e793.png"></figure>
 <h2>4. 方法</h2>
 <h3>4.1. mHC</h3>
 <p>受恒等映射原则（He et al., 2016b）启发，mHC 的核心前提是将残差映射 \(H^{res}_{l}\) 约束到特定流形上。虽然原始恒等映射通过强制 \(H^{res}_{l} = I\) 来保证稳定性，但它从根本上排除了 residual stream 内部的信息交换，而这种交换对于充分发挥多流架构的潜力至关重要。因此，我们提出将残差映射投影到一个流形上，使其既维持跨层信号传播的稳定性，又促进 residual stream 之间的相互作用，从而保持模型的表达能力。为此，我们限制 \(H^{res}_{l}\) 为双随机矩阵，即元素非负、每一行和每一列的和均为 1 的矩阵。形式上，以 \(\mathcal{M} ^{res}\) 表示双随机矩阵的流形（亦称 Birkhoff 多胞体）。我们将 \(H^{res}_{l}\) 约束为 \(\mathcal{P} _{\mathcal{M} res}(H^{res}_{l})\)，定义为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/9bd13605e1940ec87cda873bb14d9935e8b02aa9e11efec381204e541f799f1f.png"></figure>
+<figure><img height="87" width="1380" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/9bd13605e1940ec87cda873bb14d9935e8b02aa9e11efec381204e541f799f1f.png"></figure>
 <p>其中，\(\mathbf{1}_{n}\) 表示 \(n\) 维全 1 向量。</p>
 <p>值得注意的是，当 \(n = 1\) 时，双随机条件退化为标量 1，从而恢复原始恒等映射。选择双随机性带来了若干有益于大规模模型训练的严格理论性质：</p>
 <ol>
@@ -78,12 +78,12 @@
 <p>此外，我们对输入映射 \(H^{pre}_{l}\) 和输出映射 \(H^{post}_{l}\) 施加非负约束。该约束防止正负系数组合引起的信号抵消，也可视为一种特殊的流形投影。</p>
 <h3>4.2. 参数化与流形投影</h3>
 <p>本节详细介绍 mHC 中 \(H^{pre}_{l}\)、\(H^{post}_{l}\) 和 \(H^{res}_{l}\) 的计算过程。给定第 \(l\) 层的输入隐藏矩阵 \(x_{l} \in  \mathbb{R} ^{n\times C}\)，我们首先将其展平为向量 \(\vec{x}_{l} = vec(x_{l}) \in  \mathbb{R} ^{1\times nC}\)，以保留完整的上下文信息。随后，我们遵循原始 HC 的表述，按以下方式得到动态映射和静态映射：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/5fa00959603f62b86d71720a0433dc3e73d394c0bb7eab711abebf7ca81af5b3.png"></figure>
+<figure><img height="213" width="1380" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/5fa00959603f62b86d71720a0433dc3e73d394c0bb7eab711abebf7ca81af5b3.png"></figure>
 <p>其中，\(\varphi ^{pre}_{l}\)、\(\varphi ^{post}_{l} \in  \mathbb{R} ^{nC\times n}\) 和 \(\varphi ^{res}_{l} \in  \mathbb{R} ^{nC\times n^{2}}\) 是动态映射的线性投影，\(\operatorname{mat}(\cdot)\) 是从 \(\mathbb{R} ^{1\times n^{2}}\) 到 \(\mathbb{R} ^{n\times n}\) 的形状重排函数。</p>
 <p>然后，通过以下方式获得最终的受约束映射：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/82f9871d66bc721506463e6a32b5e07add571158bb193a10d251a2bf35bd1231.png"></figure>
+<figure><img height="171" width="1380" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/82f9871d66bc721506463e6a32b5e07add571158bb193a10d251a2bf35bd1231.png"></figure>
 <p>其中，\(\sigma (\cdot )\) 表示 Sigmoid 函数。Sinkhorn-Knopp(·) 算子首先通过指数运算使所有元素为正，然后进行迭代归一化，交替缩放各行和各列，使其和为 1。具体而言，以正矩阵 \(M^{(0)} = exp(\tilde{H}^{res}_{l})\) 为起点，归一化迭代按以下方式进行：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/3015ef548c7c5d2ace07a15c34525db002f6e39402ca1286522b57c2129266b2.png"></figure>
+<figure><img height="72" width="1380" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/3015ef548c7c5d2ace07a15c34525db002f6e39402ca1286522b57c2129266b2.png"></figure>
 <p>其中，\(\mathcal{T} _{r}\) 和 \(\mathcal{T} _{c}\) 分别表示行归一化和列归一化。当 \(t_{max} \to  \infty\) 时，这一过程收敛到双随机矩阵 \(H^{res}_{l} = M^{(tmax)}\)。在实验中，我们选择 \(t_{max} = 20\) 作为实用取值。</p>
 <h3>4.3. 高效基础设施设计</h3>
 <p>本节详细介绍为 mHC 量身设计的基础设施。通过严谨的优化，我们在大规模模型中实现了 mHC（\(n = 4\)），仅带来 6.7% 的少量训练开销。</p>
@@ -96,33 +96,33 @@
 <li><strong>式 (16)–(18)：</strong>这些针对小规模系数的轻量运算在适宜处融合为一个内核，显著降低内核启动开销。</li>
 <li><strong>式 (19)：</strong>我们在一个内核中实现 Sinkhorn-Knopp 迭代。对于反向传播，我们推导了一个自定义反向内核，在片上重计算中间结果，并遍历整个迭代过程。</li>
 </ul>
-<figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/4f91a5c0af4a49b770d0745790d2d329a5666c633e14618ed4541596f8df4064.png"></figure>
+<figure><img height="648" width="1380" decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/4f91a5c0af4a49b770d0745790d2d329a5666c633e14618ed4541596f8df4064.png"></figure>
 <p>利用上述内核得到的系数，我们引入另外两个内核来应用这些映射：一个用于 \(\mathcal{F} _{pre}\) ≔ \(H^{pre}_{l}x_{l}\)，另一个用于 \(\mathcal{F} _{post,res}\) ≔ \(H^{res}_{l}x_{l} + H^{post \top}_{l}\mathcal{F} (\cdot , \cdot )\)。通过将 \(H^{post}_{l}\) 和 \(H^{res}_{l}\) 的应用与残差合并融合，我们把该内核读取的元素数从 \((3n + 1)C\) 降到 \((n + 1)C\)，将写入的元素数从 \(3nC\) 降到 \(nC\)。我们使用 TileLang（Wang et al., 2025）高效实现了大多数内核（式 (14)–(15) 除外）。这一框架简化了具有复杂计算过程的内核实现，使我们能够用极少的工程投入充分利用内存带宽。</p>
 <h4>4.3.2. 重计算</h4>
 <p>\(n\) 路 residual stream 设计在训练过程中引入了显著的内存开销。为缓解这一问题，我们在前向传播后丢弃 mHC 内核的中间激活，并在反向传播中通过重新执行 mHC 内核来即时重计算这些激活<span class="continuation">（接下一页）</span></p>
 <footer>原文第 10 页</footer></section><section class="page" id="page-11"><p class="continuation">接上一页的重计算说明。</p>
 <p>而不执行计算量较大的层函数 \(\mathcal{F}\)。因此，对于包含 \(L_{r}\) 个连续层的块，我们只需保存第一层的输入 \(x_{l_{0}}\)。忽略轻量系数，同时计入 \(\mathcal{F}\) 内部的前置归一化后，表 3 总结了为反向传播保留的中间激活。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/820f6da2d8436d2f2ae3180e377835472e6e81538f1cce387607972b22e582b1.png"></figure>
+<figure><img height="321" width="1380" decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/820f6da2d8436d2f2ae3180e377835472e6e81538f1cce387607972b22e582b1.png"></figure>
 <p>由于 mHC 内核重计算以 \(L_{r}\) 个连续层组成的块为单位执行，对于总共 \(L\) 层，我们必须为反向传播持久保存所有 \(\lceil L/L_{r}\rceil\) 个块的第一层输入 \(x_{l_{0}}\)。除这部分常驻内存外，重计算过程还为当前活动块引入了 \((n + 2)C \times  L_{r}\) 个元素的临时内存开销，这决定了反向传播时的峰值内存用量。因此，我们通过最小化与 \(L_{r}\) 对应的总内存占用，确定最优块大小 \(L_{r}^{*}\)：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/0b2206ecca0122791054f0050ae785812c2911b8ddae507870843a779f971acd.png"></figure>
+<figure><img height="135" width="1380" decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/0b2206ecca0122791054f0050ae785812c2911b8ddae507870843a779f971acd.png"></figure>
 <p>此外，大规模训练中的 PP 还施加了一项约束：重计算块不能跨越流水线阶段边界。我们观察到，理论最优值 \(L_{r}^{*}\) 通常与每个流水线阶段的层数接近，因此选择将重计算边界与流水线阶段对齐。</p>
 <h4>4.3.3. 在 DualPipe 中重叠通信</h4>
 <p>在大规模训练中，PP 是降低参数和 gradient 内存占用的标准做法。具体而言，我们采用 DualPipe 调度（Liu et al., 2024b），它能有效地重叠横向扩展互连上的通信流量，例如 EP 和 PP 中的通信。然而，相比单流设计，mHC 所提出的 \(n\) 路 residual stream 在流水线阶段之间带来了显著的通信延迟。此外，在阶段边界处，对全部 \(L_{r}\) 层进行 mHC 内核重计算会引入不可忽略的计算开销。为解决这些瓶颈，我们扩展了 DualPipe 调度（见图 4），以改善流水线阶段边界处通信与计算的重叠。</p>
 <p>特别地，为避免阻塞通信流，我们将 MLP（即 FFN）层的 \(\mathcal{F} _{post,res}\) 内核放在专用的高优先级计算流上执行。我们还避免对 attention 层中的长时间运算使用持久化内核，从而防止长时间停顿。这一设计允许抢占重叠执行的 attention 计算，在维持计算设备处理单元高利用率的同时，实现灵活调度。此外，由于每个阶段的初始激活 \(x_{l_{0}}\) 已经在本地缓存，重计算过程与流水线通信依赖解耦。</p>
-<footer>原文第 11 页</footer></section><section class="page" id="page-12"><figure><img decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/cf61f4e24fe66dbf9eb0d82fb1c748dee75afd72f02eb0af534734ce41ce8f49.png"></figure>
+<footer>原文第 11 页</footer></section><section class="page" id="page-12"><figure><img height="417" width="1380" decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/cf61f4e24fe66dbf9eb0d82fb1c748dee75afd72f02eb0af534734ce41ce8f49.png"></figure>
 <h2>5. 实验</h2>
 <h3>5.1. 实验设置</h3>
 <p>我们通过语言模型预训练验证所提出的方法，对基线、HC 和我们提出的 mHC 进行比较分析。采用受 DeepSeek-V3（Liu et al., 2024b）启发的 MoE 架构，我们训练了四种不同的模型变体，以覆盖不同的评估设置。具体而言，HC 和 mHC 的扩展率 \(n\) 均设为 4。我们主要关注一个使用与其参数量成比例的数据集训练的 27B 模型，它是系统层面主要结果的评估对象。在此基础上，我们加入使用成比例数据训练的较小 3B 和 9B 模型，分析计算量扩展行为，从而观察不同计算量下的性能趋势。此外，为专门研究 token 扩展行为，我们在包含 1 万亿 token 的固定语料上训练了一个单独的 3B 模型。详细模型配置和训练超参数见附录 A.1。</p>
 <h3>5.2. 主要结果</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/4d0d194c23fd61b1e05964056c24d6a7ea3bab799ff7c163c04092569e0ae996.png"></figure>
+<figure><img height="600" width="1380" decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/4d0d194c23fd61b1e05964056c24d6a7ea3bab799ff7c163c04092569e0ae996.png"></figure>
 <p>首先，我们考察 27B 模型的训练稳定性和收敛情况。如图 5(a) 所示，mHC 有效缓解了 HC 中观察到的训练不稳定性，最终损失相较基线降低了 0.021。图 5(b) 的 gradient 范数分析进一步证实了这种稳定性改进：mHC 的表现明显优于 HC，并维持了与基线相当的稳定状态。</p>
-<footer>原文第 12 页</footer></section><section class="page" id="page-13"><figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/8b0db18acc12c82718aecf130a1cf223b03a9e75493a25af4702292a21b5faa8.png"></figure>
+<footer>原文第 12 页</footer></section><section class="page" id="page-13"><figure><img height="483" width="1380" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/8b0db18acc12c82718aecf130a1cf223b03a9e75493a25af4702292a21b5faa8.png"></figure>
 <p>表 4 展示了在一组多样化基准上的下游性能（Bisk et al., 2020; Cobbe et al., 2021; Hendrycks et al., 2020, 2021; Joshi et al., 2017; Zellers et al., 2019）。mHC 带来了全面改进，始终优于基线，并在大多数任务上超过 HC。特别是，相较 HC，mHC 进一步增强了模型的推理能力，在 BBH（Suzgun et al., 2022）和 DROP（Dua et al., 2019）上分别带来 2.1% 和 2.3% 的性能提升。</p>
 <h3>5.3. 扩展实验</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/45743f2de8289d26223880990da1dbb942ee16ee35ed9490b9d237fc9ec5360a.png"></figure>
+<figure><img height="618" width="1380" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/45743f2de8289d26223880990da1dbb942ee16ee35ed9490b9d237fc9ec5360a.png"></figure>
 <p>为评估我们方法的可扩展性，我们报告了不同规模下 mHC 相较基线的相对损失改进。在图 6(a) 中，我们绘制了覆盖 3B、9B 和 27B 参数量的计算量扩展曲线。曲线走势表明，即使在更高的计算预算下，性能优势也能稳健保持，仅有轻微减弱。此外，我们在图 6(b) 中考察单次训练内部的动态变化，其中展示了 3B 模型的 token 扩展曲线。这些发现共同验证了 mHC 在大规模场景中的有效性。我们的内部大规模训练实验进一步支持了这一结论。</p>
-<footer>原文第 13 页</footer></section><section class="page" id="page-14"><figure><img decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/6a48e6bb87b23d8912859fc0816b9a58812947ec77aec1e51f9650288d9d3925.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/a0b162cf57a543b31ba777c46dc8cfbbf81bd58f6c008b4f4c973d7a3b30bf0c.png"></figure>
+<footer>原文第 13 页</footer></section><section class="page" id="page-14"><figure><img height="606" width="1380" decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/6a48e6bb87b23d8912859fc0816b9a58812947ec77aec1e51f9650288d9d3925.png"></figure>
+<figure><img height="660" width="1380" decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/a0b162cf57a543b31ba777c46dc8cfbbf81bd58f6c008b4f4c973d7a3b30bf0c.png"></figure>
 <h3>5.4. 稳定性分析</h3>
 <p>与图 3 类似，图 7 展示了 mHC 的传播稳定性。理想情况下，单层映射满足双随机约束，意味着前向信号增益和反向 gradient 增益都应等于 1。然而，为实现计算效率，采用 Sinkhorn-Knopp 算法的实际实现必须限制迭代次数。在我们的设置中，使用 20 次迭代获得近似解。因此，如图 7(a) 所示，反向 gradient 增益略微偏离 1。在图 7(b) 所示的复合情形中，偏差增大但仍有界，最大值约为 1.6。特别地，与 HC 中接近 3000 的最大增益幅度相比，mHC 将其显著降低了三个数量级。这些结果表明，mHC 相较 HC 显著增强了传播稳定性，保证了稳定的前向信号流和反向 gradient 流。此外，图 8 展示了有代表性的映射。我们观察到，对于 HC，当最大增益很大时，其他数值也往往很大，这表明所有传播路径都存在普遍的不稳定性。相比之下，mHC 始终产生稳定结果。</p>
 <footer>原文第 14 页</footer></section><section class="page" id="page-15"><h2>6. 结论与展望</h2>
@@ -175,5 +175,5 @@
 <p class="reference">D. Zhu, H. Huang, Z. Huang, Y. Zeng, Y. Mao, B. Wu, Q. Min, and X. Zhou. Hyper-Connections. arXiv 预印本 arXiv:2409.19606, 2024.</p>
 <footer>原文第 18 页</footer></section><section class="page" id="page-19"><h2>A. 附录</h2>
 <h3>A.1. 详细模型规格与超参数</h3>
-<figure><img decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/3945c7716f49c761c4c63b9ed94765d9901e6605be616837dd38f24165ecbaf6.png"></figure>
+<figure><img height="1917" width="1380" decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/3945c7716f49c761c4c63b9ed94765d9901e6605be616837dd38f24165ecbaf6.png"></figure>
 <footer>原文第 19 页</footer></section></body></html>

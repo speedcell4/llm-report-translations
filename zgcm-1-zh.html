@@ -1,11 +1,11 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZGCM-1：用于数学与 Agent 搜索的完全开放、高效基础模型 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">ZGCM-1：数学与 agent 搜索基础模型 · 中文翻译</div><div class="document-meta">首次提交：2026-09-11 · 译文版本：arXiv:2609.13356v2（2026-09-20） · <a href="https://arxiv.org/abs/2609.13356v2">原文记录</a> · <a href="https://arxiv.org/pdf/2609.13356v2">原文 PDF</a></div><div class="page-links">已翻译 48/48 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a> <a href="#page-41">41</a> <a href="#page-42">42</a> <a href="#page-43">43</a> <a href="#page-44">44</a> <a href="#page-45">45</a> <a href="#page-46">46</a> <a href="#page-47">47</a> <a href="#page-48">48</a></div></nav><section class="page" id="page-1"><h1>ZGCM-1：用于数学与 Agent 搜索的完全开放、极其高效的基础模型</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZGCM-1：用于数学与 Agent 搜索的完全开放、高效基础模型 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">ZGCM-1：数学与 agent 搜索基础模型 · 中文翻译</div><div class="document-meta">首次提交：2026-09-11 · 译文版本：arXiv:2609.13356v2（2026-09-20） · <a href="https://arxiv.org/abs/2609.13356v2">原文记录</a> · <a href="https://arxiv.org/pdf/2609.13356v2">原文 PDF</a></div><div class="page-links">已翻译 48/48 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a> <a href="#page-41">41</a> <a href="#page-42">42</a> <a href="#page-43">43</a> <a href="#page-44">44</a> <a href="#page-45">45</a> <a href="#page-46">46</a> <a href="#page-47">47</a> <a href="#page-48">48</a></div></nav><section class="page" id="page-1"><h1>ZGCM-1：用于数学与 Agent 搜索的完全开放、极其高效的基础模型</h1>
 <p class="names">ZGCM Team<sup>1,2</sup><br><sup>1</sup>中关村学院　<sup>2</sup>中关村人工智能研究院</p>
 <p>基础模型持续推进数学推理和 agent 问题求解的前沿，但高昂的计算需求和封闭的训练方案，使更广泛的学术界在很大程度上无法参与这一进展。在本研究中，我们提出 ZGCM-1：一个完全开放的 7B 稠密基础模型，以极高的数据、系统和算法效率从头训练而成。ZGCM-1 建立在一个核心前提之上：小型模型无法被动记住开放网络，但可以将审慎的内部思考与主动的外部工具使用相结合，突破参数容量的限制。为在 256K 上下文中支持这一范式，我们开发了一套端到端、高效率的开放训练方案：（1）架构与系统协同设计：交错排列的门控 SWA 与全局 attention，以及稳定的 FP8 Muon 优化器；（2）渐进式课程与 MDP 中期训练：上下文依次扩展至 16K、64K 和 256K，并将交互轨迹重新表述为马尔可夫决策过程。此外，我们建立了一套 AI 原生研发工作流，由 agent 群自主管理集群运维、数据整理和快速诊断评估。广泛的评估表明，ZGCM-1-7B 在通用基准上与 7B 模型家族中的模型具有竞争力。在若干具有挑战性的数学推理和 agent 搜索测试中，它仍能与规模大几个数量级的前沿模型竞争，例如 Qwen3-235B-A22B 和 GLM-5.1。我们还表明，预训练设计使 16K 预训练达到给定损失所需时间的效率提高约 4.2 倍。在完整开发生命周期中，我们提炼出八项可付诸实践的实证发现，涉及架构扩展、SFT 质量筛选、长上下文泛化以及 agent 联合训练动态。为促进社区研究，我们开源预训练、中期训练和后训练阶段的模型权重、中间 checkpoint、训练代码、各阶段数据及数据方案，以及 W&amp;B 日志。</p>
 <p>代码：<a href="https://github.com/zgcagi/ZGCM-1">https://github.com/zgcagi/ZGCM-1</a><br>模型：<a href="https://huggingface.co/zgcagi/ZGCM-1-7B">https://huggingface.co/zgcagi/ZGCM-1-7B</a><br>数据：<a href="https://huggingface.co/datasets/zgcagi/ZGCM-1-Data">https://huggingface.co/datasets/zgcagi/ZGCM-1-Data</a></p>
-<figure><img decoding="async" loading="lazy" alt="原文第 1 页图表或公式" src="assets/images/041b58ffa0f0d66254862ede81d6be3553e41790349f520a2b8e5dd553140d4b.png"></figure>
+<figure><img height="618" width="1416" decoding="async" loading="lazy" alt="原文第 1 页图表或公式" src="assets/images/041b58ffa0f0d66254862ede81d6be3553e41790349f520a2b8e5dd553140d4b.png"></figure>
 <p>通讯作者：Jiyan He（<a href="mailto:hejiyan@zgci.ac.cn">hejiyan@zgci.ac.cn</a>）。</p>
 <p class="meta">arXiv:2609.13356v2 [cs.AI]，2026 年 9 月 20 日。</p>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/79b1f15e5cd1d79902c1049fa92f17f7755148e0d5a0e418443c7921d703fe62.png"></figure>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img height="1005" width="1419" decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/79b1f15e5cd1d79902c1049fa92f17f7755148e0d5a0e418443c7921d703fe62.png"></figure>
 <h2>1 引言</h2>
 <p>基础模型正在以惊人的速度发展，推进长程推理（DeepSeek-AI, 2026; Kimi Team, 2026）和现实环境中工具增强的 agent 能力（GLM-5-Team, 2026; Qwen Team, 2026; OpenAI, 2026; Anthropic, 2026）的前沿。尽管取得了这些突破，基础研究仍受到两个实际瓶颈的制约：</p>
 <ul><li><strong>规模壁垒：</strong>前沿推理和深度 agent 搜索被广泛视为千亿参数系统的专属领域，使计算资源受限的研究者无法训练和探索前沿水平的智能。</li><li><strong>不透明壁垒：</strong>大多数有竞争力的模型仅开放权重，而非完全开源。上游过滤方案、中期训练课程、长上下文计划以及多轮 agent 轨迹仍是专有黑箱，阻碍了对训练动态和容量限制的系统研究。</li></ul>
@@ -21,14 +21,14 @@
 <h2>2 架构</h2><h3>2.1 模型概览</h3>
 <p>ZGCM-1 采用仅解码器 Transformer 架构，使用 GQA（GQA; Ainslie et al. 2023）、RMSNorm（Zhang and Sennrich, 2019）、SwiGLU 激活（Shazeer, 2020）和 RoPE（RoPE; Su et al. 2024）。模型约有 73.9 亿参数、32 层 Transformer、4,096 的隐藏维度、11,008 的 SwiGLU 中间维度、32 个查询头和 8 个键值头（每头维度 128），最大上下文长度为 256K token。</p>
 <p>架构采用混合因果 attention 骨干，以 5:1 的局部／全局比例交错排列门控（Qiu et al., 2025）SWA（SWA; Child et al. 2019; Beltagy et al. 2020）与全局 attention；这一比例此前已由 Gemma 3（Gemma Team, 2025）用于生产规模部署。32 层中，27 层使用窗口为 128 token 的门控 SWA，5 层使用全局因果 attention。全局层位于第 6、12、18、24 和 30 层，形成五个重复模块，每个模块由五个局部层接一个全局层组成，末尾再接两个局部层。模型还应用以 RMSNorm 实现的 QK 归一化（Dehghani et al., 2023），以及旋转比例为 0.33 的 Partial RoPE。</p>
-<footer>原文第 3 页</footer></section><section class="page" id="page-4"><figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/709d3486898847721294b623ae5ba23169fef1794ad77f987fe6541e40bfc1b9.png"></figure>
+<footer>原文第 3 页</footer></section><section class="page" id="page-4"><figure><img height="1059" width="1419" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/709d3486898847721294b623ae5ba23169fef1794ad77f987fe6541e40bfc1b9.png"></figure>
 <p>如图 3 所示，对于归一化隐藏状态 \(h\)，门控 SWA 模块并行计算查询、键、值和门控投影。查询与键分支应用 RMS 归一化和 Partial RoPE。若 \(A_{\mathrm{SWA}}(q, k, v)\) 表示 128-token 滑动窗口 GQA 的输出，则 gated attention 输出为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/ee20c826561521c9feb30fa599f9afbcd81def0cbfeb6c99e14c07383a9b916d.png"></figure>
+<figure><img height="63" width="702" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/ee20c826561521c9feb30fa599f9afbcd81def0cbfeb6c99e14c07383a9b916d.png"></figure>
 <p>学习得到的 sigmoid 门控在输出投影之前，逐元素调制局部 attention 输出。全局 attention 层不使用这一门控，而是关注完整上下文，使信息能够流动到局部窗口之外。</p>
 <h3>2.2 混合 Attention 实验</h3>
 <p>为选择生产使用的 attention 配置，我们比较全 attention、采用 FlashAttention-2 的 GQA（Flash-GQA; Ainslie et al. 2023; Dao 2023）、MLA（DeepSeek-AI, 2024），以及局部／全局比例为 1:1、3:1 和 5:1 的三种 SWA 配置。所有配置均在八张 H100 GPU 上，以相同训练预算、4,096 序列长度训练 10B token。</p>
 <p>我们通过最后 50 个训练步骤的平均损失衡量优化质量，通过每张 GPU 每秒处理的 token 数衡量训练效率。如图 4a 所示，SWA 5:1 达到最高吞吐量（9,566 token/s/GPU），同时末段损失与全 attention 基线相同（1.93）。SWA 3:1 在吞吐量略低的情况下达到最低末段损失（1.92）。MLA 带来显著的吞吐量损失（7,645 token/s/GPU），却未改善损失。我们在生产模型中采用 SWA 5:1：它在末段损失具有竞争力的同时，提供了观测到的最高吞吐量。生产架构还包含 128-token 窗口、QK RMS 归一化、GQA 和局部输出门控。</p>
-<footer>原文第 4 页</footer></section><section class="page" id="page-5"><figure><img decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/6d438b4c9ec23a4ccf286b880b3b181ba1e544de95b87ccd32a91f80653c9d29.png"></figure>
+<footer>原文第 4 页</footer></section><section class="page" id="page-5"><figure><img height="600" width="1419" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/6d438b4c9ec23a4ccf286b880b3b181ba1e544de95b87ccd32a91f80653c9d29.png"></figure>
 <p>我们还在相同的 7B 骨干网络上，保持每步 token 预算不变，将上下文长度从 4K 增加至 256K，比较全 attention、SWA 3:1 和 SWA 5:1。图 4b 表明，SWA 5:1 相对于全 attention 的吞吐量优势随上下文增长而扩大，从 4K 时的 1.13 倍增至 256K 时的 3.94 倍。SWA 3:1 的加速程度介于两者之间。这一不断扩大的差距使门控 SWA 非常适合长上下文训练与推理；在这些场景中，全 attention 成为主要的计算瓶颈。</p>
 <h3>2.3 KV cache 分析</h3>
 <p>混合架构在推理时显著节省内存。27 个 SWA 层的 KV cache 仅保留固定的 128-token 窗口，只有 5 个全局层保存完整序列，因此每 token 的 KV 占用从全 attention 的 128 KiB 降至 20 KiB。图 4c 比较三种等参数架构：全 attention（32 个全局层，7.39B）、线性 attention 基线（GDN 3:1，7 个全局层加 21 个线性层，7.47B），以及我们的混合 SWA 5:1。在 256K 上下文下，全 attention 需要 32.0 GiB KV cache，GDN 3:1 需要 7.0 GiB，而我们的混合架构仅需 5.0 GiB（比全 attention 缩小 6.4 倍）。由于自回归 decoding 受内存带宽限制，更小的 KV 占用直接转化为更高的 decoding 吞吐量，使这一架构对经常使用长上下文的长推理与 agent 搜索工作负载尤其高效。</p>
@@ -36,7 +36,7 @@
 <p>预训练由两个连续阶段组成。如图 5 所示，通用预训练通过两个数据阶段建立广泛的语言、知识、数学与代码能力。随后，中期训练保留全序列因果语言建模目标，同时引入更密集的推理、指令和 agent 数据，并将上下文从 16K 逐步扩展至 64K 和 256K。附录 A 报告详细的语料构建、课程实验和训练配置。</p>
 <h3>3.1 通用预训练</h3><h4>3.1.1 数据混合</h4>
 <p>我们首先使用一个以约 30B token 训练的 0.3B 参数代理模型，搜索数据混合方案。训练损失以及知识、代码和数学评估信号指导对候选混合方案的迭代调整，从而降低在目标模型规模下探索混合方案的成本；这一做法遵循代理模型混合优化的更广泛实践（Liu et al., 2024; Team Olmo, 2025）。根据混合搜索结果，我们在跨领域能力与损失收敛效率之间进行平衡，确定最终训练数据方案。</p>
-<footer>原文第 5 页</footer></section><section class="page" id="page-6"><figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/177a7fa54612efc4583447148fc9613d0275284e13cf27c00f77bd81fa922d10.png"></figure>
+<footer>原文第 5 页</footer></section><section class="page" id="page-6"><figure><img height="279" width="1419" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/177a7fa54612efc4583447148fc9613d0275284e13cf27c00f77bd81fa922d10.png"></figure>
 <p><strong>网络数据。</strong>经过整理的英文网络语料（Wang et al., 2025）是主要来源，并辅以受控比例的中文网络数据。我们保留上游文档级质量分数，以及通过验证驱动过滤得到的质量分层，并将接受的文本和语言元数据规范化为统一文档表示。</p>
 <p><strong>学术与 OCR 数据。</strong>我们结合经教育价值过滤的 PDF 文本视图（Kydlíček et al., 2025），以及 Ai2（Allen Institute for AI, 2025）发布、通过 olmOCR 流水线（Poznanski et al., 2025）生成的 OCR 科学内容。对于直接从 arXiv 收集的科学论文，内部流水线提取并清洗文本，同时保留训练所需的技术内容。</p>
 <p><strong>代码数据。</strong>代码混合覆盖代码密集型网页和开源仓库文件（NVIDIA Corporation, 2025a,b）。我们将结构化发布内容转换为文本视图、规范化文件级元数据，并清理仓库附属产物和非源码内容，同时保留程序、技术文档和代码解释文本。</p>
@@ -59,11 +59,11 @@
 <blockquote><strong>发现 3（预训练效率提升）：</strong>混合 SWA（1.4 倍）、FP8 混合精度系统（1.5 倍）、Muon 优化器（1.8 倍）和 Pre-LN（1.1 倍）的协同设计，相对于标准 BF16/AdamW 基线，累计使 16K 预训练达到给定损失所需时间缩短约 4.2 倍。</blockquote>
 <h3>3.2 中期训练</h3><h4>3.2.1 数据混合</h4>
 <p>中期训练是面向能力的继续预训练。我们对整个数据池去重，以提高 token 效率并控制重复内容（Lee et al., 2022）。从得到的 2.86T-token 候选池中，我们构建一个包含 600.51B token 的采样计划，按 16K、64K 和 256K 上下文阶段组织。</p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/d27bef038fa9d8722e1e92bea4142d66b27a9d1f159ee7ac37e54e5a4e87c524.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img height="1053" width="1419" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/d27bef038fa9d8722e1e92bea4142d66b27a9d1f159ee7ac37e54e5a4e87c524.png"></figure>
 <p>遵循 Qwen2.5-1M（Yang et al., 2025b）的多阶段上下文扩展方式，最大序列长度在这些阶段中逐步增加；其他开放技术报告则在最后一个预训练阶段一次性扩展上下文（LLM-Core-Team Xiaomi, 2025; Yang et al., 2025a）。后续各阶段保持累积式组成，而非替代较短序列：64K 阶段包含长度不超过 16K 的 180.89B token，以及处于 16K–64K 范围的 59.11B token；256K 阶段则结合长度不超过 16K 的 127.81B token、处于 16K–64K 范围的 21.72B token，以及超过 64K 的 30.98B token。</p>
 <p>16K 阶段以标准上下文长度训练，均衡混合代码、数学、知识与推理。64K 阶段引入更长的文档和推理序列，同时保留大量较短上下文数据。256K 阶段加入超长文档、跨文档信息和长程 agent 轨迹，并继续回放 16K 和 64K 长度范围内的数据，以保留对常规上下文任务的覆盖。</p>
 <p>图 6 下方环形图概括顶层能力混合比例。代码与数学在整个课程中分别保持接近 20%，以保留核心编程与推理能力。随着上下文长度增加，知识数据从 10.50% 增至 14.23%，agent 数据从 1.50% 增至 3.30%，提高长文档、工具交互和多步骤任务样本的密度。预训练回放从 13.00% 降至 9.00%，但仍予以保留，以便在引入更高密度数据时维持广泛覆盖。网络、问答、推理和指令数据在三个阶段之间相对稳定。精确的长度统计和构建细节见附录 A.5。</p>
-<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/2fc1fd868ae6dd9003ee451d9d39c76f37fdaa63f0f52c2757f441ed7d72def2.png"></figure>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img height="378" width="1419" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/2fc1fd868ae6dd9003ee451d9d39c76f37fdaa63f0f52c2757f441ed7d72def2.png"></figure>
 <h4>3.2.2 推理数据</h4>
 <p>推理来源被规范化为统一 schema，并根据问题是否自包含、答案证据和推理价值，分流到接受、重写、待处理、留出或拒绝视图。经规则清洗的样本构成主要数据池。</p>
 <p>对于有价值但原始轨迹不适合训练的问题，我们将其提取为独立题目，由教师模型重建或改进；只有经过解析有效性、完整性、模板与来源泄漏风险、重复性和可训练性检查之后，才予以接受。这将问题本身的价值与上游推理轨迹质量分离。细节见附录 A.5.1。</p>
@@ -71,7 +71,7 @@
 <p>我们收集了大规模指令语料，包括来自 Tulu 和 FLAN 的数据（Lambert et al., 2024; Wei et al., 2022）。这些样本转换为适合预训练的原始上下文。流水线保留合理的短标签任务，将存在翻译风险的子集分流至模型审查，并将部分单轮样本重写为多轮讨论。这些转换在保留全序列训练目标的同时，提高对对话状态和顺序推理的覆盖。进一步的构建细节见附录 A.5.1。</p>
 <h4>3.2.4 Agent 数据</h4>
 <p>中期训练的 agent 数据覆盖通用交互轨迹与从软件工程任务收集的轨迹。我们保留高质量的完整交互，并遵循 agent 继续预训练（Su et al., 2025），将通用轨迹重新表述为类似马尔可夫决策过程、以状态为条件的下一动作预测样本，将完整轨迹上下文与更密集的局部决策监督结合。对于软件工程轨迹，我们进行考虑执行结果的过滤，并保留学习规划、工具使用及迭代改进所需的交互上下文。详细构建过程、过滤标准和语料统计见附录 A.5.2。对于每一来源类别，我们使用图 8 所示的 agent 驱动、自迭代治理过程，开发并验证针对来源的处理方案。</p>
-<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/407467f191329c1567978bd5f307bae9e2cdefeb61797c20daa1205c46c716fb.png"></figure>
+<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img height="693" width="1419" decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/407467f191329c1567978bd5f307bae9e2cdefeb61797c20daa1205c46c716fb.png"></figure>
 <h4>3.2.5 超参数</h4>
 <p>所有中期训练阶段均对原始上下文采用全序列因果语言建模（不同于 SFT 仅对 assistant 的监督，详见第 4.1.3 节）。通过调整全局 batch size（16K、64K 和 256K 分别为 768、192 和 48），我们在三个阶段中均保持每个优化器步骤约 12.6M token。学习率为 \(10^{-4}\)；256K 阶段使用 10M 的 RoPE base，并完全重计算激活。我们评估了直接 256K 路径（30B token）和分阶段路径（先以 64K 训练 10B，再以 256K 训练 20B）；分阶段路径达到略低的最终损失。完整配置见附录 A.1。</p>
 <p>由此得到的 C1 分阶段训练，其损失轨迹和学习率计划概括于图 9。</p>
@@ -80,7 +80,7 @@
 <p>为监控通用预训练期间的能力发展，我们直接使用固定能力套件评估已保存的基础 checkpoint，覆盖知识、问答、数学、推理、代码及基本符号操作。评估前不进行 SFT 或其他后训练适配。同时，我们监控 PPL、BPB、归一化损失、关键 token 的 logits，以及反映训练动态的优化器相关统计。这些信号有助于诊断优化与系统问题、检测能力退化，并为调整数据混合、课程及阶段转换提供依据。</p>
 <p>Checkpoint 级评估揭示了不同领域能力发展的异质性。知识和问答基准在监控的训练区间总体改善，但改善速度和发生时间在基准间不同。数学与代码能力同样提升，尽管收益集中在不同区间，并伴随更大的短期波动。因此，我们将这些曲线视为领域相关学习动态的描述性诊断，而非普遍单调趋势的证据。所有基准的详细轨迹见附录 A.2。</p>
 <p>例如，在恢复训练任务后，连续吞吐量监控发现：在约 80 步的匹配窗口之间，模型吞吐量从每 GPU 585 TFLOP/s 逐步降至 554 TFLOP/s。释放重叠缓冲区缓解但未消除这一下降。加入每 100 次迭代定期清理 CUDA 分配器缓存和垃圾回收后，吞吐量恢复稳定至每 GPU 585 模型 TFLOP/s。这一修复已部署到生产训练循环。</p>
-<footer>原文第 10 页</footer></section><section class="page" id="page-11"><figure><img decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/52e225d28d4bd5992ba492e995a8043faed195797aa7cae97a913989b2a8f7bb.png"></figure>
+<footer>原文第 10 页</footer></section><section class="page" id="page-11"><figure><img height="723" width="1419" decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/52e225d28d4bd5992ba492e995a8043faed195797aa7cae97a913989b2a8f7bb.png"></figure>
 <p>作为补充，短程 SFT 探测在轻量监督适配后评估连续训练里程碑。与上述直接基础 checkpoint 评估不同，这一探测衡量的是监督适配后能够激发的下游能力。结果见附录 A.3。</p>
 <h2>4 后训练</h2>
 <p>后训练流水线由 SFT 和随后进行的混合强化学习（RL）组成。SFT 使用通用与 agent 数据建立回答模式，RL 则在数学与代码等单领域任务上带来能力提升。更多数据与实现细节见附录 B。</p>
@@ -89,7 +89,7 @@
 <h4>4.1.1 通用数据</h4>
 <p>SFT 语料结合开源数据集与内部蒸馏数据，共包含 4,921,933 个样本，组织为通用与 agent 数据。如表 1 所示，通用数据覆盖指令遵循、知识、数学、科学、代码、对话与推理，agent 数据则面向与工具及外部环境的交互。</p>
 <p><strong>数据质量过滤与分层整理。</strong>我们建立多阶段数据整理流水线，将确定性启发式规则与基于模型的质量评分结合。初始阶段的规则检查系统性移除结构缺陷，包括缺失对话轮次、无效角色分配、重复生成、提示模板泄漏和格式错误的推理轨迹。规则过滤后，我们部署一个基于模型的评估器，该评估器以人工标注的先导基准校准，从多个教学与技术维度给候选样本评分：教育价值、逻辑合理性、逐步</p>
-<footer>原文第 11 页</footer></section><section class="page" id="page-12"><figure><img decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/b4556acbf384513bc1151daa3a0c2053f55b6e9d7aa5f0bf8863c6fb5cc1aa17.png"></figure>
+<footer>原文第 11 页</footer></section><section class="page" id="page-12"><figure><img height="999" width="1419" decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/b4556acbf384513bc1151daa3a0c2053f55b6e9d7aa5f0bf8863c6fb5cc1aa17.png"></figure>
 <p>（接上页）推理连贯性、事实一致性和安全合规性。我们不采用僵硬的二元阈值，而是通过固定的多标准评分规则将样本归入离散质量层级。优先保留提供密集监督和多样能力覆盖的高分样本，将边界样本送入辅助验证流水线，并严格丢弃噪声、信息量低或高风险条目。拒绝回答样本接受专门隔离和过滤，以消除过度拒绝和依赖环境的伪影，同时保留必要的安全对齐。候选训练之间的实证比较表明，积极的分层过滤——删去约 50% 的原始 SFT 候选——总体上优于在未经整理的完整语料上训练，但并非所有单项基准都朝同一方向变化。过滤强度的受控三路比较见附录 B.1.1。</p>
 <blockquote><strong>发现 4（后训练中数据质量胜过数量）：</strong>SFT 质量比数据量更重要。在受控比较中，删去约一半候选池，将六个基准的平均分从 67.78 提高至 68.83；收益集中在推理（BBH（Suzgun et al., 2023）提高 10.10），损失则局限于部分任务。因此，我们优先采用可靠、高价值监督，而非最大化保留样本数。</blockquote>
 <p><strong>去污染。</strong>为防止基准污染并确保泛化指标可靠，我们实施严格的跨基准去污染协议。整个候选 SFT 语料使用 8-gram 匹配滑动窗口，与所有下游评估和验证集进行比对清理。任何训练样本与任一评估提示或参考回答的 8-gram 重叠超过 50%，都会从语料中永久清除。</p>
@@ -109,7 +109,7 @@
 <h4>4.1.3 训练目标与超参数</h4>
 <p>SFT 将所有样本渲染为统一的 GLM-5.1 对话格式，并仅对 assistant 进行监督。根据模式，目标要么包含明确的推理轨迹和随后的最终回答，要么是不暴露推理轨迹的直接回答。assistant 的推理、回答及结构化工具调用计入损失；system 和 user 消息以及工具观察保持为被掩码的上下文。这一思考／不思考混合目标训练推理、回答生成与动作选择，而不教模型复现环境反馈。打包与损失掩码验证详见附录 B.3。</p>
 <p>我们训练两种针对长度的 SFT 变体，最大序列长度分别为 65,536 和 262,144 token。64K 变体训练八个 epoch；256K 变体在 19.46B 打包 token 上训练十个 epoch，并用于发布模型。两次训练的全局 batch size 均为 48。矩阵参数采用逐层 Muon（Liu et al., 2025），标量参数采用 Adam；学习率从 \(1 \times  10^{-4}\) 余弦衰减至 \(1 \times  10^{-6}\)，无 warmup，权重衰减 0.01，gradient 裁剪 1.0。对应优化动态见图 11。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/f0b99be4a5ec2f5da4dea53a1401fc6b6d4be1912f685ed068c1fd171405e9ae.png"></figure>
+<figure><img height="657" width="1419" decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/f0b99be4a5ec2f5da4dea53a1401fc6b6d4be1912f685ed068c1fd171405e9ae.png"></figure>
 <blockquote><strong>发现 7（长 agent 中期训练免除超长 SFT 的需求）：</strong>中期训练建立的长上下文基础，使仅用中等长度 SFT 数据，就能在 256K 规模上可靠激发稳健推理与 agent 行为。这有效免除了后训练期间昂贵的 256K 长推理轨迹需求，表明较短序列监督足以激活并外推中期训练建立的长序列能力。</blockquote>
 <footer>原文第 14 页</footer></section><section class="page" id="page-15"><h3>4.2 混合强化学习</h3><h4>4.2.1 RL 数据整理</h4>
 <p>我们构建覆盖数学、代码和通用能力任务的混合强化学习语料。通过初始策略的 rollout 估计提示难度，并移除模型已经经常解决的问题，将训练集中于仍能提供有效学习信号的提示。</p>
@@ -122,7 +122,7 @@
 <p>我们以思考模式评估 ZGCM-1。报告结果使用发布的 256K SFT checkpoint（第 4.1 节）。非 agent 和网络环境深度研究运行的采样 temperature 为 1.0，top-p 为 1.0。总上下文预算为 262,144 token，包含最多 4,096 个提示 token 和最多 258,048 个生成 token。非 agent 基准除非指定其他汇总规则，否则报告 32 次运行的平均 pass@1。对于 DeepSeek-R1-0528-Qwen3-8B 和 MiniCPM4.1-8B，GPQA-Diamond、HumanEval+、MBPP+ 及 LiveCodeBench v6 为四次运行均值；MMLU 为单次运行，IFEval 使用 Prompt Strict 准确率。</p>
 <p>非 agent 套件覆盖四类共 20 个基准。数学与抽象推理包括 MATH-500（Lightman et al., 2023）、AIME 2024/2025/2026（Mathematical Association of America, 2026）、HMMT 2025/2026（Harvard–MIT Mathematics Tournament, 2026）、AGIEval SAT Math（Zhong et al., 2023）、AQuA-RAT（Ling et al., 2017）、HARDMath-mini（Fan et al., 2024）、IMO-AnswerBench（Luong et al., 2025）、MATH-P-Hard（Huang et al., 2025）及 OlympiadBench 的纯文本数学子集（He et al., 2024），另包含 miniF2F 上的形式化定理证明（Zheng et al., 2022）和 ARC-AGI-1 上的抽象网格推理（Chollet, 2019）。代码生成采用 HumanEval+ 和 MBPP+（Liu et al., 2023），以及 LiveCodeBench v6（Jain et al., 2024）。知识采用 MMLU（Hendrycks et al., 2021）和 GPQA-Diamond（Rein et al., 2024）；指令遵循通过 IFEval（Zhou et al., 2023）衡量。</p>
 <p>网络环境深度研究使用启用思考的 ReAct 策略（Yao et al., 2023），最多执行 64 个搜索与阅读步骤。Binary Function Search 使用独立的、基于 Ghidra（National Security Agency, 2019）的</p>
-<footer>原文第 15 页</footer></section><section class="page" id="page-16"><figure><img decoding="async" loading="lazy" alt="原文第 16 页图表或公式" src="assets/images/e27d4381931f43d326e1823b051dd5d8b84d710fd08cffeffd922ac3e7cad050.png"></figure>
+<footer>原文第 15 页</footer></section><section class="page" id="page-16"><figure><img height="1002" width="1419" decoding="async" loading="lazy" alt="原文第 16 页图表或公式" src="assets/images/e27d4381931f43d326e1823b051dd5d8b84d710fd08cffeffd922ac3e7cad050.png"></figure>
 <p>（接上页）交互协议和 decoding 配置。两个运行框架均见附录 C。除 WebDancer 外的网络基线数值取自公开技术报告和模型发布；WebDancer 与 Binary Function Search 基线则在我们的共享运行框架下评估。</p>
 <h3>5.2 7B 规模模型比较</h3>
 <p>我们将 ZGCM-1 与六个 7B–8B 规模的推理模型比较。如表 2 所示，比较涵盖推理与通用能力、代码、知识和指令遵循四类共 20 个基准。</p>
@@ -130,23 +130,23 @@
 <p>我们在两种 agent 研究场景中评估 ZGCM-1：开放网络信息查找和二进制程序分析。</p>
 <p><strong>网络环境深度研究。</strong>网络环境深度研究要求 agent 迭代搜索、检查并综合外部证据。表 3 使用 WebWalkerQA（Wu et al., 2025b）、BrowseComp（Wei et al., 2025）和 GAIA（Mialon et al., 2024）的报告结果，比较专门研究 agent、配备工具的开放权重模型与专有系统，并以 WebDancer（Wu et al., 2025a）作为专门研究 agent 基线。ZGCM-1 在 WebWalkerQA 上获得 63.09%，在 BrowseComp 上获得 19.43%，在 GAIA 纯文本任务上获得 42.52%。</p>
 <p><strong>二进制函数搜索。</strong>这一基准评估 agent 能否仅根据行为描述，在移除符号的 ELF 二进制文件中找出目标函数。我们从覆盖数千个开源 C/C++ 项目的广泛收集工作中构建基准，在存在适当候选时，从每个项目中选取若干语义上有意义的函数。目前经过验证的数据池包含来自数百个项目的超过 11,000 个任务。评估使用 50 个任务的子集，通过随机</p>
-<footer>原文第 16 页</footer></section><section class="page" id="page-17"><figure><img decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/0f420da123bf36627cf7c468d3070329739984438a0a4421ad35a5d98dc38859.png"></figure>
+<footer>原文第 16 页</footer></section><section class="page" id="page-17"><figure><img height="600" width="1419" decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/0f420da123bf36627cf7c468d3070329739984438a0a4421ad35a5d98dc38859.png"></figure>
 <p>（接上页）从 10 个代表项目（tmux、tree、GNU Wget2、XZ Utils、YAJL、zlib、libuv、libgit2、nm 和 Lua）各采样五个任务组成。这 10 个项目全部从训练数据中留出，不出现在任何训练划分中；因此，没有评估任务来自训练中见过的项目。我们计划公开发布 Binary Function Search 数据集，以支持工具辅助二进制分析的可复现研究。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/712e792f44b8b7d12d22e42d566c01bafc327e9533de3298b60af677f3705058.png"></figure>
+<figure><img height="714" width="1419" decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/712e792f44b8b7d12d22e42d566c01bafc327e9533de3298b60af677f3705058.png"></figure>
 <p>如图 12 所示，agent 接收一份行为描述，其中包含控制流、被调用函数、常量、错误处理或输出方面的线索。通过结构化、基于 Ghidra 的接口，它枚举函数、搜索字面量和错误消息、反编译候选、追踪引用并检查汇编。Agent 将这些证据与描述比较，迭代缩小候选集合，随后提交精确的函数入口 ELF 虚拟地址。我们依据由对应未移除符号二进制文件构建的隐藏真值验证提交地址。仅当提交地址精确匹配函数入口 ELF 虚拟地址时，才判为正确；错误或缺失提交均判为错误。更多构建与评分细节见附录 C.2。ZGCM-1-7B 达到 62% 准确率，远超同等规模基线（Qwen3-8B 为 12%，其他模型为 0%）。它与更大的前沿模型仍具有竞争力，接近 GLM-5.1（66%），并优于 DeepSeek-R1 和 GPT-4o。</p>
-<footer>原文第 17 页</footer></section><section class="page" id="page-18"><figure><img decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/8f0094b925f8c48832a2d1d286e9273e25a584826678335f53696b3d9892eeab.png"></figure>
+<footer>原文第 17 页</footer></section><section class="page" id="page-18"><figure><img height="603" width="1419" decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/8f0094b925f8c48832a2d1d286e9273e25a584826678335f53696b3d9892eeab.png"></figure>
 <h2>6 AI 原生研究与开发</h2><h3>6.1 研发全生命周期中的 AI 辅助</h3>
 <p>我们在整个模型开发生命周期中采用 AI 原生方法。如图 13 所示，每位研究者指导基于 LLM 的 agent，参与开发的所有阶段，从数据工程与架构设计，到学习算法、实验、基础设施、评估和部署。研究者讨论产生人类上下文材料（对话、会议记录、决策、计划），完成的 agent 工作则产生可复用经验（经过验证的脚本、工作流、检查清单、调试历史）。两条信息流都进入共享 agent 运行框架，为每个 agent 提供有效自主操作所需的上下文、技能和工具。</p>
 <p><strong>数据清洗。</strong>AI agent 参与完整的数据处理流水线。给定一组质量要求，agent 首先编写启发式过滤与转换脚本，再在目标语料上执行。处理后，agent 检查所得数据组成和分布统计，验证输出是否符合预定标准。若发现差异，agent 自动迭代处理脚本，改进规则与阈值，直到数据分布满足所有要求。</p>
 <p><strong>集群管理。</strong>数据处理、模型训练和推理均在统一集群平台运行，用户通过同一网页界面提交任务、检查日志并管理开发机器。为使 AI agent 能够自主操作该平台，我们与 agent 迭代协作开发了一套完整技能包。该包提供用于创建开发机器、提交训练任务、修改资源配置、流式获取日志和过滤状态字段的结构化接口。凭借这些技能，agent 能够独立启动实验、监控进展、从日志提取并诊断失败，以及调整超参数或资源分配，无需人工干预。</p>
 <p><strong>自动研究。</strong>当前基于 LLM 的 agent 具备足够的长程任务能力，配备文献搜索和集群管理工具后，可以开展半自主研究。Agent 能够探索替代算法和超参数配置、启动训练、分析结果并迭代，无需持续人工监督。我们在 ZGCM-1 开发中常规使用这一自动研究工作流。例如，agent 剖析了存储集群的数据传输特性，并针对性调整训练框架 I/O 流水线，完全通过自主 agent 工作实现了显著训练提速。</p>
 <p><strong>评估。</strong>模型评估是 AI 原生研发工作流的一部分，作为开发工具，而不仅是最后阶段的考核。我们使用原子能力评估（ACE），这是一个细粒度诊断基准，可快速刻画模型能力并反馈到训练迭代。ACE 将 2,503 个探测样例组织为 18 类、183 项原子能力。在标准设置下，完整 ACE 运行约需两至三分钟，提供</p>
-<footer>原文第 18 页</footer></section><section class="page" id="page-19"><figure><img decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/6f5b6d761eaa15b5ba3b8fb86e1c0e2c296df5a9b039d0001ae9ec0e3f3488f4.png"></figure>
+<footer>原文第 18 页</footer></section><section class="page" id="page-19"><figure><img height="1017" width="1419" decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/6f5b6d761eaa15b5ba3b8fb86e1c0e2c296df5a9b039d0001ae9ec0e3f3488f4.png"></figure>
 <p>（接上页）类别、能力和探测样例层面的初步强弱画像。这使 ACE 非常适合消融研究中的频繁评估：使用不同数据混合、目标、超参数或推理配置训练的模型，可以高效比较，并将退化定位到受影响的能力。由此 ACE 闭合评估与开发之间的循环，识别哪些干预有效、哪些导致退化、哪里仍需调整。我们通过人类与 LLM 迭代协作构建基准。LLM 辅助能力拆解、探测样例生成、边界情况发现和评分器实现，研究者则定义能力边界、审计生成产物并批准纳入。基准执行完全自动化：可用规则表达的探测样例由确定性程序评分；无法可靠表达为可执行规则的正确性，则由独立模型按照预定义评分准则判断。附录 D 详述分类体系、评分政策、验证与结果。</p>
 <p><strong>人类上下文。</strong>研究者与开发者频繁进行项目讨论，虽然信息稀疏，却包含关键设计决策、待办事项和技术理由。我们将自研 agent 平台 ZGent 整合到团队日常会议渠道。ZGent 记录并提炼每次讨论内容，随时间积累上下文，并自动将产生的任务派发给适当 agent 执行。这弥合了人类讨论与 agent 行动之间的间隙，显著减少将会议结论转化为具体工程工作的开销。</p>
 <h3>6.2 研发全生命周期中的 AI4AI 自主程度</h3>
 <p>AI4AI（AI for AI）指使用 AI 系统构建、评估和改进其他 AI 系统。为评估 AI agent 在研发生命周期中能承担多少责任，九位核心贡献者分别根据表 5 的五级准则，对 11 类任务评分，得到 99 个评分。L4/L5 的分界是自主形成目标：L4 在人类定义的目标内独立执行，L5 则还会识别研究目标并协调跨阶段工作。这一准则为有序等级，因此均值间的小差异没有实际意义（附录 E 提供针对任务的标准和全部个体评分）。</p>
-<footer>原文第 19 页</footer></section><section class="page" id="page-20"><figure><img decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/85bf22c070db91792480c21a4b50203f21c837e3f0b8c2b24e2768b48fb61cf1.png"></figure>
+<footer>原文第 19 页</footer></section><section class="page" id="page-20"><figure><img height="1614" width="1419" decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/85bf22c070db91792480c21a4b50203f21c837e3f0b8c2b24e2768b48fb61cf1.png"></figure>
 <p>不同任务的自主程度并不均衡（图 14）。团队通过共识为各任务分级：实验与监控、部署工程为 L4；模型架构设计与学习算法设计为 L2，二者都没有收到高于 L3 的评分；其余七类任务为 L3。贡献者认为，操作类任务的自主执行空间显著大于设计类任务。</p>
 <p>这些属于贡献者判断，并非标准化测量。99 个评分中只有一个为 L5，没有任务被评为高于 L4。由于分配的等级介于 L2 至 L4，按任务描述自主程度，比为整个工作流指定单一成熟度等级更合适。</p>
 <footer>原文第 20 页</footer></section><section class="page" id="page-21"><blockquote><strong>发现 8（AI 自主程度取决于任务）：</strong>共享上下文、可复用技能和集成工具，让 agent 能够在有限人工干预下迭代，但自主程度并不均衡：实验与部署等操作类任务达到 L4，模型架构与学习算法设计则处于 L2，且从未超过 L3。</blockquote>
@@ -333,22 +333,22 @@
 <li><a href="#page-48">F 评估可复现性与来源追溯</a>　48</li>
 </ul><footer>原文第 29 页</footer></section><section class="page" id="page-30"><h1>附录</h1><h2>A 预训练细节</h2><h3>A.1 训练配置</h3>
 <p>表 6 列出通用预训练（16K 上下文）和长上下文验证（64K 与 256K）的分布式训练配置。所有训练均使用 H100 GPU 和 FP8 计算。我们评估两条达到 256K 的路径：直接路径在 256K 下训练 30B token；分阶段路径先在 64K 下训练 10B，再在 256K 下训练 20B。在吞吐量相近的情况下，分阶段路径达到略低的最终损失（1.16 对 1.19）。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或公式" src="assets/images/d20ae81317601cc83b227337a1e43ecf27f2dbe2fee9a88bc099f7876654ae71.png"></figure>
+<figure><img height="276" width="1419" decoding="async" loading="lazy" alt="原文第 30 页图表或公式" src="assets/images/d20ae81317601cc83b227337a1e43ecf27f2dbe2fee9a88bc099f7876654ae71.png"></figure>
 <h3>A.2 通用预训练期间的能力动态</h3>
 <p>我们直接评估保存的 54 个基础 checkpoint，累计处理的通用预训练 token 从 0.04T 到 4.19T。每个 checkpoint 都以基础模型形式评估并生成回答，不进行 SFT、指令微调或其他后训练适配。Checkpoint 之间保持相同的基准运行框架和评估设置，因此曲线反映预训练模型本身的能力变化。Token 位置由训练日志中的已消耗样本数乘以序列长度得到，从而在全局 batch size 逐步增加期间仍保持精确。所得轨迹见图 15。</p>
 <p>评估使用固定子集，而非完整测试集：MMLU 为 1,425 项（每个学科 25 项），HellaSwag 为 1,004 项，其余基准为 50 至 200 项。GSM-Symbolic、Minerva Math 和 OpenBookQA 各使用 50 项，因此单个项目会令分数变化两个百分点。这三个基准的点间变化既反映采样噪声，也反映能力变化，只有总体趋势具有信息价值。</p>
 <p>表 7 概括四个由五个 checkpoint 组成的窗口。第一和最后一列分别取最初和最后五个 checkpoint 的平均值；中间两列分别取以约 1.0T 和 2.5T token 为中心的五个 checkpoint 均值。分数以百分比报告。</p>
 <p>每个基准从第一个窗口到最后一个窗口均有所改善，但提升速度不同。大部分收益出现在 2.5T token 之前：截至 2.5T 窗口，MMLU 已实现总提升的 92%，ARC-Challenge 为 88%，WinoGrande 为 84%。最后 1.7T token 使 MMLU 增加 2.58 个百分点、GSM8K 增加 1.97、WinoGrande 增加 2.84。代码和更难数学基准在同一区间继续提升，HumanEval 增加 7.08 个百分点，GSM-Symbolic 增加 14.80；但后者仅以 50 项衡量，不确定性较大。这些分化动态表明，仅靠广泛预训练，其边际收益越来越不均衡，因此促使我们在中期训练中采用面向能力的混合方案。</p>
-<footer>原文第 30 页</footer></section><section class="page" id="page-31"><figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/efd5bf6aab0b6e7a3e894866eadab281a9762df1be2a5dbb697d77d12976bf41.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/b4929d44de2541336366fd34d259c6c9c79f18483cef1b415d24da996d066948.png"></figure>
+<footer>原文第 30 页</footer></section><section class="page" id="page-31"><figure><img height="1356" width="1419" decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/efd5bf6aab0b6e7a3e894866eadab281a9762df1be2a5dbb697d77d12976bf41.png"></figure>
+<figure><img height="609" width="1419" decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/b4929d44de2541336366fd34d259c6c9c79f18483cef1b415d24da996d066948.png"></figure>
 <footer>原文第 31 页</footer></section><section class="page" id="page-32"><h3>A.3 中期训练期间的能力发展</h3>
 <p>我们使用短程 SFT 探测，跟踪连续训练里程碑的下游能力。每个 checkpoint 都使用同一份精心整理的 SFT 语料快速适配，再在固定基准套件上评估。探测衡量每种初始化在轻量监督适配后激发的能力。因此，它不同于附录 A.2 的直接基础 checkpoint 评估。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/264d3beff3a80fba6f58aa2ec8cfba04e83a4fa379111fdff24531ab854234c1.png"></figure>
+<figure><img height="666" width="1419" decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/264d3beff3a80fba6f58aa2ec8cfba04e83a4fa379111fdff24531ab854234c1.png"></figure>
 <p>探测显示，进入中期训练后出现较大变化。从通用预训练结束到中期训练结束，MATH-500 从 35.83% 升至 74.12%，HumanEval+ 从 43.29% 升至 73.78%，IFEval Strict 从 29.57% 升至 72.64%，MMLU 从 44.17% 升至 72.63%。各基准并非在每个 checkpoint 都单调提升。</p>
 <p>最后一次中期训练探测使用三个 SFT epoch，而此前探测使用两个，因此这些轨迹是下游潜力改善的诊断证据，并非严格匹配的因果消融。结合附录 A.2 的直接基础模型趋势，它们支持在完整后训练前使用面向能力的中期训练。</p>
 <h3>A.4 课程式预训练</h3>
 <p>我们比较两个使用相同数据混合、训练 10B token 的 7B 训练。随机基线以随机顺序采样文档。课程训练首先将词汇复杂度分数极端的文档作为 outlier 排除；这些通常是损坏或乱码文本，而非有意义的困难样本。随后将剩余自然语言文档按词汇复杂度从低到高排序。代码与数学不以词汇复杂度作为难度代理，而是独立打乱，并按目标比例交错加入。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/2f4ed08fec89f4b10cfc7c72db6191b843257299c96dcbaf1df8048746f713e9.png"></figure>
+<figure><img height="333" width="1419" decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/2f4ed08fec89f4b10cfc7c72db6191b843257299c96dcbaf1df8048746f713e9.png"></figure>
 <p>课程排序改善了代码 BPB（1.99 → 0.81）和数学 BPB（0.97 → 0.94）。通用基准</p>
 <footer>原文第 32 页</footer></section><section class="page" id="page-33"><p>（接上页）（MMLU、ARC、HellaSwag）的 BPB 小幅增加 0.03–0.09，表明在这一 token 预算下，课程以少量通用知识获取损失为代价，加速了领域特定学习。</p>
 <h4>A.4.1 定性示例：为何代码与数学单独交错加入</h4>
@@ -378,7 +378,7 @@ count_data = np.loadtxt("../BookSource/Chapter1_Introduction/data/txtdata.csv")<
 <footer>原文第 33 页</footer></section><section class="page" id="page-34"><h3>A.5 中期训练混合</h3>
 <p>中期训练采用全序列因果目标进行继续预训练（而非聊天模板监督）。指令记录序列化为原始上下文，agent 动作和环境观察均仍是下一 token 预测目标。</p>
 <p>我们通过全池去重与数学错误过滤，产生约 5.3B 条记录（2.86T token）的候选池。再将该池采样为三种累积式上下文混合：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 34 页图表或公式" src="assets/images/ff0641d16309ccd0e37563f61c1399193fd706c1163b74e86dedee60a7eb0a55.png"></figure>
+<figure><img height="252" width="1419" decoding="async" loading="lazy" alt="原文第 34 页图表或公式" src="assets/images/ff0641d16309ccd0e37563f61c1399193fd706c1163b74e86dedee60a7eb0a55.png"></figure>
 <p>代码与数学在三个阶段分别占约 20%。256K 阶段将知识比例从 10.5% 提至 14.2%，agent 数据从 1.5% 提至 3.3%，同时将预训练回放从 13% 降至 9%。</p>
 <h4>A.5.1 推理与指令数据</h4>
 <p>推理来源规范化为统一 schema，并依据自包含性、答案证据和推理质量，分类为接受、重写、待处理、留出或拒绝。推理池约含 35M 个样本（38B token）。其中 34.7M 通过规则清洗直接保留；201K 个问题有价值但轨迹低质量的样本，由教师模型重建并在验证后重新接受。</p>
@@ -393,7 +393,7 @@ count_data = np.loadtxt("../BookSource/Chapter1_Introduction/data/txtdata.csv")<
 <p>通用 SFT 数据中的推理成分，经过结构验证、答案质量审查和推理价值过滤，从 2,268,178 个候选中保留 1,307,175 个。接受样本除了可靠的最终答案，还必须包含连贯、完整且实质有用的推理。安全与多轮样本通过适合任务的结构检查，处理全过程中，推理内容与可见最终答案保持分离。</p>
 <h4>B.1.1 质量优先选择的证据</h4>
 <p>为隔离数据质量的作用，我们从同一基础 checkpoint 出发，使用同一 SFT 数据池的三个版本快速微调为对话模型。第一版仅做格式规范化和基本结构检查，不进行基于模型的质量过滤。第二版移除被判为需审查或删除的样本，同时保留广泛能力覆盖。第三版仅保留通过最严格质量、风格与能力检查的样本。这些数量指受控消融数据池，而非最终 SFT 语料。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 35 页图表或公式" src="assets/images/3b313d0ba8da598d6994841d2df5155162512b7bfefd3e41207e742d64237854.png"></figure>
+<figure><img height="249" width="1419" decoding="async" loading="lazy" alt="原文第 35 页图表或公式" src="assets/images/3b313d0ba8da598d6994841d2df5155162512b7bfefd3e41207e742d64237854.png"></figure>
 <p>质量优先版本相比最少处理版本少用 44.9% 的样本，相比广泛过滤版本少用 37.5%。尽管规模更小，六个共享基准的平均分仍分别从 67.78 和 67.98 提高至 68.83。各任务并非都朝同一方向变化，但汇总结果表明，高质量数据比单纯增加数据量更有用。</p>
 <h3>B.2 Agent SFT 数据</h3>
 <p>我们比较两种引入 agent 监督的计划。顺序计划先用通用能力数据训练，再继续用 agent 数据训练。联合计划在整个 SFT 中交错加入通用与 agent 样本。候选训练评估更支持联合计划，最终训练采用这一计划。</p>
@@ -401,7 +401,7 @@ count_data = np.loadtxt("../BookSource/Chapter1_Introduction/data/txtdata.csv")<
 <p><strong>交互 schema。</strong>Deep Research 系统指令如下：</p>
 <blockquote>你是一名深度搜索助手。你的主要职责是对任何主题开展严谨、多步骤、多来源的调查，涵盖广泛的开放领域问题和高度专业的学术查询。对于每个用户请求，你必须主动从可信且多样的来源查找并交叉核对信息，再将发现整合为全面、准确、结构清晰且客观的回答。当你收集到充分信息并准备提供确定回答时，用 &lt;answer&gt;&lt;/answer&gt; 标签包住整个最终答案。</blockquote>
 <footer>原文第 35 页</footer></section><section class="page" id="page-36"><p>交互提供两个工具：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 36 页图表或公式" src="assets/images/d2095ca4f7992486b6679d3cb6ae60898da51798cce44ba384c794d129c7d569.png"></figure>
+<figure><img height="264" width="1419" decoding="async" loading="lazy" alt="原文第 36 页图表或公式" src="assets/images/d2095ca4f7992486b6679d3cb6ae60898da51798cce44ba384c794d129c7d569.png"></figure>
 <p>每个样本遵循 system → user → assistant → tool 消息序列，在最终 assistant 回答前按需重复 assistant—tool 交互。工具在顶层 tools 字段中声明；assistant 动作在 tool_calls 中包含工具名与 JSON 参数；每个环境返回是独立的 role=tool 消息，与前一调用配对。搜索观察采用排序结果列表，visit 观察则提供与指定目标相关的信息。最终回答包在 &lt;answer&gt;...&lt;/answer&gt; 中。</p>
 <p>思考样本在动作和最终答案前包含 assistant 推理。对应的不思考视图移除推理片段，保留用户请求、工具调用、观察和答案。</p>
 <h4>B.2.2 软件工程轨迹</h4>
@@ -420,7 +420,7 @@ count_data = np.loadtxt("../BookSource/Chapter1_Introduction/data/txtdata.csv")<
 <p>打包前，识别工具的聊天模板与损失掩码预检验证工具渲染、assistant 监督边界、动作—观察闭合、序列长度和非空目标。接受、过长及渲染错误记录分别输出，而非静默截断或丢弃。</p>
 <h3>B.4 从思考到直接回答的迁移</h3>
 <p>历史 checkpoint 比较考察面向推理的监督能否改善直接回答能力。一个以直接回答数据训练的基线 checkpoint，随后用直接回答样本与明确推理轨迹混合再训练。两个 checkpoint 均以不思考模式评估，因此比较衡量不暴露中间推理轨迹时的答案质量。</p>
-<footer>原文第 37 页</footer></section><section class="page" id="page-38"><figure><img decoding="async" loading="lazy" alt="原文第 38 页图表或公式" src="assets/images/ea906e6d7d18b4c4d839d466eea312e81749379308cc86edeb56f34fc2844c99.png"></figure>
+<footer>原文第 37 页</footer></section><section class="page" id="page-38"><figure><img height="441" width="1419" decoding="async" loading="lazy" alt="原文第 38 页图表或公式" src="assets/images/ea906e6d7d18b4c4d839d466eea312e81749379308cc86edeb56f34fc2844c99.png"></figure>
 <p>最大收益出现在数学推理与代码生成。AIME 2025 从 3/30 提至 13/30，AIME 2024 从 2/30 提至 10/30，MBPP+ 提高 20.90 个百分点。BBH、LiveCodeBench v3 和 IFEval 也改善。这些结果与推理监督将有用的问题求解行为迁移到直接回答推理的解释一致，即使中间推理不可见。</p>
 <p>迁移取决于任务，并非普遍存在：MMLU 下降 2.60 个百分点，HumanEval+ 下降 7.32 个百分点。</p>
 <p>该实验是观察性 checkpoint 比较，而非受控数据消融。混合数据训练可能在总训练 token、数据组成、checkpoint 历史和优化计划方面有所不同。</p>
@@ -473,15 +473,15 @@ count_data = np.loadtxt("../BookSource/Chapter1_Introduction/data/txtdata.csv")<
 <p>ACE 遵循四项设计原则。（P1）<strong>原子性。</strong>每项能力有狭窄语义边界，使失败能定位具体行为，而不仅是宽泛领域。（P2）<strong>探测多样性。</strong>每项能力以多种表面形式、三个由作者指定的难度等级（L1–L3）测试，降低对单一措辞的敏感性。（P3）<strong>意图感知评分。</strong>仅当格式是目标行为时，评估器才严格匹配回答；否则提取并评分实质答案，同时规范化非语义变化。（P4）<strong>可追溯性。</strong>每个决策都关联探测样例、参考答案、评分政策、提取答案和失败记录。</p>
 <h3>D.2 分类体系与评分</h3>
 <p>ACE 在 18 个能力类别中，将模型行为拆解为 183 项原子能力。每项原子能力针对一个具体行为，使用表面形式和难度不同的多个探测样例评估。表 13 概括分类体系的范围与分配。2,503 个探测样例包含 835 个 L1、835 个 L2 和 833 个 L3。这些标签表示三个逐渐增加的探测难度等级。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 41 页图表或公式" src="assets/images/a591d0a8b37ac59d88443743d65b449e30ea0e855ca850afa89e09aed10936f4.png"></figure>
+<figure><img height="702" width="1419" decoding="async" loading="lazy" alt="原文第 41 页图表或公式" src="assets/images/a591d0a8b37ac59d88443743d65b449e30ea0e855ca850afa89e09aed10936f4.png"></figure>
 <footer>原文第 41 页</footer></section><section class="page" id="page-42"><p>表 14 展示这些难度等级如何落实到一项原子能力。示例来自 Tool Use 类别的参数提取能力：L1 提取单个标量参数，L2 将单位转换与多个参数结合，L3 构造嵌套列表和对象参数。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 42 页图表或公式" src="assets/images/b450158d9a56fd5e6571c8077746855600378801af5e26fadccc1dea81e500c1.png"></figure>
+<figure><img height="327" width="1419" decoding="async" loading="lazy" alt="原文第 42 页图表或公式" src="assets/images/b450158d9a56fd5e6571c8077746855600378801af5e26fadccc1dea81e500c1.png"></figure>
 <p>ACE 为每个探测样例选择针对目标能力的评分器。2,503 个样例中，2,155 个（86.1%）采用确定性评分。数值评分器识别答案标记、最后一行、框选表达式、单位和等价分数。字符串评分器接受带引号和 embedding 句中的答案，多项选择评分器仅在审计过的答案位置匹配字母。严格的全回答匹配仅用于明确测试格式、长度或无额外文本的任务。代码探测使用抽象语法树检查或隔离单元测试，工具使用探测依据 JSON Schema 验证参数。其余 348 个（13.9%）样例的正确性无法用可靠可执行标准表达，因此自动流水线调用独立模型和预定义二元评分准则。两条评分路径在同一自动流水线中执行；人工审查仅限基准构建和离线验证。探测结果聚合为具有 L1–L3 分解的原子能力分数，用于定位改善与退化；类别级汇总则概括更广泛模式。</p>
 <h3>D.3 AI 辅助的基准构建</h3>
 <p>我们通过迭代的人类—LLM 协同设计构建基准。在分类体系层面，LLM 提出拆解、边界情况和缺失维度，研究者将建议整合为有明确评估目标的能力。在探测层面，LLM 起草问题、参考答案、难度变体和对抗样例。研究者验证每项是否隔离了目标能力，并修订歧义或混杂项目。在评分层面，LLM 有两个角色。首先，将评估规范转换为候选答案提取器、验证器、静态分析和任务特定测试；研究者在评估前验证并冻结这些组件。其次，在运行时，LLM 充当基于评分准则样例的自动评判器。</p>
 <h3>D.4 评估结果</h3>
 <p>图 17 在全部 18 个能力类别上，比较 ZGCM-7B 与参考模型。</p>
-<footer>原文第 42 页</footer></section><section class="page" id="page-43"><figure><img decoding="async" loading="lazy" alt="原文第 43 页图表或公式" src="assets/images/2eb65abca1d24a80f35b8b2a674b0553ba4d5f53cd412f1e0862efbbd1f737ea.png"></figure>
+<footer>原文第 42 页</footer></section><section class="page" id="page-43"><figure><img height="786" width="1419" decoding="async" loading="lazy" alt="原文第 43 页图表或公式" src="assets/images/2eb65abca1d24a80f35b8b2a674b0553ba4d5f53cd412f1e0862efbbd1f737ea.png"></figure>
 <p>ZGCM-7B 表现最好的类别是数学（98.18%）、规划（97.78%）、逻辑（96.08%）、因果推理（96.00%）和阅读（95.04%）。最弱的类别是指令遵循（49.74%）、真实性（68.91%）、代码（72.24%）和语言（79.75%）。热图还表明，它与最强参考模型的差距集中在少数类别，而非分散于整个能力空间。</p>
 <p>相比同等规模的 Qwen3-8B-256K，ZGCM-7B 最大优势体现在长上下文处理（+31.11 个百分点）、算术（+20.74）、规划（+14.45）和世界建模（+10.00）。</p>
 <h3>D.5 质量与范围</h3>
@@ -565,9 +565,9 @@ count_data = np.loadtxt("../BookSource/Chapter1_Introduction/data/txtdata.csv")<
 <h3>E.3 个体贡献者评分</h3>
 <p>表 15 报告完整贡献者评分。任务顺序与图 14 相同，各列标识核心贡献者 1–9。表格保留可能被汇总摘要掩盖的个体差异。</p>
 <p>对于每个任务，图中将 L1–L5 编码为 1–5 后，报告九个评分的算术平均值和样本标准差。这些统计是有序等级回答的描述性总结，并不确立相邻等级间能力差异相等。误差条表示贡献者之间的差异，而非置信区间。图中个体点直接对应下表条目。</p>
-<footer>原文第 47 页</footer></section><section class="page" id="page-48"><figure><img decoding="async" loading="lazy" alt="原文第 48 页图表或公式" src="assets/images/4cad7cd96c7f2e84671634e6e38e212ed21fcaec41b9e2281775009948fff533.png"></figure>
+<footer>原文第 47 页</footer></section><section class="page" id="page-48"><figure><img height="756" width="1419" decoding="async" loading="lazy" alt="原文第 48 页图表或公式" src="assets/images/4cad7cd96c7f2e84671634e6e38e212ed21fcaec41b9e2281775009948fff533.png"></figure>
 <h2>F 评估可复现性与来源追溯</h2>
 <p>可复现性要求将数值结果同时绑定到四个层次：模型产物、评估数据、调用契约和评分实现。对于每个最终基准，评估记录应保留模型哈希、官方数据集 URL 与不可变修订版本、划分、提示包装、少样本示例、系统提示、聊天模板、模式控制设置、答案提取、指标实现、随机种子、超时、推理引擎与修订版本、硬件和原始输出位置。外部比较数值取自所引发布内容，而非统一重跑。</p>
 <p>我们以不思考模式评估 ZGCM-1，采用确定性 decoding，temperature 为 0，top-p = 1.0，运行一次。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 48 页图表或公式" src="assets/images/9bcf4c9a7098d326ff0d66a33e0c1736bf1a1d65df156ab3fd71b8bfa70b21e0.png"></figure>
+<figure><img height="705" width="1419" decoding="async" loading="lazy" alt="原文第 48 页图表或公式" src="assets/images/9bcf4c9a7098d326ff0d66a33e0c1736bf1a1d65df156ab3fd71b8bfa70b21e0.png"></figure>
 <footer>原文第 48 页</footer></section></body></html>

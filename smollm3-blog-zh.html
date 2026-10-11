@@ -1,17 +1,17 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SmolLM3 官方技术博客 · 中文全文</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">SmolLM3 官方技术博客</div><div class="document-meta">发布日期：2025-07-08 · 官方技术博客全文译文（非 arXiv 论文） · 7/7 节<br><a href="https://huggingface.co/blog/smollm3">官方原文（2025-07-08）</a></div><div class="page-links">章节：<a href="#part-1">1</a> <a href="#part-2">2</a> <a href="#part-3">3</a> <a href="#part-4">4</a> <a href="#part-5">5</a> <a href="#part-6">6</a> <a href="#part-7">7</a></div></nav><section class="page" id="part-1"><h1>SmolLM3：小型、多语言、长上下文推理模型</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SmolLM3 官方技术博客 · 中文全文</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">SmolLM3 官方技术博客</div><div class="document-meta">发布日期：2025-07-08 · 官方技术博客全文译文（非 arXiv 论文） · 7/7 节<br><a href="https://huggingface.co/blog/smollm3">官方原文（2025-07-08）</a></div><div class="page-links">章节：<a href="#part-1">1</a> <a href="#part-2">2</a> <a href="#part-3">3</a> <a href="#part-4">4</a> <a href="#part-5">5</a> <a href="#part-6">6</a> <a href="#part-7">7</a></div></nav><section class="page" id="part-1"><h1>SmolLM3：小型、多语言、长上下文推理模型</h1>
 <p class="note">原文：<a href="https://huggingface.co/blog/smollm3">Hugging Face 官方技术博客</a>，发表于 2025-07-08。本文是官方博客的中文全文，非 arXiv 论文。图表与代码保留原样。</p>
 <p class="names cover-info">作者（原文账号）：eliebak、cmpatino、anton-l、edbeeching、m-ric、nouamanetazi、akseljoonas、guipenedo、hynky、clefourrier、SaylorTwift、kashif、qgallouedec、hlarcher、glutamatt、Xenova、reach-vb、ngxson、craffel、lewtun、loubnabnl、lvwerra、thomwolf。</p>
 <p class="cover-info">随着用户寻求能够高效部署、能力出色的模型，小型语言模型正变得越来越重要。社区推出了丰富的小模型，每个都在推动这一规模下能力的边界。通过 SmolLM3，我们很高兴贡献一个新的、具有竞争力的完全开放 3B 模型：</p>
 <ul><li>基础模型：<a href="https://hf.co/HuggingFaceTB/SmolLM3-3B-Base">https://hf.co/HuggingFaceTB/SmolLM3-3B-Base</a></li><li>指令与推理模型：<a href="https://hf.co/HuggingFaceTB/SmolLM3-3B">https://hf.co/HuggingFaceTB/SmolLM3-3B</a></li></ul>
 <p class="cover-info"><strong>SmolLM3 处于效率的理想区间。</strong>我们的 3B 模型优于 Llama-3.2-3B 和 Qwen2.5-3B，同时与更大的 4B 替代模型 Qwen3 和 Gemma3 保持竞争力。除了性能数字，我们还准确分享了如何使用公开数据集和训练框架构建它。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 1" src="assets/images/685cd00e62fc1a113b2a72b396ed9a2ea17cb31fa646f529f33c5963ddaae8e5.png"></figure>
+<figure><img height="2077" width="2992" decoding="async" loading="lazy" alt="SmolLM3 原文图 1" src="assets/images/685cd00e62fc1a113b2a72b396ed9a2ea17cb31fa646f529f33c5963ddaae8e5.png"></figure>
 <p class="cover-info">模型概览：</p><ul><li><strong>3B 模型</strong>，使用 11T tokens 训练，在 3B 规模达到先进水平，并可与 4B 模型竞争。</li><li>具有<strong>双模式推理</strong>的<strong>指令模型</strong>，支持 <code>think</code>／<code>no_think</code> 模式。</li><li><strong>多语言支持</strong>：英语、法语、西班牙语、德语、意大利语和葡萄牙语，共 6 种语言。</li><li><strong>长上下文</strong>：通过 NoPE 和 YaRN 支持最多 128k。</li></ul>
 <p class="cover-info"><strong>完整配方：</strong>我们随 SmolLM3 一起发布工程蓝图，包括架构细节、精确的数据混合——展示如何通过三阶段预训练逐步提升各领域性能——以及构建混合推理模型的方法。通常，要达到这些结果需要花费数月进行逆向工程。我们直接提供完整方法。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 2" src="assets/images/86b8d7f9159fc0cc897d016a502895c9e71460531c2c44922a5b6f6e2427bde8.png"></figure>
+<figure><img height="10000" width="16666" decoding="async" loading="lazy" alt="SmolLM3 原文图 2" src="assets/images/86b8d7f9159fc0cc897d016a502895c9e71460531c2c44922a5b6f6e2427bde8.png"></figure>
 <p>无论你是在构建自己的模型，还是希望了解这一规模下性能的驱动力，这份蓝图都展示了具有竞争力的 3B 性能背后的工程过程。</p><p>先来看预训练阶段。</p>
 </section><section class="page" id="part-2"><h2>预训练</h2><p>相比此前的模型，SmolLM3 同时改变了架构和数据混合。先看架构与训练配置。</p>
 <h3>架构与训练细节</h3>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 3" src="assets/images/e2be67ecb438071d7a89f5593a4be1a1268c5a55d88b096bcdebf84a76dcd311.png"></figure>
+<figure><img height="1470" width="2554" decoding="async" loading="lazy" alt="SmolLM3 原文图 3" src="assets/images/e2be67ecb438071d7a89f5593a4be1a1268c5a55d88b096bcdebf84a76dcd311.png"></figure>
 <p>SmolLM3 使用 Transformer 解码器架构，与 SmolLM2 类似，共享 embedding 权重；它基于 Llama 架构，并进行了若干关键修改，以优化效率和长上下文表现。</p>
 <p><strong>GQA：</strong>我们将 MHA 替换为使用 4 组的 GQA。我们在使用 <a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu">FineWeb-Edu</a> 的 100B tokens 训练的 3B 模型上开展消融，表明 GQA 可以达到 MHA 的性能，同时显著减小推理时的 KV cache。</p>
 <p><strong>NoPE：</strong>我们实现了 <a href="https://huggingface.co/papers/2501.18795">《从 RoPE 到 NoRoPE，再回到 RoPE：一种新的混合 attention 策略》</a>（Yang et al., 2025）中的 NoPE，有选择地每隔 4 层移除一层的 RoPE。这种方法改善长上下文表现，同时不影响短上下文能力，消融实验验证了这一点。</p>
@@ -19,18 +19,18 @@
 <p><strong>训练稳定性：</strong>遵循 OLMo 2，我们取消 embedding 层的权重衰减，以改善训练稳定性。这一修改带来更稳定的训练动态，使 embedding 范数在训练过程中自然稳定在更健康的数值，而我们的消融表明，整体性能未受影响。</p>
 <p>所有这些修改都通过消融验证：使用相同的 3B 架构，在 FineWeb-Edu 的 100B tokens 上训练，确保每个修改要么改善性能，要么在保持性能的同时带来其他好处。</p>
 <p><strong>训练配置：</strong>我们使用 2.36M tokens 的全局 batch 大小，序列长度为 4096，学习率为 2e-4，使用 AdamW 优化器（beta1：0.9，beta2：0.95），权重衰减为 0.1，gradient 裁剪为 1。采用 WSD（warmup–稳定–衰减）调度器，warmup 2000 步，在最后 10% 的训练步数中线性衰减至 0。训练使用 <a href="https://github.com/huggingface/nanotron">nanotron</a>，数据处理使用 <a href="https://github.com/huggingface/datatrove">datatrove</a>，评测使用 <a href="https://github.com/huggingface/lighteval">lighteval</a>。模型在 384 张 H100 GPU 上训练了 24 天。分布式训练设置见下图。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 4" src="assets/images/607af210b7ef041cfa52d5f85f065312099e8e9bab72f6bee4a8195cbc353e74.png"></figure>
+<figure><img height="1024" width="1672" decoding="async" loading="lazy" alt="SmolLM3 原文图 4" src="assets/images/607af210b7ef041cfa52d5f85f065312099e8e9bab72f6bee4a8195cbc353e74.png"></figure>
 <p>除了架构修改，我们还对训练配方进行消融并改进。下面仔细看看。</p>
 <h3>数据混合与训练阶段</h3>
 <p>遵循 SmolLM2 的多阶段方法，我们采用三阶段训练策略，在 11.2T tokens 上训练 SmolLM3，以动态变化的比例混合网页、数学和代码数据。我们对训练了 50B 到 100B tokens 的 3B 模型开展大量消融，以确定数据混合及比例。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 5" src="assets/images/85fc2daa46e5df8efbbe084eb616ccab56b46320a7df7acb7d450b8a5da9646a.png"></figure>
+<figure><img height="1196" width="1932" decoding="async" loading="lazy" alt="SmolLM3 原文图 5" src="assets/images/85fc2daa46e5df8efbbe084eb616ccab56b46320a7df7acb7d450b8a5da9646a.png"></figure>
 <p>预训练包含以下阶段，上图也展示了这些阶段：</p>
 <ul><li><strong>阶段 1：稳定阶段（0T → 8T tokens）。</strong>这一基础阶段通过核心数据集混合建立强大的通用能力：<ul><li>网页：85%（12% 多语言），包括 FineWeb-Edu、DCLM、FineWeb2 和 FineWeb2-HQ。</li><li>代码：12%，包括 The Stack v2（16 种编程语言）、StarCoder2 拉取请求、Jupyter 与 Kaggle notebooks、GitHub issues 和 StackExchange。</li><li>数学：3%，包括 FineMath3+ 与 InfiWebMath3+。</li></ul></li><li><strong>阶段 2：稳定阶段（8T → 10T tokens）。</strong>保持良好的网页覆盖，同时引入更高质量的数学与代码数据集：<ul><li>网页：75%（12% 多语言）。</li><li>代码：15%，加入 Stack-Edu。</li><li>数学：10%，引入 FineMath4+、InfiWebMath4+ 与 MegaMath，包括 Qwen 问答、Pro 合成改写，以及文本–代码交错块。</li></ul></li><li><strong>阶段 3：衰减阶段（10T → 11.1T tokens）。</strong>最后阶段进一步提高数学与代码数据的采样比例：<ul><li>网页：63%（12% 多语言）。</li><li>代码：24%，提高高质量代码数据的采样比例。</li><li>数学：13%，提高数学数据的采样比例，并引入 OpenMathReasoning 等指令与推理数据集。</li></ul></li></ul>
 <p>这些阶段与混合使基础模型获得了很有竞争力的性能，评测部分将进一步介绍。包含精确数据权重的 nanotron 训练配置可在<a href="https://huggingface.co/datasets/HuggingFaceTB/smollm3-configs">这里</a>获取。我们还将分享训练日志和中间 checkpoint。</p>
 <p>主要预训练之后，我们通过中期训练阶段改善模型的长上下文和推理能力。</p>
 </section><section class="page" id="part-3"><h2>中期训练</h2><p>我们将长上下文适应和推理适应称为“中期训练”。它们比主要预训练短得多，但仍具有一定通用性，旨在改善模型在这两个领域的能力。先看长上下文训练。</p>
 <h3>长上下文扩展</h3>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 6" src="assets/images/e6430dd8ce263a649edfd193e893ac2f97cd9dd352af2896d151da25699e2eef.png"></figure>
+<figure><img height="1128" width="1942" decoding="async" loading="lazy" alt="SmolLM3 原文图 6" src="assets/images/e6430dd8ce263a649edfd193e893ac2f97cd9dd352af2896d151da25699e2eef.png"></figure>
 <p>主要预训练之后，我们在额外的 100B tokens 上训练 SmolLM3，以扩展上下文长度。我们按顺序分两个阶段扩展上下文窗口，每个阶段训练 50B tokens：先从 4k 扩至 32k 上下文，将 RoPE theta 提高至 1.5M；再从 32k 扩至 64k 上下文，将 RoPE theta 提高至 5M。两个阶段都提高了数学、代码和推理数据的采样比例。消融中，我们发现，除了混合中天然较长的样本以外，额外提高代码仓库、书籍和长网页等特定长上下文数据的采样比例，并没有进一步提高 RULER 和 HELMET 基准的表现。使用 NoPE，并在衰减阶段的数据混合上以更长序列和更大的 RoPE theta 值训练，已足以在最多 64k 上下文上获得有竞争力的性能。</p>
 <p>遵循 Qwen2.5，我们使用 YARN 外推至训练上下文长度之外。推理时，模型可处理最多 128k 上下文，即 64k 训练长度的 2 倍。</p>
 <h3>推理中期训练</h3>
@@ -39,7 +39,7 @@
 </section><section class="page" id="part-4"><h2>后训练</h2>
 <p><a href="https://arxiv.org/abs/2501.12948">DeepSeek R1</a> 和 <a href="https://arxiv.org/abs/2505.09388">Qwen3</a> 等推理模型的发布，展示了模型能够显式推理时涌现出的强大能力。然而，社区仍缺少使用公开数据集、构建同时支持推理与非推理模式的双模式指令模型的完全开放配方。大多数现有方法涉及复杂的强化学习过程和专有数据集，使研究者难以复现并在这些结果上继续构建。</p>
 <p>本节解释我们如何应对这些挑战，并分享构建双模式指令模型的完整配方。我们详细说明了如何通过精心设计的训练流水线，在推理和非推理模式之间平衡性能；流水线包括面向通用推理能力的中期训练、结合合成数据生成的 SFT，以及使用 APO 进行对齐。APO 是 DPO 的一个近期变体。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 7" src="assets/images/ded37f4c377a502793b59ee8ac0041d27746bdd772e5d491b4e5517a4498a310.png"></figure>
+<figure><img height="1208" width="1796" decoding="async" loading="lazy" alt="SmolLM3 原文图 7" src="assets/images/ded37f4c377a502793b59ee8ac0041d27746bdd772e5d491b4e5517a4498a310.png"></figure>
 <h3>构建聊天模板</h3>
 <p>深入训练方法之前，需要先明确用户如何与双模式模型交互。聊天模板是实现推理与非推理模式无缝切换的接口，其设计直接影响训练数据格式和模型行为。SmolLM3 的聊天模板允许用户在对话中控制推理模式。用户可分别在系统提示词中加入 <code>/think</code> 和 <code>/no_think</code> 标记，开启推理或非推理模式。在非推理模式下，与 Qwen3 类似，我们使用空的 think 块 prefill 模型回答，以确保直接作答而不显式推理。</p>
 <p>SmolLM3 支持工具调用，其聊天模板中，工具描述分为两个不同部分：XML Tools 和 Python Tools。实验表明，这种具体分类有助于模型准确理解各格式的工具定义。</p>
@@ -47,18 +47,18 @@
 <h3>SFT</h3>
 <p>推理中期训练阶段在 140B tokens 的通用推理数据上训练模型，随后进行 SFT，以在推理和非推理两种模式下加入数学、代码、通用推理、指令遵循、多语言及工具调用能力。训练双模式模型，需要谨慎平衡数据混合，才能在所有目标领域中保持两种模式的出色性能。为在训练过程中评估 SmolLM3，我们跟踪了数学、代码、通用推理、指令遵循和多语言领域。</p>
 <p>构建推理模式数据集时，遇到的主要挑战是某些领域中包含推理轨迹的数据集稀缺。为弥补这一缺口，我们使用现有非推理数据集的提示词，提示处于推理模式的 <a href="https://huggingface.co/Qwen/Qwen3-32B">Qwen3-32B</a> 生成合成数据。这使我们能改善模型最初在推理模式下表现不佳的领域，例如多轮对话、多语言和日常对话。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 8" src="assets/images/210bf70431eb90210415d12d0f889cfb0e2d38a61649bb306ff2111e725d3da3.png"></figure>
+<figure><img height="940" width="1562" decoding="async" loading="lazy" alt="SmolLM3 原文图 8" src="assets/images/210bf70431eb90210415d12d0f889cfb0e2d38a61649bb306ff2111e725d3da3.png"></figure>
 <p>最终的数据混合来自大量消融实验，探索推理 tokens 与非推理 tokens 的最佳比例，以及每种模式内的组成。所得 SFT 数据集包含 1.8B tokens：1B 属于非推理模式，0.8B 属于推理模式，由 12 个非推理数据集和 10 个带推理轨迹的数据集组成。我们使用 <a href="https://github.com/huggingface/trl/pull/3521">BFD（best-fit decreasing，递减最佳适配）packing</a> 训练了 4 个 epoch，约 8B tokens，对用户轮次和工具调用结果的损失进行掩码。</p>
 <p>我们将发布该数据混合及完整训练脚本，使社区能够复现并继续开展工作。</p>
 <h3>使用 APO 进行 Off-Policy 模型对齐</h3>
 <p>SFT 之后，我们进行一轮模型对齐，将用于非推理模式的 <a href="https://huggingface.co/datasets/allenai/llama-3.1-tulu-3-8b-preference-mixture">Tulu3 偏好数据集</a>，与通过 Qwen3-32B 和 Qwen3-0.6B 新生成的推理模式合成偏好对结合。为了完整覆盖非思考数据集中的所有领域，我们生成了对应的思考模式偏好对。选择 Qwen3-32B 的生成结果作为 “chosen”，Qwen3-0.6B 的回答作为 “rejected”，使用 APO 进行对齐。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 9" src="assets/images/0ee79c8a363eafec5e86967b4c01e934c0a78d46873e4579842a02c6e9204079.png"></figure>
+<figure><img height="760" width="1542" decoding="async" loading="lazy" alt="SmolLM3 原文图 9" src="assets/images/0ee79c8a363eafec5e86967b4c01e934c0a78d46873e4579842a02c6e9204079.png"></figure>
 <p><a href="https://arxiv.org/abs/2408.06266">APO</a>（APO）是 <a href="https://arxiv.org/abs/2305.18290">DPO</a>（DPO）的变体，提供更稳定的优化目标。在 DPO 中，奖励函数 \(r_{\theta }(x,y)\) 衡量训练期间序列概率，相对于训练开始时模型——即参考模型——的序列概率的对数比：</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 10" src="assets/images/50d24f6a5c0d0028eb9b445f9976bd199750a59e681c35756a1957fcfa12dd00.png"></figure>
+<figure><img height="184" width="791" decoding="async" loading="lazy" alt="SmolLM3 原文图 10" src="assets/images/50d24f6a5c0d0028eb9b445f9976bd199750a59e681c35756a1957fcfa12dd00.png"></figure>
 <p>这里，\(\beta\) 控制被优化模型相对于参考模型可以改变多少。DPO 损失优化由提示词 \(x\)、被选择回答 \(y_{w}\) 和被拒绝回答 \(y_{l}\) 组成的三元组：</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 11" src="assets/images/5291bec8fccd51b351e3b540d72eaba46d41c4ebb80b9d2594b098916cc301b3.png"></figure>
+<figure><img height="92" width="1476" decoding="async" loading="lazy" alt="SmolLM3 原文图 11" src="assets/images/5291bec8fccd51b351e3b540d72eaba46d41c4ebb80b9d2594b098916cc301b3.png"></figure>
 <p>APO 目标已被证明更稳定，我们也在内部消融中观察到更高的下游性能。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 12" src="assets/images/88cf9e0c8530157c416d791dfd10d3bec653f45155aa881a27615f934216b343.png"></figure>
+<figure><img height="92" width="1476" decoding="async" loading="lazy" alt="SmolLM3 原文图 12" src="assets/images/88cf9e0c8530157c416d791dfd10d3bec653f45155aa881a27615f934216b343.png"></figure>
 <p>虽然下游评测在数学、科学、指令遵循、代码、聊天和多语言任务上都显示改善，但我们观察到 RULER 等长上下文基准性能下降。我们将这一退化追溯到推理中期训练阶段：对推理能力的侧重影响了长上下文性能。此外，由于绝大多数推理数据短于 24k tokens，APO 训练数据也被限制在这一长度以内。</p>
 <p>为减轻这一性能下降，我们探索使用模型合并作为解决办法。</p>
 <h3>模型合并</h3>
@@ -68,21 +68,21 @@
 </section><section class="page" id="part-5"><h2>评测</h2><p>我们评估基础模型，以及指令模型在推理和非推理模式下的表现。先看基础模型的性能。</p>
 <h3>基础模型</h3><p>下图展示了 SmolLM3 在 12 个常用基准上的胜率，这些基准评估知识、推理、数学和代码能力。SmolLM3 稳定优于其他 3B 模型，并与更大的 4B 模型，包括 Qwen3-4B 和 Gemma3-4B，取得有竞争力的表现。</p>
 <p>计算胜率所使用的评测基准：HellaSwag、ARC、Winogrande、CommonsenseQA、MMLU-CF、MMLU Pro CF、PIQA、OpenBookQA、GSM8K、MATH、HumanEval+、MBPP+。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 13" src="assets/images/6ae5da0245fe6d9d5777e3a5a0a661c49d1b81183311728610895d93254c7fda.png"></figure>
+<figure><img height="2059" width="2992" decoding="async" loading="lazy" alt="SmolLM3 原文图 13" src="assets/images/6ae5da0245fe6d9d5777e3a5a0a661c49d1b81183311728610895d93254c7fda.png"></figure>
 <p>SmolLM3 在知识和推理基准 HellaSwag、ARC、BoolQ 上排名第一或第二，展现了这些核心能力的出色性能。数学与代码表现，在 3B 类别中具有竞争力。Ruler 64k 上的长上下文性能，表明模型能够有效处理扩展后的序列。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 14" src="assets/images/68dfbbcfd49dd55ffb4ffdfe9ae04365cf42abda6e2cc8b7f25a16c29dd37c04.png"></figure>
+<figure><img height="954" width="2194" decoding="async" loading="lazy" alt="SmolLM3 原文图 14" src="assets/images/68dfbbcfd49dd55ffb4ffdfe9ae04365cf42abda6e2cc8b7f25a16c29dd37c04.png"></figure>
 <p>在 Global MMLU、MLMM HellaSwag、Flores-200 和 Belebele 等多语言基准上评估时，模型在五种主要欧洲语言中展现出出色的多语言表现；这些基准测试知识、常识推理、文本理解和翻译。这表明，SmolLM3 在英语以外仍保持稳定的性能。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 15" src="assets/images/63051c7a321da7ba84e2c7aaa4605ff6afcabd1d7997973a579a986d1608d336.png"></figure>
+<figure><img height="1062" width="1600" decoding="async" loading="lazy" alt="SmolLM3 原文图 15" src="assets/images/63051c7a321da7ba84e2c7aaa4605ff6afcabd1d7997973a579a986d1608d336.png"></figure>
 <p>总体而言，基础模型在许多领域都表现出色。接下来看看这些能力如何体现为指令模型的表现。</p>
 <h3>双模式指令／推理模型</h3><p>由于 SmolLM3 同时具备指令和推理模式，我们需要分别评估两种模式，并与具有相同能力的模型比较。</p>
 <h4>不开启扩展思考的评测</h4>
 <p>我们在多个基准上，将 SmolLM3 与其他 3B 非推理模型比较，并与处于无思考模式的 Qwen3 推理模型比较。如性能图所示，SmolLM3 优于 Llama3.2 3B Instruct 和 Qwen2.5 3B Instruct 等其他 3B 非推理模型，在推理模型之间处于效率的理想区间：显著优于 Qwen3 1.7B，同时以较低计算成本接近 4B 模型的性能。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 16" src="assets/images/dd33e6605eadad1257ab76c4035563eb6e41e3283def223d3426d2a698e6ad59.png"></figure>
+<figure><img height="2064" width="2992" decoding="async" loading="lazy" alt="SmolLM3 原文图 16" src="assets/images/dd33e6605eadad1257ab76c4035563eb6e41e3283def223d3426d2a698e6ad59.png"></figure>
 <p>因此，指令模型处于性能与成本的帕累托前沿。下面看看推理模型的表现。</p>
 <h4>开启扩展思考的评测</h4>
 <p>开启扩展思考、评估 SmolLM3 的推理能力时，相比非推理版本，模型在大多数基准上显著改善。我们在挑战性任务中观察到明显提升，例如 AIME 2025（36.7% 对 9.3%）、LiveCodeBench 竞赛编程（30.0% 对 15.2%）和 GPQA Diamond 研究生水平推理（41.7% 对 35.7%）。</p>
 <p>虽然 Qwen3 4B 通常在思考与非思考两种模式下都取得最高分，SmolLM3 在 3B 参数类别中展现出有竞争力的性能，尤其擅长数学推理和复杂问题求解。模型的双模式能力，使用户能够选择不进行推理的更快推理过程，或通过扩展思考进行更深入的分析。</p>
-<figure><img decoding="async" loading="lazy" alt="SmolLM3 原文图 17" src="assets/images/9ba01496ec5d6ed2a34b4f7db860f1194e84955ecf9fc7dd5474b1f06fa5213a.png"></figure>
+<figure><img height="1208" width="2158" decoding="async" loading="lazy" alt="SmolLM3 原文图 17" src="assets/images/9ba01496ec5d6ed2a34b4f7db860f1194e84955ecf9fc7dd5474b1f06fa5213a.png"></figure>
 <p>最后一个问题是：如何使用这个模型？</p>
 </section><section class="page" id="part-6"><h2>如何在本地运行</h2><p>SmolLM3 的模型代码已包含在 Transformers <code>v4.53.0</code> 中，因此请升级 Transformers 版本。也可使用最新版 <code>vllm</code> 加载模型，它使用 Transformers 作为后端。</p>
 <pre><code>pip install -U transformers</code></pre>

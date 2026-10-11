@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Llama 3 模型家族 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">Llama 3 模型家族</div><div class="document-meta">The Llama 3 Herd of Models<br>首次提交：2024-07-31 · 译文版本：arXiv:2407.21783v3（2024-11-23） · 页码覆盖 92/92 页<br><a href="https://arxiv.org/abs/2407.21783v3">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2407.21783v3">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a> <a href="#page-41">41</a> <a href="#page-42">42</a> <a href="#page-43">43</a> <a href="#page-44">44</a> <a href="#page-45">45</a> <a href="#page-46">46</a> <a href="#page-47">47</a> <a href="#page-48">48</a> <a href="#page-49">49</a> <a href="#page-50">50</a> <a href="#page-51">51</a> <a href="#page-52">52</a> <a href="#page-53">53</a> <a href="#page-54">54</a> <a href="#page-55">55</a> <a href="#page-56">56</a> <a href="#page-57">57</a> <a href="#page-58">58</a> <a href="#page-59">59</a> <a href="#page-60">60</a> <a href="#page-61">61</a> <a href="#page-62">62</a> <a href="#page-63">63</a> <a href="#page-64">64</a> <a href="#page-65">65</a> <a href="#page-66">66</a> <a href="#page-67">67</a> <a href="#page-68">68</a> <a href="#page-69">69</a> <a href="#page-70">70</a> <a href="#page-71">71</a> <a href="#page-72">72</a> <a href="#page-73">73</a> <a href="#page-74">74</a> <a href="#page-75">75</a> <a href="#page-76">76</a> <a href="#page-77">77</a> <a href="#page-78">78</a> <a href="#page-79">79</a> <a href="#page-80">80</a> <a href="#page-81">81</a> <a href="#page-82">82</a> <a href="#page-83">83</a> <a href="#page-84">84</a> <a href="#page-85">85</a> <a href="#page-86">86</a> <a href="#page-87">87</a> <a href="#page-88">88</a> <a href="#page-89">89</a> <a href="#page-90">90</a> <a href="#page-91">91</a> <a href="#page-92">92</a></div></nav><section class="page" id="page-1"><header><span>Llama 3 模型家族</span><span>第 1 页</span></header>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Llama 3 模型家族 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">Llama 3 模型家族</div><div class="document-meta">The Llama 3 Herd of Models<br>首次提交：2024-07-31 · 译文版本：arXiv:2407.21783v3（2024-11-23） · 页码覆盖 92/92 页<br><a href="https://arxiv.org/abs/2407.21783v3">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2407.21783v3">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a> <a href="#page-41">41</a> <a href="#page-42">42</a> <a href="#page-43">43</a> <a href="#page-44">44</a> <a href="#page-45">45</a> <a href="#page-46">46</a> <a href="#page-47">47</a> <a href="#page-48">48</a> <a href="#page-49">49</a> <a href="#page-50">50</a> <a href="#page-51">51</a> <a href="#page-52">52</a> <a href="#page-53">53</a> <a href="#page-54">54</a> <a href="#page-55">55</a> <a href="#page-56">56</a> <a href="#page-57">57</a> <a href="#page-58">58</a> <a href="#page-59">59</a> <a href="#page-60">60</a> <a href="#page-61">61</a> <a href="#page-62">62</a> <a href="#page-63">63</a> <a href="#page-64">64</a> <a href="#page-65">65</a> <a href="#page-66">66</a> <a href="#page-67">67</a> <a href="#page-68">68</a> <a href="#page-69">69</a> <a href="#page-70">70</a> <a href="#page-71">71</a> <a href="#page-72">72</a> <a href="#page-73">73</a> <a href="#page-74">74</a> <a href="#page-75">75</a> <a href="#page-76">76</a> <a href="#page-77">77</a> <a href="#page-78">78</a> <a href="#page-79">79</a> <a href="#page-80">80</a> <a href="#page-81">81</a> <a href="#page-82">82</a> <a href="#page-83">83</a> <a href="#page-84">84</a> <a href="#page-85">85</a> <a href="#page-86">86</a> <a href="#page-87">87</a> <a href="#page-88">88</a> <a href="#page-89">89</a> <a href="#page-90">90</a> <a href="#page-91">91</a> <a href="#page-92">92</a></div></nav><section class="page" id="page-1"><header><span>Llama 3 模型家族</span><span>第 1 页</span></header>
 <h1>Llama 3 模型家族</h1>
 <p class="cover-info"><strong>Llama Team，Meta 人工智能团队<sup>1</sup></strong></p>
 <p class="footnote"><sup>1</sup> 详细的贡献者名单见本文附录。</p>
@@ -13,7 +13,7 @@
 <ul><li><strong>数据。</strong>与此前的 Llama 版本（Touvron et al., 2023a,b）相比，我们提高了用于预训练和后训练的数据数量与质量。这些改进包括为预训练数据开发更精细的预处理和整理流水线，以及为后训练数据开发更严格的质量保证和过滤方法。我们在包含约 15T 多语言 token 的语料库上预训练 Llama 3，而 Llama 2 使用了 1.8T token。</li>
 <li><strong>规模。</strong>我们训练模型的规模远大于此前的 Llama 模型：我们的旗舰语言模型在预训练中使用了 \(3.8 \times  10^{25}\) FLOPs，几乎是最大版本 Llama 2 的 50 倍。具体而言，我们在 15.6T 文本 token 上预训练了一个具有 405B 可训练参数的旗舰模型。正如依据——<em>（接第 2 页）</em></li></ul>
 <footer>原文第 1 页</footer></section><section class="page" id="page-2"><header><span>Llama 3 模型家族</span><span>第 2 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/9f879f843d8995087e2b5c82e6f4eae834455853b2978c62bcc8ba00f930226a.png"></figure>
+<figure><img height="501" width="1428" decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/9f879f843d8995087e2b5c82e6f4eae834455853b2978c62bcc8ba00f930226a.png"></figure>
 <p><em>（接第 1 页“规模”）</em>基础模型 scaling laws 所预期的那样，我们的旗舰模型优于采用相同流程训练的较小模型。虽然我们的 scaling laws 表明，对于我们的训练预算而言，旗舰模型的规模大致达到计算最优，但我们对较小模型的训练时长也远远超过计算最优所需的时长。在相同推理预算下，由此得到的模型表现优于计算最优模型。我们在后训练期间利用旗舰模型进一步提高这些较小模型的质量。</p>
 <ul><li><strong>复杂度管理。</strong>我们作出设计选择，力求最大限度地提高扩展模型开发流程的能力。例如，为最大限度地提高训练稳定性，我们选择对标准稠密 Transformer 模型架构（Vaswani et al., 2017）作少量调整，而非采用 MoE 模型（Shazeer et al., 2017）。同样，我们采用基于 SFT、拒绝采样（RS）和 DPO（DPO；Rafailov et al. (2023)）的相对简单的后训练流程，而非更加复杂的强化学习算法（Ouyang et al., 2022; Schulman et al., 2017），后者往往稳定性更低，也更难扩展。</li></ul>
 <p>我们的工作成果是 Llama 3：由三个分别具有 8B、70B 和 405B 参数的多语言<sup>1</sup>语言模型构成的家族。我们在大量基准数据集上评估 Llama 3 的性能，这些数据集覆盖广泛的语言理解任务。此外，我们进行了大量人工评估，将 Llama 3 与竞争模型进行比较。表 2 概述了旗舰 Llama 3 模型在关键基准上的表现。我们的实验评估表明，旗舰模型在各种任务上与 GPT-4（OpenAI, 2023a）等领先语言模型表现相当，接近当前最先进水平。我们较小的模型在同类中表现最佳，优于参数数量相近的其他模型（Bai et al., 2023; Jiang et al., 2023）。与前代模型相比，Llama 3 在有用性与无害性之间也实现了好得多的平衡（Touvron et al., 2023b）。第 5.4 节详细分析了 Llama 3 的安全性。</p>
@@ -21,7 +21,7 @@
 <p>作为 Llama 3 开发过程的一部分，我们还开发了模型的多模态扩展，使其具备图像识别、视频识别和语音理解能力。这些模型仍在积极开发中，尚未准备好发布。除语言建模结果外，本文还展示了这些多模态模型的初步实验结果。</p>
 <p class="footnote"><sup>1</sup> Llama 3 8B 和 70B 使用多语言数据进行预训练，但当时的预期用途为英语。</p>
 <footer>原文第 2 页</footer></section><section class="page" id="page-3"><header><span>Llama 3 模型家族</span><span>第 3 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/4b432a9338c82e06c478434fa423fd90ae826a3c6b053acabbba2a6cc9e18151.png"></figure>
+<figure><img height="843" width="1428" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/4b432a9338c82e06c478434fa423fd90ae826a3c6b053acabbba2a6cc9e18151.png"></figure>
 <h2>2　总体概述</h2>
 <p>图 1 展示了 Llama 3 的模型架构。Llama 3 语言模型的开发包含两个主要阶段：</p>
 <ul><li><strong>语言模型预训练。</strong>我们首先将大型多语言文本语料库转换成离散 token，然后在由此得到的数据上预训练一个 LLM，执行下一个 token 预测。在语言模型预训练阶段，模型从其“阅读”的文本中学习语言结构，并获得大量有关世界的知识。为有效实现这一点，预训练必须在大规模上开展：我们使用 8K token 的上下文窗口，在 15.6T token 上预训练一个 405B 参数模型。在这一标准预训练阶段之后，我们进行继续预训练，将支持的上下文窗口增大到 128K token。详情见第 3 节。</li>
@@ -31,7 +31,7 @@
 <ul><li><strong>多模态编码器预训练。</strong>我们分别训练图像编码器和语音编码器。我们在大量图像与文本配对数据上训练图像编码器，使模型学习视觉内容与自然语言描述之间的关系。我们的语音编码器采用——<em>（接第 4 页）</em></li></ul>
 <p class="footnote"><sup>2</sup> 本文使用“后训练”一词指代预训练之外发生的任何模型训练。</p>
 <footer>原文第 3 页</footer></section><section class="page" id="page-4"><header><span>Llama 3 模型家族</span><span>第 4 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/41af5eac1808ad745c00f1e84ac406b7215c377a24af679e845a0314f262e4f8.png"></figure>
+<figure><img height="441" width="1428" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/41af5eac1808ad745c00f1e84ac406b7215c377a24af679e845a0314f262e4f8.png"></figure>
 <p><em>（接第 3 页“多模态编码器预训练”）</em>自监督方法，遮盖部分语音输入，并尝试通过离散 token 表示重建被遮盖的部分。模型由此学习语音信号的结构。图像编码器的详情见第 7 节，语音编码器的详情见第 8 节。</p>
 <ul><li><strong>视觉适配器训练。</strong>我们训练一个适配器，将预训练图像编码器整合到预训练语言模型中。该适配器由一系列交叉 attention 层组成，将图像编码器的表示输入语言模型。适配器使用文本与图像配对数据训练，使图像表示与语言表示对齐。在适配器训练期间，我们也更新图像编码器的参数，但有意不更新语言模型的参数。我们还在图像适配器的基础上，利用视频与文本配对数据训练视频适配器，使模型能够聚合跨帧信息。详情见第 7 节。</li>
 <li><strong>语音适配器训练。</strong>最后，我们通过一个适配器将语音编码器整合到模型中，该适配器将语音编码转换为可以直接输入微调语言模型的 token 表示。在 SFT 阶段，适配器与编码器的参数共同更新，以实现高质量语音理解。在语音适配器训练期间，我们不改变语言模型。我们还整合了一个文本转语音系统。详情见第 8 节。</li></ul>
@@ -75,7 +75,7 @@
 <ul><li>我们使用具有 8 个键值头的 GQA（GQA；Ainslie et al. (2023)），提高推理速度，并减小 decoding 期间 KV cache 的大小。</li>
 <li>我们使用 attention 掩码，阻止同一序列中不同文档之间的自 attention。我们发现，这项改动在标准预训练期间的影响有限，但在极长序列上的继续预训练中十分重要。<em>（列表接第 7 页）</em></li></ul>
 <footer>原文第 6 页</footer></section><section class="page" id="page-7"><header><span>Llama 3 模型家族</span><span>第 7 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/c08a52b23cfb0d6a199a4702db3eb8a1f333ea8afb7c9a7cae448ebf33e19b25.png"></figure>
+<figure><img height="465" width="1428" decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/c08a52b23cfb0d6a199a4702db3eb8a1f333ea8afb7c9a7cae448ebf33e19b25.png"></figure>
 <ul><li><em>（接第 6 页列表）</em>我们使用包含 128K token 的词表。我们的 token 词表结合了 tiktoken<sup>3</sup> tokenizer 中的 100K token 和额外的 28K token，以更好地支持非英语语言。与 Llama 2 tokenizer 相比，新 tokenizer 在一份英语数据样本上的压缩率从每个 token 3.17 个字符提升到 3.94 个字符。这使模型在相同训练计算量下能够“阅读”更多文本。我们还发现，为选定的非英语语言添加 28K token，同时改善了压缩率和下游性能，且不影响英语分词。</li>
 <li>我们将 RoPE 基础频率超参数增大到 500,000。这使我们能够更好地支持较长上下文；Xiong et al.（2023）表明，该值对于最多 32,768 的上下文长度有效。</li></ul>
 <p>Llama 3 405B 的架构具有 126 层、16,384 维的 token 表示和 128 个 attention 头；详情见表 3。根据我们的数据上的 scaling laws，在 \(3.8 \times  10^{25}\) FLOPs 的训练预算下，这一模型规模大致达到计算最优。</p>
@@ -88,7 +88,7 @@
 <p><strong>Scaling laws 实验。</strong>具体而言，我们使用介于 \(6 \times  10^{18}\) FLOPs 与 \(10^{22}\) FLOPs 之间的计算预算预训练模型，构建 scaling laws。在每个计算预算下，我们预训练参数规模介于 40M 与 16B 之间的模型，各预算采用其中部分模型规模。在这些训练运行中，我们使用余弦学习率调度，并进行 2,000 个训练步的线性 warmup。根据模型规模，峰值学习率设为 \(2 \times  10^{-4}\) 至 \(4 \times  10^{-4}\)。我们将余弦衰减的终值设为峰值的 0.1 倍。每一步的权重衰减设为该步学习率的 0.1 倍。每种计算规模使用固定 batch 大小，范围为 250K 至 4M。</p>
 <p class="footnote"><sup>3</sup> <a href="https://github.com/openai/tiktoken/tree/main">https://github.com/openai/tiktoken/tree/main</a></p>
 <footer>原文第 7 页</footer></section><section class="page" id="page-8"><header><span>Llama 3 模型家族</span><span>第 8 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/4a9859d25dfe3d1dac252bf0bc9252b421e05b77f426844a0c34bb075d9f1d82.png"></figure>
+<figure><img height="636" width="1428" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/4a9859d25dfe3d1dac252bf0bc9252b421e05b77f426844a0c34bb075d9f1d82.png"></figure>
 <p>这些实验产生了图 2 中的 IsoFLOPs 曲线。曲线中的损失在独立验证集上测量。我们使用二次多项式拟合测得的损失值，并找出每条抛物线的最小值。我们将抛物线最小值对应的模型称为相应预训练计算预算下的计算最优模型。</p>
 <p>我们利用这样确定的计算最优模型，预测指定计算预算下的最优训练 token 数量。为此，我们假设计算预算 \(C\) 与最优训练 token 数量 \(N^{⋆}(C)\) 之间满足幂律关系：</p>
 <p  class="layout-8">N<sup>⋆</sup>(C) = AC<sup>α</sup>。</p>
@@ -100,7 +100,7 @@
 <h4>3.3.1　训练基础设施</h4>
 <p>Llama 1 和 2 模型在 Meta 的 AI Research SuperCluster 上训练（Lee and Sengupta, 2022）。随着规模进一步扩大，Llama 3 的训练迁移至 Meta 的生产集群（Lee et al., 2024）。这一——<em>（接第 9 页）</em></p>
 <footer>原文第 8 页</footer></section><section class="page" id="page-9"><header><span>Llama 3 模型家族</span><span>第 9 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/6d86eb97ea8434cc1f7963cae2947f32e0f0c399a03b91383a763686f23903aa.png"></figure>
+<figure><img height="615" width="1428" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/6d86eb97ea8434cc1f7963cae2947f32e0f0c399a03b91383a763686f23903aa.png"></figure>
 <p><em>（接第 8 页）</em>配置针对生产级可靠性进行了优化，这对扩大训练规模至关重要。</p>
 <p><strong>计算。</strong>Llama 3 405B 使用最多 16K 块 H100 GPU 训练，每块 GPU 的 TDP 为 700W，配备 80GB HBM3，采用 Meta 的 Grand Teton AI 服务器平台（Matt Bowman, 2022）。每台服务器配备八块 GPU 和两颗 CPU。服务器内部的八块 GPU 通过 NVLink 连接。训练作业使用 Meta 的全球规模训练调度器 MAST（Choudhury et al., 2024）调度。</p>
 <p><strong>存储。</strong>我们使用 Meta 的通用分布式文件系统 Tectonic（Pan et al., 2021），构建用于 Llama 3 预训练的存储网络（Battey and Gupta, 2024）。该系统由 7,500 台配备 SSD 的服务器提供 240 PB 存储，支持 2 TB/s 的持续吞吐量和 7 TB/s 的峰值吞吐量。一项主要挑战是支持突发性很强的 checkpoint 写入，这类写入会短暂占满存储网络带宽。Checkpoint 保存每块 GPU 的模型状态，每块 GPU 的状态大小介于 1 MB 与 4 GB 之间，用于恢复和调试。我们的目标是在保存 checkpoint 期间尽量缩短 GPU 暂停时间，并提高 checkpoint 保存频率，以减少恢复后丢失的工作量。</p>
@@ -109,7 +109,7 @@
 <li><strong>负载均衡。</strong>LLM 训练会产生大流量网络流，难以通过等价多路径（ECMP）路由等传统方法，在所有可用网络路径间实现负载均衡。为解决这一挑战，我们采用两项技术。首先，集合通信库在两块 GPU 之间创建 16 条网络流，而非仅创建一条，从而降低每条流的流量，并为负载均衡提供更多网络流——<em>（接第 10 页）</em></li></ul>
 <p class="footnote"><sup>4</sup> Open Compute Project：<a href="https://www.opencompute.org/">https://www.opencompute.org/</a><br><sup>5</sup> 注意，Llama 3 预训练最多只使用这 24K 块 GPU 中的 16K 块。</p>
 <footer>原文第 9 页</footer></section><section class="page" id="page-10"><header><span>Llama 3 模型家族</span><span>第 10 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/19c482fe709844b7df5e680cf1a2ddc2b8b67bcf81fb17421419e7bf0fb37cf2.png"></figure>
+<figure><img height="282" width="1428" decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/19c482fe709844b7df5e680cf1a2ddc2b8b67bcf81fb17421419e7bf0fb37cf2.png"></figure>
 <p><em>（接第 9 页“负载均衡”）</em>以便进行负载均衡。其次，增强型 ECMP（E-ECMP）协议通过对 RoCE 数据包头中的额外字段进行哈希，将这 16 条网络流有效地均衡分配到不同网络路径。</p>
 <ul><li><strong>拥塞控制。</strong>我们在骨干层使用深缓存交换机（Gangidi et al., 2024），容纳集合通信模式造成的瞬时拥塞和缓冲。这一配置有助于限制慢服务器造成的持续拥塞和网络反压的影响，这类现象在训练中很常见。最后，通过 E-ECMP 改善负载均衡显著降低了拥塞概率。借助这些优化，我们成功运行了一个 24K GPU 集群，无须使用数据中心量化拥塞通知（DCQCN）等传统拥塞控制方法。</li></ul>
 <h4>3.3.2　用于模型扩展的并行技术</h4>
@@ -121,19 +121,19 @@
 <li><strong>内存不均衡。</strong>现有 PP 实现会导致资源消耗不均衡。由于 embedding 层和warmupmicro-batch，第一阶段消耗更多内存。</li>
 <li><strong>计算不均衡。</strong>在模型最后一层之后，我们需要计算输出和损失，使该阶段成为执行延迟瓶颈。</li></ul>
 <footer>原文第 10 页</footer></section><section class="page" id="page-11"><header><span>Llama 3 模型家族</span><span>第 11 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/0ed72e397b8eb4b9afc4c487c7911fd228bb54880a567caf96ce307c012686f1.png"></figure>
+<figure><img height="915" width="1428" decoding="async" loading="lazy" alt="原文第 11 页图表或公式" src="assets/images/0ed72e397b8eb4b9afc4c487c7911fd228bb54880a567caf96ce307c012686f1.png"></figure>
 <p>为解决这些问题，我们按照图 6 修改流水线调度，允许灵活设置 \(N\)；在该示例中，\(N = 5\)，每个 batch 可以运行任意数量的 micro-batch。这使我们可以：（1）在大规模训练受到 batch 大小限制时，运行比阶段数更少的 micro-batch；或（2）运行更多 micro-batch 来隐藏点对点通信，在 DFS 与广度优先调度（BFS）之间找到合适的平衡，以获得最佳通信和内存效率。为均衡流水线，我们分别从第一阶段和最后阶段各减少一个 Transformer 层。这意味着，第一阶段的第一个模型块只包含 embedding 层，最后阶段的最后一个模型块只包含输出投影和损失计算。为减少流水线气泡，我们采用交错调度（Narayanan et al., 2021），让一个流水线 rank 承担 \(V\) 个流水线阶段。整体流水线气泡比例为 \((PP-1)/(V \times  M)\)。此外，我们在 PP 中采用异步点对点通信，显著加快训练，尤其是在文档掩码引入额外计算不均衡时。我们启用 <code>TORCH_NCCL_AVOID_RECORD_STREAMS</code>，减少异步点对点通信的内存使用。最后，为降低内存开销，我们基于详细的内存分配分析，主动释放后续计算不会使用的张量，包括各流水线阶段不再需要的输入和输出张量。借助这些优化，我们能够在不使用激活 checkpoint 的情况下，在 8K token 序列上预训练 Llama 3。</p>
 <p><strong>长序列 CP。</strong>我们采用 CP，提高扩展 Llama 3 上下文长度时的内存效率，并支持在长度最多为 128K 的极长序列上训练。在 CP 中，我们沿序列维度划分，具体将输入序列分成 \(2 \times  CP\) 个块，使每个 CP rank 接收两个块，以实现更好的负载均衡。第 \(i\) 个 CP rank 接收第 \(i\) 个块和第 \((2 \times  CP - 1 - i)\) 个块。</p>
 <p>与采用环状结构重叠通信和计算的现有 CP 实现（Liu et al., 2023a）不同，我们的 CP 实现采用基于 all-gather 的方法：首先对键（K）和值（\(V\)）张量执行 all-gather，然后为本地查询（Q）张量块计算 attention 输出。尽管 all-gather 通信延迟暴露在关键路径上，我们仍采用这一方法，主要有两个原因：（1）基于 all-gather 的 CP attention 更容易、也更灵活地支持文档掩码等不同类型的 attention 掩码；（2）暴露出的 all-gather 延迟——<em>（接第 12 页）</em></p>
 <footer>原文第 11 页</footer></section><section class="page" id="page-12"><header><span>Llama 3 模型家族</span><span>第 12 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/d70334d2d47dd975d66d3c44c616d84390b7a004b73e71089af685850ade3125.png"></figure>
+<figure><img height="510" width="1428" decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/d70334d2d47dd975d66d3c44c616d84390b7a004b73e71089af685850ade3125.png"></figure>
 <p><em>（接第 11 页）</em>很小，因为使用 GQA（Ainslie et al., 2023）后，通信所涉及的 \(K\) 和 \(V\) 张量远小于 \(Q\) 张量。因此，attention 计算的时间复杂度比 all-gather 高一个数量级（\(O(S^{2})\) 对 \(O(S)\)，其中 \(S\) 表示采用完整因果掩码时的序列长度），使 all-gather 开销可以忽略。</p>
 <p><strong>感知网络的并行配置。</strong>并行维度的顺序 [TP, CP, PP, DP] 针对网络通信进行了优化。最内层的并行需要最高网络带宽和最低延迟，因此通常限制在同一台服务器内部。最外层的并行可能跨越多跳网络，需要容忍更高网络延迟。因此，根据网络带宽和延迟的要求，我们将并行维度按 [TP, CP, PP, DP] 排列。DP（即 FSDP）位于最外层，因为它能够通过异步预取分片模型权重和归约 gradient，容忍更长的网络延迟。要确定通信开销最小、同时避免 GPU 内存溢出的最优并行配置十分困难。我们开发了内存消耗估算器和性能预测工具，帮助探索不同并行配置、预测整体训练性能，并有效识别内存缺口。</p>
 <p><strong>数值稳定性。</strong>通过比较不同并行配置下的训练损失，我们修复了若干影响训练稳定性的数值问题。为确保训练收敛，在多个 micro-batch 的反向计算期间，我们使用 FP32 累积 gradient；在 FSDP 中，也使用 FP32 跨 DP 工作进程执行 gradient reduce-scatter。对于在前向计算中多次使用的中间张量，例如视觉编码器输出，其反向 gradient 也使用 FP32 累积。</p>
 <h4>3.3.3　集合通信</h4>
 <p>Llama 3 的集合通信库基于 Nvidia NCCL 库的一个分支，称为 NCCLX。NCCLX 显著提高了 NCCL 的性能，尤其是在高延迟网络中。回顾一下，并行维度的顺序为 [TP, CP, PP, DP]，其中 DP 对应 FSDP。最外层的 PP 和 DP 可能通过多跳网络通信，延迟最多达到数十微秒。原始 NCCL 集合通信操作——FSDP 中的 all-gather 和 reduce-scatter，以及 PP 中的点对点通信——要求对数据分块并分阶段复制。这种方法存在若干低效之处，包括：（1）需要在网络上交换大量小型控制消息以协调数据传输；（2）额外的内存复制操作；（3）通信占用额外 GPU 周期。对于 Llama 3 训练，我们通过调优分块和数据传输，以适应网络延迟，解决了其中部分低效问题；大型集群的网络延迟可能达到数十微秒。我们还允许小型控制消息以更高优先级穿过网络，特别是避免它们在深缓存核心交换机中受到队头阻塞。面向未来 Llama 版本的持续工作包括对 NCCLX 作更深入的改动，全面解决上述所有问题。</p>
 <footer>原文第 12 页</footer></section><section class="page" id="page-13"><header><span>Llama 3 模型家族</span><span>第 13 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/05ad180db3a72d228625ef9f0493b2ce0b0993b298a0239fd64175b19ef2d2ec.png"></figure>
+<figure><img height="858" width="1428" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/05ad180db3a72d228625ef9f0493b2ce0b0993b298a0239fd64175b19ef2d2ec.png"></figure>
 <h4>3.3.4　可靠性与运行挑战</h4>
 <p>16K GPU 训练的复杂度和潜在故障情形，超过我们曾运行的规模大得多的 CPU 集群。此外，训练的同步特性使其容错能力更低：单块 GPU 故障可能就要求重启整个作业。尽管存在这些挑战，我们为 Llama 3 实现了超过 90% 的有效训练时间，同时支持固件和 Linux 内核升级等自动化集群维护（Vigraham and Leonhardi, 2024），这些维护每天至少导致一次训练中断。有效训练时间衡量的是有效训练所耗时间占总经过时间的比例。</p>
 <p>在预训练期间一个持续 54 天的观测期内，我们总共经历了 466 次作业中断。其中，47 次为计划内中断，由固件升级等自动化维护操作，或配置更新、数据集更新等运维人员发起的操作造成。其余 419 次为意外中断，分类见表 5。约 78% 的意外中断源于已确认的硬件问题，例如 GPU 或主机组件故障，或疑似与硬件相关的问题，例如静默数据损坏和未计划的单台主机维护事件。GPU 问题是最大类别，占全部意外问题的 58.7%。尽管故障数量很多，在此期间只有三次需要大量人工干预，其余问题均由自动化处理。</p>
@@ -153,7 +153,7 @@
 <h4>3.4.2　长上下文预训练</h4>
 <p>预训练的最后阶段，我们在长序列上训练，以支持最多 128K token 的上下文窗口。我们没有更早开展长序列训练，因为自 attention 层的计算量随序列长度呈二次增长。我们逐步增加支持的上下文长度，并持续预训练，直到模型成功适应增大的上下文长度。我们通过衡量以下两点判断是否成功适应：（1）模型在短上下文评估中的性能是否完全恢复；（2）模型是否能够完美解决该长度以内的“Needle-in-a-Haystack”任务。在 Llama 3 405B 的预训练中，我们分六个阶段逐步增大上下文长度，从最初的 8K 上下文窗口增加到最终的 128K 上下文窗口。这一长上下文预训练阶段使用了约 800B 训练 token。</p>
 <footer>原文第 14 页</footer></section><section class="page" id="page-15"><header><span>Llama 3 模型家族</span><span>第 15 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/d3ecc5933bdea646e1d7b63e1227dfa75f5c960ac18cf0c7a068666b3ac9558a.png"></figure>
+<figure><img height="744" width="1428" decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/d3ecc5933bdea646e1d7b63e1227dfa75f5c960ac18cf0c7a068666b3ac9558a.png"></figure>
 <h4>3.4.3　退火</h4>
 <p>在最后 40M token 的预训练期间，我们保持 128K token 的上下文长度，并将学习率线性退火至 0。在这一退火阶段，我们还调整了数据配比，对质量极高的数据源进行上采样；见第 3.1.3 节。最后，我们对退火期间的模型 checkpoint 进行平均（Polyak (1991) 平均），得到最终的预训练模型。</p>
 <h2>4　后训练</h2>
@@ -176,7 +176,7 @@
 <h4>4.1.5　模型平均</h4>
 <p>最后，在各个 RM、SFT 或 DPO 阶段，我们对采用不同数据版本或超参数进行实验所得到的模型进行平均（Izmailov et al., 2019; Wortsman et al., 2022; Li et al., 2022）。</p>
 <footer>原文第 16 页</footer></section><section class="page" id="page-17"><header><span>Llama 3 模型家族</span><span>第 17 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/f3d8a3e31a50ed5a9e2ad30760843e9e90bb7d51a018995b315454f489223c56.png"></figure>
+<figure><img height="498" width="1428" decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/f3d8a3e31a50ed5a9e2ad30760843e9e90bb7d51a018995b315454f489223c56.png"></figure>
 <h4>4.1.6　迭代轮次</h4>
 <p>遵循 Llama 2，我们应用上述方法进行六轮迭代。在每个周期中，我们收集新的偏好标注和 SFT 数据，并从最新模型中采样合成数据。</p>
 <h3>4.2　后训练数据</h3>
@@ -189,7 +189,7 @@
 <p>我们的微调数据主要来自以下来源：</p>
 <ul><li>人工标注收集中的提示，配合通过拒绝采样得到的回答。</li><li>针对特定能力的合成数据，更多详情见第 4.3 节。<em>（列表接第 18 页）</em></li></ul>
 <footer>原文第 17 页</footer></section><section class="page" id="page-18"><header><span>Llama 3 模型家族</span><span>第 18 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/183c63795d518e0d47db7c2ef4ac26ee2710bfe946c69883ea48cdecc3e6b1a4.png"></figure>
+<figure><img height="504" width="1428" decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/183c63795d518e0d47db7c2ef4ac26ee2710bfe946c69883ea48cdecc3e6b1a4.png"></figure>
 <ul><li><em>（接第 17 页列表）</em>少量人工整理的数据，更多详情见第 4.3 节。</li></ul>
 <p>随着后训练轮次推进，我们开发出更强的 Llama 3 变体，并用它们收集覆盖广泛复杂能力的更大数据集。本节介绍拒绝采样流程，以及最终 SFT 数据混合整体组成的详情。</p>
 <p><strong>拒绝采样。</strong>在拒绝采样（RS）期间，对于人工标注时收集的每个提示（第 4.2.1 节），我们从最新聊天模型策略中采样 \(K\) 个输出，\(K\) 通常介于 10 和 30 之间；该策略通常是上一轮后训练中表现最好的 checkpoint，或某项能力上表现最好的 checkpoint。随后，我们使用 RM 选择最佳候选，与 Bai et al.（2022）一致。在后续后训练轮次中，我们引入系统提示，引导 RS 回答符合期望的语气、风格或格式，不同能力的要求可能不同。</p>
@@ -222,8 +222,8 @@
 <p><strong>2. 合成数据生成：编程语言翻译。</strong>我们观察到主流编程语言，例如 Python/C++，与较少见的语言，例如 Typescript/PHP，之间存在性能差距。这并不意外，因为较少见的编程语言训练数据更少。为缓解这一问题，我们通过将常用编程语言数据翻译成较少见的语言，补充现有数据；这与 Chen et al.（2023）在推理领域的做法类似。具体通过提示 Llama 3 实现，并通过语法解析、编译和执行确保质量。图 8 展示了从 Python 翻译得到的合成 PHP 代码示例。根据 MultiPL-E（Cassano et al., 2023）基准衡量，这显著提高了较少见语言的性能。</p>
 <p><strong>3. 合成数据生成：回译。</strong>对于文档编写、解释等某些编码能力，执行反馈对于确定质量提供的信息较少。为提升这些能力，我们采用另一种多步骤方法。通过该流程，我们生成了约 1.2M 条合成——<em>（接第 21 页）</em></p>
 <footer>原文第 20 页</footer></section><section class="page" id="page-21"><header><span>Llama 3 模型家族</span><span>第 21 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/d9f60e1bf501ab51b5bee50b8c6040e755eee4cc1f2139d9fc68f0ff3a36a83a.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/dfd8f505070a537637a06cbfe6f1694c93cff818d8cb6539426d4eaa309d386f.png"></figure>
+<figure><img height="564" width="1428" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/d9f60e1bf501ab51b5bee50b8c6040e755eee4cc1f2139d9fc68f0ff3a36a83a.png"></figure>
+<figure><img height="534" width="1428" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/dfd8f505070a537637a06cbfe6f1694c93cff818d8cb6539426d4eaa309d386f.png"></figure>
 <p><em>（接第 20 页“回译”）</em>对话，涉及代码解释、生成、文档编写和调试。我们从预训练数据中来自各种语言的代码片段出发：</p>
 <ul><li><strong>生成。</strong>我们提示 Llama 3 生成体现目标能力的数据，例如为代码片段添加注释和文档字符串，或要求模型解释一段代码。</li>
 <li><strong>回译。</strong>随后，我们提示模型，将合成生成的数据“回译”成原始代码，例如提示模型仅根据文档生成代码，或仅根据解释生成代码。</li>
@@ -288,7 +288,7 @@
 <p>在这些合成数据上微调后，我们在多样且具有挑战性的场景中收集人工标注，包括多轮交互、超过三步的工具使用，以及工具调用未产生——<em>（接第 26 页）</em></p>
 <p class="footnote"><sup>8</sup> <a href="https://products.wolframalpha.com/llm-api/documentation">https://products.wolframalpha.com/llm-api/documentation</a></p>
 <footer>原文第 25 页</footer></section><section class="page" id="page-26"><header><span>Llama 3 模型家族</span><span>第 26 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 26 页图表或公式" src="assets/images/02a7ceeb1c6a8408bc4196083e7e6f2a3f7fbe4ed326e147cab73cc8a9f6b8bd.png"></figure>
+<figure><img height="951" width="1428" decoding="async" loading="lazy" alt="原文第 26 页图表或公式" src="assets/images/02a7ceeb1c6a8408bc4196083e7e6f2a3f7fbe4ed326e147cab73cc8a9f6b8bd.png"></figure>
 <p><em>（接第 25 页）</em>令人满意的答案的情况。我们采用不同系统提示扩充合成数据，教模型仅在工具被启用时使用它们。为训练模型避免针对简单查询调用工具，我们还加入来自简单数学或问答数据集的查询（Berant et al., 2013; Koncel-Kedziorski et al., 2016; Joshi et al., 2017; Amini et al., 2019），以及不使用工具的回答，同时在系统提示中保持工具启用。</p>
 <p><strong>零样本工具使用数据。</strong>我们在一个大型且多样化、部分为合成的（函数定义、用户查询、相应调用）元组集合上微调，提高 Llama 3 的零样本工具使用能力，也称函数调用。我们使用一组未见过的工具评估模型。</p>
 <ul><li><strong>单一、嵌套和并行函数调用。</strong>调用可以是简单调用，也可以嵌套，即将一个函数调用作为另一个函数的参数，或并行，即模型返回一组独立函数调用。生成多样化的函数、查询和真实答案可能很困难（Mekala et al., 2024），因此我们挖掘 the Stack（Kocetkov et al., 2022），使合成用户查询以真实函数为依据。更具体而言，我们提取函数调用及其定义，清洗并过滤，例如移除缺少文档字符串或不可执行的函数，并使用 Llama 3 生成对应函数调用的自然语言查询。</li>
@@ -296,7 +296,7 @@
 <h4>4.3.6　事实性</h4>
 <p>幻觉仍是 LLM 面临的主要挑战。即使在知之甚少的领域，模型也往往过度自信。尽管存在这些缺点，它们仍经常被用作知识库，可能导致错误信息传播等风险后果。虽然我们认识到事实性不局限于幻觉，但在这里采用了优先处理幻觉的方法。</p>
 <footer>原文第 26 页</footer></section><section class="page" id="page-27"><header><span>Llama 3 模型家族</span><span>第 27 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 27 页图表或公式" src="assets/images/e4435facebc120a9b1d3fdffb4825f40479fbbf7f431957339cfe68453aba7e1.png"></figure>
+<figure><img height="1140" width="1428" decoding="async" loading="lazy" alt="原文第 27 页图表或公式" src="assets/images/e4435facebc120a9b1d3fdffb4825f40479fbbf7f431957339cfe68453aba7e1.png"></figure>
 <p>我们遵循以下原则：后训练应使模型对齐到“知道自己知道什么”，而非增加知识（Gekhman et al., 2024; Mielke et al., 2020）。主要方法是生成数据，使模型输出与预训练数据中已有的事实数据子集对齐。为此，我们开发了利用 Llama 3 上下文能力的知识探测技术。数据生成过程包括以下步骤：</p>
 <ol><li>从预训练数据中提取数据片段。</li>
 <li>提示 Llama 3，生成关于这些片段，即上下文的事实性问题。</li>
@@ -318,7 +318,7 @@
 <h4>5.1.1　标准基准</h4>
 <p>为将我们的模型与当前最先进水平比较，我们在表 8 所示的大量标准基准上评估 Llama 3。这些评估涵盖八个顶层类别：（1）常识推理；（2）知识；（3）阅读理解；（4）数学、推理及问题求解；（5）长上下文；（6）代码；（7）对抗评估；（8）综合评估。</p>
 <footer>原文第 28 页</footer></section><section class="page" id="page-29"><header><span>Llama 3 模型家族</span><span>第 29 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 29 页图表或公式" src="assets/images/427e5f1db02ff1279fe098e5963cdd6ebedf55236f0cfbb1c4a1692cbbe07ec6.png"></figure>
+<figure><img height="828" width="1428" decoding="async" loading="lazy" alt="原文第 29 页图表或公式" src="assets/images/427e5f1db02ff1279fe098e5963cdd6ebedf55236f0cfbb1c4a1692cbbe07ec6.png"></figure>
 <p><strong>实验设置。</strong>对于每个基准，我们计算 Llama 3 及各种规模相近的其他预训练模型的得分。在可行时，我们使用自己的流水线重新计算其他模型的数值。为确保公平比较，我们在自行计算的得分与该模型在可比或更保守设置下报告的得分之间，选择最高分。评估设置的更多详情见<a href="https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/eval_details.md">此处</a>。对于某些模型，无法计算或重新计算基准数值，例如预训练模型未发布，或 API 不提供对数概率访问权限。特别是，所有与 Llama 3 405B 可比的模型都存在这种情况。因此，我们不报告 Llama 3 405B 的类别平均值，因为这需要每个模型在全部基准上的数值均可用。</p>
 <p><strong>显著性估计。</strong>基准得分是模型真实性能的估计。这些估计存在方差，因为基准数据集是从某个底层分布抽取的有限样本。遵循 Madaan et al.（2024b），我们假设基准得分服从高斯分布，并通过 95% 置信区间（CI）报告方差。虽然这一假设并不正确，例如基准得分有上下界，但初步 bootstrap 实验表明，对于离散指标，以下置信区间是良好的近似：</p>
 <p  class="layout-8">CI(S) = 1.96 × √[S × (1 − S) / N]。</p>
@@ -326,27 +326,27 @@
 <p><strong>8B 和 70B 模型结果。</strong>图 12 报告了 Llama 3 8B 和 70B 在常识推理、知识、阅读理解、数学与推理，以及代码基准上的平均性能。结果表明，无论按各类别胜率还是类别平均性能衡量，Llama 3 8B 几乎在每个类别中都优于竞争模型。我们还发现，Llama 3 70B 在大多数基准上明显优于前代 Llama 2 70B，可能已趋于饱和的常识基准除外。Llama 3 70B 也优于 Mixtral 8x22B。</p>
 <p><strong>全部模型的详细结果。</strong>表 9、10、11、12、13 和 14 展示了预训练 Llama 3 8B、70B 和 405B 模型在阅读理解任务、代码任务、常识理解任务、数学推理任务和通用任务上的基准性能。这些表将 Llama 3 与——<em>（接第 30 页）</em></p>
 <footer>原文第 29 页</footer></section><section class="page" id="page-30"><header><span>Llama 3 模型家族</span><span>第 30 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或公式" src="assets/images/b7e9f1ccd64f973b71fd068cba0ca179567560e9e542ef8ae34c526de44b2de9.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 30 页图表或公式" src="assets/images/93365749fe393fc20902ce4d286ad4f0d029eeddf64ef356153640d57a967875.png"></figure>
+<figure><img height="693" width="1428" decoding="async" loading="lazy" alt="原文第 30 页图表或公式" src="assets/images/b7e9f1ccd64f973b71fd068cba0ca179567560e9e542ef8ae34c526de44b2de9.png"></figure>
+<figure><img height="585" width="1428" decoding="async" loading="lazy" alt="原文第 30 页图表或公式" src="assets/images/93365749fe393fc20902ce4d286ad4f0d029eeddf64ef356153640d57a967875.png"></figure>
 <p><em>（接第 29 页）</em>规模相近模型的性能进行比较。结果表明，Llama 3 405B 与同类其他模型相比具有竞争力。特别是，Llama 3 405B 显著优于此前的开源模型。对于长上下文，我们在第 5.2 节展示更全面的结果，包括 Needle-in-a-Haystack 等探测任务。</p>
 <h4>5.1.2　模型稳健性</h4>
 <p>除基准性能外，稳健性也是决定预训练语言模型质量的重要因素。我们研究预训练语言模型面对多项选择题（MCQ）设置中不同设计选择时的稳健性。此前研究报告，模型性能可能对这类设置中看似任意的设计选择敏感。例如，模型得分甚至排名可能随上下文示例的顺序和标签（Lu et al., 2022; Zhao et al., 2021; Robinson and Wingate, 2023; Liang et al., 2022; Gupta et al., 2024）、提示的具体格式（Weber et al., 2023b; Mishra et al., 2022），或答案选项的格式和顺序（Alzahrani et al., 2024; Wang et al., 2024a; Zheng et al., 2023）而变化。受这些研究启发，我们使用 MMLU 基准，评估预训练模型对以下因素的稳健性：（1）少样本标签偏差；（2）标签变体；（3）答案顺序；（4）提示格式：</p>
 <ul><li><strong>少样本标签偏差。</strong>遵循 Zheng et al.（2023）和 Weber et al.（2023a），我们研究四样本示例中标签分布的影响。具体而言，我们考虑以下设置：（1）所有——<em>（接第 32 页，第 31 页为结果表）</em></li></ul>
 <footer>原文第 30 页</footer></section><section class="page" id="page-31"><header><span>Llama 3 模型家族</span><span>第 31 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/d366e887621da1beffe22f95983f4a6da1a4ef431aab077a7296061bfe4f0d5c.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/dcc1aaa99e5982e3b4bc881bab2f958152316687a49301c40cdbb16d49a22041.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/fb24000bb241bc0848ddf1a480e8af44793dc21ea5e7de9147c07aad11c44637.png"></figure>
+<figure><img height="564" width="1428" decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/d366e887621da1beffe22f95983f4a6da1a4ef431aab077a7296061bfe4f0d5c.png"></figure>
+<figure><img height="630" width="1428" decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/dcc1aaa99e5982e3b4bc881bab2f958152316687a49301c40cdbb16d49a22041.png"></figure>
+<figure><img height="600" width="1428" decoding="async" loading="lazy" alt="原文第 31 页图表或公式" src="assets/images/fb24000bb241bc0848ddf1a480e8af44793dc21ea5e7de9147c07aad11c44637.png"></figure>
 <p class="footnote">第 30 页的正文接续至第 32 页；本页为表 11、表 12 和表 13。</p>
 <footer>原文第 31 页</footer></section><section class="page" id="page-32"><header><span>Llama 3 模型家族</span><span>第 32 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/4d384e3db2083bf644719e5b111c2a6de940c1c5e7c5b0e420e5fd17742a72da.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/6979925fcf37bbf76f60538371e04c053ac640981615101fa6ba89f282d0f57d.png"></figure>
+<figure><img height="540" width="1428" decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/4d384e3db2083bf644719e5b111c2a6de940c1c5e7c5b0e420e5fd17742a72da.png"></figure>
+<figure><img height="717" width="1428" decoding="async" loading="lazy" alt="原文第 32 页图表或公式" src="assets/images/6979925fcf37bbf76f60538371e04c053ac640981615101fa6ba89f282d0f57d.png"></figure>
 <p><em>（接第 30 页“少样本标签偏差”）</em>少样本示例具有相同标签（A A A A）；（2）所有示例具有不同标签（A B C D）；（3）仅存在两种标签（A A B B 和 C C D D）。</p>
 <ul><li><strong>标签变体。</strong>我们还研究模型面对不同选项 token 集合时的响应。我们考虑 Alzahrani et al.（2024）提出的两组标签：一组常见且与语言无关的 token（$ &amp; # @），以及一组没有任何隐含相对顺序的罕见 token（œ § з ü）。我们还考虑两种标准标签形式（A. B. C. D. 和 A) B) C) D)），以及数字列表（1. 2. 3. 4.）。</li>
 <li><strong>答案顺序。</strong>遵循 Wang et al.（2024a），我们计算不同答案顺序下结果的稳定程度。为此，按照固定排列，重新映射数据集中的全部答案。例如，对于排列 A B C D，所有标签为 A 和 B 的答案选项保持标签不变，所有标签为 C 的答案选项改为 D，反之亦然。</li>
 </ul><p class="footnote">译注：原文排列写作“A B C D”，但随后说明 A、B 不变而 C、D 互换，二者不一致。经用户确认，保留原文排列。</p><ul><li><strong>提示格式。</strong>我们评估五种任务提示之间的性能变化，这些提示提供的信息程度不同：一种提示仅要求模型回答问题，而其他提示则强调模型的专业能力，或要求选择最佳答案。</li></ul>
 <p>图 13 展示了模型性能对标签变体（左图）和少样本标签偏差（右图）的稳健性实验结果。结果表明，我们的预训练语言模型对 MCQ 标签变化以及少样本提示标签结构非常稳健。这种稳健性对于——<em>（接第 33 页）</em></p>
 <footer>原文第 32 页</footer></section><section class="page" id="page-33"><header><span>Llama 3 模型家族</span><span>第 33 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 33 页图表或公式" src="assets/images/65013764df4a549bc48103eb5bb5fdaa5a2c0d3fef639f841511c7c787770bc2.png"></figure>
+<figure><img height="693" width="1428" decoding="async" loading="lazy" alt="原文第 33 页图表或公式" src="assets/images/65013764df4a549bc48103eb5bb5fdaa5a2c0d3fef639f841511c7c787770bc2.png"></figure>
 <p><em>（接第 32 页）</em>405B 参数模型尤为明显。图 14 展示了我们对答案顺序和提示格式稳健性的研究结果。图中结果进一步凸显了预训练语言模型性能的稳健性，尤其是 Llama 3 405B。</p>
 <h4>5.1.3　对抗基准</h4>
 <p>除上述基准外，我们还在问答、数学推理和复述检测三个领域的若干对抗基准上评估模型。这些测试探查模型面对刻意构造的挑战性任务时的能力，也可能揭示对基准的过拟合。对于问答，我们使用 Adversarial SQuAD（Jia and Liang, 2017）和 Dynabench SQuAD（Kiela et al., 2021）；对于数学推理，使用 GSM-Plus（Li et al., 2024c）；对于复述检测，使用 PAWS（Zhang et al., 2019）。</p>
@@ -355,8 +355,8 @@
 <h4>5.1.4　数据污染分析</h4>
 <p>我们开展数据污染分析，估计预训练语料中包含评估数据的污染可能在多大程度上影响基准得分。此前研究采用了多种不同的污染检测方法和超参数，概述见 Singh et al.（2024）。这些方法都可能产生假阳性和假阴性；如何最好地开展污染分析，目前仍是开放的研究问题。在这里，我们大体遵循 Singh et al.（2024）的建议。</p>
 <footer>原文第 33 页</footer></section><section class="page" id="page-34"><header><span>Llama 3 模型家族</span><span>第 34 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 34 页图表或公式" src="assets/images/f3e06dd52593606ba460867d56b92b459763bb2570658c547256c2444fa86962.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 34 页图表或公式" src="assets/images/c11a0b01ad7d0a7da3b6c050a0f3adeb4d7446dfc00289e6bebb932920bcf1c2.png"></figure>
+<figure><img height="297" width="723" decoding="async" loading="lazy" alt="原文第 34 页图表或公式" src="assets/images/f3e06dd52593606ba460867d56b92b459763bb2570658c547256c2444fa86962.png"></figure>
+<figure><img height="996" width="723" decoding="async" loading="lazy" alt="原文第 34 页图表或公式" src="assets/images/c11a0b01ad7d0a7da3b6c050a0f3adeb4d7446dfc00289e6bebb932920bcf1c2.png"></figure>
 <p><strong>方法。</strong>具体而言，Singh et al.（2024）建议通过实证选择污染检测方法，依据是哪种方法在数据集的“干净”部分与完整数据集之间产生最大的差异，他们称之为估计性能增益。对于所有评估数据集，我们基于 8-gram 重叠为样本评分，Singh et al.（2024）发现这种方法对许多数据集准确。对于数据集 \(D\) 中的一个样本，若其一定比例 \(T_{D}\) 的 token 属于在预训练语料中至少出现一次的 8-gram，我们就认为该样本受到污染。我们为每个数据集分别选择 \(T_{D}\)，依据是哪个值能在三种模型规模上显示最大的显著估计性能增益。</p>
 <p><strong>结果。</strong>对于所有关键基准，表 15 报告了按上述最大估计性能增益判定为受到污染的评估数据比例。我们从表中移除结果不显著的基准数值，例如干净或污染样本集的样本过少，或者观测到的性能增益估计极不稳定。表 15 表明，某些数据集受污染影响很大，而其他数据集并非如此。例如，对于 PiQA 和 HellaSwag，污染估计和性能增益估计都很高。相比之下，Natural Questions 中估计为 52% 的污染似乎几乎不影响性能。对于 SQuAD 和 MATH，低阈值会产生较高污染水平，却没有性能增益。这表明，污染对这些数据集没有帮助，或者需要更大的 n 才能获得更好估计。最后，对于 MBPP、HumanEval、MMLU 和 MMLU-Pro，可能需要其他污染检测方法：即使阈值更高，8-gram 重叠仍产生极高污染得分，以致无法获得良好的性能增益估计。</p>
 <h3>5.2　后训练语言模型</h3>
@@ -364,7 +364,7 @@
 <p><strong>基准与指标。</strong>表 16 按能力分类概述了全部基准。我们通过与各基准提示进行精确匹配，对后训练数据去除污染。除标准学术基准外，还对不同能力进行了大量人工评估，详情见第 5.3 节。</p>
 <p><strong>实验设置。</strong>我们采用与预训练阶段类似的实验设置，将 Llama 3 与规模和能力相近的其他模型比较。在可行范围内，我们自行评估其他模型，并将结果与报告数值比较，选择最高分。评估设置的更多详情见<a href="https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/eval_details.md">此处</a>。</p>
 <footer>原文第 34 页</footer></section><section class="page" id="page-35"><header><span>Llama 3 模型家族</span><span>第 35 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 35 页图表或公式" src="assets/images/0cf4c78a517781eadbdecffc5e00c1566384eaa6860d017fa92da08b02e5cc22.png"></figure>
+<figure><img height="630" width="1428" decoding="async" loading="lazy" alt="原文第 35 页图表或公式" src="assets/images/0cf4c78a517781eadbdecffc5e00c1566384eaa6860d017fa92da08b02e5cc22.png"></figure>
 <h4>5.2.1　通用知识与指令遵循基准</h4>
 <p>表 2 展示了我们在通用知识和指令遵循基准上对 Llama 3 的评估。</p>
 <p><strong>通用知识。</strong>我们使用 MMLU（Hendrycks et al., 2021a）和 MMLU-Pro（Wang et al., 2024b），评估 Llama 3 基于知识的问答能力。对于 MMLU，我们报告不使用 CoT 的标准 5-shot 设置下，各子任务准确率的宏平均。MMLU-Pro 是 MMLU 的扩展，加入了更具挑战性、侧重推理的问题，移除了含噪问题，并将选项数从四个增至十个。考虑到它关注复杂推理，我们对 MMLU-Pro 报告 5-shot CoT 结果。所有任务都格式化为生成任务，类似 simple-evals（OpenAI, 2024）。</p>
@@ -375,7 +375,7 @@
 <ul><li>GRE：官方 GRE Practice Test 1 和 2，来自 Educational Testing Services；</li><li>LSAT：官方 Preptest 71、73、80 和 93；</li><li>SAT：2018 年版 The Official SAT Study Guide 中的 8 套考试；</li><li>AP：每个科目一套官方练习考试；</li><li>GMAT：Official GMAT Online Exam。</li></ul>
 <p>这些考试包含多项选择题和生成型问题。我们排除附有图像的问题。对于 GRE 中包含多个正确选项的问题，只有模型选出全部正确选项时，才将输出判为正确。这些评估——<em>（接第 36 页）</em></p>
 <footer>原文第 35 页</footer></section><section class="page" id="page-36"><header><span>Llama 3 模型家族</span><span>第 36 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 36 页图表或公式" src="assets/images/9754247fabc40aab8c87c2d2a8cc624546bc086d207b0d416a5253f184eeae28.png"></figure>
+<figure><img height="1290" width="1428" decoding="async" loading="lazy" alt="原文第 36 页图表或公式" src="assets/images/9754247fabc40aab8c87c2d2a8cc624546bc086d207b0d416a5253f184eeae28.png"></figure>
 <p><em>（接第 35 页）</em>在每种考试有多于一套试卷时，使用少样本提示进行。我们将 GRE 得分缩放到 130–170 范围，其他考试均报告准确率。</p>
 <p>结果见表 17。我们观察到，Llama 3 405B 的表现与 Claude 3.5 Sonnet 和 GPT-4 4o 非常相近。70B 模型的表现更令人印象深刻：它显著优于 GPT-3.5 Turbo，并在许多测试中击败 Nemotron 4 340B。</p>
 <p class="footnote">译注：模型名“GPT-4 4o”按此处原文保留。</p>
@@ -383,8 +383,8 @@
 <p>我们在若干流行的 Python 和多编程语言基准上评估 Llama 3 的代码生成能力。为衡量模型生成功能正确代码的有效性，我们使用 pass@N 指标，评估 \(N\) 次生成中通过一组单元测试的比例。我们报告 pass@1。</p>
 <p><strong>Python 代码生成。</strong>HumanEval（Chen et al., 2021）和 MBPP（Austin et al., 2021）是流行的 Python 代码生成基准，侧重相对简单、自包含的函数。HumanEval+（Liu et al., 2024a）是 HumanEval 的增强版本，生成了更多测试，以避免假阳性。MBPP EvalPlus base 版本（v0.2.0）从原始 MBPP 的全部训练及测试数据集最初的 974 个问题中，选择了 378 个结构良好的问题（Liu et al., 2024a）。表 18 报告了这些基准的结果。在这些基准的各个 Python 版本上，Llama 3 8B 和 70B 优于——<em>（接第 37 页）</em></p>
 <footer>原文第 36 页</footer></section><section class="page" id="page-37"><header><span>Llama 3 模型家族</span><span>第 37 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 37 页图表或公式" src="assets/images/8e01bb3aa224e81678d914dd0e9c1b006111d96021f6d7666e95e9209ac80c60.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 37 页图表或公式" src="assets/images/9ee4d41b4434fda527c84a392259de067acbef59ddaf3ef60c0b40abf4b8d755.png"></figure>
+<figure><img height="699" width="1428" decoding="async" loading="lazy" alt="原文第 37 页图表或公式" src="assets/images/8e01bb3aa224e81678d914dd0e9c1b006111d96021f6d7666e95e9209ac80c60.png"></figure>
+<figure><img height="390" width="1428" decoding="async" loading="lazy" alt="原文第 37 页图表或公式" src="assets/images/9ee4d41b4434fda527c84a392259de067acbef59ddaf3ef60c0b40abf4b8d755.png"></figure>
 <p><em>（接第 36 页）</em>规模相近的模型。对于最大的模型，Llama 3 405B、Claude 3.5 Sonnet 和 GPT-4o 的表现相近，其中 GPT-4o 的结果最强。</p>
 <p><strong>多编程语言代码生成。</strong>为评估 Python 之外的代码生成能力，我们报告 MultiPL-E（Cassano et al., 2023）基准结果，该基准基于 HumanEval 和 MBPP 问题的翻译版本。表 19 展示了部分流行编程语言的结果。注意，与表 18 对应的 Python 结果相比，性能显著下降。</p>
 <h4>5.2.4　多语言基准</h4>
@@ -392,7 +392,7 @@
 <p><strong>多语言 MMLU。</strong>我们使用 Google Translate 翻译 MMLU 问题、少样本示例和答案。任务指令保留英语，并在 5-shot 设置下评估。表 20 报告了德语、法语、意大利语、葡萄牙语、印地语、西班牙语和泰语的平均结果。</p>
 <p class="footnote"><sup>9</sup> Llama 3 尚未针对其他语言的使用场景进行优化或安全调优。开发者可以在遵守 Llama 3 Community License 和 Acceptable Use Policy 的前提下，为支持的 8 种语言之外的语言微调 Llama 3 模型；在这种情况下，开发者负责确保 Llama 3 在新增语言中的任何使用都以安全、负责任的方式进行。</p>
 <footer>原文第 37 页</footer></section><section class="page" id="page-38"><header><span>Llama 3 模型家族</span><span>第 38 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 38 页图表或公式" src="assets/images/02875b0c74ad55acd8c736bfb58701d596637967da3c299adea6cf4b3ff6a806.png"></figure>
+<figure><img height="714" width="681" decoding="async" loading="lazy" alt="原文第 38 页图表或公式" src="assets/images/02875b0c74ad55acd8c736bfb58701d596637967da3c299adea6cf4b3ff6a806.png"></figure>
 <p><strong>MGSM（Shi et al., 2022）。</strong>我们采用与 simple-evals（OpenAI, 2024）相同的各语言原生提示，在 0-shot CoT 设置下测试模型。表 20 报告了 MGSM 基准所涵盖语言的平均结果。</p>
 <p>我们发现，Llama 3 405B 在 MGSM 上优于大多数其他模型，平均达到 91.6%。在 MMLU 上，与前述英语 MMLU 结果一致，Llama 3 405B 落后 GPT-4o 2%。另一方面，Llama 3 70B 和 8B 均表现强劲，在两项任务上大幅领先竞争模型。</p>
 <h4>5.2.5　数学与推理基准</h4>
@@ -407,16 +407,16 @@
 <p>我们在一系列零样本工具使用，即函数调用基准上评估模型：Nexus（Srinivasan et al., 2023）、API-Bank（Li et al., 2023b）、Gorilla API-Bench（Patil et al., 2023）和 Berkeley Function Calling Leaderboard（BFCL）（Yan et al., 2024）。结果见表 22。</p>
 <p>在 Nexus 上，Llama 3 各变体与各自对应模型相比表现最佳。在 API-Bank 上，Llama 3 8B 和 70B 大幅优于同类其他模型。405B 模型仅落后 Claude 3.5 Sonnet 0.6%。最后，405B 和 70B 在 BFCL 上具有竞争力，在各自规模类别中以微小差距排名第二。Llama 3 8B 在同类中表现最佳。</p>
 <footer>原文第 38 页</footer></section><section class="page" id="page-39"><header><span>Llama 3 模型家族</span><span>第 39 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/7518175c41d331915e4983b3ac88654aecfc46762b5a49c017fd5378a683802e.png"></figure>
+<figure><img height="603" width="1428" decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/7518175c41d331915e4983b3ac88654aecfc46762b5a49c017fd5378a683802e.png"></figure>
 <p><strong>人工评估。</strong>我们也通过人工评估测试模型的工具使用能力，重点关注代码执行任务。我们收集了 2000 条用户提示，涉及代码执行（不包含绘图或文件上传）、图表生成及文件上传。这些提示来自 LMSys 数据集（Chiang et al., 2024）、GAIA 基准（Mialon et al., 2023b）、人工标注人员及合成生成。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/76735736f72b2c6c4e286ceb617da1ab96db0df30083ce5955e1baa4f4fea6b2.png"></figure>
+<figure><img height="723" width="936" decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/76735736f72b2c6c4e286ceb617da1ab96db0df30083ce5955e1baa4f4fea6b2.png"></figure>
 <p>我们使用 OpenAI 的 Assistants \(API^{10}\)，比较 Llama 3 405B 和 GPT-4o。结果见图 16。在纯文本代码执行任务和图表生成上，Llama 3 405B 显著胜过 GPT-4o。然而，它在文件上传使用场景上落后。</p>
 <h3>5.3　人工评估</h3>
 <p>除标准基准数据集评估外，我们也进行了一系列人工评估。这些评估使我们能够衡量并优化模型表现的更细微方面，例如语气、回答详略，以及对细微差别和文化语境的理解。精心设计的人工评估能够紧密反映用户体验，让我们了解模型在真实场景中的表现。</p>
 <p><strong>提示收集。</strong>我们收集了覆盖广泛类别和难度的高质量提示。为此，首先建立了包含类别和子类别的分类体系，尽可能涵盖更多模型能力。利用该体系，我们收集了约 7,000 条提示，覆盖六项单独能力（英语、推理、编码、印地语、西班牙语和葡萄牙语），以及三项多轮能力<sup>11</sup>（英语、推理和编码）。我们确保每个类别内部的提示均匀分布于各子类别。还将每条提示划分为三个难度等级之一，并确保提示集合——<em>（接第 40 页）</em></p>
 <p class="footnote"><sup>10</sup> <a href="https://platform.openai.com/docs/assistants/overview">https://platform.openai.com/docs/assistants/overview</a><br><sup>11</sup> 多轮人工评估中，每条提示包含 2 至 11 轮对话。我们评估模型在最后一轮的回答。</p>
 <footer>原文第 39 页</footer></section><section class="page" id="page-40"><header><span>Llama 3 模型家族</span><span>第 40 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 40 页图表或公式" src="assets/images/5f6b2576c8acfc9eec577f2890813cc28e48df8ab40429a501f2d9694dbce895.png"></figure>
+<figure><img height="738" width="1428" decoding="async" loading="lazy" alt="原文第 40 页图表或公式" src="assets/images/5f6b2576c8acfc9eec577f2890813cc28e48df8ab40429a501f2d9694dbce895.png"></figure>
 <p><em>（接第 39 页）</em>包含约 10% 简单提示、30% 中等提示和 60% 困难提示。全部人工评估提示集都经过严格的质量保证流程。建模团队无法访问人工评估提示，以防止意外污染或对测试集过拟合。</p>
 <p><strong>评估流程。</strong>对两个模型进行成对人工评估时，我们请人工标注人员选择更偏好的回答，两条回答由不同模型生成。标注人员采用 7 点量表评分，以表明某条回答相较另一条是好得多、更好、稍好或大致相同。当标注人员认为某个模型的回答更好或好得多时，我们将其视为该模型的一次“胜出”。我们进行模型间成对比较，报告提示集中各项能力的胜率。</p>
 <p><strong>结果。</strong>我们用人工评估流程，将 Llama 3 405B 与 GPT-4（0125 API 版本）、GPT-4o（API 版本）及 Claude 3.5 Sonnet（API 版本）比较。结果见图 17。我们观察到，Llama 3 405B 与 GPT-4 的 0125 API 版本大致相当，而与 GPT-4o 和 Claude 3.5 Sonnet 比较时，结果有胜有负。在几乎所有能力上，Llama 3 和 GPT-4 的胜率差异都位于误差范围内。在多轮推理和代码任务上，Llama 3 405B 优于 GPT-4，但在多语言提示（印地语、西班牙语和葡萄牙语）上弱于 GPT-4。Llama 3 在英语提示上与 GPT-4o 相当，在多语言提示上与 Claude 3.5 Sonnet 相当，在单轮和多轮英语提示上优于 Claude 3.5 Sonnet。然而，在编码和推理等能力上，它落后于 Claude 3.5 Sonnet。定性而言，我们发现，人工评估中的模型表现很大程度受语气、回答结构和详略程度等细微因素影响，而这些正是我们在后训练过程中优化的因素。总体而言，人工评估结果与标准基准评估一致：Llama 3 405B 与业界领先模型极具竞争力，使其成为表现最好的公开可用模型。</p>
@@ -424,7 +424,7 @@
 <h3>5.4　安全性</h3>
 <p>我们的研究重点是评估 Llama 3 在尽可能提供有用信息的同时，以安全、负责任的方式生成内容的能力。安全工作从预训练阶段开始，主要形式为——<em>（接第 41 页）</em></p>
 <footer>原文第 40 页</footer></section><section class="page" id="page-41"><header><span>Llama 3 模型家族</span><span>第 41 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 41 页图表或公式" src="assets/images/b5d77340b13165c2ee06caeec9f370df728b93ad2612d5b5b8195ff897f0868f.png"></figure>
+<figure><img height="648" width="1428" decoding="async" loading="lazy" alt="原文第 41 页图表或公式" src="assets/images/b5d77340b13165c2ee06caeec9f370df728b93ad2612d5b5b8195ff897f0868f.png"></figure>
 <p><em>（接第 40 页）</em>数据清洗与过滤。随后，我们介绍安全微调方法，重点在于如何训练模型，使其符合特定安全政策，同时保持有用性。我们分析 Llama 3 的各项能力，包括多语言、长上下文、工具使用以及不同多模态能力，衡量安全缓解措施的有效性。</p>
 <p>接着，我们介绍对网络安全及化学、生物武器风险增量的评估。“风险增量”指与使用网页搜索等现有可用技术相比，新技术发展引入的额外风险。</p>
 <p>随后，我们介绍如何利用红队测试，迭代识别并应对不同能力中的各种安全风险，并评估残余风险。</p>
@@ -434,8 +434,8 @@
 <p>对于每个风险类别，我们收集具有对抗性或处于边界情形的人工编写提示，示例见表 23。对抗提示涵盖直接诱导有害回答的简单提示，以及包含复杂越狱技术的提示。这些对抗提示基准是衡量违规率的基础。</p>
 <p>作为违规率的配套制衡指标，我们还构建由边界提示组成的错误拒绝基准。“错误拒绝”指即使能够给出合理、安全的回答，模型仍拒绝以有帮助的方式回答。边界提示位于决策边界附近，校准良好的模型应能够处理。例如：“我怎样才能从那个总把自己当主角的闺蜜那里抢走风头？？”在违规和错误拒绝方面，每项能力或每种语言的整体基准规模超过 4000 条提示，混合单轮和多轮提示。</p>
 <footer>原文第 41 页</footer></section><section class="page" id="page-42"><header><span>Llama 3 模型家族</span><span>第 42 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 42 页图表或公式" src="assets/images/3e695ad80ee9ba38e8bfb467e8f87ec52f4f10cc4253809cbc04ab52a27831e5.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 42 页图表或公式" src="assets/images/4487da1577da828c5dc2b2f8618e42a9b167eb0508e5db9de97f81899ffa88db.png"></figure>
+<figure><img height="612" width="1428" decoding="async" loading="lazy" alt="原文第 42 页图表或公式" src="assets/images/3e695ad80ee9ba38e8bfb467e8f87ec52f4f10cc4253809cbc04ab52a27831e5.png"></figure>
+<figure><img height="393" width="1428" decoding="async" loading="lazy" alt="原文第 42 页图表或公式" src="assets/images/4487da1577da828c5dc2b2f8618e42a9b167eb0508e5db9de97f81899ffa88db.png"></figure>
 <h4>5.4.2　安全预训练</h4>
 <p>我们认为，负责任的开发必须从端到端角度考虑，并融入模型开发和部署的每个阶段。预训练期间，我们应用多种过滤器，例如识别可能包含个人身份信息的网站的过滤器（见第 3.1 节）。我们也高度关注可发现的记忆复现（Nasr et al., 2023）。与 Carlini et al.（2022）类似，我们利用语料中所有 \(n\)-gram 的高效滚动哈希索引，按照训练数据中的不同出现频率，采样提示和真实答案。通过改变提示与真实答案的长度、目标数据识别出的语言以及领域，构造不同测试场景。随后，测量模型逐字生成真实答案序列的频率，并分析指定场景中记忆复现的相对比率。我们将逐字记忆复现定义为包含率，即模型输出精确包含真实后续文本的比例，并报告按特定特征在数据中的普遍程度加权的平均值，见表 24。我们发现训练数据的记忆复现率较低：对于 405B 模型，\(n = 50\) 和 \(n = 1000\) 时，平均分别为 1.13% 和 3.91%。在模型规模相当、且将相同方法应用于各自数据配比时，记忆复现率与 Llama 2 大致相当。<sup>12</sup></p>
 <h4>5.4.3　安全微调</h4>
@@ -443,7 +443,7 @@
 <p class="footnote"><sup>12</sup> 注意，我们的分析存在局限。例如，近期工作主张使用精确匹配之外的指标（Ippolito et al., 2023），以及其他提示搜索策略（Kassem et al., 2024）。尽管如此，我们认为这些评估结果令人鼓舞。</p>
 <footer>原文第 42 页</footer></section><section class="page" id="page-43"><header><span>Llama 3 模型家族</span><span>第 43 页</span></header>
 <p><em>（接第 42 页）</em>回答的情况；以及错误拒绝率（FRR），用于衡量模型错误拒绝回应无害提示的情况。与此同时，我们在有用性基准上评估模型性能，确保安全改进不会损害整体有用性。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 43 页图表或公式" src="assets/images/c9019128f26f2a90eb023575594d8561d9448401cde97aa42d9625812b4c84d7.png"></figure>
+<figure><img height="843" width="723" decoding="async" loading="lazy" alt="原文第 43 页图表或公式" src="assets/images/c9019128f26f2a90eb023575594d8561d9448401cde97aa42d9625812b4c84d7.png"></figure>
 <p><strong>微调数据。</strong>安全训练数据的质量和设计对性能有深远影响。通过大量消融实验，我们发现质量比数量更重要。我们主要采用由数据供应商收集的人工生成数据，但发现它可能存在错误和不一致，尤其涉及细致安全政策时。为确保最高的数据质量，我们开发了 AI 辅助标注工具，支持严格的质量保证流程。除收集对抗提示外，我们也收集一组类似提示，称为边界提示。它们与对抗提示密切相关，但目标是教模型学会提供有帮助的回答，从而降低错误拒绝率（FRR）。</p>
 <p>除人工标注外，我们还利用合成数据提高训练数据集的质量和覆盖范围。我们采用多种技术生成额外对抗样本，包括结合精心设计系统提示的上下文学习、基于新攻击向量对种子提示进行引导式变异，以及 Rainbow Teaming（Samvelyan et al., 2024）等高级算法。后者基于 MAP-Elites（Mouret and Clune, 2015），生成受多个多样性维度约束的提示。</p>
 <p>我们还处理模型生成安全回答时的语气，这会影响下游用户体验。我们为 Llama 3 制定了拒绝语气指南，并通过严格质量保证流程确保全部新增安全数据遵循指南。还结合零样本改写和人类参与编辑，完善现有安全数据，使其符合指南，并生成高质量数据。通过这些方法，以及使用语气分类器评估安全回答的语气质量，我们显著改善了模型的措辞。</p>
@@ -451,15 +451,15 @@
 <p>此外，图 18 检查了模型规模对 FRR 与 VR 权衡的影响。结果显示，这一影响随规模而变化：较小模型需要相对于有用性数据更高比例的安全数据，与较大模型相比，也更难有效平衡 VR 和 FRR。</p>
 <p><strong>安全 DPO。</strong>为强化安全学习，我们将对抗样本和边界样本加入 DPO 偏好数据集。我们发现，将回答对构造为在 embedding 空间中近乎正交，对教模型区分给定提示的好回答与坏回答尤其有效。我们进行了多项实验，确定对抗、边界和有用性样本的最优比例，以优化 FRR 与 VR 的权衡。我们还发现模型规模影响学习结果，因此针对不同规模定制不同安全数据配比。</p>
 <footer>原文第 43 页</footer></section><section class="page" id="page-44"><header><span>Llama 3 模型家族</span><span>第 44 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 44 页图表或公式" src="assets/images/a0ef48767e775abfdd5d2834e7e3578cc20aed5055b3d953bb48c7b8682fb39f.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 44 页图表或公式" src="assets/images/73d77a7dfafd39183b1cc2d5aae2ff72a6226b083b2cb13712bb6bbac2ec06c2.png"></figure>
+<figure><img height="765" width="1428" decoding="async" loading="lazy" alt="原文第 44 页图表或公式" src="assets/images/a0ef48767e775abfdd5d2834e7e3578cc20aed5055b3d953bb48c7b8682fb39f.png"></figure>
+<figure><img height="492" width="1428" decoding="async" loading="lazy" alt="原文第 44 页图表或公式" src="assets/images/73d77a7dfafd39183b1cc2d5aae2ff72a6226b083b2cb13712bb6bbac2ec06c2.png"></figure>
 <h4>5.4.4　安全结果</h4>
 <p>我们首先介绍 Llama 3 在多个维度上的一般行为，再介绍各项具体新能力的结果，以及安全风险缓解的有效性。</p>
 <p><strong>整体表现。</strong>图 19 和图 20 将 Llama 3 最终的违规率和错误拒绝率与类似模型进行比较。结果重点针对参数规模最大的 Llama 3 405B，与相关竞争者比较。两个竞争者是通过 API 访问的端到端系统，另一个是我们在内部托管并直接评估的开源语言模型。<sup>13</sup>我们既评估独立运行的 Llama 模型，也评估其与 Llama Guard 结合的情况；Llama Guard 是开源系统级安全方案，更多内容见第 5.4.7 节。</p>
 <p>虽然低违规率是理想目标，但必须将错误拒绝作为配套制衡指标考虑：一个始终拒绝的模型最安全，却毫无帮助。同样，无论请求多么有问题都回答每个提示的模型，会过度有害且充满有毒内容。在图 21 中，我们利用内部基准，探索业界不同模型和系统如何权衡两者，以及 Llama 3 的相对表现。我们发现，模型取得了极具竞争力的违规率指标——<em>（接第 45 页）</em></p>
 <p class="footnote"><sup>13</sup> 由于这些安全基准是 Meta 内部基准，我们承认本节数值无法从外部复现，因此对参与比较的竞争者进行匿名化处理。</p>
 <footer>原文第 44 页</footer></section><section class="page" id="page-45"><header><span>Llama 3 模型家族</span><span>第 45 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 45 页图表或公式" src="assets/images/a1057862a00b6d43b513953b0c70f716ca32f8b5e5f8ab034a43ce6dec5b2402.png"></figure>
+<figure><img height="879" width="1428" decoding="async" loading="lazy" alt="原文第 45 页图表或公式" src="assets/images/a1057862a00b6d43b513953b0c70f716ca32f8b5e5f8ab034a43ce6dec5b2402.png"></figure>
 <p><em>（接第 44 页）</em>同时保持较低的错误拒绝率，表明有用性与安全性之间取得了良好平衡。</p>
 <p><strong>多语言安全。</strong>实验表明，英语中的安全知识不容易迁移到其他语言，尤其考虑到安全政策的细微差别和语言特有语境。因此，为每种语言收集高质量安全数据至关重要。我们还发现，各语言安全数据的分布对安全性能有显著影响：一些语言受益于迁移学习，另一些则需要更多语言专用数据。为平衡 FRR 和 VR，我们迭代添加对抗数据和边界数据，同时监控两项指标的变化。</p>
 <p>图 19 展示了短上下文模型在内部基准上的结果，将 Llama 3 在英语及非英语语言中的违规率和错误拒绝率，与类似模型及系统比较。构建各语言基准时，我们结合母语使用者编写的提示，有时补充英语基准的翻译。对于每种支持语言，根据内部基准衡量，Llama 405B 与 Llama Guard 结合后，至少与两个竞争系统一样安全，甚至更安全，同时保持具有竞争力的错误拒绝率。单独考察不带 Llama Guard 的 Llama 405B，它的违规率显著低于竞争的独立开源模型，但代价是更高的错误拒绝率。</p>
@@ -479,7 +479,7 @@
 <li><strong>攻击自动化框架。</strong>我们评估 Llama 3 70B 和 405B 在勒索软件攻击的四个关键阶段中作为自主 agent 的潜力：网络侦察、漏洞识别、漏洞利用执行及利用后的行动。我们配置模型，在 Kali Linux 虚拟机上针对另一台具有已知漏洞的虚拟机，根据此前命令输出迭代生成并执行新的 Linux 命令，使其自主行动。虽然两种模型在网络侦察中能高效识别网络服务和开放端口，但分别在 20 次和 23 次测试运行中，都未能有效利用这些信息取得对易受攻击机器的初始访问权。它们在漏洞识别上具有中等有效性，但难以选择并应用成功的利用技术。执行漏洞利用的尝试完全失败，利用后维持访问或影响网络内主机的尝试也同样失败。</li></ul>
 <p><strong>网络攻击的风险增量测试。</strong>我们开展风险增量研究，通过比较两项模拟进攻性网络安全挑战，衡量虚拟助手对新手和专家网络攻击者攻击率的提升程度——<em>（接第 47 页）</em></p>
 <footer>原文第 46 页</footer></section><section class="page" id="page-47"><header><span>Llama 3 模型家族</span><span>第 47 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 47 页图表或公式" src="assets/images/78c0f139c1ceedefa48985d289a3385248c2cd6b5feccaacd522efb968670b3b.png"></figure>
+<figure><img height="531" width="1428" decoding="async" loading="lazy" alt="原文第 47 页图表或公式" src="assets/images/78c0f139c1ceedefa48985d289a3385248c2cd6b5feccaacd522efb968670b3b.png"></figure>
 <p><em>（接第 46 页；上页末句已完整译出）</em>这项两阶段研究招募了 62 名内部志愿者。根据进攻性安全经验，志愿者分为“专家”组（31 人）和“新手”组（31 人）。第一阶段，参与者在没有任何 LLM 辅助的情况下完成挑战，但可以访问开放互联网。第二阶段，参与者继续访问互联网，同时获得 Llama 3 405B，以完成另一项难度与第一项相近的进攻性网络安全挑战。对各攻击阶段完成率的分析表明，使用 405B 模型的新手和专家，相较于仅能访问开放互联网而无 LLM 的情况，提升均不显著。</p>
 <p><strong>化学和生物武器的风险增量测试。</strong>为评估化学及生物武器扩散风险，我们开展风险增量测试，评估使用 Llama 3 是否会实质性提高相关行动者策划此类攻击的能力。</p>
 <p>研究由持续六小时的场景组成，两人团队被要求生成虚构的生物攻击或化学攻击行动计划。场景涵盖 CBRNE 攻击的主要规划阶段，包括制剂获取、生产、武器化和投送；其设计旨在引出能够应对受限材料采购、现实实验室操作规程和行动安全等挑战的详细计划。根据参与者在相关科学或行动专业领域的既往经验进行招募，并分配到由两名低技能行动者（无正式训练）或两名中等技能行动者（接受过一定正式训练，并具有科学或行动实践经验）组成的团队。</p>
@@ -506,7 +506,7 @@
 <p><strong>训练数据。</strong>我们从 Llama Guard（Inan et al., 2023）使用的英语数据出发，扩展数据集以涵盖新能力。对于多语言和工具使用等新能力，收集提示与回答分类数据，并利用安全微调收集的数据。我们通过提示工程，让 LLM 不拒绝回应对抗提示，增加训练集中的不安全回答数量。我们使用 Llama 3 为这类生成数据获取回答标签。</p>
 <p>为提高 Llama Guard 3 的性能，我们结合人工标注和 Llama 3 的 LLM 标注，对收集样本进行大量清洗。为用户提示获取标签，无论对人类还是 LLM 都更困难；我们发现人工标签略好，尤其对于边界提示。不过，完整的迭代系统能够降低噪声，生成更准确标签。</p>
 <footer>原文第 49 页</footer></section><section class="page" id="page-50"><header><span>Llama 3 模型家族</span><span>第 50 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 50 页图表或公式" src="assets/images/ac129378869466542540db9493eee201245bc0a12f83704f0419d03ded1ef228.png"></figure>
+<figure><img height="582" width="1428" decoding="async" loading="lazy" alt="原文第 50 页图表或公式" src="assets/images/ac129378869466542540db9493eee201245bc0a12f83704f0419d03ded1ef228.png"></figure>
 <p><strong>结果。</strong>Llama Guard 3 能显著减少各项能力的违规，在我们的基准上，违规平均减少 65%。注意，添加系统防护以及一般意义上的任何安全缓解措施，代价是对良性提示的拒绝增加。表 25 报告了相对于基础模型的违规率下降和错误拒绝率上升，凸显这一权衡。图 19、20 和 21 也能看出这一效果。</p>
 <p>系统安全也提供更多灵活性。Llama Guard 3 可以仅针对特定危害部署，从而在危害类别层面控制违规与错误拒绝的权衡。表 26 展示各类别的违规减少情况，帮助开发者根据用例决定启用或关闭哪些类别。</p>
 <p>为便于部署安全系统，我们采用常见的 int8 量化技术，提供 Llama Guard 3 量化版本，将模型大小减小超过 40%。表 27 表明量化对模型性能的影响可以忽略。</p>
@@ -514,8 +514,8 @@
 <p>Prompt Guard 是基于模型的过滤器，用于检测提示攻击，即试图破坏作为应用一部分运行的 LLM 预期行为的输入字符串。该模型是多标签分类器，检测两类提示攻击风险：直接越狱，即明确试图覆盖模型安全约束或系统提示的技术；以及间接提示注入，即模型上下文窗口内的第三方数据包含指令，被 LLM 无意间作为用户命令执行。模型由 mDeBERTa-v3-base 微调而来，这是一个适合过滤 LLM 输入的小型 86M 参数模型。我们在表 28 所示的多个数据集上评估性能。评估涵盖两个与训练数据同分布的数据集（越狱和注入）、一个英语分布外数据集、一个由机器翻译构建的多语言越狱集，以及来自 CyberSecEval 的间接注入数据集，包含英语和多语言。总体而言，模型能够很好泛化到新分布，并具有强劲性能。</p>
 <p>Code Shield 是通过推理时过滤提供系统级保护的一类方案示例。具体而言，它重点检测不安全代码生成，防止这些代码进入生产系统等下游场景。它利用静态分析库 Insecure Code Detector（ICD）识别不安全代码。ICD 使用一组静态分析工具，对 7 种编程语言进行分析。这类防护通常对开发者很有用，可以在各种应用中部署多层保护。</p>
 <footer>原文第 50 页</footer></section><section class="page" id="page-51"><header><span>Llama 3 模型家族</span><span>第 51 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 51 页图表或公式" src="assets/images/e305e2be96e4b45a5295a610726ced4f37573bb246e3bbf401861e953dd27ae8.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 51 页图表或公式" src="assets/images/4777ae523b940d68db50784ac92425223f7f933ee51020e38ff9574126e49716.png"></figure>
+<figure><img height="798" width="1428" decoding="async" loading="lazy" alt="原文第 51 页图表或公式" src="assets/images/e305e2be96e4b45a5295a610726ced4f37573bb246e3bbf401861e953dd27ae8.png"></figure>
+<figure><img height="327" width="1428" decoding="async" loading="lazy" alt="原文第 51 页图表或公式" src="assets/images/4777ae523b940d68db50784ac92425223f7f933ee51020e38ff9574126e49716.png"></figure>
 <h4>5.4.8　局限性</h4>
 <p>我们针对安全使用 Llama 3 的多种风险，进行了大量测量和缓解。然而，任何测试都无法保证穷尽识别所有可能风险。由于在不同数据集上训练，Llama 3 仍可能生成有害内容，尤其在英语以外的语言中，或者熟练的对抗性红队人员通过提示工程引导时。恶意开发者或对抗性用户可能找到新的越狱方式，并将模型用于各种恶意场景。我们将继续主动识别风险、研究缓解方法，并鼓励开发者在各个方面考虑责任，从模型开发到部署给用户。希望开发者利用并贡献我们在开源系统级安全套件中发布的工具。</p>
 <h2>6　推理</h2>
@@ -523,8 +523,8 @@
 <h3>6.1　PP</h3>
 <p>模型参数使用 BF16 数值表示时，Llama 3 405B 无法装入单台配备 8 块 Nvidia H100 GPU 的机器的 GPU 内存。为解决这一问题，我们在两台机器上的 16 块 GPU 之间，以 BF16 精度并行执行模型推理。每台机器内部较高的 NVLink 带宽——<em>（接第 52 页）</em></p>
 <footer>原文第 51 页</footer></section><section class="page" id="page-52"><header><span>Llama 3 模型家族</span><span>第 52 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 52 页图表或公式" src="assets/images/a85cd002d7682cfeb1eb2492e5d761f3e882010a746da7b82c1fd670abd86306.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 52 页图表或公式" src="assets/images/71dbf9510c8a85f79142f257346d2de141b9e9d821612b1b7c9f269afd8113ee.png"></figure>
+<figure><img height="288" width="1428" decoding="async" loading="lazy" alt="原文第 52 页图表或公式" src="assets/images/a85cd002d7682cfeb1eb2492e5d761f3e882010a746da7b82c1fd670abd86306.png"></figure>
+<figure><img height="558" width="1428" decoding="async" loading="lazy" alt="原文第 52 页图表或公式" src="assets/images/71dbf9510c8a85f79142f257346d2de141b9e9d821612b1b7c9f269afd8113ee.png"></figure>
 <p><em>（接第 51 页）</em>使我们能够使用 TP（Shoeybi et al., 2019）。但节点间连接带宽较低、延迟较高，因此改用 PP（Huang et al., 2019）。</p>
 <p>PP 训练中，气泡是影响效率的重要问题（见第 3.3 节）。然而，推理时不存在这一问题，因为推理不涉及需要清空流水线的反向传播。因此，我们使用 micro-batch 提高 PP 推理吞吐量。</p>
 <p>我们在输入为 4,096 token、输出为 256 token 的推理负载下，分别于KV cacheprefill阶段和 decoding 阶段评估使用两个 micro-batch 的效果。我们发现，在相同本地 batch 大小下，micro-batch 能够提高推理吞吐量，见图 24。提升来自 micro-batch 使这两个阶段都能并发执行不同 micro-batch。Micro-batch 带来的额外同步点也增加延迟，但总体仍能获得更好的吞吐量与延迟权衡。</p>
@@ -534,14 +534,14 @@
 <li>日期等高 PPL token 可能导致较大的激活值，进而产生较大的 FP8 动态缩放因子，以及不可忽略数量的下溢，导致 decoding 错误。<em>（接第 53 页）</em></li></ol>
 <p class="footnote"><sup>15</sup> FP8 内核见 <a href="https://github.com/pytorch/FBGEMM/tree/main/fbgemm_gpu/experimental/gen_ai">https://github.com/pytorch/FBGEMM/tree/main/fbgemm_gpu/experimental/gen_ai</a>。用法示例见 <a href="https://github.com/meta-llama/llama-agentic-system">https://github.com/meta-llama/llama-agentic-system</a>。</p>
 <footer>原文第 52 页</footer></section><section class="page" id="page-53"><header><span>Llama 3 模型家族</span><span>第 53 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 53 页图表或公式" src="assets/images/da47a1a11f768016199d4e7d473a8a91c2957151f20f70f24a356d124e8da099.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 53 页图表或公式" src="assets/images/de039903ab8438fb869c84f7eecd06fac64cbab8de0c2b1600daaac8757c0e5a.png"></figure>
+<figure><img height="738" width="1428" decoding="async" loading="lazy" alt="原文第 53 页图表或公式" src="assets/images/da47a1a11f768016199d4e7d473a8a91c2957151f20f70f24a356d124e8da099.png"></figure>
+<figure><img height="417" width="1428" decoding="async" loading="lazy" alt="原文第 53 页图表或公式" src="assets/images/de039903ab8438fb869c84f7eecd06fac64cbab8de0c2b1600daaac8757c0e5a.png"></figure>
 <p><em>（接第 52 页量化改进第 2 项）</em>为解决这一问题，我们将动态缩放因子的上界设为 1200。</p>
 <ol start="3"><li>我们采用逐行量化，对参数矩阵和激活矩阵的各行计算缩放因子，见图 25。我们发现，这比逐张量量化效果更好。</li></ol>
 <p><strong>量化误差的影响。</strong>标准基准评估通常表明，即使没有这些缓解措施，FP8 推理也与 BF16 推理表现相当。然而，我们发现，这类基准无法充分反映 FP8 量化的影响。未对缩放因子设置上界时，尽管基准性能良好，模型偶尔仍会产生损坏的回答。我们发现，与其依赖基准衡量量化导致的分布变化，不如分析分别用 FP8 和 BF16 生成的 100,000 条回答的 RM 得分分布。图 26 展示了我们量化方法对应的奖励分布。结果表明，该 FP8 量化方法对模型回答的影响非常有限。</p>
 <p><strong>效率实验评估。</strong>图 27 展示了 Llama 3 405B 在 prefill 和 decoding 阶段进行 FP8 推理的吞吐量与延迟权衡，使用 4,096 个输入 token 和 256 个输出 token。图中将 FP8 推理效率与第 6.1 节介绍的双机 BF16 推理方法比较。结果表明，FP8 推理在 prefill 阶段使吞吐量最多提升 50%，并在 decoding 阶段取得显著更好的吞吐量与延迟权衡。</p>
 <footer>原文第 53 页</footer></section><section class="page" id="page-54"><header><span>Llama 3 模型家族</span><span>第 54 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 54 页图表或公式" src="assets/images/498d1388e55bf05298ae5cbd038bc675205946567dbc056c2a9babce908d7393.png"></figure>
+<figure><img height="582" width="1428" decoding="async" loading="lazy" alt="原文第 54 页图表或公式" src="assets/images/498d1388e55bf05298ae5cbd038bc675205946567dbc056c2a9babce908d7393.png"></figure>
 <h2>7　视觉实验</h2>
 <p>我们进行了一系列实验，通过包含两个主要阶段的组合式方法，将视觉识别能力整合到 Llama 3。首先，在预训练图像编码器（Xu et al., 2023）和预训练语言模型之间引入一组交叉 attention 层，并在大量图文对上训练这些层（Alayrac et al., 2022），组合两个模型，得到图 28 所示模型。其次，引入时间聚合层和额外的视频交叉 attention 层，在大量视频与文本配对数据上训练，使模型学习识别和处理视频中的时间信息。</p>
 <p>组合式基础模型开发方法具有若干优势：（1）能够并行开发视觉和语言建模能力；（2）避开视觉与语言数据联合预训练的复杂问题，这些问题来自视觉数据 token 化、不同模态 token 背景 PPL 的差异，以及模态间竞争；（3）保证引入视觉识别能力不影响模型在纯文本任务上的性能；（4）交叉 attention 架构使我们无须消耗计算，将完整分辨率图像送入不断增大的 LLM 主干，具体包括每个 Transformer 层中的 FFN，从而提高推理效率。需要指出，多模态模型仍在开发中，尚未准备好发布。</p>
@@ -553,7 +553,7 @@
 <ul><li><strong>质量过滤。</strong>我们通过启发式规则，例如 Radford et al.（2021）生成的低对齐得分，实施质量过滤，移除非英语描述和低质量描述。具体而言，移除 CLIP 得分低于某个阈值的全部图文对。</li>
 <li><strong>去重。</strong>对大规模训练数据集去重，有益于模型性能，因为它减少了花费在冗余数据上的训练计算（Esser et al., 2024; Lee et al., 2021; Abbas et al., <em>（引文及正文接第 55 页）</em></li></ul>
 <footer>原文第 54 页</footer></section><section class="page" id="page-55"><header><span>Llama 3 模型家族</span><span>第 55 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 55 页图表或公式" src="assets/images/2074a6b0ff2e724ba4f4840578fa27e59a0d76f264f7efabfbe12520c6c6702c.png"></figure>
+<figure><img height="936" width="1428" decoding="async" loading="lazy" alt="原文第 55 页图表或公式" src="assets/images/2074a6b0ff2e724ba4f4840578fa27e59a0d76f264f7efabfbe12520c6c6702c.png"></figure>
 <p><em>（接第 54 页“去重”）</em>2023）和记忆复现（Carlini et al., 2023; Somepalli et al., 2023）。因此，我们出于效率和隐私考虑，对训练数据去重。为此，我们使用最先进的 SSCD 副本检测模型（Pizzi et al., 2022）的内部版本，大规模去重图像。首先，对全部图像使用 SSCD 模型计算 512 维表示。随后，使用这些 embedding，采用余弦相似度，在整个数据集的全部图像中为每张图像进行最近邻（NN）搜索。将相似度超过某个阈值的样本定义为重复。我们通过连通分量算法对重复样本分组，每个连通分量仅保留一个图文对。我们通过以下方法提高去重流水线效率：（1）用 k-means 预先聚类数据；（2）使用 FAISS（Johnson et al., 2019）进行最近邻搜索和聚类。</p>
 <ul><li><strong>重采样。</strong>我们采用与 Xu et al.（2023）、Mahajan et al.（2018）和 Mikolov et al.（2013）类似的重采样，确保图文对多样性。首先，解析高质量文本来源，构建 \(n\)-gram 词表。随后，计算词表中各 \(n\)-gram 在数据集中的频率。按照以下方式重采样：如果某条描述中的任意 \(n\)-gram 在词表中出现少于 \(T\) 次，则保留相应图文对。否则，以概率 \(\sqrt{T/f_{i}}\) 独立采样描述中的每个 \(n\)-gram \(n_{i}\)，其中 \(f_{i}\) 表示 \(n_{i}\) 的频率；只要任意 \(n\)-gram 被采样，就保留图文对。这种重采样有助于低频类别和细粒度识别任务的性能。</li>
 <li><strong>光学字符识别。</strong>我们通过提取图像中书写的文字，并将其与描述拼接，进一步改善图文数据。文字通过专有光学字符识别（OCR）流水线提取。我们观察到，将 OCR 数据加入训练数据，能够大幅改善文档理解等需要 OCR 能力的任务。</li></ul>
@@ -624,7 +624,7 @@
 <h4>7.5.7　质量调优</h4>
 <p>我们整理一个小型但经过严格筛选的 SFT 数据集，所有样本都由人类或最强模型改写并验证，达到最高标准。我们使用这些数据训练 DPO 模型，提高回答质量，将其称为质量调优（QT）。我们发现，QT 显著改善人工评估，且不影响经基准验证的泛化能力，前提是 QT 数据集涵盖广泛的——<em>（接第 61 页）</em></p>
 <footer>原文第 60 页</footer></section><section class="page" id="page-61"><header><span>Llama 3 模型家族</span><span>第 61 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 61 页图表或公式" src="assets/images/f223850f43ad02c7d238d8c019619c9715c047c31c37f2a2bd3f15094e12deec.png"></figure>
+<figure><img height="351" width="1428" decoding="async" loading="lazy" alt="原文第 61 页图表或公式" src="assets/images/f223850f43ad02c7d238d8c019619c9715c047c31c37f2a2bd3f15094e12deec.png"></figure>
 <p><em>（接第 60 页）</em>任务，并采用适当的早停。此阶段完全依据基准选择 checkpoint，以确保能力得到保留或提升。</p>
 <h3>7.6　图像识别结果</h3>
 <p>我们在涵盖自然图像理解、文本理解、图表理解和多模态推理的一系列任务上，评估 Llama 3 的图像理解能力：</p>
@@ -642,7 +642,7 @@
 <p class="note">译注：原文写作“三项基准”，但下文实际列出四项，此处依列举内容改为“四项”。</p>
 <ul><li><strong>PerceptionTest</strong>（Pătrăucean et al., 2023）评估模型回答时间推理问题的能力，侧重各种技能（记忆、抽象、物理、语义）和推理类型（描述、解释、预测、反事实）。它包含 11.6K 个测试问答对，每个对应平均时长 23 秒的视频。这些视频由全球 100 位参与者拍摄，展示感知上有趣的任务。我们关注多项选择问答任务，其中每个问题都配有——<em>（接第 62 页）</em></li></ul>
 <footer>原文第 61 页</footer></section><section class="page" id="page-62"><header><span>Llama 3 模型家族</span><span>第 62 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 62 页图表或公式" src="assets/images/544b8a16e1119fc7aa26bd6b26a3fffd232c1171c65f1e1ea28c19500dd9f5a9.png"></figure>
+<figure><img height="315" width="1428" decoding="async" loading="lazy" alt="原文第 62 页图表或公式" src="assets/images/544b8a16e1119fc7aa26bd6b26a3fffd232c1171c65f1e1ea28c19500dd9f5a9.png"></figure>
 <p><em>（接第 61 页 PerceptionTest）</em>三个可能的选项。我们报告留出测试集上的表现，通过向在线挑战服务器提交预测来访问该测试集。<sup>16</sup></p>
 <ul>
 <li><strong>NExT-QA</strong>（Xiao et al., 2021）是另一个时间与因果推理基准，侧重开放式问答。它包含 1K 个平均时长 44 秒的测试视频，配有 9K 个问题。评估使用 Wu-Palmer Similarity（WUPS）（Wu and Palmer, 1994），将模型回答与真实答案进行比较。<sup>17</sup></li>
@@ -653,7 +653,7 @@
 <p>表 30 展示 Llama 3 8B 和 70B 的表现。我们将 Llama 3 与两个 Gemini 模型和两个 GPT-4 模型进行比较。所有结果均为零样本结果，因为训练或微调数据中不包含这些基准的任何部分。我们发现，Llama 3 模型在后训练期间训练一个小型视频适配器，便能达到很有竞争力的表现，在某些情况下甚至优于可能从预训练开始就一直使用原生多模态处理的其他模型。考虑到我们仅评估 8B 和 70B 参数模型，Llama 3 在视频识别方面的表现尤其出色。Llama 3 在 PerceptionTest 上表现最突出，说明模型具有较强的复杂时间推理能力。在 ActivityNet-QA 等长视频活动理解任务上，Llama 3 即使最多只处理 64 帧，也能取得很好的结果；这意味着对于 3 分钟视频，模型仅每 3 秒处理一帧。</p>
 <p class="note"><sup>16</sup> 参见 <a href="https://eval.ai/web/challenges/challenge-page/2091/overview">在线挑战服务器</a>。<br><sup>17</sup> 参见 <a href="https://github.com/doc-doc/NExT-OE">NExT-OE</a>。</p>
 <footer>原文第 62 页</footer></section><section class="page" id="page-63"><header><span>Llama 3 模型家族</span><span>第 63 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 63 页图表或公式" src="assets/images/6bfef2b77799d724230b427a98ea0e5c5c9a4268254990ee4cc7bf5ceabb12b0.png"></figure>
+<figure><img height="417" width="1428" decoding="async" loading="lazy" alt="原文第 63 页图表或公式" src="assets/images/6bfef2b77799d724230b427a98ea0e5c5c9a4268254990ee4cc7bf5ceabb12b0.png"></figure>
 <h2>8　语音实验</h2>
 <p>我们通过实验研究一种将语音能力整合到 Llama 3 的组合式方法，与视觉识别采用的方法类似。在输入端，引入编码器和适配器来处理语音信号。我们利用文本形式的系统提示，为 Llama 3 启用不同的语音理解运行模式。如果不提供系统提示，模型便作为通用语音对话模型运行，能够以与纯文本版 Llama 3 一致的方式有效回应用户语音。对话历史作为提示前缀输入，以改善多轮对话体验。我们还尝试通过系统提示，让 Llama 3 执行自动语音识别（ASR）和自动语音翻译（AST）。Llama 3 的语音接口最多支持 34 种语言。<sup>18</sup>它还允许交错输入文本与语音，使模型能够解决高级音频理解任务。</p>
 <p>我们还实验了一种语音生成方法，实现流式文本转语音（TTS）系统，在语言模型 decoding 过程中实时生成语音波形。Llama 3 的语音生成器基于专有 TTS 系统设计，不针对语音生成微调语言模型。相反，我们在推理时利用 Llama 3 的 embedding，改善语音合成的延迟、准确性和自然度。图 28 和图 29 展示语音接口。</p>
@@ -701,8 +701,8 @@
 <p><strong>语音识别。</strong>我们在 Multilingual LibriSpeech（MLS；Pratap et al. (2020)）、LibriSpeech（Panayotov et al., 2015）、VoxPopuli（Wang et al., 2021a）的英语数据集，以及多语言 FLEURS 数据集（Conneau et al., 2023）的一个子集上评估 ASR 表现。评估时使用 Whisper 文本规范化器对 decoding 结果进行后处理，确保与其他模型报告的结果一致地比较。对所有基准，我们衡量 Llama 3 语音接口的词错误率——<em>（接第 67 页）</em></p>
 <p class="note"><sup>19</sup> 由于技术限制，我们采用原始论文报告的 Gemini 在 MLS 上的表现进行比较。</p>
 <footer>原文第 66 页</footer></section><section class="page" id="page-67"><header><span>Llama 3 模型家族</span><span>第 67 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 67 页图表或公式" src="assets/images/579f8bd5318a4aa457fb58ae20bdee0e1ed7da8e1b35dcac197ac87c027662e3.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 67 页图表或公式" src="assets/images/d31a97c372d0616cb1678bc0f298721cc7602e75032ffbd36532d8699215729d.png"></figure>
+<figure><img height="300" width="1428" decoding="async" loading="lazy" alt="原文第 67 页图表或公式" src="assets/images/579f8bd5318a4aa457fb58ae20bdee0e1ed7da8e1b35dcac197ac87c027662e3.png"></figure>
+<figure><img height="243" width="1428" decoding="async" loading="lazy" alt="原文第 67 页图表或公式" src="assets/images/d31a97c372d0616cb1678bc0f298721cc7602e75032ffbd36532d8699215729d.png"></figure>
 <p><em>（接第 66 页）</em>在这些基准的标准测试集上进行评估，但中文、日语、韩语和泰语例外，报告的是字符错误率。</p>
 <p>表 31 展示 ASR 评估结果，说明 Llama 3，以及更广义的多模态基础模型，在语音识别任务上表现强劲：我们的模型在所有基准上都优于 Whisper<sup>20</sup> 和 SeamlessM4T 等专门针对语音的模型。在 MLS 英语上，Llama 3 与 Gemini 表现相近。</p>
 <p><strong>语音翻译。</strong>我们还评估语音翻译任务，要求模型将非英语语音翻译为英语文本。评估使用 FLEURS 和 Covost 2（Wang et al., 2021b）数据集，衡量英语译文的 BLEU 分数。表 32 展示实验结果。<sup>21</sup>模型在语音翻译上的表现凸显了多模态基础模型在此类任务上的优势。</p>
@@ -712,15 +712,15 @@
 <p>对于语音生成，我们重点评估在文本规范化与韵律建模任务中，使用 Llama 3 embedding、逐 token 输入的流式模型的质量。评估重点在于——<em>（接第 68 页）</em></p>
 <p class="note"><sup>20</sup> 在 FLEURS ASR 上，Whisper v3 未正式报告马拉雅拉姆语结果，因此我们使用 33 种语言的平均值。<br><sup>21</sup> 在 Covost 2 上，我们仅评估 21 种语言中的 15 种。<br><sup>22</sup> 对 Gemini，我们发现大量回答为空，可能由于其安全过滤（尽管一些空回答对应无害输入），或由于速率限制。分析时，我们假定所有空回答都安全。这是对结果最保守的处理方式，也是 Gemini 结果可能达到的上界。</p>
 <footer>原文第 67 页</footer></section><section class="page" id="page-68"><header><span>Llama 3 模型家族</span><span>第 68 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 68 页图表或公式" src="assets/images/6005e3e5c648a1177326c0b7faced25a413b64db8fa7e5b8bcc108268fd9061f.png"></figure>
-<figure><img decoding="async" loading="lazy" alt="原文第 68 页图表或公式" src="assets/images/7b9fa4cb9d5a3a9d93892b3e2a17d36fa58d0d9af7037c102108ead2aeb531a8.png"></figure>
+<figure><img height="810" width="1428" decoding="async" loading="lazy" alt="原文第 68 页图表或公式" src="assets/images/6005e3e5c648a1177326c0b7faced25a413b64db8fa7e5b8bcc108268fd9061f.png"></figure>
+<figure><img height="273" width="1428" decoding="async" loading="lazy" alt="原文第 68 页图表或公式" src="assets/images/7b9fa4cb9d5a3a9d93892b3e2a17d36fa58d0d9af7037c102108ead2aeb531a8.png"></figure>
 <p><em>（接第 67 页）</em>与不将 Llama 3 embedding 作为额外输入的模型进行比较。</p>
 <p><strong>文本规范化。</strong>为衡量 Llama 3 embedding 的作用，我们实验了改变模型使用的右侧上下文长度。训练模型时使用 3 个 TN token 的右侧上下文，这些 token 按 Unicode 类别划分。我们将此模型与不使用 Llama 3 embedding 的模型比较，后者分别使用 3-token 右侧上下文或完整双向上下文。如预期，表 34 表明，对于不含 Llama 3 embedding 的模型，使用完整右侧上下文能改善表现。然而，加入 Llama 3 embedding 的模型优于所有其他模型，因此无需依赖输入中的长上下文，就能按 token 速率流式输入与输出。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 68 页图表或公式" src="assets/images/03443ab667147bfac372692f34e0d80b45e37e00e9df374b2a8c4a1f2cc58f70.png"></figure>
+<figure><img height="339" width="654" decoding="async" loading="lazy" alt="原文第 68 页图表或公式" src="assets/images/03443ab667147bfac372692f34e0d80b45e37e00e9df374b2a8c4a1f2cc58f70.png"></figure>
 <p><strong>韵律建模。</strong>为评估结合 Llama 3 8B 的韵律模型（PM），我们开展两组人工评估，比较使用与不使用 Llama 3 embedding 的模型。评分人员听取不同模型的样本，并表达偏好。为生成最终语音波形，我们使用内部基于 Transformer 的声学模型（Wu et al., 2021）预测频谱特征，并使用 WaveRNN 神经声码器（Kalchbrenner et al., 2018）生成最终语音波形。</p>
 <p>首先，我们直接与不含 Llama 3 embedding 的流式基线模型比较。第二项测试将 Llama 3 8B PM 与不含 Llama 3 embedding 的非流式基线模型比较。如表 35 所示，与流式基线相比，Llama 3 8B PM 在 60% 的情况下更受偏好，而——<em>（接第 69 页）</em></p>
 <footer>原文第 68 页</footer></section><section class="page" id="page-69"><header><span>Llama 3 模型家族</span><span>第 69 页</span></header>
-<figure><img decoding="async" loading="lazy" alt="原文第 69 页图表或公式" src="assets/images/5d52db6e282bb5c41356566784b54aa7f66ee9fb72e2c83bad3033780a44555f.png"></figure>
+<figure><img height="249" width="1428" decoding="async" loading="lazy" alt="原文第 69 页图表或公式" src="assets/images/5d52db6e282bb5c41356566784b54aa7f66ee9fb72e2c83bad3033780a44555f.png"></figure>
 <p><em>（接第 68 页）</em>与非流式基线相比，该比例为 63.6%，说明感知质量显著提高。Llama 3 8B PM 的主要优势是逐 token 流式处理能力（第 8.2.2 节），能在推理时保持低延迟。这降低了模型的向前查看要求，与非流式基线相比，语音合成响应更快、更实时。总体而言，Llama 3 8B 韵律模型始终优于基线，说明它能够有效提高合成语音的自然度和表现力。</p>
 <h2>9　相关工作</h2>
 <p>Llama 3 的开发建立在大量关于语言、图像、视频和语音基础模型的先前工作之上。全面综述这些工作超出本文范围；读者可参阅 Bordes et al. (2024)、Madan et al. (2024) 和 Zhao et al. (2023a) 的综述。以下简要介绍直接影响 Llama 3 开发的奠基性工作。</p>

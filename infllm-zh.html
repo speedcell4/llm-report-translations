@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>InfLLM：通过高效上下文记忆实现 LLM 的免训练长上下文外推 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">InfLLM：通过高效上下文记忆实现 LLM 的免训练长上下文外推</div><div class="document-meta">InfLLM: Training-Free Long-Context Extrapolation for LLMs with an Efficient Context Memory<br>首次提交：2024-02-07 · 译文版本：arXiv:2402.04617v2（2024-05-28） · 页码覆盖 17/17 页<br><a href="https://arxiv.org/abs/2402.04617v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2402.04617v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a></div></nav><section class="page" id="page-1"><header><span>InfLLM · 论文中文翻译</span><span>原文第 1 / 17 页</span></header>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>InfLLM：通过高效上下文记忆实现 LLM 的免训练长上下文外推 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">InfLLM：通过高效上下文记忆实现 LLM 的免训练长上下文外推</div><div class="document-meta">InfLLM: Training-Free Long-Context Extrapolation for LLMs with an Efficient Context Memory<br>首次提交：2024-02-07 · 译文版本：arXiv:2402.04617v2（2024-05-28） · 页码覆盖 17/17 页<br><a href="https://arxiv.org/abs/2402.04617v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2402.04617v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a></div></nav><section class="page" id="page-1"><header><span>InfLLM · 论文中文翻译</span><span>原文第 1 / 17 页</span></header>
 <h1>InfLLM：通过高效上下文记忆实现 LLM 的免训练长上下文外推</h1>
 <p class="authors cover-info">Chaojun Xiao<sup>1∗</sup>、Pengle Zhang<sup>1∗</sup>、Xu Han<sup>1†</sup>、Guangxuan Xiao<sup>2</sup>、Yankai Lin<sup>3</sup>、Zhengyan Zhang<sup>1</sup>、Zhiyuan Liu<sup>1†</sup>、Maosong Sun<sup>1</sup></p>
 <p class="affiliations cover-info"><sup>1</sup>清华大学　<sup>2</sup>麻省理工学院　<sup>3</sup>中国人民大学</p>
@@ -31,23 +31,23 @@
 <p>具体而言，将长输入序列记为 \(s = \{t_{i}\}^{l}_{i=1}\)。由于 GPU 显存有限，我们不会一次性编码整个 \(s\)，而是逐块编码输入序列 \(s\)，逐 token 生成输出。每个计算步骤的输入包括过去的键值向量 \(P = \{(k_j,v_j)\}^{l_P}_{j=1}\)，以及当前 token \(X = \{t_{i+l_P}\}^{l_X}_{i=1}\)。在编码步骤中，\(l_{X}\) 等于块大小；在 decoding 步骤中，\(l_{X}\) 等于 1。</p>
 <p>根据与当前 token 的距离，可以将 \(P\) 分为三组，按距离当前 token 从远到近排列：初始 token，\(I = P[1:l_{I}]\)；被驱逐的 token，\(E = P[l_{I}+1:l_{P} - l_{L}]\)；以及局部 token，\(L = P[l_{P} - l_{L}+1:l_{P}]\)。这里，\(l_{P}\)、\(l_{I}\)、\(l_{L}\) 分别表示过去键值向量的长度、初始 token 的长度和局部窗口大小。所有被驱逐的 token \(E\) 都存储在<span class="continuation">（接原文第 4 页）</span></p>
 <footer>原文第 3 页</footer></section><section class="page" id="page-4"><header><span>InfLLM · 论文中文翻译</span><span>原文第 4 / 17 页</span></header>
-<figure><img decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/7ab6506932f6d8548dc2bad9ec6401cae72854fc05c73c634a134e88f6269f3e.png" class="image-width-771"></figure>
+<figure><img height="525" width="1015" decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/7ab6506932f6d8548dc2bad9ec6401cae72854fc05c73c634a134e88f6269f3e.png" class="image-width-771"></figure>
 <p class="continuation">（接原文第 3 页）</p>
 <p>由多个记忆单元组成的上下文记忆中。每一步，InfLLM 将初始 token、上下文记忆中的相关记忆单元和局部 token 拼接起来，形成当前 KV cache \(C = \operatorname{Concat}(I, f(X, E), L)\)。\(f(\cdot )\) 表示上下文记忆的查找操作。Attention 输出计算如下：</p>
-<figure><img decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/40d0b75c9377308380ed9d1c4ca9f3907279fee3e768d32e525b796fb89beca7.png" class="image-width-443"></figure>
+<figure><img height="47" width="582" decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/40d0b75c9377308380ed9d1c4ca9f3907279fee3e768d32e525b796fb89beca7.png" class="image-width-443"></figure>
 <p>这里，\(Q\)、\(K\) 和 \(V\) 是 attention 层的参数，\(C_{k}\) 和 \(C_{v}\) 表示 \(C\) 中的键向量和值向量。如果 \(f(\cdot )\) 始终返回空集，InfLLM 就退化为直接丢弃远距离上下文的 LM-Infinite（Han et al., 2023）和 Streaming-LLM（Xiao et al., 2023）。</p>
 <h3>3.2　上下文记忆</h3>
 <p>已有研究表明，LLM 的 attention 分数矩阵是稀疏的，仅保留一小部分键值向量就能够生成相同输出（Zhang et al., 2023b）。受此启发，我们设计上下文记忆，从大量被驱逐的 token 中高效查找相关上下文，并忽略无关上下文以节省计算成本。最直观的方法，是针对每个过去的键值向量、每个 attention 头分别构建 token 级记忆单元；但这会产生海量记忆单元，以及不可接受的计算成本和非连续内存访问成本。因此，考虑到长序列局部语义的连贯性，我们将过去的键值向量分成块，每个块作为一个记忆单元，并在块级进行记忆查找，在保持性能的同时降低成本。</p>
 <p>本节将介绍块级记忆单元的细节，然后说明如何为选中的相关记忆单元分配位置 embedding，以及如何管理上下文记忆的缓存。</p>
 <p><strong>块级记忆单元。</strong>相比 token 级记忆单元，块级记忆单元可以节省计算成本。但这也给单元表示带来了新挑战：它们应当包含整个单元的语义，以有效计算相关性分数，同时高效利用内存，以支持上下文长度的扩展。传统方法通常需要训练额外编码器，将给定单元映射成低维向量。受隐藏状态中 token 冗余现象的启发（Goyal et al., 2020; Dai et al., 2020），我们从整个块中选择几个代表性 token，作为单元表示。对于第 \(m\) 个 token，定义其代表性分数为：</p>
-<figure><img decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/a7d31eaee8ff00b303feacf0d663f71bc456d7dc14e76044d7f4a32e3a9a327d.png" class="image-width-218"></figure>
+<figure><img height="95" width="287" decoding="async" loading="lazy"  alt="第 4 页原始图表或公式" src="assets/images/a7d31eaee8ff00b303feacf0d663f71bc456d7dc14e76044d7f4a32e3a9a327d.png" class="image-width-218"></figure>
 <p>其中，\(q_{m+j}\) 是第 \((m + j)\) 个 token 的查询向量，\(k_{m}\) 是第 \(m\) 个 token 的键向量。直观上，\(r_{m}\) 表示第 \(m\) 个 token 在其对应局部窗口中的重要性，反映它对局部窗口中其他 token 的影响<span class="continuation">（接原文第 5 页）</span>。</p>
 <footer>原文第 4 页</footer></section><section class="page" id="page-5"><header><span>InfLLM · 论文中文翻译</span><span>原文第 5 / 17 页</span></header>
 <p class="continuation">（接原文第 4 页）</p>
 <p>程度。代表性分数的计算不需要额外参数。</p>
 <p>形式上，给定被驱逐的 token \(E\)，将其分成若干记忆单元，每个单元包含 \(l_{bs}\) 个 token。对于每个单元，选择代表性分数最高的 \(r_{k}\) 个 token 作为代表性 token。通常，\(r_{k}\) 是一个较小的正整数。将记忆单元记为 \(B = \{(k_j^B,v_j^B)\}^{l_{bs}}_{j=1}\)，该单元的代表性 token 记为 \(R(B) = \{(k_{b_j}^B,v_{b_j}^B)\}^{r_k}_{j=1}\)。</p>
 <p>在记忆查找阶段，仅加载相关性分数最高的 \(k_{m}\) 个单元，用于当前 attention 计算。我们按下式计算 \(B\) 与当前 token \(X\) 之间的相关性分数：</p>
-<figure><img decoding="async" loading="lazy"  alt="第 5 页原始图表或公式" src="assets/images/51e5b8aaf8726c5aa2878001d7fa1246c3c0d8c65496affc284b574479d460ed.png" class="image-width-281"></figure>
+<figure><img height="95" width="370" decoding="async" loading="lazy"  alt="第 5 页原始图表或公式" src="assets/images/51e5b8aaf8726c5aa2878001d7fa1246c3c0d8c65496affc284b574479d460ed.png" class="image-width-281"></figure>
 <p>值得注意的是，代表性 token 的选择是一种获取单元表示的免训练方法。这里也可以训练额外编码器，生成表达能力更强的单元表示；我们将其留作未来工作。</p>
 <p><strong>位置编码。</strong>现有 LLM 训练通常使用数量有限的位置编码，直接将其应用于更长序列的处理时，会遇到分布外挑战（Han et al., 2023）。此外，在 InfLLM 中，当前 KV cache 由一些不连续的文本块组成，直接给它们分配连续位置编码也会导致不匹配，使模型困惑。因此，受已有工作启发（Raffel et al., 2020; Su, 2023），我们为所有超出局部窗口大小的 token 分配相同的位置编码。具体而言，上下文记忆单元中的 token 与当前 token 之间的距离被设为 \(l_{L}\)。</p>
 <p><strong>缓存管理。</strong>为使 LLM 能够处理超长序列流，同时捕获长上下文中的语义相关性，我们需要保留全部记忆单元，并在每个计算步骤查找它们。考虑到大多数单元很少使用，我们采用卸载机制，将大多数记忆单元存储在 CPU 内存中，仅在 GPU 显存中保留代表性 token 和当前步骤需要的记忆单元。此外，考虑到长序列的语义连贯性，即相邻 token 通常需要类似的记忆单元，我们在 GPU 显存中分配缓存空间，并采用最近最少使用策略管理。该方法使得在有限 GPU 显存下高效编码超长序列成为可能。观察表明，我们的卸载机制让 InfLLM 只需 26G 显存即可处理包含 100K 个 token 的序列。此外，GPU 缓存未命中率很低，这意味着卸载机制在节省 GPU 显存的同时，不会在记忆加载中引入显著的时间开销。详情见附录。</p>
@@ -57,7 +57,7 @@
 <p><strong>数据集。</strong>我们采用广泛使用的长文档基准 ∞-Bench（Zhang et al., 2023a）中的代表性任务进行评估。由于基础模型主要在英文语料上预训练，我们使用英文数据集进行评估。∞-Bench 的数据集覆盖问答、摘要、上下文检索和数学计算等多种任务。∞-Bench 的平均长度为 145.1K。序列长度的第 95 百分位数为 214K，远超基础模型的最大长度。这些数据集的详细统计和任务描述列于附录。此外，我们也在 LongBench（Bai et al., 2023）上进行了评估。LongBench 的结果见附录。</p>
 <p><strong>基线模型。</strong>为验证所提方法的有效性，我们将 InfLLM 与以下有竞争力的基线模型进行比较：（1）原始模型：报告未进行上下文长度外推的原始 LLM 的性能。（2）位置缩放与复用：NTK-aware scaled RoPE（NTK）（LocalLLaMA, 2023）设计了非线性插值方法，<span class="continuation">（接原文第 6 页）</span></p>
 <footer>原文第 5 页</footer></section><section class="page" id="page-6"><header><span>InfLLM · 论文中文翻译</span><span>原文第 6 / 17 页</span></header>
-<figure><img decoding="async" loading="lazy"  alt="第 6 页原始图表或公式" src="assets/images/edbf54111478820668837f07c7b0a7d9824762d13cbfd995efb6d7f9499c8e2d.png" class="image-width-771"></figure>
+<figure><img height="637" width="1015" decoding="async" loading="lazy"  alt="第 6 页原始图表或公式" src="assets/images/edbf54111478820668837f07c7b0a7d9824762d13cbfd995efb6d7f9499c8e2d.png" class="image-width-771"></figure>
 <p class="continuation">（接原文第 5 页）</p>
 <p>其本质上改变了 RoPE 的旋转基数。SelfExtend 在相邻 token 之间复用位置 ID，使扩展后的相对位置落在训练上下文窗口范围内。（3）滑动窗口：这些方法应用滑动窗口机制丢弃远距离上下文，包括 LM-Infinite（Han et al., 2023）和 StreamingLLM（Stream）（Xiao et al., 2023）。因此，每次 attention 计算步骤的输入长度都不超过上下文窗口。（5）键值驱逐：KV 驱逐方法旨在长序列处理过程中丢弃无用键值向量，因此通常用于降低计算复杂度。我们报告广泛使用的键值驱逐方法 H2O（Zhang et al., 2023b）的结果。由于未见过的位置 embedding，键值驱逐方法无法泛化到更长序列，预计难以取得令人满意的性能。</p>
 <p class="footnote">译注：本段条目编号沿用原文，原文从（3）直接跳至（5）。</p>
@@ -68,17 +68,17 @@
 <h3>4.3　主要结果</h3>
 <p>基于 Mistral 和基于 Llama-3 的模型结果见表 1。从结果可以观察到：（1）与同样能够读取超长序列的滑动窗口模型相比，我们的方法表现出显著的性能提升。这表明，InfLLM 的上下文记忆能够准确地为 LLM 补充<span class="continuation">（接原文第 7 页）</span></p>
 <footer>原文第 6 页</footer></section><section class="page" id="page-7"><header><span>InfLLM · 论文中文翻译</span><span>原文第 7 / 17 页</span></header>
-<figure><img decoding="async" loading="lazy"  alt="第 7 页原始图表或公式" src="assets/images/217e0a84fcd4550597c7609f4ffc817ad33fa97237d0574ac9f2977395601abb.png" class="image-width-771"></figure>
+<figure><img height="262" width="1015" decoding="async" loading="lazy"  alt="第 7 页原始图表或公式" src="assets/images/217e0a84fcd4550597c7609f4ffc817ad33fa97237d0574ac9f2977395601abb.png" class="image-width-771"></figure>
 <p class="continuation">（接原文第 6 页）</p>
 <p>相关上下文信息，从而实现高效、有效的长序列理解与推理。（2）位置缩放与复用方法 NTK 和 SelfExtend 在将序列长度扩展至 128K 的同时，往往会损害模型性能。这是因为它们无法解决噪声上下文导致的 attention 分散问题。相比之下，我们的模型能够持续改善超长序列上的性能。我们成功将 Llama-3 从 8K 长度泛化至其 16 倍以上，并在 ∞-Bench 上取得了良好性能。（3）位置缩放与复用方法可以增加 LLM 的最大序列长度，但也增加了计算和内存成本，限制了这些方法的应用。相比之下，InfLLM 使用块级记忆和卸载机制，能够在有限资源下高效处理长序列。</p>
 <h3>4.4　与持续训练模型的比较</h3>
 <p>本文聚焦于无需额外训练即可扩展 LLM 的上下文窗口。本节从性能和效率两方面，将 InfLLM 与在长序列上持续训练的模型进行比较。具体而言，我们选择 Llama-3-8B-Instruct-Gradient-1048k（Llama-1M）<sup>3</sup>，该模型在长文本数据和对话数据集上进一步微调，将上下文窗口扩展至 1048K。此外，我们也将 InfLLM 应用于 Llama-1M，把局部窗口设为 4K，选中的记忆大小设为 4K。表 2 报告了 ∞-Bench 上的结果、GPU 显存使用量和时间消耗。从结果可以观察到：（1）与在长序列上持续训练的模型相比，InfLLM 无需任何额外训练即可取得相当甚至更好的结果。这表明，LLM 本身具备识别长序列中关键信息，并进行有效理解和推理的能力。值得注意的是，Llama-1M 的持续训练需要 512 块 GPU，许多研究者无法负担。相比之下，InfLLM 不需要任何训练，体现了其实用性。（2）效率方面，相比全 attention 模型，InfLLM 的时间消耗减少了 34%，GPU 显存使用量仅为其 34%。此外，在更长的 256K token 序列上，全 attention 基线因显存不足而失败，而 InfLLM 可以在单块 GPU 上高效处理最长 1024K token 的序列。（3）InfLLM 也可以直接与持续训练的模型结合，只使用 8K 上下文窗口便取得相当甚至更好的结果。这表明 InfLLM 也可以作为提高推理速度的有效方式。</p>
 <h3>4.5　与 RAG 的比较</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 7 页原始图表或公式" src="assets/images/6d7a0518b92f74896a719f920c8912dc62842d3458153db720a35c83e64dfc7b.png" class="image-width-281"></figure>
+<figure><img height="195" width="370" decoding="async" loading="lazy"  alt="第 7 页原始图表或公式" src="assets/images/6d7a0518b92f74896a719f920c8912dc62842d3458153db720a35c83e64dfc7b.png" class="image-width-281"></figure>
 <p>InfLLM 利用 LLM 的内在能力构建上下文记忆，收集与 token 相关的信息，这一概念类似于 RAG（Lewis et al., 2020; Nakano et al., 2021）。然而，与采用 RAG、将历史上下文视为可搜索数据库来理解长序列的方法（Xu et al., 2023）相比，InfLLM 具有若干优势：（1）免训练：RAG 需要额外检索数据来训练检索模型，而 InfLLM 无需训练，适用于任何 LLM。此外，RAG 还需要微调 LLM，使其适应检索知识增强后的输入。（2）更广泛的适用性：RAG 模型通常受其检索组件性能的限制。此外，现有检索模型会受到分布外问题的影响，难以<span class="continuation">（接原文第 8 页）</span></p>
 <p class="footnote"><sup>3</sup> <a href="https://huggingface.co/gradientai/Llama-3-8B-Instruct-Gradient-1048k">https://huggingface.co/gradientai/Llama-3-8B-Instruct-Gradient-1048k</a></p>
 <footer>原文第 7 页</footer></section><section class="page" id="page-8"><header><span>InfLLM · 论文中文翻译</span><span>原文第 8 / 17 页</span></header>
-<figure><img decoding="async" loading="lazy"  alt="第 8 页原始图表或公式" src="assets/images/d137cf29d3d82019ea06969c13f027a024222a201d0a5f1ef8a3bcdbb1974437.png" class="image-width-775"></figure>
+<figure><img height="475" width="1020" decoding="async" loading="lazy"  alt="第 8 页原始图表或公式" src="assets/images/d137cf29d3d82019ea06969c13f027a024222a201d0a5f1ef8a3bcdbb1974437.png" class="image-width-775"></figure>
 <p class="continuation">（接原文第 7 页）</p>
 <p>在其训练分布之外的任务上表现良好（Lin et al., 2023; Muennighoff et al., 2023）。这一限制会损害 RAG 系统的整体性能。相比之下，InfLLM 对任务没有特定要求，可以方便地用于长序列。</p>
 <p>为验证 InfLLM 的泛化能力，我们在三项上下文检索任务上开展了比较 RAG 与 InfLLM 的实验。我们使用 E5-mistral-7B-instruct（Wang et al., 2024b）作为检索模型。结果见表 3。我们的发现表明，即使不使用额外数据或训练，InfLLM 也能持续优于 RAG 模型，凸显其更强的泛化能力。对外部检索模型的依赖，使 RAG 在处理多样任务时不够灵活。</p>
@@ -93,11 +93,11 @@
 <p>在 Retrieve.KV 中，一个键值对构成一个语义单元，而在 Math.Find 中，单个数字就是一个语义单元。使用启发式规则分割上下文容易导致次优性能。因此，探索如何动态分割上下文，是未来研究的重要方向。</p>
 <h3>4.7　消融研究</h3>
 <p>为进一步验证动态记忆查找和单元表示的有效性，本节开展消融研究。结果见表 4。</p>
-<figure><img decoding="async" loading="lazy"  alt="第 9 页原始图表或公式" src="assets/images/89659dcf3496f8ab63a8e109fa5501d7050a4892e5902e443737d4558083caf4.png" class="image-width-338"></figure>
+<figure><img height="230" width="445" decoding="async" loading="lazy"  alt="第 9 页原始图表或公式" src="assets/images/89659dcf3496f8ab63a8e109fa5501d7050a4892e5902e443737d4558083caf4.png" class="image-width-338"></figure>
 <p><strong>上下文记忆查找。</strong>InfLLM 在输入编码和输出 decoding 步骤中均采用动态上下文记忆查找，以全面理解长文本。我们报告仅在输出 decoding 时查找（Decoding-Only），以及完全不进行记忆查找（w/o Lookup）的 InfLLM 结果。可以观察到，随着记忆查找次数减少，模型性能显著下降。这表明，远距离上下文信息对于长输入编码阶段和答案生成阶段都至关重要。模型需要整合长距离上下文，生成连贯的上下文记忆以理解输入。LLM 应当从大量历史上下文信息中收集有用信息，以生成正确答案。</p>
 <p><strong>单元表示。</strong>我们设计块级记忆，以高效查找上下文信息。我们选择几个代表性 token 作为单元表示，用于相关性计算。我们报告采用另一种免训练表示方法（Mean Repr）的 InfLLM 结果，该方法通过对记忆单元中的键向量求平均来计算表示。从结果可以观察到，采用平均表示的 InfLLM 也能取得有竞争力的性能。这表明，LLM 中原始 attention 向量对于相关性分数计算是有效的，而探索更高效的单元表示是未来的重要方向。</p>
 <h3>4.8　扩展至 1,024K 上下文</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 9 页原始图表或公式" src="assets/images/170eb650c32699cc65f200bd30679062e9180d4cb5d52750fe69ea0129c8b793.png" class="image-width-361"></figure>
+<figure><img height="395" width="475" decoding="async" loading="lazy"  alt="第 9 页原始图表或公式" src="assets/images/170eb650c32699cc65f200bd30679062e9180d4cb5d52750fe69ea0129c8b793.png" class="image-width-361"></figure>
 <p>为评估 InfLLM 在超长序列上的有效性，本节将序列长度扩展至 1024K，评估 InfLLM 捕获长序列中上下文相关性的能力。具体而言，我们采用 ∞-Bench 中的 Retrieve.PassKey 任务进行评估。该任务要求 LLM 在冗长、带噪声的上下文中找到一个 5 位数字序列，因此需要 LLM 有效定位长序列中的相关信息。我们自动生成包含 {32, 64, 128, 256, 512, 768, 1024} 千个 token 的输入，每种长度生成 50 个样本用于评估。我们采用 Mistral 作为基础模型。</p>
 <p>结果见图 3。从结果可以观察到，InfLLM 能够从冗长噪声中准确定位关键信息，即使上下文长度扩展至 1024 千个 token，也能达到 100% 准确率。然而，LM-Infinite 只能关注局部窗口中的 token，导致其性能随序列长度增加而迅速下降。这证明 InfLLM 能够准确捕获长距离依赖，实现有效的长序列推理。</p>
 <h2>5　结论</h2>
@@ -108,16 +108,16 @@
 <h2>局限性</h2>
 <p>本文提出 InfLLM，一种无需额外训练即可扩展 LLM 上下文窗口的方法。我们使用广泛采用的长文本评估基准 ∞-Bench 验证模型的有效性。然而，我们的方法仍有以下局限：（1）我们在 CPU 内存中存储大量过去的键值（KV）缓存，增加了 CPU 内存使用量。未来可以通过结合 KV cache 量化等技术，降低 CPU 内存需求。（2）尽管 InfLLM 减少了 LLM 处理长文本的计算开销，但仍有加速空间。未来可以将 InfLLM 与 llama.cpp<sup>4</sup> 和 vllm（Kwon et al., 2023）等推理框架结合，进一步提高推理速度。</p>
 <h2>A　缓存管理策略</h2>
-<figure><img decoding="async" loading="lazy"  alt="第 15 页原始图表或公式" src="assets/images/2e5c046295c7ba18905ba8aa51d44812d43f10c9c9681be01e3241bda77e0a74.png" class="image-width-395"></figure>
+<figure><img height="427" width="520" decoding="async" loading="lazy"  alt="第 15 页原始图表或公式" src="assets/images/2e5c046295c7ba18905ba8aa51d44812d43f10c9c9681be01e3241bda77e0a74.png" class="image-width-395"></figure>
 <p>由于超长序列具有海量记忆单元，我们采用卸载机制以节省 GPU 显存。考虑到记忆单元使用频率较低，我们将大多数记忆单元卸载到 CPU 内存，仅在 GPU 显存中保留经常使用的记忆单元和当前所需的记忆单元。为此，我们在 GPU 显存中维护缓存，以有效利用 GPU 显存，并减少 CPU 与 GPU 之间的通信。GPU 缓存大小固定，因此我们设计最近最少使用（LRU）策略来管理缓存。本节将详细介绍该管理策略。</p>
 <p><strong>加载记忆单元。</strong>每个计算步骤，我们首先计算各记忆单元的相关性分数，以确定应当使用哪些单元。然后，对于每个所需记忆单元，先在缓存中查找；若未命中，再从 CPU 内存传输到 GPU 显存。</p>
 <p><strong>卸载记忆单元。</strong>attention 计算之后，我们需要卸载冗余记忆单元，以保持 GPU 缓存大小固定。为此，我们采用 LRU 策略。具体而言，对于每个加载到 GPU 缓存中的记忆单元，我们分配一个频率分数 \(s_{b}\)，用于决定该单元应保留在 GPU 显存中，还是卸载至 CPU 内存以节省 GPU 显存。频率分数在 attention 计算之后更新，具体更新方式如下：</p>
-<figure><img decoding="async" loading="lazy"  alt="第 15 页原始图表或公式" src="assets/images/e0dd250ce4f46d67fa6627737237246e0e8412770e41a68e648b0074d01781b9.png" class="image-width-585"></figure>
+<figure><img height="97" width="770" decoding="async" loading="lazy"  alt="第 15 页原始图表或公式" src="assets/images/e0dd250ce4f46d67fa6627737237246e0e8412770e41a68e648b0074d01781b9.png" class="image-width-585"></figure>
 <p>其中，\(l_{u}\) 表示此次查找涉及的当前 token 数量；\(\operatorname{attention_score}(q, k)\) 表示执行 attention 计算后得到的 \(Q\) 相对于 \(k\) 的 attention 分数，范围为 0 至 1。\(d\) 是表示衰减系数的超参数，用来纳入此前查找的影响。每次 attention 计算之后，我们根据频率分数 \(s_{b}\) 对 GPU 缓存中的所有记忆单元排序，并将分数最低的单元卸载回 CPU 内存。</p>
 <p class="footnote">译注：公式（1）使用 \(l_{X}\) 和小写 \(q\)，原文解释却写作 \(l_{u}\) 和大写 \(Q\)；此处保留原文符号差异。</p>
 <p class="footnote"><sup>4</sup> <a href="https://github.com/ggerganov/llama.cpp">https://github.com/ggerganov/llama.cpp</a></p>
 <footer>原文第 15 页</footer></section><section class="page" id="page-16"><header><span>InfLLM · 论文中文翻译</span><span>原文第 16 / 17 页</span></header>
-<figure><img decoding="async" loading="lazy"  alt="第 16 页原始图表或公式" src="assets/images/43cf55275dace5b832957b9bd395cefa66ed744f260ca5f7809b36e69bb20db1.png" class="image-width-771"></figure>
+<figure><img height="1147" width="1015" decoding="async" loading="lazy"  alt="第 16 页原始图表或公式" src="assets/images/43cf55275dace5b832957b9bd395cefa66ed744f260ca5f7809b36e69bb20db1.png" class="image-width-771"></figure>
 <p>为验证缓存管理策略的有效性，我们在 GovReport 数据集的一份数据样本上，评估了不同缓存管理策略的缓存未命中率。具体而言，我们将所采用的 LRU 策略与以下策略比较：（1）随机（Random）：随机选择 GPU 缓存中的单元进行卸载。（2）先进先出（FIFO）：卸载最先加载到 GPU 缓存的单元。结果见图 4。可以观察到，我们采用的 LRU 策略未命中率更低，确保卸载机制不会引入显著时间开销。在正文所述实验中，我们选择的衰减值为 0.1。</p>
 <h2>B　位置编码</h2>
 <p>在 InfLLM 中，我们为所有超出局部窗口大小的 token 分配相同的位置编码。因此，对于当前 token，我们没有显式提供上下文的位置信息。但我们认为，仅解码器模型的单向性质使其能够识别上下文的位置信息。例如，假设一个序列依次包含三个片段 \(S_{A}\)、\(S_{B}\) 和 \(S_{C}\)。编码 \(S_{C}\) 时，虽然 \(S_{A}\) 与 \(S_{B}\) 被分配相同的位置编码，但仅解码器模型的单向性质，使 \(S_{A}\) 与 \(S_{B}\) 的键值隐藏状态<span class="continuation">（接原文第 17 页）</span></p>
@@ -131,6 +131,6 @@
 <h3>C.2　LongBench 上的性能</h3>
 <p>我们也使用 LongBench（Bai et al., 2023）作为基准，评估 InfLLM 和基线模型的有效性。评估结果见表 5。结果表明：（1）在多种不同任务中，InfLLM 优于其他能够处理流式输入的模型。这证明，上下文记忆提供的上下文信息能够高效提高模型性能。（2）采用 Llama-3 作为基础模型时，StreamingLLM 和 LM-Infinite 的性能仅与原始 Llama-3 相当，甚至更差。这表明，虽然 SWA 能够有效扩展 LLM 的上下文窗口大小，但这些模型丢弃了长距离上下文信息，因此无法有效理解长序列。（3）Mistral 可以处理最长 32K 的文本，覆盖 LongBench 中大多数样本。相比之下，InfLLM 的窗口大小仅为 12K，却在平均性能上取得相当甚至更好的结果。这进一步展示了 InfLLM 过滤长上下文中噪声的能力，从而实现更好的长序列理解。</p>
 <h3>C.3　Vicuna 上的实验</h3>
-<figure><img decoding="async" loading="lazy"  alt="第 17 页原始图表或公式" src="assets/images/10a395e9e0b52677e767c05cf88002279b329d2ff6a6b30a83a6845bb2bb91db.png" class="image-width-365"></figure>
+<figure><img height="162" width="480" decoding="async" loading="lazy"  alt="第 17 页原始图表或公式" src="assets/images/10a395e9e0b52677e767c05cf88002279b329d2ff6a6b30a83a6845bb2bb91db.png" class="image-width-365"></figure>
 <p>在前面各节中，我们展示了 InfLLM 可以将 Llama-3（最大长度为 8K）和 Mistral（最大长度为 32K）的上下文窗口扩展至数十万个 token。为进一步验证 InfLLM 的有效性，我们将其应用于最大长度仅为 4K 的 Vicuna（Chiang et al., 2023）。实验结果见表 6。结果表明，我们有效地将 Vicuna 的上下文长度扩展至 128K，在 Retrieve.Passkey 和 Retrieve.Number 任务上取得了显著性能提升。然而，InfLLM 在 Retrieve.KV 和 Math.Find 任务上未表现出性能增益。这是因为 Vicuna 的隐藏向量在超长文本中过滤噪声的能力有限，使上下文记忆难以在 Retrieve.KV 和 Math.Find 任务更复杂的上下文中有效定位相关信息。未来值得进一步探索，设计更强大的记忆机制。</p>
 <footer>原文第 17 页</footer></section></body></html>

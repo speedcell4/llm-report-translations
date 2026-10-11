@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeekMath-V2：迈向可自验证的数学推理 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">DeepSeekMath-V2：迈向可自验证的数学推理</div><div class="document-meta">DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning<br>首次提交：2025-11-27 · 译文版本：arXiv:2511.22570v1（2025-11-27） · 页码覆盖 19/19 页<br><a href="https://arxiv.org/abs/2511.22570v1">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2511.22570v1">原文 PDF</a></div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a></div></nav><section class="page" id="page-1"><h1>DeepSeekMath-V2：迈向可自验证的数学推理</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeekMath-V2：迈向可自验证的数学推理 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">DeepSeekMath-V2：迈向可自验证的数学推理</div><div class="document-meta">DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning<br>首次提交：2025-11-27 · 译文版本：arXiv:2511.22570v1（2025-11-27） · 页码覆盖 19/19 页<br><a href="https://arxiv.org/abs/2511.22570v1">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2511.22570v1">原文 PDF</a></div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a></div></nav><section class="page" id="page-1"><h1>DeepSeekMath-V2：迈向可自验证的数学推理</h1>
 <p class="authors cover-info">Zhihong Shao*，Yuxiang Luo*，Chengda Lu*†，Z.Z. Ren*<br>Jiewen Hu，Tian Ye，Zhibin Gou，Shirong Ma，Xiaokang Zhang</p><p class="cover-info">DeepSeek-AI<br/><a href="mailto:zhihongshao@deepseek.com">zhihongshao@deepseek.com</a><br/><a href="https://github.com/deepseek-ai/DeepSeek-Math-V2">https://github.com/deepseek-ai/DeepSeek-Math-V2</a></p>
 <p class="meta cover-info">arXiv:2511.22570v1 [cs.AI] · 2025 年 11 月 27 日</p>
 <h2>摘要</h2>
@@ -22,7 +22,7 @@
 <ul><li><strong>格式奖励 \(R_{format}\)：</strong>一个指示函数，通过检查最终回复是否包含关键短语 <code>Here is my evaluation of the solution:</code>，以及在 <code>Based on my evaluation, the final overall score should be:</code> 之后是否存在包含在 <code>\boxed{}</code> 中的分数，要求模型同时生成发现问题的总结和证明评分。</li><li><strong>评分奖励 \(R_{score}\)：</strong>根据预测评分 \({s'}_{i}\) 与标注评分 \(s_{i}\) 的接近程度给予奖励：</li></ul>
 <p class="equation">R<sub>score</sub>(s′<sub>i</sub>,s<sub>i</sub>) = 1 − |s′<sub>i</sub> − s<sub>i</sub>|　（1）</p>
 <p>训练验证器的 RL 目标为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/5538d206a29630222ab135125fbf004c13e9f6c91bf5ad3d709f55bfb35e24ba.png"></figure>
+<figure><img height="90" width="1143" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/5538d206a29630222ab135125fbf004c13e9f6c91bf5ad3d709f55bfb35e24ba.png"></figure>
 <p>其中 \({V'}_{i}\) 表示验证器的最终回复，\({s'}_{i}\) 是从中提取出的证明评分。</p>
 <h4>2.1.2. 引入元验证以审查证明分析</h4>
 <p>第 2.1.1 节描述的方法通过 RL 训练证明验证，使预测的证明评分与专家标注保持一致，但并不直接监督所发现的问题本身。这会造成一个关键漏洞：训练过程中，在评估有缺陷的证明（\(s_{i} &lt; 1\)）时，验证器可以一边臆造不存在的问题，一边预测正确的评分并获得全部奖励，从而破坏其可信度。</p>
@@ -38,7 +38,7 @@
 <p>在 \(D_{v}\) 的验证集划分上，验证器证明分析的平均质量评分（由元验证器评估）从 0.85 提升至 0.96，同时证明评分预测的准确率保持不变。</p>
 <h3>2.2. 证明生成</h3><h4>2.2.1. 训练用于定理证明的生成器</h4>
 <p>以验证器 \(\pi _{\phi}\) 作为 GenRM，我们训练证明生成器 \(\pi _{\theta}(\cdot |X)\)，其 RL 目标为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/f353575be7b97e453f4ad4e5cbe2cb80b0ce13027bb8a38847acefab32949e70.png"></figure>
+<figure><img height="84" width="906" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/f353575be7b97e453f4ad4e5cbe2cb80b0ce13027bb8a38847acefab32949e70.png"></figure>
 <p>其中 \(R_{Y}\) 是 \(\pi _{\phi}(\cdot |X_{i},Y_{i},I_{v})\) 产生的证明评分。</p>
 <h4>2.2.2. 通过自验证增强推理</h4>
 <p>当证明生成器无法一次生成完全正确的证明时（对于 IMO 和 CMO 等竞赛中的困难问题，这很常见），迭代验证与改进可以提升结果。这涉及用外部验证器分析证明，并通过提示让生成器解决发现的问题。</p>
@@ -60,7 +60,7 @@
 <footer>原文第 5 页</footer></section><section class="page" id="page-6"><ol start="2"><li>对于报告了问题的分析（评分为 0 或 0.5），生成 m 份元验证评估，以验证所发现的问题。如果多数元评估确认其发现，该分析就被视为有效。</li><li>对于每个证明，我们检查给予最低评分的分析。如果至少有 k 份这样的分析被视为有效，就给证明标注这个最低评分。如果在所有验证尝试中都未发现确实存在的问题，就给证明标注 1 分。否则，丢弃该证明，或交由人类专家标注。</li></ol>
 <p>在最后两次训练迭代中，这条完全自动化的流水线彻底取代了人工标注。质量检查确认，自动标注与专家判断具有良好的一致性。</p>
 <h2>3. 实验</h2>
-<figure><img decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/8da492f04b6a08026c4d34deb0204d4fdb5ab9018b4d1564aae1ecbc76541937.png"></figure>
+<figure><img height="630" width="1386" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/8da492f04b6a08026c4d34deb0204d4fdb5ab9018b4d1564aae1ecbc76541937.png"></figure>
 <h3>3.1. 训练设置</h3>
 <p>我们使用 Group Relative Policy Optimization（GRPO）（Shao et al., 2024）进行强化学习，按照第 2 节所述，迭代优化证明验证与生成能力。在每次迭代中，我们先优化证明验证，然后从验证器 checkpoint 初始化证明生成器，并优化其证明生成能力。从第二次迭代开始，证明验证器使用一个 checkpoint 初始化；该 checkpoint 通过拒绝采样微调整合了前一次迭代中的验证与生成能力。</p>
 <h3>3.2. 评估基准</h3><p>我们在以下定理证明基准上评估最终的证明生成器：</p>
@@ -71,14 +71,14 @@
 <h3>3.3. 评估结果</h3><h4>3.3.1. 单次生成</h4>
 <p>我们首先评估模型在不进行迭代改进的情况下生成正确证明的能力。在内部题目上，我们为每个受评模型、每道题生成 8 个证明样本。证明正确性通过最终验证器产生的 8 份验证分析进行多数投票衡量。如图 1 所示，在 CNML 难度问题的所有类别（代数、几何、数论、组合和不等式）中，DeepSeekMath-V2 均持续优于 GPT-5-Thinking-High（OpenAI, 2025）和 Gemini 2.5-Pro（DeepMind, 2025），展现出跨领域的更强定理证明能力。</p>
 <h4>3.3.2. 结合自验证的顺序改进</h4>
-<figure><img decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/4a73d59e90f4c0fca767d6851fcba6397b73f56a9164b4b1e3ecf57cbb8f6033.png"></figure>
+<figure><img height="675" width="735" decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/4a73d59e90f4c0fca767d6851fcba6397b73f56a9164b4b1e3ecf57cbb8f6033.png"></figure>
 <p>对于 IMO 和 CMO 等竞赛中的困难问题，模型通常无法在 128K token 限制内，一次性生成全面、严谨的证明。发生这种情况时，我们的证明生成器通过自验证认识到自己的证明无效，但缺少足够的上下文长度，无法在单次尝试中解决所有发现的问题。</p>
 <p>为了探索更长上下文与自验证如何提高证明质量，我们评估了结合自验证的顺序改进。这种方法先生成带有自我分析的证明，然后使用生成器之前的输出反复重新提示它（改进提示见附录 A.4），使它能够解决发现的问题。该过程持续进行，直到生成器给自己打出满分，或达到顺序尝试次数的上限。</p>
 <p>图 2 展示了在 IMO Shortlist 2024 题目上，通过顺序改进提升证明质量的情况。对于每道题，我们启动 32 条独立的改进线程。证明正确性通过最终验证器产生的 32 份验证分析进行多数投票衡量。图 2 报告两个指标：（1）Pass@1，即各线程最终<span class="continuation">（接下一页）</span></p>
 <footer>原文第 7 页</footer></section><section class="page" id="page-8"><p class="continuation">（接上一页）证明的平均评分；（2）Best@32，即根据所有线程中的自评分数选出的每道题最佳证明的评分。通过自我选择得到的最佳证明，其验证评分显著高于线程平均值，表明我们的生成器能够准确评估证明质量。此外，随着最大顺序尝试次数增加，Pass@1 显著提升，说明自验证能够有效指导迭代改进。这些结果证实，我们的生成器能够可靠区分高质量证明和有缺陷的证明，并利用这种自我认知系统性地改进数学推理。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/7745e09461fabf795001771c89abb9fa8fe98bb9678f628227901762a63ef69d.png"></figure>
+<figure><img height="492" width="1389" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/7745e09461fabf795001771c89abb9fa8fe98bb9678f628227901762a63ef69d.png"></figure>
 <h4>3.3.3. 高计算量搜索</h4>
-<figure><img decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/488e9bc861250ddf4e7cb183470635db72fec00218253db132dd5797a8b5d29c.png"></figure>
+<figure><img height="378" width="735" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/488e9bc861250ddf4e7cb183470635db72fec00218253db132dd5797a8b5d29c.png"></figure>
 <p>为了解决最困难的问题，我们同时扩大验证和生成计算量：使用大量验证来发现细微问题，并通过并行生成探索不同的证明策略。</p>
 <p>我们的方法为每道题维护一个候选证明池，初始包含 64 个证明样本，并为每个样本生成 64 份验证分析。在每次改进迭代中，我们根据平均验证评分选出分数最高的 64 个证明，并分别为每个证明随机配对 8 份分析，优先选择发现了问题的分析（评分为 0 或 0.5）。每个“证明—分析”对用于生成一个改进后的证明，随后更新候选池。该过程最多持续 16 次迭代，或在某个证明成功通过全部 64 次验证尝试时结束；这表明对其正确性具有较高置信度。所有实验都使用同一个模型，即最终的证明生成器，它同时执行证明生成和验证。</p>
 <p>为验证结果，数学专家评估了评分最高的证明。如表 1 所示，我们的方法解决了 IMO 2025 的 6 道题中的 5 道，以及 CMO 2024 的 4 道题，并在另 1 道题上获得部分分数，在这两项顶级高中竞赛中均达到金牌水平。在最重要的本科生数学竞赛 Putnam 2024 上，我们的模型完整解决了 12 道题中的 11 道，剩下 1 道题仅有小错误，得到 118/120 分，超过人类最高分 90。图 3 展示 IMO-ProofBench 上的结果。我们的方法在基础集上优于 DeepMind 的 DeepThink（IMO Gold），在高级集上保持竞争力，同时大幅超过所有其他基线。我们观察到，最困难的 IMO 级别问题对我们的模型而言仍具有挑战性。</p>

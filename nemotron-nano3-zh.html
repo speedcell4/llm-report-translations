@@ -1,11 +1,11 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nemotron 3 Nano：用于 Agent 推理的开放、高效的 Mamba-Transformer MoE 模型 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">Nemotron 3 Nano：用于 agent 推理的开放、高效的 Mamba-Transformer MoE 模型</div><div class="document-meta">已翻译 40/40 页 · 原文版本：2512.20848v1</div><div class="page-links"><a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Nano-Technical-Report.pdf">原论文</a> · <a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a></div><div class="document-meta">原文发布方：NVIDIA。原文许可：<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本页面为中文译文，图表保留原文。</div></nav><section class="page" id="page-1"><h1>Nemotron 3 Nano：用于 Agent 推理的开放、高效的专家混合式 Mamba-Transformer 混合模型</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nemotron 3 Nano：用于 Agent 推理的开放、高效的 Mamba-Transformer MoE 模型 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=b5a0317eb546"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">Nemotron 3 Nano：用于 agent 推理的开放、高效的 Mamba-Transformer MoE 模型</div><div class="document-meta">已翻译 40/40 页 · 原文版本：2512.20848v1</div><div class="page-links"><a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Nano-Technical-Report.pdf">原论文</a> · <a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a></div><div class="document-meta">原文发布方：NVIDIA。原文许可：<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本页面为中文译文，图表保留原文。</div></nav><section class="page" id="page-1"><h1>Nemotron 3 Nano：用于 Agent 推理的开放、高效的专家混合式 Mamba-Transformer 混合模型</h1>
 <p class="cover-info">2025-12-23</p><p class="cover-info">NVIDIA</p>
 <div class="abstract"><strong>摘要。</strong>我们介绍 Nemotron 3 Nano 30B-A3B，一种采用专家混合机制的 Mamba-Transformer 混合语言模型。Nemotron 3 Nano 在 25 万亿文本 token 上进行预训练，其中相较于 Nemotron 2 包含超过 3 万亿新增的唯一 token，随后进行 SFT 和涵盖多种环境的大规模强化学习。Nemotron 3 Nano 的准确率超过上一代 Nemotron 2 Nano，同时每次前向传播所激活的参数不到后者的一半。与 GPT-OSS-20B 和 Qwen3-30B-A3B-Thinking-2507 等规模相近的开放模型相比，它的推理吞吐量最高提高至 3.3 倍，同时在常用基准上也更加准确。Nemotron 3 Nano 展现出更强的 agent、推理和聊天能力，并支持最长 100 万 token 的上下文。我们在 Hugging Face 上发布预训练的 Nemotron 3 Nano 30B-A3B Base 和经过后训练的 Nemotron 3 Nano 30B-A3B 两种 checkpoint。</div>
 <h2>1. 引言</h2>
 <p>我们介绍 NVIDIA Nemotron 3 Nano，一种具有 agent、推理和聊天能力的专家混合（MoE）式 Mamba-Transformer 混合模型（Lieber et al., 2024）。与前几代模型（NVIDIA, 2025e,d）一样，Nemotron 3 Nano 结合使用 Mamba-2（Dao &amp; Gu, 2024）与 GQA（Ainslie et al., 2023）。此外，Nemotron 3 Nano 使用专家混合（Shazeer et al., 2017）层，以稀疏方式扩展模型参数，并显著改善推理吞吐量与准确率之间的前沿权衡。我们使用细粒度 MoE 架构（Dai et al., 2024），其可学习的 MLP 路由器从 128 个专家中激活 6 个（§2.1）。Nemotron 3 Nano 的总参数量为 31.6B，每次前向传播仅激活其中的 3.2B 参数（计入 embedding 层则为 3.6B）。如图 1 所示，与 GPT-OSS-20B（OpenAI, 2025）和 Qwen3-30B-A3B-Thinking-2507（Yang et al., 2025a）相比，Nemotron 3 Nano 的准确率更好或相当。此外，在输入 8K token、输出 16K token 的场景下，Nemotron 3 Nano 的推理吞吐量分别是 GPT-OSS-20B 和 Qwen3-30B-A3B-Thinking-2507 的 2.2 倍与 3.3 倍。Nemotron 3 Nano 还支持最长 100 万 token 的上下文，在不同上下文长度的 RULER 测试中均超过 GPT-OSS-20B 和 Qwen3-30B-A3B-Instruct-2507。除模型权重之外，我们还提供训练模型所用的配方、代码和大部分数据。</p>
 <p>我们采用 Warmup-Stable-Decay（Hu et al., 2024）学习率调度，在涵盖 15 类数据的 25 万亿文本 token 上预训练基础模型 Nemotron 3 Nano 30B-A3B Base（§2.2）。我们将预训练分为两个阶段：第一阶段使用 23.5 万亿 token 的多样化数据，第二阶段使用 1.5 万亿 token 的高质量数据（§2.3）。在代码、数学、长上下文、通用知识和常识理解等类别的大部分学术基准上，我们的基础模型比规模相当的 Qwen3-30B-A3B-Base 更加准确。我们没有将基础模型的准确率与 GPT-OSS-20B 比较，因为后者未发布基础模型。在单张 H200 GPU 上测试输入 8K token、输出 16K token 这一生成量较大的场景时，我们的模型还取得了显著高于 Qwen3-30B-A3B（3.3 倍）和 GPT-OSS-20B（2.2 倍）的推理吞吐量。测量吞吐量时，我们采用 H200 GPU 上可用的最佳配置，</p>
 <p class="continuation">（吞吐量测量说明接原文第 2 页。）</p><p>© 2025 NVIDIA。保留所有权利。</p>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/333f7bb337761b7b557ab4b616f0ca3ed9045d7f66b80dc5db2a7fc3b2bdd68a.png"></figure>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img height="909" width="1428" decoding="async" loading="lazy" alt="原文第 2 页图表或公式" src="assets/images/333f7bb337761b7b557ab4b616f0ca3ed9045d7f66b80dc5db2a7fc3b2bdd68a.png"></figure>
 <p class="continuation">（接原文第 1 页。）</p>
 <p>分别使用 vLLM 和 TRT-LLM，并为每个模型选择两者中效果更好的结果。测量 Nemotron 3 Nano 和 Qwen3 的吞吐量时，权重和激活均使用 FP8。对于 GPT-OSS-20B，我们的权重使用 mxfp4，激活使用 bfloat16。</p>
 <p>我们采用三种方法对 Nemotron 3 Nano 进行后训练：SFT（§3.1）、多环境 RLVR（§3.2）和 RLHF（§3.3）。在 SFT 阶段，我们使用多样化的聊天、agent 和推理轨迹训练 Nemotron 3 Nano，使模型具备推理预算控制、推理开关控制以及结合工具的推理能力。在 RLVR 阶段，我们同时在所有环境中训练，使模型能力平稳、均衡地提升。在 RLHF 阶段，我们利用一个规模大、准确率高的 GenRM，提高 Nemotron 3 Nano 在关键聊天基准上的表现。</p>
@@ -19,7 +19,7 @@
 </ul><h3>数据</h3>
 <p class="continuation">（数据列表接原文第 3 页。）</p>
 <p><sup>1</sup> <a href="https://github.com/NVIDIA-NeMo/Nemotron">https://github.com/NVIDIA-NeMo/Nemotron</a></p>
-<footer>原文第 2 页</footer></section><section class="page" id="page-3"><figure><img decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/3ef8fe8b713fe48f085144e1d27c2f791da8f246b85b81aa6794893f6a30839d.png"></figure>
+<footer>原文第 2 页</footer></section><section class="page" id="page-3"><figure><img height="471" width="1428" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/3ef8fe8b713fe48f085144e1d27c2f791da8f246b85b81aa6794893f6a30839d.png"></figure>
 <p class="continuation">（接原文第 2 页的数据列表。）</p><ul>
 <li><a href="https://huggingface.co/datasets/nvidia/Nemotron-CC-v2.1">Nemotron-CC-v2.1</a>：来自 Common Crawl 的 2.5 万亿新增英文 token，包括从最近三次快照中整理的数据、合成改写，以及从其他语言翻译为英文的数据。</li>
 <li><a href="https://huggingface.co/datasets/nvidia/Nemotron-CC-Code-v1">Nemotron-CC-Code-v1</a>：一个包含 4280 亿高质量代码 token 的预训练数据集，通过使用 <a href="https://huggingface.co/datasets/nvidia/Nemotron-CC-Math-v1">Nemotron-CC-Math-v1</a> 的 Lynx + LLM 流程处理 Common Crawl 中含代码的页面而得到。该流程保留公式与代码，将数学公式规范为 LaTeX，并去除噪声。</li>
@@ -34,7 +34,7 @@
 <h3>2.1. 模型架构</h3>
 <p>Nemotron 3 Nano 30B-A3B Base 在此前 Nemotron-H（NVIDIA, 2025e）和 Nemotron 2 Nano（NVIDIA, 2025d）模型的 Mamba-Transformer 混合架构基础上，将标准 FFN 层替换为稀疏专家混合（MoE）（Shazeer et al., 2017）层。MoE 层帮助我们以较少的激活参数实现更高的准确率。Nemotron 3 Nano 30B-A3B Base 包含 31.6B 总参数，每次前向传播激活其中的 3.2B 参数（计入 embedding 层则为 3.6B）。为了获得最佳准确率，我们采用带共享专家的细粒度 MoE 架构（Dai et al., 2024）。MoE 层使用平方 ReLU 激活函数，以及采用 sigmoid 门控的标准可学习 MLP 路由器。我们不使用任何位置 embedding、dropout，也不在线性层中使用偏置。我们使用 RMSNorm 进行归一化，且 embedding 权重与投影权重不共享。</p>
 <p>表 1 和图 2 展示了 Nemotron 3 Nano 的关键架构细节。</p>
-<footer>原文第 3 页</footer></section><section class="page" id="page-4"><figure><img decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/5a9ca797845277c7ae4ecf5d8d8e26d9c6a6bfaf57783dc35b7d2ad5839da4af.png"></figure>
+<footer>原文第 3 页</footer></section><section class="page" id="page-4"><figure><img height="786" width="999" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/5a9ca797845277c7ae4ecf5d8d8e26d9c6a6bfaf57783dc35b7d2ad5839da4af.png"></figure>
 <h3>2.2. 预训练数据</h3>
 <p>本小节介绍自 Nemotron Nano 2 以来新增至预训练语料的新数据集。我们将在 HuggingFace 上发布绝大部分新增数据，分为四个主要数据集。下面分别详细介绍。</p>
 <h4>2.2.1. Nemotron-CC-Code-v1</h4>
@@ -80,7 +80,7 @@
 <p>我们采用基于两个阶段的课程方案预训练 Nemotron 3 Nano 30B-A3B Base。第一阶段使用有助于数据多样性的混合数据；第二阶段主要使用高质量数据集（例如 Wikipedia）。我们在训练进度达到 94% 时切换到第二阶段。各阶段所用的数据混合如图 3 所示。</p>
 <h3>2.4. 超参数</h3>
 <p>我们采用 Warmup-Stable-Decay 学习率（LR）调度，在总计 25 万亿 token 上预训练 Nemotron 3 Nano 30B-A3B Base。我们在前 84 亿 token 内将学习率 warmup 到最大值 \(10^{-3}\)。在训练的 80%（20 万亿 token）期间保持最大学习率，然后在最后 20% 的训练（5 万亿 token）期间衰减到最小值 \(10^{-5}\)。我们使用 AdamW（Loshchilov &amp; Hutter, 2017）优化器，权重衰减为 0.1，\(\beta _{1} = 0.9\)，\(\beta _{2} = 0.95\)。</p>
-<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/d496a01667fa4ceb179930bfb25c3406f9c9af8e284d0e7252ae388a1870b533.png"></figure>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img height="756" width="1428" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/d496a01667fa4ceb179930bfb25c3406f9c9af8e284d0e7252ae388a1870b533.png"></figure>
 <p>我们以 8192 的序列长度和 3072 的 batch 大小预训练模型，每个 batch 约包含 2500 万 token。对于 MoE 层，我们使用 DeepSeek 的无辅助损失负载均衡策略（Wang et al., 2024; DeepSeek-AI, 2025b），更新率为 \(10^{-3}\)，并结合标准负载均衡损失（Lepikhin et al., 2020）。负载均衡损失系数为 \(10^{-4}\)。</p>
 <h3>2.5. 长上下文扩展</h3>
 <p>与 Nemotron 2 Nano 类似，我们在预训练末尾加入长上下文阶段（LC-Phase）。在 LC-Phase 中，我们进行持续预训练（CPT），赋予基础模型长上下文能力。我们采用 \(10^{-5}\) 的恒定学习率和 48 的全局 batch 大小，使用 8 路 CP、8 路 TP、8 路 EP 和 4 路 PP，在 H100 GPU 上训练。我们复用了 Nemotron Nano 2 的长上下文文档问答数据集，并将其规模扩大至三倍。我们还在 CPT 数据混合中加入少量面向检索的合成数据，其最大序列长度为 256k token，以改善部分 RULER 风格任务。在 LC 阶段的数据混合中，文档问答数据和面向检索的合成数据分别占 20% 和 1%，其余 79% 是按比例缩减的第二阶段数据。我们最初尝试仅在序列长度为 524,288（512k）token 的数据 batch 上进行 CPT，但发现短上下文基准分数受到轻微影响。因此，我们混合使用 512k 和 4k 序列，改善了短上下文基准分数，尤其是 MMLU-Pro 和代码任务，同时也提高了长上下文基准分数。LC-Phase 总共使用 1210 亿 token。</p>
@@ -88,7 +88,7 @@
 <p>表 2 全面比较了通用知识、代码、数学、常识理解、阅读理解、多语言及长上下文基准上的准确率。评估设置遵循社区标准协议，以确保公平比较。所有评估结果均通过 Nemo Evaluator \(SDK^{2}\) 和 LM Evaluation Harness<sup>3</sup> 收集。为便于复现，评估设置的更多细节见 Nemo Evaluator SDK 的 configs 文件夹<sup>4</sup>；通过 NVIDIA 的</p>
 <p class="continuation">（关于评估容器的此句接原文第 11 页；第 10 页为表 2。）</p>
 <p><sup>2</sup> <a href="https://github.com/NVIDIA-NeMo/Evaluator">https://github.com/NVIDIA-NeMo/Evaluator</a><br><sup>3</sup> <a href="https://github.com/EleutherAI/lm-evaluation-harness">https://github.com/EleutherAI/lm-evaluation-harness</a><br><sup>4</sup> <a href="https://github.com/NVIDIA-NeMo/Evaluator">https://github.com/NVIDIA-NeMo/Evaluator</a></p>
-<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/6eb57b07c64ac1cebe638f793048910ef11dfc9bae565d15eaca180f419de424.png"></figure>
+<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img height="1428" width="1428" decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/6eb57b07c64ac1cebe638f793048910ef11dfc9bae565d15eaca180f419de424.png"></figure>
 <footer>原文第 10 页</footer></section><section class="page" id="page-11"><p class="continuation">（接原文第 9 页。）</p>
 <p>Nemo Evaluator SDK 打包、用于评估的开源 LM Evaluation Harness 容器可以在此处<sup>5</sup>找到。</p>
 <p>对于 MATH-500 任务，我们采用采样策略，报告 avg@32 分数（从 32 个样本估计 pass@1）。对于其余任务，我们报告通过贪心 decoding（temperature = 0）得到的准确率（acc）或归一化准确率（acc_norm）。对于 HumanEval 和 MBPP 代码评估，我们采用与 Evalplus<sup>6</sup> 相同的清理方法。Few-shot 设置因基准而异，从 HumanEval 的 0-shot 到 ARC-Challenge 的 25-shot 不等。我们通过 MMLU Global Lite（对德语、西班牙语、法语、意大利语、日语、韩语、葡萄牙语和中文取平均）与 MGSM（对德语、西班牙语、法语、日语、俄语和中文取平均）评估多语言能力。</p>
@@ -103,7 +103,7 @@
 <p>在推理模式下，我们针对以下对话场景调整推理流程：</p>
 <ul><li>多步骤：在一系列助手模型调用中，保留已有推理 token，使模型能够在后续步骤复用已有推理。</li></ul>
 <p><sup>5</sup> <a href="https://catalog.ngc.nvidia.com/orgs/nvidia/teams/eval-factory/containers/lm-evaluation-harness">https://catalog.ngc.nvidia.com/orgs/nvidia/teams/eval-factory/containers/lm-evaluation-harness</a><br><sup>6</sup> <a href="https://github.com/evalplus/evalplus">https://github.com/evalplus/evalplus</a></p>
-<footer>原文第 11 页</footer></section><section class="page" id="page-12"><figure><img decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/a715154b85a8c6bfc8967e30ae6d4061e8fe6df6567f33b6bdf5e87a7e42d0ae.png"></figure>
+<footer>原文第 11 页</footer></section><section class="page" id="page-12"><figure><img height="648" width="1428" decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/a715154b85a8c6bfc8967e30ae6d4061e8fe6df6567f33b6bdf5e87a7e42d0ae.png"></figure>
 <ul><li>多轮：当引入用户消息时，丢弃此前各轮中的全部推理内容。</li></ul>
 <p>对于工具调用，我们遵循 GLM-4.5（Team, 2025a）和 Qwen3-Coder（Yang et al., 2025a）的观察，使用 XML 风格的特殊标签，以减少字符转义。</p>
 <h4>3.1.2. 数据</h4>
@@ -131,7 +131,7 @@
 <p><strong>GenSelect。</strong>我们遵循 Toshniwal et al.（2025）的方法，训练模型从多个候选解答中识别最佳解答，以提高其作为 GenRM 的能力。我们改编数学和代码 SFT 数据中的问题，使用 GPT-OSS 120B（OpenAI, 2025）与 DeepSeek-R1-0528（DeepSeek-AI, 2025a）生成合成解答，再生成包含最终判定的选择推理轨迹。</p>
 <p><strong>CUDA。</strong>我们以 HuggingFace Transformers（Wolf et al., 2020）和 KernelBook（Paliskara &amp; Saroufim, 2025）为种子，收集并合成 21k 个（PyTorch, Cuda C）配对。我们首先解析</p><p class="continuation">（此句接原文第 15 页。）</p>
 <p><sup>7</sup> <a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-knowledge-mcqa">https://huggingface.co/datasets/nvidia/Nemotron-RL-knowledge-mcqa</a><br><sup>8</sup> <a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-knowledge-openqa">https://huggingface.co/datasets/nvidia/Nemotron-RL-knowledge-openqa</a><br><sup>9</sup> <a href="https://github.com/NVIDIA-NeMo/Gym/tree/main/resources_servers/mcqa">https://github.com/NVIDIA-NeMo/Gym/tree/main/resources_servers/mcqa</a><br><sup>10</sup> <a href="https://github.com/NVIDIA-NeMo/Gym/tree/main/resources_servers/equivalence_llm_judge">https://github.com/NVIDIA-NeMo/Gym/tree/main/resources_servers/equivalence_llm_judge</a></p>
-<footer>原文第 14 页</footer></section><section class="page" id="page-15"><figure><img decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/84c7471a0dc520a5e886c2f2b3c91e2148b121f62b2407ae97fdea902ad0f7bf.png"></figure>
+<footer>原文第 14 页</footer></section><section class="page" id="page-15"><figure><img height="615" width="888" decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/84c7471a0dc520a5e886c2f2b3c91e2148b121f62b2407ae97fdea902ad0f7bf.png"></figure>
 <p class="continuation">（接原文第 14 页。）</p><p>Transformers（Wolf et al., 2020）和 KernelBook（Paliskara &amp; Saroufim, 2025）中的 PyTorch 代码，再使用 DeepSeek-R1-0528（DeepSeek-AI, 2025a）生成对应的 Cuda C 代码。我们仅保留 Cuda C 代码成功编译、并通过与 PyTorch 参考代码进行数值验证的 PyTorch、Cuda C 配对。</p>
 <h4>3.1.3. 数据过滤</h4>
 <p>对于所有领域，我们采用统一的数据过滤流程，确保仅使用高质量、符合许可要求且可验证的样本训练。我们首先通过结构检查丢弃格式错误样本（例如存在工具调用却缺少工具定义）。随后，我们严格过滤表现出异常重复的推理轨迹，例如在滑动窗口内或整个轨迹中重复出现 n-gram；我们发现这强烈表明推理存在格式错误或质量较低。最后，根据对合成数据集的内部审计，我们观察到某些教师模型偶尔会生成隐含偏向特定政治实体或宣扬民族主义叙事的推理轨迹与最终回答。为缓解这一问题，我们应用针对性的关键词与正则表达式过滤器（例如“our nation/party […]”“our values”等模式），删除所有符合这类行为的轨迹。</p>
@@ -158,15 +158,15 @@
 <p>我们首先使用SFTcheckpoint，对全部强化学习（RL）任务进行能力测评。为将训练重点放在困难样本上，我们过滤掉 SFT checkpoint 已达到 100% 通过率的样本。随后采用 NVIDIA（2025a）提出的课程训练方法，在训练期间动态调整任务难度。</p>
 <p>每个 batch 中，我们保持不同领域样本的固定比例。对于每个领域，我们以高斯函数建模目标通过率分布，从训练初期的高通过率（较简单）样本，逐步转向后期的低通过率（较困难）样本。高斯分布的目标均值随训练步数线性下降。每个 batch 内，不同领域的样本被打乱。这种高斯采样策略防止过度拟合过于简单或过于困难的样本，确保均衡的学习进程。</p>
 <p>该方法能够在保留领域多样性、确保高效 batch 组成的同时，以受控、渐进的方式提高任务难度。图 6 展示 RL 训练过程中样本难度的变化。当训练进展进入平台期后，我们使用最佳 RL checkpoint 重新测评任务，构建新的课程，以进一步改善表现。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/6bdd84b44302053cd020cbce28ad2ded539385fdddb23f8eb9e1691ba63570b8.png"></figure>
+<figure><img height="579" width="879" decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/6bdd84b44302053cd020cbce28ad2ded539385fdddb23f8eb9e1691ba63570b8.png"></figure>
 <p>我们使用一个中间 SFT checkpoint，将课程采样与随机采样进行比较，两种情况下领域比例保持相同。如图 7 所示，课程采样确保训练过程中多个领域的学习保持稳定。相比之下，随机采样</p><p class="continuation">（此句接原文第 18 页。）</p>
 <footer>原文第 17 页</footer></section><section class="page" id="page-18"><p class="continuation">（接原文第 17 页。）</p><p>使模型偏向更简单的任务，妨碍模型有效学习更具挑战性的任务。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/4f1bcb75e2a0d3964d72897120b0a479e0037605ce2ebb8a623e063edb3227c3.png"></figure>
+<figure><img height="357" width="1428" decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/4f1bcb75e2a0d3964d72897120b0a479e0037605ce2ebb8a623e063edb3227c3.png"></figure>
 <h4>3.2.3. 通过 RLVR 超越 SFT</h4>
 <p>近期工作表明，仅对小模型进行 SFT 即可取得较强表现（Ahmad et al., 2025b; DeepSeek-AI, 2025a）。本研究考察 RLVR 是否能够超越经过充分微调的 SFT 基线。如图 8 所示，我们将 RLVR 训练过程中模型的准确率与两个 SFT checkpoint 比较：</p>
 <ul><li>SFT1：最初的 RLVR 起点，经过约 3 个 epoch 的微调。</li><li>SFT2：经过充分微调、训练至完全收敛的 checkpoint（约 5 个 epoch）。</li></ul>
 <p>结果表明，即使训练时间相对较短，RLVR 仍在所有评估领域中持续超过或达到充分微调的 SFT 模型的准确率。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/df6d2e682800b9953063c0875b3b1a7a044eca977868d4ce21cb857014056426.png"></figure>
+<figure><img height="363" width="1428" decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/df6d2e682800b9953063c0875b3b1a7a044eca977868d4ce21cb857014056426.png"></figure>
 <h4>3.2.4. 基础设施</h4>
 <p>当前，模型后训练前沿的 RL 主要通过扩展到越来越多样化的任务或环境，让模型学习日益通用的能力。将 RL 扩展到多个环境，需要高性能、可扩展、标准化的接口，以协调轨迹生成与训练。为使用一个标准框架应对规模扩展中的性能和可扩展性挑战，我们采用 NeMo Gym（NVIDIA, 2025b）和 NeMo RL（NVIDIA, 2025c），使大规模 RL 能在多种不同环境或验证器上开展。</p>
 <p>NeMo Gym 基于服务器抽象。Gym 有三种核心服务器：（1）agent；（2）模型；（3）资源。Agent 服务器实现 RL 环境的轨迹生成内核。模型服务器封装 vLLM（Kwon et al., 2023）等推理引擎，提供提示与回答 API，同时谨慎保留 RL 所需的 token、推理对数概率数据和元数据。资源服务器提供验证 API，用于计算给定轨迹的奖励。</p>
@@ -174,36 +174,36 @@
 <h4>3.2.5. 算法</h4>
 <p>我们使用带掩码重要性采样的同步 GRPO 训练 Nemotron 3 Nano，以缓解训练与推理的不一致（Shao et al., 2024; Team et al., 2025; Yao et al., 2025）。每步使用 128 个提示，每个提示生成 16 个回答。训练 batch 大小为 2048，使更新保持 on-policy。为进一步稳定训练，我们还冻结 MoE 路由器权重。我们采用无辅助损失负载均衡方法，并持续更新专家偏置（Wang et al., 2024）。</p>
 <p>整个训练过程使用 49K 的最大生成长度。我们采用超长样本过滤（Yu et al., 2025），发现这有助于提高推理密集型基准的表现。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/60a27e76ec49c29454590efa424836ed541f7a1a228bd396aae8ff1829eeb1df.png"></figure>
+<figure><img height="618" width="1428" decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/60a27e76ec49c29454590efa424836ed541f7a1a228bd396aae8ff1829eeb1df.png"></figure>
 <h3>3.3. RLHF</h3>
 <h4>3.3.1. 扩大 GenRM 训练的强化学习规模</h4>
 <p>许多近期工作（Liu et al., 2025b; Wang et al., 2025b; Chen et al., 2025）表明，GenRM 的泛化能力优于传统 Bradley-Terry 模型，能够降低 RLHF 期间 reward hacking 的风险。为训练准确、稳健的 GenRM，我们利用大规模强化学习。在 Wang et al.（2025b）方法的基础上，我们使用 GRPO 算法，将 Qwen3-235B-A22B-Thinking-2507（Yang et al., 2025a）训练为 GenRM。给定对话历史、新用户请求及两个候选助手回答，GenRM 首先推理分析两份回答的优缺点，随后分别为每份回答生成有用性评分，以及一个排序评分。GenRM 训练中，每个 batch 使用 128 个提示，每个提示生成 8 个回答，并对完整 batch 进行一次 gradient 更新。我们将奖励定义为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/5bfb6a8db666b731d37c22ad57c98f0df7069ce437ea95ef1f847a2cd7e6fe22.png"></figure>
+<figure><img height="78" width="1173" decoding="async" loading="lazy" alt="原文第 19 页图表或公式" src="assets/images/5bfb6a8db666b731d37c22ad57c98f0df7069ce437ea95ef1f847a2cd7e6fe22.png"></figure>
 <p>其中，\(P_{r}\)、\(G_{r}\) 表示预测和真实标准偏好排序；\(P_{h1}\)、\(G_{h1}\)、\(P_{h2}\)、\(G_{h2}\) 分别表示回答 1 和回答 2 的预测及真实标准有用性评分；\(I_{format}\) 指示</p><p class="continuation">（公式符号说明接原文第 20 页。）</p>
 <footer>原文第 19 页</footer></section><section class="page" id="page-20"><p class="continuation">（接原文第 19 页。）</p><p>预测是否违反格式要求；\(C_{1}\) 和 \(C_{2}\) 是控制权重的超参数。我们设置 \(C_{1} = 10\)、\(C_{2} = 1\)。</p>
 <p>我们使用 HelpSteer3（Wang et al., 2025b）、lmarena-ai/arena-human-preference-140k（Chiang et al., 2024）中便于商业使用的子集，以及合成安全混合数据（详见附录 D）训练模型。数据集中，单独的有用性评分范围为 1 至 5，分数越高代表越有用；排序评分范围为 1 至 6，其中 1 表示回答 1 远优于回答 2，6 表示回答 2 远优于回答 1（Wang et al., 2025b）。我们通过交换两个回答的位置来增强每个样本，防止位置偏差。图 10 表明，随着训练推进，GenRM 在 RM-Bench（Liu et al., 2024）、JudgeBench（Tan et al., 2024）和内部验证集上的表现稳步提高。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/3fb640f9c8a33ae7c4749a8c644f97c62c4aafcbd48e2a27f49a175979ee87f7.png"></figure>
+<figure><img height="444" width="1428" decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/3fb640f9c8a33ae7c4749a8c644f97c62c4aafcbd48e2a27f49a175979ee87f7.png"></figure>
 <h4>3.3.2. 采用组相对长度控制的 RLHF</h4>
 <p>训练好 GenRM 后，我们在同一组提示上进行 RLHF。与 RLVR 相同，我们每个 batch 使用 128 个提示，每个提示生成 16 个回答。直接比较 \(N\) 个回答的所有配对，每个提示需要 \(N(N-1)/2\) 次 GenRM 调用，其成本按平方增长，\(N\) 较大时会昂贵到难以承受。\(N = 16\) 个回答时，每个提示需要 120 次比较。我们改为采用环形比较策略，每个回答只与其后继比较：\((r_{1}, r_{2})\)、\((r_{2}, r_{3})\)、…、\((r_{N-1}, r_{N})\)、\((r_{N}, r_{1})\)，恰好进行 \(N\) 次比较。这将计算成本从 \(O(N^{2})\) 降至 \(O(N)\)，同时仍将所有回答连接在一个比较图中。每个回答还会在不同位置被评判两次，以缓解位置偏差。</p>
 <p>对于每次成对比较 \((r_{i}, r_{j})\)，GenRM 分别生成有用性评分 \(s_{i}\)、\(s_{j} \in  [1, 5]\) 和排序评分 \(s_{r} \in  [1, 6]\)。当 \(s_{i} = s_{j}\) 时，我们进一步使用一个简单的平局打破机制：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/5c61c9f6de271023ab498b8dee1d0a877b24e650483676c9700009403aa9bc87.png"></figure>
+<figure><img height="132" width="888" decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/5c61c9f6de271023ab498b8dee1d0a877b24e650483676c9700009403aa9bc87.png"></figure>
 <p>随后，对回答 \(r_{i}\) 在两次对局中的评分取平均，得到其基础奖励 \(R_{i}^{(base)}\)。</p>
 <p>使用基础奖励训练时，我们发现回答长度可能随着 RLHF 训练推进而快速增加。这与 reward hacking 不同，因为长度增加主要来自推理轨迹，而 GenRM 只评判最终答案。这与 DeepSeek-AI（2025a）的观察类似：模型投入更多推理时计算，以获得更高奖励。不过，与数学和代码等推理密集型任务不同，RLHF 数据集中的提示通常并不</p><p class="continuation">（此句接原文第 21 页。）</p>
 <footer>原文第 20 页</footer></section><section class="page" id="page-21"><p class="continuation">（接原文第 20 页。）</p><p>需要大量推理。为减少冗余思考，我们提出在 RLHF 期间使用组相对长度控制机制。具体而言，对于每个提示，我们生成一组 \(N\) 个候选回答 \(\{r_{1}, r_{2}, \ldots , r_{N}\}\)。每个回答 \(r_{i}\) 分解为推理部分 \(r_{i}^{(think)}\) 和答案部分 \(r_{i}^{(answer)}\)，对应长度分别为 \(\ell _{i}^{(think)}\) 与 \(\ell _{i}^{(answer)}\)。</p>
 <p><strong>长度归一化奖励调整。</strong>我们计算零均值、组相对的长度奖励，鼓励组内较短回答。对于推理部分，首先在组内归一化长度：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/89c294e68c5dd9b9c3a1486c54caefde705c56c62cdb66828c12f6e315e32837.png"></figure>
+<figure><img height="144" width="978" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/89c294e68c5dd9b9c3a1486c54caefde705c56c62cdb66828c12f6e315e32837.png"></figure>
 <p>其中，\(\ell _{min}^{(think)} = min_{j} \ell _{j}^{(think)}\)，\(\ell _{max}^{(think)} = max_{j} \ell _{j}^{(think)}\)。为确保调整在组内总和为零（保留整体奖励尺度），我们对权重进行中心化：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/ead0b21cec901bdde6eee55ac00ffc884a9a254960ed1de05794ed68d1adfee3.png"></figure>
+<figure><img height="135" width="993" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/ead0b21cec901bdde6eee55ac00ffc884a9a254960ed1de05794ed68d1adfee3.png"></figure>
 <p>对答案长度执行相同流程，得到 \(\tilde{w}_{i}^{(answer)}\)。回答 \(r_{i}\) 的最终奖励为：</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/a1437ad200cf73a4fc4365e7dbf2aa9e5bfddbed3e49d9bd0f42d03fc8383234.png"></figure>
+<figure><img height="96" width="1098" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/a1437ad200cf73a4fc4365e7dbf2aa9e5bfddbed3e49d9bd0f42d03fc8383234.png"></figure>
 <p>其中，\(R_{i}^{(base)}\) 是成对比较得到的基础奖励，\(\lambda ^{(think)}\)、\(\lambda ^{(answer)}\) 是控制长度惩罚强度的系数。我们设置 \(\lambda ^{(think)} = 0.5\)、\(\lambda ^{(answer)} = 0.5\)。</p>
 <p><strong>由质量门控的简洁性奖励。</strong>为进一步鼓励简洁回答而不牺牲质量，我们为达到最高质量档评分的最短回答引入可选奖励。令 \(\tau _{p}\) 表示组内评分的第 \(p\) 百分位阈值。对于推理长度最短的回答 \(r_{k}\)：</p>
-<figure class="formula"><img decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/d37a03aea4974eabe563e85a64497f0009dbd0ffd5cdb2d129e5ca1fa36910bc.png"></figure>
+<figure class="formula"><img height="93" width="591" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/d37a03aea4974eabe563e85a64497f0009dbd0ffd5cdb2d129e5ca1fa36910bc.png"></figure>
 <p>类似地，对于答案长度最短的回答 \(r_{m}\)：</p>
-<figure class="formula"><img decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/6e5ec60013a7f2cf8df12731c2dc636041de26e38a4b4942bee02d4b10bbc29a.png"></figure>
+<figure class="formula"><img height="90" width="621" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/6e5ec60013a7f2cf8df12731c2dc636041de26e38a4b4942bee02d4b10bbc29a.png"></figure>
 <p>其中，\(\beta ^{(think)}\) 和 \(\beta ^{(answer)}\) 分别是推理和答案的简洁性奖励，⊮[·] 是指示函数。我们设置 \(\beta ^{(think)} = 0.5\)、\(\beta ^{(answer)} = 0.5\)，\(\tau _{p} = 80\)。</p>
 <p>该机制确保：（1）长度惩罚是每个提示组内的相对惩罚，而非绝对惩罚，避免对本身复杂的问题产生偏差；（2）简洁性奖励仅授予高质量回答，防止模型学会生成简短但低质量的答案。我们观察到，在不牺牲准确率的情况下，训练期间的冗长程度降低了 30%。</p>
-<footer>原文第 21 页</footer></section><section class="page" id="page-22"><figure><img decoding="async" loading="lazy" alt="原文第 22 页图表或公式" src="assets/images/72af8e46bca5e14ded26670e606960905344760d3a023f2469788f32b5498613.png"></figure>
+<footer>原文第 21 页</footer></section><section class="page" id="page-22"><figure><img height="1956" width="1428" decoding="async" loading="lazy" alt="原文第 22 页图表或公式" src="assets/images/72af8e46bca5e14ded26670e606960905344760d3a023f2469788f32b5498613.png"></figure>
 <footer>原文第 22 页</footer></section><section class="page" id="page-23"><h3>3.4. 后训练模型评估</h3><h4>3.4.1. 评估基准</h4>
 <p>我们在广泛的成熟基准上评估 Nemotron 3 Nano，涵盖数学和科学推理、编程、agent 工具使用、指令遵循、长上下文理解及多语言能力。表 3 汇总最终结果。</p>
 <p>所有评估结果均通过 Nemo Evaluator \(SDK^{11}\) 收集，大部分基准还使用 Nemo Skills Harness<sup>12</sup>。为便于复现，通过 NVIDIA 的 Nemo Evaluator SDK 打包、用于评估的 Nemo Skills 开源容器可以在此处<sup>13</sup>找到。除 Nemo Skills 外，评估还使用专门打包的 Tau-2 Bench、ArenaHard v2 和 \(AA_{LCR}\) 容器。评估设置的更多细节见 Nemo Evaluator SDK 的 configs 文件夹<sup>14</sup>。以下基准尚未接入我们的开源工具，因此使用其官方开源实现：Terminal Bench、SWE-Bench 和 Scale AI Multi Challenge。</p>
@@ -229,8 +229,8 @@
 <p>为验证选择性量化策略的有效性，并更好地理解准确率与效率的权衡，我们评估多种量化配置。我们通过对不同模型组件应用 PTQ 进行消融研究。具体考察三个因素：attention 层量化（BF16 或 FP8）、Mamba 层量化（FP8 或 BF16 与 FP8 混合），以及 KV cache 量化（BF16 或 FP8）。</p>
 <p>如图 11 所示，FP8 量化的 KV cache 通过允许更大的 batch 大小，显著提高吞吐量。其他量化配置会损失准确率，而选择性量化即使对 KV cache 量化，仍能保留准确率。结果证实，将自 attention 层及其前面的 Mamba 层保留为 BF16，同时将其余层和 KV cache 量化为 FP8，可以取得较好的准确率与效率权衡。</p>
 <p><sup>16</sup> <a href="https://github.com/NVIDIA/Model-Optimizer">https://github.com/NVIDIA/Model-Optimizer</a></p>
-<footer>原文第 24 页</footer></section><section class="page" id="page-25"><figure><img decoding="async" loading="lazy" alt="原文第 25 页图表或公式" src="assets/images/cee21c015eafbbc04d9a46f7847b98ebe42b1c25d187fbd5cced46efbf422131.png"></figure>
-<footer>原文第 25 页</footer></section><section class="page" id="page-26"><figure><img decoding="async" loading="lazy" alt="原文第 26 页图表或公式" src="assets/images/33be61b97ae0c79bd06e0276ebce72153a3a9ad6b8f705d7bf343ee746143d53.png"></figure>
+<footer>原文第 24 页</footer></section><section class="page" id="page-25"><figure><img height="1245" width="1182" decoding="async" loading="lazy" alt="原文第 25 页图表或公式" src="assets/images/cee21c015eafbbc04d9a46f7847b98ebe42b1c25d187fbd5cced46efbf422131.png"></figure>
+<footer>原文第 25 页</footer></section><section class="page" id="page-26"><figure><img height="1029" width="1431" decoding="async" loading="lazy" alt="原文第 26 页图表或公式" src="assets/images/33be61b97ae0c79bd06e0276ebce72153a3a9ad6b8f705d7bf343ee746143d53.png"></figure>
 <h2>5. 结论</h2>
 <p>我们介绍了 Nemotron 3 Nano，一种用于 agent 推理的开放、高效的 MoE 式 Mamba-Transformer 混合模型。与具有竞争力的模型相比，Nemotron 3 Nano 的准确率更好或相当，同时推理吞吐量最高提高至 3.3 倍。Nemotron 3 Nano 支持最长 100 万 token 的上下文。我们在 HuggingFace 上发布了基础模型（Nemotron 3 Nano 30B-A3B Base）和最终模型（Nemotron 3 Nano 30B-A3B）的权重。除权重外，我们还开源了训练配方、数据和代码。</p>
 <h2>贡献者</h2><p>感谢以下人员为 NVIDIA Nemotron 3 Nano 作出的宝贵贡献。</p>
@@ -355,13 +355,13 @@
 <footer>原文第 35 页</footer></section><section class="page" id="page-36"><h2>A. 基础模型评估</h2>
 <p>为完整起见，表 5 展示了用于初始化对齐流程的基础模型 checkpoint（称为对齐前基础模型）的评估结果。在开发期间，我们发现该模型在几个关键基准上的表现存在局限，因此训练了准备发布的改进基础模型（评估见表 2）。</p>
 <p>与落后于 Qwen3 的对齐前基础模型不同，改进 checkpoint 在代码和通用知识任务的平均表现上超过 Qwen3。相较对齐前基础模型，其数学任务的领先幅度也显著扩大。在多语言基准中，Qwen3 在 MMLU Global Lite 任务上仍保持领先，但改进 checkpoint 已在 MGSM 任务上超过 Qwen3。唯一明显的退化出现在长上下文中：改进 checkpoint 的表现相比对齐前基础模型略有下降，但仍大幅领先 Qwen3。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 36 页图表或公式" src="assets/images/2df03622516e0bfac97bd4615a5c53c2d0f50c490d5e7a52a89a69a9c71820fc.png"></figure>
+<figure><img height="1422" width="1428" decoding="async" loading="lazy" alt="原文第 36 页图表或公式" src="assets/images/2df03622516e0bfac97bd4615a5c53c2d0f50c490d5e7a52a89a69a9c71820fc.png"></figure>
 <footer>原文第 36 页</footer></section><section class="page" id="page-37"><h2>B. MMLU-redux 评估</h2><p>我们开发了以下两个 MMLU-redux 变体：</p>
 <p>（1）MMLU-redux CoT。我们观察到许多 STEM 问题本质上需要逐步推理才能成功解决，而原始的不带 CoT 的多项选择格式无法充分反映这一点，因此创建了该变体。模型可能通过猜测或记忆得出某些答案。因此，我们为每个学科创建五个示例，每个示例附有详细的逐步解答，使我们能够在 5-shot CoT 设置下评估模型。</p>
 <p>（2）MMLU-redux Tweak。MMLU 的广泛使用增加了因大量调优而产生的过拟合和基准饱和风险，因此我们引入该变体，以更严格地评估模型在相似但新颖的样本上的表现；这些样本在难度、风格、结构和格式方面与原始样本高度一致。我们使用 Qwen3-235B-A22B-Thinking-2507 修改原始测试样本，保留对相同底层概念、思想和技能的考察，同时改变数值、方程等具体细节。</p>
 <p>评估结果见表 6。总体而言，启用 CoT 推理显著提高准确率，尤其是 STEM 学科。我们的模型从 CoT 中获得的提升大于 Qwen（平均提升分别为 +5.27 和 +0.79）。此外，我们观察到 Other 类别下的 Professional Accounting 任务显著提升，从 64.00 提高到 77.00（+13.00），因为该任务也高度依赖计算技能。</p>
 <p>在 MMLU-redux Tweak 上，两个模型在非 STEM 类别中都取得明显提升，可能是因为许多非 STEM 问题考察领域知识，而改写问题由 Qwen3-235B-A22B-Thinking-2507 生成，其知识可能与被评估模型更为接近。我们在 STEM 中观察到不同趋势：Qwen 的准确率略微下降（−0.83），而我们模型的分数提高了 5.31。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 37 页图表或公式" src="assets/images/21788de7cf2f558f3fe6370b10320c3aa18dc05095f5661d2431f60d58b7f773.png"></figure>
+<figure><img height="501" width="1431" decoding="async" loading="lazy" alt="原文第 37 页图表或公式" src="assets/images/21788de7cf2f558f3fe6370b10320c3aa18dc05095f5661d2431f60d58b7f773.png"></figure>
 <h2>C. 用于减少工具幻觉的 DPO</h2>
 <p>减少幻觉式工具使用是对齐实验的关键目标之一。虽然发布的模型不依赖 DPO，因为强化学习（RL）已经取得相当表现，但由于 DPO 简单且计算开销极低，我们仍将其作为补充技术进行探索。如下文所示，即使极少量 DPO 训练也能明显减少幻觉工具调用，并提高推理稳定性。为支持该分析，我们首先定义评估中什么构成幻觉式工具使用。</p>
 <footer>原文第 37 页</footer></section><section class="page" id="page-38"><p><strong>工具幻觉与幻觉率的定义。</strong>我们将工具幻觉定义为：系统消息未声明任何工具时，模型仍尝试调用工具的任何情况。在 No-Tools 和 Hallucination-Penalty 设置中，模型应完全依靠内部推理；因此，任何包含工具调用的输出，例如 Python 执行请求、搜索调用或任何工具特定的 API 格式，都被视为幻觉。</p>
@@ -373,7 +373,7 @@
 <p>GPQA 更具挑战性，基线幻觉率更高；DPO 同样带来显著收益。准确率从 65.15% 提高到 69.19%，幻觉率从 8.33% 大幅降至仅 0.7%。这证实，模型容易不确定或过度触发工具调用时，基于偏好的微调尤其有效。</p>
 <p>总体而言，结果表明，即使极少量 DPO 训练也能明显减少幻觉式工具使用，同时提高推理准确率。这说明 DPO 为基于 RL 的对齐提供有价值的补充信号，在计算成本可以忽略的情况下，增强模型的可靠性</p><p class="continuation">（此句接原文第 39 页；训练设置中的重复句保留原文。）</p>
 <footer>原文第 38 页</footer></section><section class="page" id="page-39"><p class="continuation">（接原文第 38 页。）</p><p>与校准。</p>
-<figure><img decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/533a2e9b6a550fa55b3375c5ddb2ba4463eea16b31fadcdde1e988ef60bc8e06.png"></figure>
+<figure><img height="273" width="1122" decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/533a2e9b6a550fa55b3375c5ddb2ba4463eea16b31fadcdde1e988ef60bc8e06.png"></figure>
 <h2>D. 安全偏好数据</h2>
 <p>对于 RLHF 阶段，RM 训练数据包含与 SFT 安全子集相同的底层数据集，因此初始种子提示的分布相近。回答生成更加细致，以将过度拒绝和有害参与作为被拒绝回答处理。</p>
 <ul><li>对于有害提示，选中回答使用与 SFT 回答相近的策略生成。被拒绝回答是不安全的模型输出，通过两种方法生成：（i）应用越狱模板产生有害补全；（ii）直接提示模型，并使用内容安全审核分类器检测有害输出。</li>
@@ -381,7 +381,7 @@
 <p>所得回答对按照基于偏好的方案标注：对于有害提示，将 <安全、不安全> 补全标为 <选中、拒绝> 配对；对于安全提示，将 <安全、过度拒绝> 补全同样标为 <选中、拒绝> 配对。这一方法支持训练 RM，实现稳健的安全对齐，并缓解过度拒绝行为。</p>
 <p>为确保多样性，我们使用五（5）个不同开源模型，为每个提示生成选中与拒绝回答对，随后应用必要过滤，仅保留安全回答（作为选中回答）和不安全或过度拒绝回答（作为拒绝回答），构建候选选中与拒绝回答列表。最后，为每个提示从候选中随机选取一组选中与拒绝回答对。</p>
 <h2>E. 提示敏感性分析</h2>
-<figure><img decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/5fe6026dbfa75e2694aeac17504410eb690ede777dcc540933ab6e69c69dd9bd.png"></figure>
+<figure><img height="417" width="1428" decoding="async" loading="lazy" alt="原文第 39 页图表或公式" src="assets/images/5fe6026dbfa75e2694aeac17504410eb690ede777dcc540933ab6e69c69dd9bd.png"></figure>
 <footer>原文第 39 页</footer></section><section class="page" id="page-40"><p>LLM 的预测可能对输入的细微变化敏感（Nalbandyan et al., 2025）。即使简单、非对抗性的修改（例如改变提示措辞、答案格式指令或问题相对于提示的位置），也可能使模型输出发生足以改变单个预测乃至整体基准准确率的变化。为降低因只选择一个提示而高估或低估准确率的风险，我们使用多个提示评估模型。这更能反映模型面对日常、真实提示变化时的稳定性。</p>
 <p>为测量提示敏感性，我们为每个数据集构建一组提示，在措辞、指令细致程度（简略与详细）、问题位置（提示之前、中间或之后）和答案格式方面进行变化。对于每个提示，我们计算八个随机种子的平均准确率，再使用各提示平均值的标准差作为提示敏感性指标。提示敏感性结果见表 8。Nemotron 3 Nano 在所有数据集上的敏感性分数均低于 1，表明其对提示变化具有较强的稳定性与稳健性。</p>
 <footer>原文第 40 页</footer></section></body></html>
