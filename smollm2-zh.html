@@ -68,7 +68,7 @@
 <h4>数据混合</h4>
 <p>在稳定阶段的第三个也是最后一个阶段（8T 到 10T tokens，退火开始之前），我们加入 InfiMM-WebMath 中纯文本英文部分，与 OWM 一起使数学数据总占比达到约 10%，如图 2 所示。英文网页数据方面，我们重新审视消融结果，将 FineWeb-Edu 与 DCLM 的比例调整为 40/60。代码方面，我们用 Stack-Edu 替换 StarCoderData（第 3.4 节）。对于 Stack-Edu 中少于 4B tokens 的语言，即 TypeScript、Shell、Swift、Go、Rust 和 Ruby，我们使用相应的 StarCoder2Data 子集。还加入 StarCoder2（Lozhkov et al., 2024）的 Jupyter Notebooks，它们提供代码与解释交错的丰富、具有上下文的示例，从而增强模型对编程任务的推理。</p>
 <h4>观察结果</h4>
-<p>虽然加入这些新数据集改善了多个基准的表现，但我们在这一阶段观察到明显的损失尖峰；即使回退训练并跳过与尖峰相关的数据，它仍然存在（Chowdhery et al., 2023; Almazrouei et al., 2023）。确切原因仍未确定，不过大多数评测指标在这一阶段结束前恢复。</p>
+<p>虽然加入这些新数据集改善了多个基准的表现，但我们在这一阶段观察到明显的 loss spike；即使回退训练并跳过与尖峰相关的数据，它仍然存在（Chowdhery et al., 2023; Almazrouei et al., 2023）。确切原因仍未确定，不过大多数评测指标在这一阶段结束前恢复。</p>
 <h3>4.5. 衰减阶段：阶段 4</h3>
 <h4>数据混合</h4>
 <p>最后阶段在总训练时长的 10% 内，将学习率线性衰减至 0（从 10T 到 11T tokens）（Hägele et al., 2024）。遵循 Blakeney et al. (2024)，我们引入质量最高的数学数据集 InfiWebMath-3+ 与 FineMath 4+。此外，将混合的 0.08% 分配给 OWM，0.02% 分配给 AugGSM8K（Li et al., 2024a）；后者是 GSM8K 基准训练集的增强版本，已成为近期预训练数据集中的常见组成部分（Achiam et al., 2023; Dubey et al., 2024; Ai2, 2024）。数学内容总计占混合的 14%。我们扩展 Stack-Edu，以包含阶段 3 未覆盖的其他编程语言，并将其占比设为 24%。我们保持编程语言间的自然分布，为 Python 分配较高比例。其余混合包括 58% 英文网页数据，保持 DCLM 相对于 FineWeb-Edu 的较高比例，以及 4% Cosmopedia v2（Allal et al., 2024），后者提供 30B tokens 的高质量合成教材、博客文章和故事。</p>
@@ -208,7 +208,7 @@
 <p class="reference">Team, G., Riviere, M., Pathak, S., Sessa, P. G., Hardin, C., Bhupatiraju, S., Hussenot, L., Mesnard, T., Shahriari, B., Ramé, A., et al. Gemma 2：在实用规模上改进开放语言模型, 2024. URL https://arxiv. org/abs/2408.00118, 1(3), 2024.</p><details class="note"><summary>本页原文链接</summary><ul><li><a href="https://api.semanticscholar.org/CorpusID:270711474">https://api.semanticscholar.org/CorpusID:270711474</a></li><li><a href="https://huggingface.co/datasets/cerebras/SlimPajama-627B">https://huggingface.co/datasets/cerebras/SlimPajama-627B</a></li><li><a href="https://aclanthology.org/N19-1421">https://aclanthology.org/N19-1421</a></li></ul></details><footer>原文第 13 页</footer></section><section class="page" id="page-14"><p class="reference">Teknium. OpenHermes 2.5：面向通用 LLM 助手的开放合成数据集, 2023a. URL https://huggingface.co/datasets/ teknium/OpenHermes-2.5.</p>
 <p class="reference">Teknium. OpenHermes 2.5：面向通用 LLM 助手的开放合成数据集, 2023b. URL https://huggingface.co/datasets/ teknium/OpenHermes-2.5.</p>
 <p class="reference">Touvron, H., Lavril, T., Izacard, G., Martinet, X., Lachaux, M.-A., Lacroix, T., Rozière, B., Goyal, N., Hambro, E., Azhar, F., Rodriguez, A., Joulin, A., Grave, E., and Lample, G. Llama：开放、高效的基础语言模型, 2023.</p>
-<p class="reference">Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L. u., and Polosukhin, I. attention 就是你所需要的一切. In Advances in Neural Information Processing Systems, 2017.</p>
+<p class="reference">Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L. u., and Polosukhin, I. Attention 就是你所需要的一切. In Advances in Neural Information Processing Systems, 2017.</p>
 <p class="reference">Wan, F., Huang, X., Yang, T., Quan, X., Bi, W., and Shi, S. Explore-Instruct：通过主动探索提高特定领域指令的覆盖. arXiv 预印本 arXiv:2310.09168, 2023.</p>
 <p class="reference">Wang, H., Lin, Y., Xiong, W., Yang, R., Diao, S., Qiu, S., Zhao, H., and Zhang, T. 面向多样化用户偏好的 LLM 算术控制：利用多目标奖励实现定向偏好对齐. In ACL, 2024a.</p>
 <p class="reference">Wang, H., Xiong, W., Xie, T., Zhao, H., and Zhang, T. 通过多目标奖励建模与 MoE 实现可解释偏好. In EMNLP, 2024b.</p>

@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Qwen3.5到3.7的官方博客、HF Hub配置和Transformers实现对照，含历史思考、工具协议、MTP、视觉与上下文细节。"><title>Qwen3.5–3.7 技术演进与源码核查</title><link rel="stylesheet" href="assets/document.css"></head><body class="technical-note"><nav class="document-nav" aria-label="文档与章节导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-meta">核查日期：2026-10-10 · 技术核查汇总（非论文译文）</div><div class="nav-links"><a href="#overview">概览</a><a href="#blog">版本更新</a><a href="#code">配置与代码</a><a href="#sources">来源与范围</a></div></nav><main><section class="page" id="overview"><header><a href="https://speedcell4.github.io/llm-report-translations/">大模型技术资料</a><time datetime="2026-10-10">2026年10月10日</time></header><h1>Qwen3.5–3.7 技术演进与源码核查</h1><p class="intro">汇总官方博客中的架构、训练与 agent 更新，并用HF Hub配置、聊天模板、权重索引及Transformers实现补足具体细节。</p><div class="note"><strong>核心结论：</strong>本次未找到3.5、3.6、3.7主系列的统一官方技术报告。开放3.6-27B与35B-A3B沿用对应3.5主体结构；历史思考输入、工具参数序列化和部分推理默认值存在可确认变化。相同推理结构不能说明训练方法相同；闭源3.7-Max内部细节仍以官方披露为限。</div><div class="contents"><a href="#blog">博客与版本更新</a><a href="#code">Hub与代码细节</a><a href="#sources">来源版本</a><a href="qwen38-next-zh.html">2608.30320v1全文译文</a></div></section><section class="page" id="blog"><h2>一　官方博客与版本更新</h2><h3 id="blog-1">结论</h3>
 <p>此次未找到 Qwen3.5、Qwen3.6、Qwen3.7 主系列的统一官方技术报告。3.5、3.7 博客仍提到 upcoming technical report；这表示公开材料有缺口，不证明报告绝对不存在。各版本仍有具体技术披露，不能理解为只有模型名和榜单变化。</p>
 <h3 id="blog-2">主系列逐项变化</h3>
-<h4 id="blog-3">Qwen3.5：原生多模态、混合 attention 与训练系统</h4>
+<h4 id="blog-3">Qwen3.5：原生多模态、混合 Attention 与训练系统</h4>
 <p>来源：<a href="https://qwen.ai/blog?id=qwen3.5">官方发布博客</a>。</p>
 <ul>
 <li>以文本、图像联合早期融合实现原生视觉语言预训练，增加视觉文本、多语言及 STEM 数据并强调过滤；未给出可完整复现的数据比例和训练配方。</li>
@@ -13,7 +13,7 @@
 <li>强调扩展 RL 环境的任务质量、难度与泛化，但更多方法和分析仍指向待发布报告。</li>
 <li>托管 Qwen3.5-Plus 的默认1M上下文和内置工具是服务规格，不能直接套到所有开放权重。</li>
 </ul>
-<h4 id="blog-4">Qwen3.6：工程 agent 与历史思考保留</h4>
+<h4 id="blog-4">Qwen3.6：工程 Agent 与历史思考保留</h4>
 <p>来源：<a href="https://qwen.ai/blog?id=qwen3.6">Plus 博客</a>、<a href="https://qwen.ai/blog?id=qwen3.6-35b-a3b">35B-A3B 博客</a>、<a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B">35B 官方模型卡</a>、<a href="https://qwen.ai/blog?id=qwen3.6-27b">27B 博客</a>。</p>
 <ul>
 <li>Plus 是托管版本，发布重点是实际工程编码和多模态任务，默认1M上下文；未公开其完整参数规模、架构与训练配方。</li>
@@ -67,7 +67,7 @@
 <li>环境扩展强调质量、多样性以及未见过的环境中的泛化。</li>
 <li>将 Task、Harness、Verifier 分离并组合，训练时变化工具框架及其版本与验证方式，目标是避免策略只适应特定框架。</li>
 <li>Dynamic Cumulative Survival Games用于训练上千步执行时的策略一致性、上下文记忆，以及抵抗上下文衰退与指令漂移。</li>
-<li>reward hacking 监测展示了自演化检查工具：约80小时、10K工具调用，产生13条规则并标记1618个案例。这是训练研究案例，不是所有部署的标配。</li>
+<li>Reward hacking 监测展示了自演化检查工具：约80小时、10K工具调用，产生13条规则并标记1618个案例。这是训练研究案例，不是所有部署的标配。</li>
 <li>Kernel优化案例运行约35小时、1158次工具调用、432次评估。案例速度收益不能当作普遍基准收益。</li>
 <li>未公开Max精确参数、层数、完整数据量和训练超参数；博客仍把更完整scaling方法分析指向后续报告。</li>
 </ul>
@@ -124,7 +124,7 @@
 <div class="table-wrap" tabindex="0" role="region" aria-label="横向滚动查看完整表格"><table>
 <thead>
 <tr>
-<th>checkpoint</th>
+<th>Checkpoint</th>
 <th  class="layout-10">层数 L/F</th>
 <th  class="layout-10">hidden size</th>
 <th  class="layout-10">full attention Q/KV heads</th>
@@ -212,7 +212,7 @@
 <p>源码：<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L204-L220">RMSNormGated L204–220</a>、<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L735-L807">full attention L735–807</a>、<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/configuration_qwen3_5.py#L90-L119">配置兼容默认 L90–119</a>。</p>
 <h3 id="code-3">preserve_thinking到底做什么</h3>
 <p>对应27B与35B模板都是同样两处差异。第一处：3.5只在assistant消息位于最近用户提问之后时保留think块；3.6增加<code>preserve_thinking is true</code>条件，可以把更早轮次思考一起放回模型输入。</p>
-<p>这不是持久化内存或Transformer新增状态；服务必须保留并重新提供历史reasoning_content，或含think标记的content，否则模板不能恢复被丢弃的思考。用户发起下一轮提问后，默认设置会去掉更早轮次思考；同一次提问的工具调用链内，3.5本来就会保留当前轮思考。</p>
+<p>这不是持久化内存或 Transformer 新增状态；服务必须保留并重新提供历史reasoning_content，或含think标记的content，否则模板不能恢复被丢弃的思考。用户发起下一轮提问后，默认设置会去掉更早轮次思考；同一次提问的工具调用链内，3.5本来就会保留当前轮思考。</p>
 <p><code>enable_thinking=false</code>是生成前缀放入空think块，和“是否保留历史think”是独立设置。不存在源码新增thinking/non-thinking两套独立模型。</p>
 <p>3.6模型卡明确另有训练支持历史思考利用，这是训练披露；Jinja差异只证明输入协议，不能单独证明训练方法或性能收益。保留历史可能减少重复推理、提高前缀缓存复用，也会增加输入长度，实际总耗时取决于任务和服务缓存。</p>
 <p>模板：<a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/blob/59d61f3ce65a6d9863b86d2e96597125219dc754/chat_template.jinja">3.5-35B</a>、<a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/chat_template.jinja">3.6-35B</a>；训练说明：<a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/README.md">3.6模型卡</a>。</p>
@@ -228,17 +228,17 @@
 <li>模型卡建议长视频提高video longest_edge到469762048（官方标注约224K video tokens）；不能以默认采帧/预算直接期待长视频评测效果，实际还受fps和上下文预算影响。</li>
 </ul>
 <p>来源：<a href="https://huggingface.co/Qwen/Qwen3.5-27B/blob/fc05daec18b0a78c049392ed2e771dde82bdf654/generation_config.json">3.5-27B generation_config</a>、<a href="https://huggingface.co/Qwen/Qwen3.6-27B/blob/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9/generation_config.json">3.6-27B generation_config</a>、<a href="https://huggingface.co/Qwen/Qwen3.6-27B/blob/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9/README.md">3.6-27B模型卡</a>。</p>
-<h3 id="code-6">tokenizer 没有另换一套</h3>
+<h3 id="code-6">Tokenizer 没有另换一套</h3>
 <p>四个对应 checkpoint 的 tokenizer.json均为12,807,982字节，Hub LFS SHA256均为<code>5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42</code>。tokenizer_config除内嵌聊天模板之外无差异；词表配置248320、图像/视频特殊 token ID也一致。由官方blob哈希确认文件相同，而非只比较vocab_size。</p>
 <p>因此3.6的变化不能解释为新 tokenizer 带来的压缩率提升。这个结论限定上述27B/35B checkpoint，不外推闭源Plus/Max。来源为各模型固定revision的官方Hub文件元数据；仓库版本列于本页来源表。</p>
 <h3 id="code-7">MTP 确有权重，但支持取决于引擎</h3>
-<p>四个 checkpoint 配置均为mtp_num_hidden_layers=1、mtp_use_dedicated_embeddings=false；权重索引都有mtp.*参数。27B两版各15个 MTP 键；35B从785键变19键，原因是3.5的 MTP 专家以256组gate/up/down分别存储，3.6打包成experts.gate_up_proj和experts.down_proj。键数减少不表示减少专家。主干非 MTP 键集合两版相同。</p>
+<p>四个 checkpoint 配置均为mtp_num_hidden_layers=1、mtp_use_dedicated_embeddings=false；权重索引都有 mtp.*参数。27B两版各15个 MTP 键；35B从785键变19键，原因是3.5的 MTP 专家以256组gate/up/down分别存储，3.6打包成experts.gate_up_proj和experts.down_proj。键数减少不表示减少专家。主干非 MTP 键集合两版相同。</p>
 <p>当前Transformers模型代码把<code>^mtp.*</code>作为可忽略的unexpected keys，没有对应 MTP 模块和forward。普通AutoModel加载并generate不能自动获得该 checkpoint 的 MTP 加速。官方模型卡提供vLLM参数<code>--speculative-config '{&quot;method&quot;:&quot;qwen3_next_mtp&quot;,&quot;num_speculative_tokens&quot;:2}'</code>，说明引擎层需要明确启用；本次没有审计或运行vLLM实现。MTP 隐藏层数1也不能直接当作一次可预测 token 数上限。</p>
 <p>来源：<a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/blob/59d61f3ce65a6d9863b86d2e96597125219dc754/model.safetensors.index.json">3.5-35B权重索引</a>、<a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/model.safetensors.index.json">3.6-35B权重索引</a>、<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L903-L913">Transformers忽略 MTP L903–913</a>。</p>
-<h3 id="code-8">混合 attention、MoE、位置编码的实际运算</h3>
+<h3 id="code-8">混合 Attention、MoE、位置编码的实际运算</h3>
 <ul>
 <li>GatedDeltaNet：Q/K/V经过kernel4的depthwise因果卷积；Q/K做L2 normalization；sigmoid 控制delta更新强度，softplus/exp控制递归衰减。Q/K与V头数可不同，重复匹配。<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L490-L647">实现L490–647</a></li>
-<li>MoE：FP32 softmax 后top-k，入选专家概率重归一化；共享专家始终执行，其输出再乘独立 sigmoid 门。35B/122B是8个路由专家+1个共享，397B是10+1；不能简单用总参数乘8/256得到激活参数。<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py#L871-L909">实现L871–909</a></li>
+<li>MoE：FP32 softmax 后 top-k，入选专家概率重归一化；共享专家始终执行，其输出再乘独立 sigmoid 门。35B/122B是8个路由专家+1个共享，397B是10+1；不能简单用总参数乘8/256得到激活参数。<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py#L871-L909">实现L871–909</a></li>
 <li>位置编码：head_dim256的25%即64维做旋转；MRoPE [11,11,10]在频率上交错分配时间/高/宽，纯文本三轴相同。不能把重复配置字段解释为新位置编码。<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L135-L200">实现L135–200</a></li>
 <li>缓存：linear层存卷积/递归状态，full层仍存历史KV。大量层省去了完整KV，并不使整个模型成为常量内存。<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L779-L783">full KV L779–783</a></li>
 </ul>
