@@ -619,3 +619,24 @@ figure.formula { max-width: 350px; margin: 18px auto; }
     width: auto !important;
   }
 }
+
+/* Reference containers use the same spacing as individual references. */
+.references p { font-size: 16px; line-height: 1.5; margin: 10px 0; text-indent: 0; text-align: left; }
+
+/* Semantic paper header: one hierarchy for every translation. */
+.translation .paper-header { border: 0; padding: 0; margin-bottom: 18px; }
+.translation .paper-header :is(p, div, ul) { text-align: center; text-indent: 0; }
+.translation .paper-header .authors { font-size: 18px; font-weight: normal; line-height: 1.6; white-space: normal; }
+.translation .paper-header .affiliations { font-size: 16px; line-height: 1.6; }
+.translation .paper-header :is(.cover-meta, .links, .note, .footnote) { font-size: 14px; line-height: 1.6; font-family: inherit; }
+.translation .paper-header :is(h2, h3) { text-align: center; text-indent: 0; }
+.translation .paper-header h3 { font-size: 16px; }
+.translation .paper-header ul { list-style: none; padding: 0; }
+.translation .paper-header li { font-size: 14px; }
+.translation .reference, .translation .references p { font-size: 16px; line-height: 1.5; margin: 10px 0; text-indent: 0; text-align: left; }
+@media (max-width: 640px) {
+  .translation .paper-header .authors { font-size: 17px; }
+}
+
+.translation .paper-header .subtitle { font-size: 22px; font-weight: bold; }
+.translation .page figure img.fit-page { width: 100%; max-width: 100% !important; }

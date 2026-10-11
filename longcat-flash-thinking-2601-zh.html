@@ -1,12 +1,13 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LongCat-Flash-Thinking-2601 技术报告 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=d55ff23067b7"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">LongCat-Flash-Thinking-2601 技术报告</div><div class="document-meta">LongCat-Flash-Thinking-2601 Technical Report<br>首次提交：2026-01-23 · 译文版本：arXiv:2601.16725v2（2026-02-01） · 页码覆盖 27/27 页<br><a href="https://arxiv.org/abs/2601.16725v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2601.16725v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a></div></nav><section class="page" id="page-1"><h1>LongCat-Flash-Thinking-2601 技术报告</h1>
-<p class="author cover-info">美团 LongCat 团队（Meituan LongCat Team）</p>
-<p class="note layout-8" >longcat-team@meituan.com</p>
-<h2>摘要</h2>
-<p>我们介绍 LongCat-Flash-Thinking-2601，这是一个拥有 5,600 亿参数的开源 MoE 推理模型，具备卓越的 agent 推理能力。LongCat-Flash-Thinking-2601 在广泛的 agent 基准上达到开源模型中的最先进水平，包括 agent 搜索、agent 工具使用和 tool-integrated reasoning。除基准表现之外，该模型在复杂工具交互中展现出强大的泛化能力，并能在具有噪声的真实环境中保持稳健行为。其先进能力源自一个统一的训练框架：先并行训练各领域专家，再进行融合，同时从预训练到后训练，对数据构建、环境、算法和基础设施进行端到端协同设计。特别是，模型在复杂工具使用中的强大泛化能力，来自我们对环境扩展和系统性任务构建的深入探索。为优化具有长尾偏斜分布的生成过程和多轮 agent 交互，并支持跨越 20 多个领域、超过 10,000 个环境的稳定训练，我们系统性扩展了异步强化学习框架 DORA，实现稳定、高效的大规模多环境训练。此外，考虑到真实任务本质上存在噪声，我们对真实世界的噪声模式进行了系统性分析和分解，并设计有针对性的训练流程，将这些不完善之处显式纳入训练过程，从而提高模型在真实应用中的稳健性。为进一步提升复杂推理任务的表现，我们引入 Heavy Thinking（深度思考）模式，通过密集的并行思考，同时扩展推理的深度和宽度，实现有效的 test-time scaling。我们发布模型 checkpoint，以促进 agent 系统的后续研究和实际应用。</p>
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LongCat-Flash-Thinking-2601 技术报告 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">LongCat-Flash-Thinking-2601 技术报告</div><div class="document-meta">LongCat-Flash-Thinking-2601 Technical Report<br>首次提交：2026-01-23 · 译文版本：arXiv:2601.16725v2（2026-02-01） · 页码覆盖 27/27 页<br><a href="https://arxiv.org/abs/2601.16725v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2601.16725v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a></div></nav><main class="document-content"><section class="page" id="page-1" aria-label="原文第 1 页"><header class="paper-header"><h1>LongCat-Flash-Thinking-2601 技术报告</h1>
+<p class="cover-info authors">美团 LongCat 团队（Meituan LongCat Team）</p>
+<p class="note layout-8 cover-info cover-meta">longcat-team@meituan.com</p>
+</header><h2>摘要</h2>
+<p class="abstract">我们介绍 LongCat-Flash-Thinking-2601，这是一个拥有 5,600 亿参数的开源 MoE 推理模型，具备卓越的 agent 推理能力。LongCat-Flash-Thinking-2601 在广泛的 agent 基准上达到开源模型中的最先进水平，包括 agent 搜索、agent 工具使用和 tool-integrated reasoning。除基准表现之外，该模型在复杂工具交互中展现出强大的泛化能力，并能在具有噪声的真实环境中保持稳健行为。其先进能力源自一个统一的训练框架：先并行训练各领域专家，再进行融合，同时从预训练到后训练，对数据构建、环境、算法和基础设施进行端到端协同设计。特别是，模型在复杂工具使用中的强大泛化能力，来自我们对环境扩展和系统性任务构建的深入探索。为优化具有长尾偏斜分布的生成过程和多轮 agent 交互，并支持跨越 20 多个领域、超过 10,000 个环境的稳定训练，我们系统性扩展了异步强化学习框架 DORA，实现稳定、高效的大规模多环境训练。此外，考虑到真实任务本质上存在噪声，我们对真实世界的噪声模式进行了系统性分析和分解，并设计有针对性的训练流程，将这些不完善之处显式纳入训练过程，从而提高模型在真实应用中的稳健性。为进一步提升复杂推理任务的表现，我们引入 Heavy Thinking（深度思考）模式，通过密集的并行思考，同时扩展推理的深度和宽度，实现有效的 test-time scaling。我们发布模型 checkpoint，以促进 agent 系统的后续研究和实际应用。</p>
 <p class="note">原文版本：<a href="https://arxiv.org/abs/2601.16725v2">arXiv:2601.16725v2</a> [cs.AI]，2026 年 2 月 1 日。</p>
 <p class="links">LongCat 对话：<a href="https://longcat.ai">https://longcat.ai</a><br>Hugging Face：<a href="https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking-2601">https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking-2601</a><br>GitHub：<a href="https://github.com/meituan-longcat/LongCat-Flash-Thinking-2601">https://github.com/meituan-longcat/LongCat-Flash-Thinking-2601</a></p>
-<figure><img height="687" width="1416" decoding="async" loading="lazy" alt="原文第 1 页图表或公式" src="assets/images/73787550d1a3db20566ebce75176dbcd63edb55d2a8a5bf0d3c3b9dd13dea02d.png"></figure>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><h2>1　引言</h2>
+<figure><img alt="原文第 1 页图表或公式" src="assets/images/73787550d1a3db20566ebce75176dbcd63edb55d2a8a5bf0d3c3b9dd13dea02d.png" width="1416" height="687" loading="lazy" decoding="async"></figure>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2" aria-label="原文第 2 页"><h2>1　引言</h2>
 <p>推理模型的近期进展推动了数学和编程等复杂任务的快速发展，在某些情况下甚至超越了顶尖人类专家 [DeepSeek-AI, 2025, Shao et al., 2025, Anthropic, 2025, Google, 2025]。由此自然产生下一个问题：如何将这种复杂问题求解能力用于解决复杂的真实生活任务，又如何在此基础上进一步扩展复杂问题求解能力？随着模型内在推理能力接近极限，我们发现，与外部环境交互成为进一步进步的关键机制 [MoonshotAI, 2025, DeepSeek-AI et al., 2025]。从这一角度看，agent 推理可以理解为通过与外部环境进行自适应交互来解决复杂问题的能力。除了内部思考，先进的 agent 推理能力还要求模型决定何时以及如何与环境交互，并有效整合环境反馈，以维持和推进推理过程。这样，推理与交互自然交织、相互强化，共同实现更通用、更强大的问题求解行为 [MiniMax, 2025]。然而，实现这种 agent 推理能力，对现有模型和训练流程提出了重大挑战。Agent 任务通常涉及长程轨迹、异构环境以及具有长尾特征的交互动态，对从预训练到后训练阶段的数据筛选整理、环境构建、强化学习策略和系统级基础设施提出了新的要求。</p>
 <p>在本研究中，我们介绍 LongCat-Flash-Thinking-2601，这是一个强大且高效的 MoE 推理模型，总参数量为 560B，平均每个 token 激活 27B 参数，具备强大的 agent 推理能力。LongCat-Flash-Thinking-2601 的预训练大体遵循 LongCat-Flash-Chat 的方案 [Meituan et al., 2025]，保留原始数据分布，以维持具有竞争力的通用推理表现。在此基础上，我们通过精心设计的中期训练阶段，将模型进一步扩展到大规模 agent 推理。与传统推理相比，agent 行为通常涉及主动调用工具的长程轨迹。然而，这类交互模式在真实语料中极为稀缺，其中大多数数据主要由自然语言构成。因此，未经适配的模型对 agent 交互动态基本不熟悉，导致强化学习阶段的探索效率低下。为应对这一挑战，我们在中期训练中让模型接触中等规模的合成结构化 agent 轨迹，为 agent 推理行为提供良好的初始化。</p>
 <p>在后训练中，我们着重高效扩展 RL 计算量，以提升 agent 推理能力。除了搜索和代码等特定 agent 场景，我们还将跨任务、跨环境的泛化能力视为先进 agent 行为的核心特征。这种能力主要通过与多样化环境交互获得，因此，环境构成了学习的试验场。为此，我们设计了一条自动化环境扩展流程，构建覆盖 20 多个领域的复杂、多样化环境，同时严格保证可执行性与可验证性。由于生成的环境在领域和难度上具有显著异质性，在这些环境中训练需要细致地协同设计训练策略与基础设施支持，以确保多领域环境学习的稳定性和有效性。为在这一设定下支持大规模 agent 强化学习，我们扩展了多版本异步训练系统 Dynamic ORchestration for Asynchronous Rollout（DORA，异步轨迹生成的动态编排），使最多 32,000 个环境能够并发执行，并实现可扩展、稳定的训练。然而，向真实场景泛化仍然极具挑战，因为真实环境本质上并不完善。为缩小理想化训练设定与实际部署之间的差距，我们系统性分析真实世界的噪声，并设计一条自动化流程，逐步将多类型、多级别的环境不完善因素纳入多领域环境训练过程。</p>
@@ -15,7 +16,7 @@
 <p>我们的工作有三项核心贡献：</p>
 <ul><li><strong>环境扩展与多领域环境训练。</strong>我们开发了一套可扩展的环境构建和任务生成框架，产生大量高质量、可执行、可验证的 agent 环境。</li></ul>
 <p class="continuation">（第一项贡献在原文第 3 页接续。）</p>
-<footer>原文第 2 页</footer></section><section class="page" id="page-3"><ul><li><strong>环境扩展与多领域环境训练（接上页）。</strong>在此基础上，我们扩展了异步强化学习基础设施，支持稳定、高效的多领域环境训练，使模型能够获得可跨不同领域泛化的 agent 技能。</li>
+<footer>原文第 2 页</footer></section><section class="page" id="page-3" aria-label="原文第 3 页"><ul><li><strong>环境扩展与多领域环境训练（接上页）。</strong>在此基础上，我们扩展了异步强化学习基础设施，支持稳定、高效的多领域环境训练，使模型能够获得可跨不同领域泛化的 agent 技能。</li>
 <li><strong>噪声环境下的稳健 agent 训练。</strong>为应对真实环境本质上的不完善，我们系统性分析了环境噪声的主要来源，并设计自动化流程，将多类型、多级别噪声注入训练环境。我们采用基于课程的强化学习策略，逐步增加噪声复杂度，显著提升模型在不完善条件下的稳健性与表现。</li>
 <li><strong>用于 test-time scaling 的 Heavy Thinking 模式。</strong>我们引入 Heavy Thinking 模式，通过同时扩展推理宽度与深度，实现推理的有效 test-time scaling。通过并行轨迹探索和迭代式推理完善，该模式进一步提升了模型在具有挑战性的推理与 agent 任务上的表现。</li></ul>
 <h2>2　预训练</h2>
@@ -29,7 +30,7 @@
 <ul><li><strong>工具分解：</strong>从简单的工具调用轨迹出发，我们迭代地将部分工具参数隐藏到环境中。相应地，我们合成模型交互以提取这些参数，逐步构建更复杂的轨迹。</li>
 <li><strong>推理分解：</strong>针对模型输出中的每个动作步骤，我们生成多个备选候选，并用这些候选替换原始动作。随后，我们合成模型的推理步骤，使其选择最合适的候选。</li></ul>
 <p class="continuation">（推理分解的说明在原文第 4 页接续。）</p>
-<footer>原文第 3 页</footer></section><section class="page" id="page-4"><figure><img height="450" width="1416" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/0c37b354e1c0f3c398954b4f095e6aef0a765ed00ddd16a87564f4e8d3ee7efc.png"></figure>
+<footer>原文第 3 页</footer></section><section class="page" id="page-4" aria-label="原文第 4 页"><figure><img alt="原文第 4 页图表或公式" src="assets/images/0c37b354e1c0f3c398954b4f095e6aef0a765ed00ddd16a87564f4e8d3ee7efc.png" width="1416" height="450" loading="lazy" decoding="async"></figure>
 <p class="continuation">（接原文第 3 页“推理分解”。）</p>
 <p>这一过程将轨迹转化为体现 agent 跨多个步骤推理的决策过程。</p>
 <h3>基于环境的合成</h3>
@@ -41,7 +42,7 @@
 <h2>3　扩展强化学习</h2>
 <p>利用强化学习进行后训练，已成为激发更强推理能力的主要方法。沿用 LongCat-Flash-Thinking [Meituan. et al., 2025]，我们采用统一的多领域后训练流程：首先在共享框架下训练各领域专用的专家模型，再通过模型层面和数据层面的合并，将它们整合为单一通用模型。</p>
 <p>具有 agent 推理能力的强化学习需要：（i）精心准备的训练设置，包括可扩展的环境构建、高质量冷启动数据以及经过良好校准的 RL 任务集；（ii）能够持续支持高吞吐、异步、长尾多轮轨迹生成的专用基础设施；（iii）在异构领域与不同难度水平下保持稳定、有效的专门训练策略。在本节中，我们介绍一套系统性流程，解决这些挑战并实现可扩展的 agent 强化学习。</p>
-<footer>原文第 4 页</footer></section><section class="page" id="page-5"><figure><img height="573" width="1416" decoding="async" loading="lazy" alt="原文第 5 页图表或公式" src="assets/images/2bf013cb3b82b3d22905f060183b769f721a848980a1043acf07580cdddb84eb.png"></figure>
+<footer>原文第 4 页</footer></section><section class="page" id="page-5" aria-label="原文第 5 页"><figure><img alt="原文第 5 页图表或公式" src="assets/images/2bf013cb3b82b3d22905f060183b769f721a848980a1043acf07580cdddb84eb.png" width="1416" height="573" loading="lazy" decoding="async"></figure>
 <h3>3.1　RL 准备工作</h3>
 <p>在进行大规模强化学习之前，需要完成若干必要的准备步骤。标准强化学习依赖两个核心组成部分：（i）经过良好初始化、具备与任务相关的基本行为的策略；（ii）经过系统性设计、能够支持稳定且有效学习的训练任务集。除了这些共同组成部分，agent 强化学习还需要可靠、可扩展的环境基础，以支持长程、交互驱动的训练。</p>
 <h4>3.1.1　环境</h4>
@@ -50,28 +51,28 @@
 <p>对于每个编程任务，agent 必须在可执行代码沙箱中操作，并与各种终端工具实时交互。这一设定带来两项主要挑战：对高效、大规模资源调度的需求，以及工具和执行环境的异质性。在大规模训练中，沙箱系统必须同时保证灵活性和稳健性。为应对这些挑战，我们设计了可扩展的执行沙箱系统，提供统一工具接口和高吞吐交互。为处理真实代码执行场景的异质性，我们将搜索、文件读写、代码编辑和 shell 执行等常用工具整合为标准化环境接口。为进一步支持大规模训练，我们实现高并发沙箱调度器，异步分配和回收沙箱实例，将任务分派到工作节点，并并行执行数千个沙箱，从而将环境启动和阻塞开销移出训练的关键路径。</p>
 <h4>Agent 工具使用环境</h4>
 <p>先进 agent 推理能力的核心特征是泛化，即在已知环境中获得有效行为，并可靠地将其迁移到未见过的场景。为训练这样的通用 agent，我们认为，可迁移的 agent 推理能力应当从对多样化工具集和交互模式的接触中涌现。虽然设计一个能够完整捕获真实工具使用复杂性的单一元环境并不可行，但我们发现，一组足够多样化的环境能够提供基础，使模型形成可迁移、可泛化的工具使用行为。然而，在实践中，构建这样的环境面临不可忽视的挑战，因为不同领域对交互接口、执行机制和评估标准提出了不同要求。</p>
-<footer>原文第 5 页</footer></section><section class="page" id="page-6"><figure><img height="561" width="1416" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/671029725202702e065cd91572730421f3e3e2e34d3833aecd8bc7a930ef9843.png"></figure>
+<footer>原文第 5 页</footer></section><section class="page" id="page-6" aria-label="原文第 6 页"><figure><img alt="原文第 6 页图表或公式" src="assets/images/671029725202702e065cd91572730421f3e3e2e34d3833aecd8bc7a930ef9843.png" width="1416" height="561" loading="lazy" decoding="async"></figure>
 <p>我们设计了一条全自动流程，将高层领域规范转化为可执行图。如图 3 所示，该流程根据领域定义合成专用工具集，并将其功能抽象为统一数据库模式，同时显式定义工具—数据库映射。基于这一模式层面的规范，流程随后自动生成数据库实现和相应的工具代码。为确保正确性和稳健性，我们通过单元测试与辅助调试 agent 验证生成代码。在实践中，这条流程将模式层面的设计转化为完全可执行工具实现的成功率超过 95%。最后，我们根据经过验证的工具集构建工具依赖图，作为后续环境构建与扩展的基础。</p>
 <p>利用自动化流程，我们构建了一组领域专用工具图 \(\mathcal{G}\)，覆盖 20 多个领域。每个工具图 \(G \in  \mathcal{G}\) 都包含超过 60 个工具，组织为密集的依赖图，并配有相应的可执行、工具专用数据库模式实现，为大规模探索与多样化环境构建提供足够的结构复杂度。</p>
 <p>接下来介绍基于领域图构建可执行环境的流程。给定领域专用工具图 \(G\)，我们首先采样一条中等规模的工具链 \(s_{1}\) ⊂ \(G\)。此前被选中过的工具，其采样概率会逐步降低，以促进任务多样性。对于 \(s_{1}\) 中的每个工具，我们依次实例化相应的数据库状态，确保所有必要工具依赖均得到充分满足。在构建与工具关联的数据库后，我们自动生成以该工具链为基础的任务。采样得到的 \(s_{1}\) 作为生成任务的一条可执行工具链。为减轻潜在人类先验偏差，任务生成器被限制为只能使用完整工具链，不进行任何刻意的任务设计。具体而言，每个生成任务包含三个部分：（\(i\)）任务描述；（ii）用户画像；（iii）评估准则。为确保监督可靠，我们通过多轮一致性检查验证评估准则，保证任何可执行的工具链都可以作为正确解被接受，而错误或不完整的轨迹始终被拒绝。</p>
 <p>我们注意到，任务难度来自两个互补来源：交互复杂度和环境复杂度。通过合成需要不同程度澄清、规划与多步骤交互的多样化用户提示词，我们保证交互复杂度，鼓励模型表现出丰富、自适应的 agent 行为。环境复杂度则通过底层工具图的结构性质量化，包括所涉及工具节点的数量以及它们之间的连接密度。</p>
 <p>增加环境复杂度的一种自然方式，是通过从 \(G\) 引入额外工具节点、同时维护其数据库实例，将初始工具链 \(s_{1}\) 扩展为更大的子图 \(R(s_{1})\)。值得注意的是，扩展后的环境还可能包含多条有效的可执行工具链。然而，随着子图增长，维持跨工具的数据库一致性变得越来越困难。特别是，由于工具依赖图施加的约束，不受控地引入额外工具节点，可能引发此前未满足依赖的级联反应，需要大量扩充数据库并维护众多辅助工具节点。一旦数据库状态在扩展过程中变得不一致，工具调用就可能产生不可预测的结果，使有效的工具轨迹也无法执行。这可能导致正确解被错误判定为失败，从而在训练中引入有偏的负奖励。为减轻这一问题，我们通过延伸可执行工具链来扩展环境，而不是盲目注入随机工具。具体而言，从 \(s_{1}\) 开始，我们在工具图上进行类似 BFS 的扩展，并且只有在新工具节点的全部依赖都已由先前实例化的工具满足、且这些工具的数据库状态已完整构建时，才添加该节点。</p>
 <p class="continuation">（受控扩展策略的说明在原文第 7 页接续。）</p>
-<footer>原文第 6 页</footer></section><section class="page" id="page-7"><p class="continuation">（接原文第 6 页。）</p>
+<footer>原文第 6 页</footer></section><section class="page" id="page-7" aria-label="原文第 7 页"><p class="continuation">（接原文第 6 页。）</p>
 <p>这种受控扩展策略，使我们能够在保留可执行性和可靠监督的同时，逐步增加环境复杂度。</p>
 <p>通过这种受控图扩展，我们将 \(s_{1}\) 扩展为更复杂的子图 \(R(s_{1})\)。将得到的扩展环境记为 \(E_{1} = R(s_{1})\)。令 \(D_{1} = G\) ∖ \(E_{1}\) 表示 \(E_{1}\) 尚未使用的工具节点。进一步的设计选择是，是否初始化另一条种子可执行工具链 \(s_{2}\) ⊆ \(D_{1}\)，并将其扩展为 \(R(s_{2})\)，以构建环境：</p>
-<p  class="layout-9">E₂ = R(s₁) ∪ R(s₂)，</p>
+<p class="layout-9">E₂ = R(s₁) ∪ R(s₂)，</p>
 <p>从而进一步增加环境复杂度。我们根据以下因素作出这一决定：（\(i\)）当前环境的结构复杂度 \(c(E_{1})\)；（ii）从剩余图中识别新有效工具链的难度 \(g(D_{1})\)；（iii）剩余未使用节点的数量 \(|D_{1}|\)。具体而言，给定当前环境：</p>
-<p  class="layout-9">Eₙ = ⋃<sub>i=1</sub><sup>n</sup> R(sᵢ)，</p>
+<p class="layout-9">Eₙ = ⋃<sub>i=1</sub><sup>n</sup> R(sᵢ)，</p>
 <p>我们定义剩余未使用工具集为 \(D_{n} = G\) ∖ \(E_{n}\)，并以如下概率从 \(D_{n}\) 中采样新种子链 \(s_{n}+_{1}\)：</p>
-<p  class="layout-9">p = f(c(Eₙ), g(Dₙ), |Dₙ|)，</p>
+<p class="layout-9">p = f(c(Eₙ), g(Dₙ), |Dₙ|)，</p>
 <p>其中，\(g(D_{n})\) 通过强求解器从 \(D_{n}\) 中发现另一条有效工具链所需的尝试次数衡量，f(·) 则是控制环境增长过程的单调决策函数。在实践中，当 \(p &gt; \tau\) 时，其中 \(\tau\) 是预定义阈值，我们从 \(D_{n}\) 中初始化一条新的种子标准工具链 \(s_{n}+_{1}\)，并将其扩展为 \(R(s_{n}+_{1})\)。为确保环境达到最低复杂度，我们还引入了兜底机制。如果扩展结果 \(E_{n}\) 只包含少量工具节点，我们从 \(G\) 随机采样一条额外的中等规模工具链，并将其纳入环境，同时确保其与当前工具链的数据库一致性。这保证每个构建的环境至少包含 20 个工具，提供足够的结构复杂度，以支持有意义的 agent 交互和探索。这种自动化环境构建策略，使我们能够在维持可靠监督信号的同时逐步扩展环境复杂度，实现稳定、高效的大规模 agent 强化学习。</p>
 <h4>3.1.2　初始策略</h4>
 <p>冷启动阶段对后续强化学习阶段的策略初始化具有关键作用。我们的首要目标是让模型做好有效开展大规模探索的准备，而不是优先追求标准基准上的即时提升。高质量的冷启动策略必须展现多样的推理模式和稳定的交互格式，确保后续 RL 阶段能够高效开展，同时保留通用思考能力。因此，我们从更基础的角度评估冷启动模型，重点关注：（1）其在为 RL 阶段指定的特定任务上的熟练程度；（2）通过人工定性检查评估其推理路径的多样性。虽然我们报告标准基准上的 pass@k 表现以衡量底层推理能力，但这一指标只作为参考，并非主要优化目标。</p>
 <p>冷启动训练的一个主要挑战，是构建能够有效使模型具备 agent 行为基础的高质量数据。对于数学、通用编程和 agent 编程任务等部分领域，真实世界存在大规模数据来源。在这些情况下，我们从现有来源筛选整理并组装轨迹，核心挑战在于严格的质量控制与可执行性验证。然而，对于搜索和工具使用等大多数 agent 任务，基本缺乏高质量的真实轨迹。因此，我们依靠精心设计的数据合成流程构建冷启动轨迹。接下来详细介绍，如何针对不同 agent 能力实施这两种互补策略。</p>
 <h4>通用思考</h4>
 <p>Agent 能力需要强大的思考能力作为基础。因此，我们设计严格的数据过滤流程，构建高质量通用思考数据。具体而言，我们采用由 PPL 引导的 K-Center-Greedy（KCG）选择算法 [Sener and Savarese, 2018, Du et al., 2023, Wu et al., 2023]。现有基于 PPL 的过滤方法，要么忽略序列长度，要么对整个序列的 PPL 取平均 [Jiang et al., 2025, Zhang et al., 2025b]，这会掩盖局部困难 token，并丢弃信息丰富的样本。为应对这一问题，我们引入滑动窗口 PPL，计算序列中所有 512-token 窗口的平均 PPL 的最大值，从而捕获模型不确定性的峰值，避免被全局平均所稀释。在 KCG 选择过程中，我们用候选样本的滑动窗口 PPL 分数，对其与当前已选集合之间的距离加权。这一设计共同实现两个互补目标：KCG 保持对原始数据分布的覆盖，而滑动窗口 PPL 强调能够暴露模型当前推理能力缺口的样本。利用这条流程，我们从大规模语料中下采样得到 210K 个通用思考样本。在多个推理基准上，使用这一子集训练的模型优于使用完整语料训练的模型。</p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><h4>Agent 编程</h4>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8" aria-label="原文第 8 页"><h4>Agent 编程</h4>
 <p>对于 agent 编程任务，大规模软件开发平台提供了丰富的真实轨迹来源。然而，从这些来源收集的原始轨迹往往存在噪声、局部错误或不可复现的问题，确保其可靠性和可执行性成为关键挑战。为此，我们构建了严格的代码交互轨迹筛选整理流程。我们要求所有保留轨迹都能在可复现环境中完整执行并验证，只保留正确解决目标问题、同时保留现有功能的轨迹。为进一步避免模型学习虚假行为，我们进行细粒度的动作级过滤，移除对正确求解没有贡献的错误、冗余或臆测性操作。此外，为保留真实调试过程中常见的长程推理模式，我们通过压缩较早步骤，保留涉及长时间、迭代式调试的轨迹，使长程代码推理得以保留，不受长度限制。</p>
 <h4>Agent 搜索</h4>
 <p>对于 agent 搜索能力，构建高质量轨迹需要显式建模多步骤证据收集和完整条件验证，同时避免基于局部信息的虚假捷径。这种结构化推理轨迹在真实搜索日志中很少见。因此，我们构建合成推理轨迹，优先保证正确性、推理完整性，以及对捷径行为的抵抗能力。我们通过严格过滤保证轨迹质量，移除简单案例，并要求统一的推理与工具使用格式。为避免基于局部证据碰巧猜对等捷径学习，我们要求轨迹显式验证查询中指定的全部条件。我们进一步通过压缩较早步骤，保留涉及长时间、迭代式探索的轨迹，使长程推理得以保留，不受长度限制。最后，我们复用后续强化学习阶段生成的轨迹，扩大数据收集规模并增加行为多样性。</p>
@@ -83,7 +84,7 @@
 <p>我们识别出刻画搜索问题的两项基本难度因素：（i）沿关系实体链进行多跳推理；（ii）在多个模糊约束下对单个实体进行推理。大多数复杂搜索任务可以视为这两项因素的组合或迭代完善。</p>
 <ul><li><strong>基于图的问答合成：</strong>为对多跳推理难度建模，我们通过系统性流程构建基于图的问答任务：从 Wikipedia 实体建立关系图，并生成具有挑战性的推理问题。首先从 Wikipedia 提取低频实体，作为初始种子节点；随后从现有实体集合中采样、检索其 Wikipedia 页面，并纳入相关实体及其对应关系，迭代扩展图，直到达到预定义的规模阈值。</li></ul>
 <p class="continuation">（基于图的问答合成在原文第 9 页接续。）</p>
-<footer>原文第 8 页</footer></section><section class="page" id="page-9"><figure><img height="504" width="1416" decoding="async" loading="lazy" alt="原文第 9 页图表或公式" src="assets/images/ef5845d5d19fc5ba598a1d8300e7631bf8b2b2919000b3a36e8a97c9c303a457.png"></figure>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9" aria-label="原文第 9 页"><figure><img alt="原文第 9 页图表或公式" src="assets/images/ef5845d5d19fc5ba598a1d8300e7631bf8b2b2919000b3a36e8a97c9c303a457.png" width="1416" height="504" loading="lazy" decoding="async"></figure>
 <ul><li><strong>基于图的问答合成（接上页）：</strong>图构建完成后，我们采样多个固定大小的连通子图，并用它们生成问答对。在问题生成过程中，我们利用 LLM 创建与子图信息对应的问题，随后有意模糊数值、实体名称、地理位置和时间标记等显式细节，以最大化推理复杂度。为在整个流程中保证质量和正确性，我们在实体关系提取、问题生成和模糊化等关键步骤采用 LLM 作为评判者，维持基础准确性。最后，对每个生成的问答对，我们使用基于 agent 的方法识别其他潜在正确答案并评估其有效性，只保留原始答案正确、而所有识别出的其他潜在答案均不正确的问答对。</li>
 <li><strong>基于 agent 的问答合成：</strong>为对模糊性驱动的难度建模，我们提出可扩展、高效的数据合成流程，利用有限状态机（FSM）编排多 agent 协作交互。在这一框架中，实体提取 agent 识别具有代表性的长尾实体并提取其显著属性，作为合成问题的基础标准真值。随后，问题合成 agent 随机采样这些属性，构造针对性问题。为保证精确性，验证 agent 使用搜索和浏览工具，严格验证标准真值是否满足问题指定的全部约束，降低实体与问题不匹配的风险。对于每个通过验证的问题，答案生成 agent 使用搜索和浏览工具产生候选答案。评判 agent 评估这些候选与预定义标准真值的一致性。如果评判 agent 发现某个非标准真值答案仍满足验证标准，就说明存在多答案冲突。为解决这一问题，系统随机加入标准真值实体的额外属性，并重新合成问题，以保证唯一性。这一流程支持跨多个领域高吞吐生成多样化、高质量的问答对。此外，它还能根据答案生成 agent 的准确率指标，自动对难度进行分级。</li></ul>
 <h4>Agent 工具使用</h4>
@@ -92,7 +93,7 @@
 <p>与标准推理任务等单轮场景相比，agent 训练涉及与不同环境（ENV）或工具的多轮交互，对 RL 基础设施提出了新挑战。在典型的多轮轨迹生成阶段，LLM 生成、环境执行和奖励评估反复交织，构建用于 RL 训练的最终轨迹。在这一设定中，轨迹不仅具有长尾偏斜分布，还涉及不可预测、延迟分布偏斜的环境交互，导致 batch 处理时设备利用不足 [Fu et al., 2025, Zhang et al., 2025c, Lu et al., 2025a]。此外，我们的生产集群由中档加速器组成，尤其是每个设备可用内存仅约 60GB。这些硬件约束连同其软件生态，对实现稳定、可扩展的 agent RL 训练提出了重大挑战。为解决这些问题，我们扩展了多版本异步训练系统 DORA（Dynamic ORchestration for Asynchronous rollout）[Team et al., 2025]，使其全面支持多轮 agent 场景中的大规模 RL 训练。</p>
 <p>如图 5 所示，我们的控制器采用生产者—消费者架构，由管理轨迹生成阶段的 RolloutManager、控制样本陈旧度的 SampleQueue，以及管理 Experience-Maker 和训练阶段的 Trainer 组成。</p>
 <p class="continuation">（框架组件的说明在原文第 10 页接续。）</p>
-<footer>原文第 9 页</footer></section><section class="page" id="page-10"><figure><img height="528" width="1416" decoding="async" loading="lazy" alt="原文第 10 页图表或公式" src="assets/images/2ad8273aded25e7110fa849a95c817ed85468654942dd375ca88ba91c9aee966.png"></figure>
+<footer>原文第 9 页</footer></section><section class="page" id="page-10" aria-label="原文第 10 页"><figure><img alt="原文第 10 页图表或公式" src="assets/images/2ad8273aded25e7110fa849a95c817ed85468654942dd375ca88ba91c9aee966.png" width="1416" height="528" loading="lazy" decoding="async"></figure>
 <p class="continuation">（接原文第 9 页。）</p>
 <p>这些组件运行在不同节点上，主要通过远程过程调用（RPC）负责逻辑控制和协调，而运行在 CPU 或加速器上的工作节点执行实际任务。我们提出若干关键技术，实现高效、可扩展且稳定的 agent RL 训练。</p>
 <h4>全流式异步流水线</h4>
@@ -102,7 +103,7 @@
 <h4>结合 CPU 换入换出的 PD 分离</h4>
 <p>为在我们的加速器上高效生成 560B MoE 模型 LongCat-Flash-Thinking-2601 的输出，我们采用高程度的 EP，并为 decoding 使用图级编译。然而，在多轮 agent 训练中，长上下文请求频繁到达，导致 EP 组内部工作负载不均衡：分配到更长上下文的 rank 消耗了不成比例的计算和通信带宽，成为性能瓶颈。为解决这一问题，我们在 RL 训练中引入 prefill—decoding（Prefill–Decode，PD）分离 [Zhong et al., 2024, Qin et al., 2024]，如图 6 所示。对于生成实例，我们将 prefill 节点和 decoding 节点部署在独立设备组上，使 decoding 执行图不会被新到达请求的 prefill 工作负载打断。这避免生成效率下降，并在多轮轨迹生成中维持高吞吐。然而，PD 分离带来了额外挑战，包括 KV-cache 传输开销，以及当 decoding 节点上的设备 KV-cache 不足时产生的昂贵重计算开销，在我们的加速器上尤其如此。为降低 KV-cache 传输成本，我们按分块聚合 KV-cache 块，并支持 PD 节点之间的异步传输。我们将先前分块的传输与后续分块的计算重叠，尽量减少 KV-cache 传输开销。为避免设备上有限的 KV-cache 内存导致重计算，我们进一步引入驻留于 CPU 的 KV-cache。</p>
 <p class="continuation">（CPU KV-cache 的说明在原文第 11 页接续。）</p>
-<footer>原文第 10 页</footer></section><section class="page" id="page-11"><p class="continuation">（接原文第 10 页。）</p>
+<footer>原文第 10 页</footer></section><section class="page" id="page-11" aria-label="原文第 11 页"><p class="continuation">（接原文第 10 页。）</p>
 <p>该缓存根据需要动态换入和换出 KV-cache 块。这一设计消除了设备 KV-cache 容量不足带来的重计算开销，有助于在我们的加速器上维持高吞吐。</p>
 <p>总体而言，我们的 agent RL 训练框架在 560B 模型上实现了工业规模下的强大性能与稳定性，支持数万个加速器和环境。根据生产任务的运行时统计，在整个轨迹生成过程中，我们的请求负载率<sup>1</sup>约为 63%。这一指标量化长尾请求对生成吞吐的影响，值越高表示利用率越好。训练期间未达到完全请求负载率，是因为我们限制向旧模型版本发送新请求，以牺牲部分效率来控制平均陈旧度。此外，在可能包含多次负载均衡操作的单个训练步内，我们采用两阶段策略：在第一次负载均衡前的初始轨迹生成阶段，尚不存在长尾生成时，允许每台设备处理较多请求，例如 8 个；随后，将每台设备的请求数限制在最优水平，例如 4 个，以避免重计算并提升生成效率。未来，我们计划采用更乐观的陈旧度控制策略，并探索感知陈旧度的稳定性技术，实现更高效的异步训练。总体而言，在覆盖不同场景的生产任务中，我们的多版本异步训练系统 DORA 比同步训练快 2 至 4 倍。</p>
 <h3>3.3　RL 训练策略</h3>
@@ -114,8 +115,8 @@
 <h4>训练目标</h4>
 <p>我们采用 Group Sequence Policy Optimization（GSPO）作为训练目标，因为它在 MoE 模型上具有经过实践验证的有效性，并能为长程 agent 轨迹提供更稳定的序列级优化。</p>
 <p class="note"><sup>1</sup> 请求负载率是介于 0 与 1 之间的连续值，在整个轨迹生成期间对所有生成设备汇总计算。例如，当最大响应长度设为 64K、仅考虑设备上可用的 KV-cache 块以避免重计算时，我们的加速器可容纳约 4 个请求。如果某个加速器上只有 1 个请求，请求负载率为 25%；如果没有请求则为 0%，这种情况尤其会出现在长尾生成场景中。</p>
-<footer>原文第 11 页</footer></section><section class="page" id="page-12"><p>给定输入 \(x\)，我们从旧策略 \(\pi _{\theta old}\) 中采样一组 \(G\) 条轨迹 \(\{y_{i}\}_{i=1}^{G}\)，并优化：</p>
-<figure><img height="114" width="1416" decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/025d1c0c5f5952b97976dbf1f2cc97f3481ee10fa5477b73d0bf226f5814b219.png"></figure>
+<footer>原文第 11 页</footer></section><section class="page" id="page-12" aria-label="原文第 12 页"><p>给定输入 \(x\)，我们从旧策略 \(\pi _{\theta old}\) 中采样一组 \(G\) 条轨迹 \(\{y_{i}\}_{i=1}^{G}\)，并优化：</p>
+<figure><img alt="原文第 12 页图表或公式" src="assets/images/025d1c0c5f5952b97976dbf1f2cc97f3481ee10fa5477b73d0bf226f5814b219.png" width="1416" height="114" loading="lazy" decoding="async"></figure>
 <p>其中，\(\varepsilon\) 为裁剪阈值。遵循 Zheng et al. [2025]，我们采用基于组的优势估计，并根据归一化似然在序列层面定义重要性比率 \(s_{i}(\theta )\)。我们主要依赖面向结果的监督，并放宽对长轨迹的惩罚，使有效策略能够在训练中自然涌现。</p>
 <h4>课程学习</h4>
 <p>为提升学习效果，我们采用课程学习策略，逐步组织训练过程。具体而言，我们的课程沿两个互补维度组织：任务难度和能力要求。任务难度通过优化前估计的模型通过率量化，通过率越低，任务越有挑战性。同时，我们根据任务主要锻炼的 agent 能力刻画任务，例如基本工具调用、多步骤规划或自主决策。在训练早期，我们优先安排更易学习的任务，或者能让 agent 接触预期在解决更困难任务时自主复用的能力的任务。随着训练推进，我们逐步转向既更困难、又需要更高级 agent 能力组合的任务。这种二维课程使模型先获得可复用的 agent 技能，再将其组合起来，解决越来越复杂的问题。在实践中，这一课程策略提高了总体任务通过率，并在最具挑战性的任务上带来尤为显著的增益。我们在 agent 场景中的分析表明，这些提升来自三个主要因素：</p>
@@ -125,12 +126,12 @@
 <h4>动态预算分配</h4>
 <p>我们进一步在训练 batch 内采用动态预算分配，优先处理在当前模型状态下提供更高学习价值的任务。我们观察到，在固定轨迹生成预算下，难度与模型当前能力良好匹配的任务，能够带来显著更高的学习增益。现有大规模 RL 流程通常为所有任务分配统一轨迹生成预算。近期研究开始探索自适应轨迹生成分配 [Li et al., 2025]，但多数方法依赖预定义价值函数。然而，随着模型能力在训练中不断演化，这一假设不再成立，因为能够提供最有信息量学习信号的任务集合也会随之变化。</p>
 <p>为此，我们提出一种动态轨迹生成预算分配策略，使其适应模型的实时训练状态。具体而言，我们通过监控实时训练指标 \(m_{t}\)（例如通过率），量化当前策略 \(\pi _{\theta t}\) 的能力。我们通过动态价值函数对具体任务 \(\tau _{i}\) 和 \(m_{t}\) 进行映射：</p>
-<figure><img height="48" width="1416" decoding="async" loading="lazy" alt="原文第 12 页图表或公式" src="assets/images/3f24f681d17f36ac4bcb5a5b363dd42db1c60b42bfd49a7bceb4fbd781130c3e.png"></figure>
+<figure><img alt="原文第 12 页图表或公式" src="assets/images/3f24f681d17f36ac4bcb5a5b363dd42db1c60b42bfd49a7bceb4fbd781130c3e.png" width="1416" height="48" loading="lazy" decoding="async"></figure>
 <p>其中，\(v_{i,t}\) 表示任务 \(\tau _{i}\) 的估计价值，刻画模型在任务空间中不断演化的偏好分布。基于这一价值估计，我们采用基于堆的贪心算法，计算使当前训练 batch 总体学习价值最大化的轨迹生成分配方案。</p>
 <h4>自验证</h4>
 <p>除了仅将模型作为执行生成的行动策略，我们还让模型充当验证器，评估自身 on-policy 轨迹的质量。我们观察到明显的不对称性：即使先进推理模型能够生成高质量轨迹，在缺乏显式标准真值信号时，往往也难以可靠判断这些轨迹的正确性。这促使我们显式增强模型的自验证能力，并将其作为辅助信号，提升模型在特定领域的推理能力。</p>
 <p>具体而言，我们在强化学习期间引入 on-policy 自验证，将其作为动态激活的训练阶段。当生成器出现停滞或收敛到局部最优的迹象时，我们触发验证阶段，由模型评估自身生成的轨迹。相比生成，验证是较容易的任务，通常能获得更高奖励。为进一步增强自验证的有效性，我们采用专门的训练方案。具体而言，我们确保验证重点覆盖具有挑战性的案例，并将验证的影响与相应生成轨迹的质量关联起来，使辅助信号促进生成的忠实改进，而不是退化为捷径行为。在实践中，引入 on-policy 自验证作为辅助任务能够加速模型收敛，从而改善生成表现。</p>
-<footer>原文第 12 页</footer></section><section class="page" id="page-13"><figure><img height="567" width="1416" decoding="async" loading="lazy" alt="原文第 13 页图表或公式" src="assets/images/be993423e4f9f3a86cb3f426415371a150cbab01efc4e9216651c38c37aa19df.png"></figure>
+<footer>原文第 12 页</footer></section><section class="page" id="page-13" aria-label="原文第 13 页"><figure><img alt="原文第 13 页图表或公式" src="assets/images/be993423e4f9f3a86cb3f426415371a150cbab01efc4e9216651c38c37aa19df.png" width="1416" height="567" loading="lazy" decoding="async"></figure>
 <h4>3.3.2　Agent 专用策略</h4>
 <p>在 agent 场景中，交互模式自然从单轮生成转向模型推理与工具调用交织的多轮轨迹。随着任务复杂度增加，交互轮数和工具响应长度都不断增长，使总上下文长度高度可变，并且往往难以控制。在实践中，这经常导致上下文窗口溢出、推理链截断，以及任务执行不完整。因此，在有限上下文窗口下进行带工具使用的强化学习时，有效的上下文管理成为必要组成部分。</p>
 <h4>上下文管理</h4>
@@ -142,7 +143,7 @@
 <h4>3.3.3　环境扩展下的训练策略</h4>
 <p>引入扩展后的环境，进一步提高了强化学习的复杂度，超出了工具增强设定。在这一阶段，我们在跨多个领域、具有高度异质性的环境上开展大规模训练。我们期望，在如此多样化的环境中训练，能够促使模型获得可迁移的 agent 行为，泛化到特定领域模式之外。</p>
 <p class="continuation">（环境异质性带来的挑战在原文第 14 页接续。）</p>
-<footer>原文第 13 页</footer></section><section class="page" id="page-14"><figure><img height="747" width="1416" decoding="async" loading="lazy" alt="原文第 14 页图表或公式" src="assets/images/c24f50b1f8628a77bbb943d90b3bd8a89a3dedaac32598b28732371b3a4fff0d.png"></figure>
+<footer>原文第 13 页</footer></section><section class="page" id="page-14" aria-label="原文第 14 页"><figure><img alt="原文第 14 页图表或公式" src="assets/images/c24f50b1f8628a77bbb943d90b3bd8a89a3dedaac32598b28732371b3a4fff0d.png" width="1416" height="747" loading="lazy" decoding="async"></figure>
 <p class="continuation">（接原文第 13 页。）</p>
 <p>这种异质性在算法和系统两个层面引入新的挑战：训练过程必须同时维持跨领域泛化，确保在高度多样化的任务分布下稳定优化，并在具有长尾特征、负载不均衡的环境工作负载下保持高效。为应对这些挑战，我们采用多领域环境训练范式，在每个训练 batch 内跨多样化环境联合优化。为确保稳定性与可扩展性，我们需要协同设计训练策略和异步基础设施。受环境扩展构建流程启发，我们注意到真实环境本质上并不完善。因此，我们在训练期间显式引入环境噪声，提高模型对异构、不可靠环境反馈的稳健性。</p>
 <h4>多领域环境训练</h4>
@@ -151,14 +152,14 @@
 <p>为确保这一训练设定下的动态预算分配与异步基础设施兼容，我们根据各任务的历史通过率，为其引入过采样系数。成功率较低的任务被赋予更高过采样系数，从而有效地为更困难任务分配更多轨迹生成预算。具体而言，每个任务根据其过采样系数复制到多个组中，各组在训练时独立计算优势。这一设计近似实现动态预算分配，同时保留 DORA 简单且完全异步的调度行为，以极小的系统复杂度实现动态 token 预算控制。</p>
 <p>图 8 展示 LongCat-Flash-Thinking-2601 的训练奖励曲线，图 9 展示其在不同训练步的相应 agent 基准表现。图 8 中的训练奖励在整个训练期间呈现稳定、持续上升的趋势。</p>
 <p class="continuation">（训练曲线与评测结果的说明在原文第 15 页接续。）</p>
-<footer>原文第 14 页</footer></section><section class="page" id="page-15"><figure><img height="1164" width="1416" decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/e366b5edd19643531b469d19e05cf4bbb6073e39e383aae3d5b42d4dcb2b5d9e.png"></figure>
-<figure><img height="237" width="858" decoding="async" loading="lazy" alt="原文第 15 页图表或公式" src="assets/images/f4a02b7237547470c39b9977fde5c2a2db50ceace49d3122c1efa8e7f784295c.png"></figure>
+<footer>原文第 14 页</footer></section><section class="page" id="page-15" aria-label="原文第 15 页"><figure><img alt="原文第 15 页图表或公式" src="assets/images/e366b5edd19643531b469d19e05cf4bbb6073e39e383aae3d5b42d4dcb2b5d9e.png" width="1416" height="1164" loading="lazy" decoding="async"></figure>
+<figure><img alt="原文第 15 页图表或公式" src="assets/images/f4a02b7237547470c39b9977fde5c2a2db50ceace49d3122c1efa8e7f784295c.png" width="858" height="237" loading="lazy" decoding="async"></figure>
 <p class="continuation">（接原文第 14 页。）</p>
 <p>这表明，我们对算法与基础设施的协同设计有效保证了大规模训练的稳定性。此外，图 9 中的 agent 基准表现显示，模型在多个基准上具有强大泛化能力，验证了环境合成流程的有效性。在实践中，多领域环境训练提高了跨环境的平均任务完成率，在最具挑战性的环境上提升尤其显著。此外，模型在随机生成环境中也取得优异表现，展示了强大的泛化能力。</p>
 <h4>稳健 RL</h4>
 <p>我们将环境不完善因素显式纳入训练过程，以提高稳健性。现有 agent 模型部署到此前未见过或不完善的环境时，性能会显著下降。这一问题主要源自当前 agent 训练范式的一个常见假设：agent 通常使用精心整理的指令训练，并与稳定、受到良好控制的环境交互。相比之下，真实环境本质上并不完善。用户表现出多样化交互风格和不可预测行为，而工具可能因各种外部因素失败、返回含噪输出或产生不完整结果。我们系统性分析真实世界的噪声，而不是在训练期间假设环境理想，再依赖 agent 事后适应。</p>
 <p class="continuation">（稳健 RL 的说明在原文第 16 页接续。）</p>
-<footer>原文第 15 页</footer></section><section class="page" id="page-16"><figure><img height="609" width="1416" decoding="async" loading="lazy" alt="原文第 16 页图表或公式" src="assets/images/39fa394e3093dbd1cf453d0d5372b688de0f2ba7113b490802f2c43e61440fa2.png"></figure>
+<footer>原文第 15 页</footer></section><section class="page" id="page-16" aria-label="原文第 16 页"><figure><img alt="原文第 16 页图表或公式" src="assets/images/39fa394e3093dbd1cf453d0d5372b688de0f2ba7113b490802f2c43e61440fa2.png" width="1416" height="609" loading="lazy" decoding="async"></figure>
 <p class="continuation">（接原文第 15 页。）</p>
 <p>我们还设计了自动化流程，将环境不完善因素显式纳入训练。为避免引入不可靠或误导性的奖励信号，我们确保注入的不完善因素不会使任务失去可解性，而是增加交互过程的难度与随机性。具体而言，我们对真实 agent 场景中的两类主要交互噪声建模：指令噪声，捕获用户交互模式中的歧义与变化；工具噪声，模拟外部工具的执行失败、不一致响应和局部结果。</p>
 <p>在 agent 强化学习期间，我们利用基于课程的策略逐步引入这些噪声。我们以 agent 模型在同一任务的完善与不完善环境之间的性能差距，衡量其稳健性。从轻微扰动开始，当模型在当前噪声级别表现出足够稳健性时，我们逐渐增加噪声难度与多样性。这种自适应过程确保训练保持信息价值，而不会令模型不堪重负，并避免在噪声过强的设定中进行低效探索。</p>
@@ -167,7 +168,7 @@
 <p>Test-time scaling（TTS）通过扩大推理期间的计算量，已成为提升模型在复杂推理任务上表现的有效范式。近期进展表明，通过带有自我反思的长 CoT 增加推理深度，使模型能够迭代完善推理过程 [OpenAI, 2024, DeepSeek-AI, 2025, DeepMind, 2025]。与此同时，自一致性和蒙特卡洛树搜索（MCTS）等方法沿宽度维度扩展计算，探索多条推理轨迹，以更好地逼近模型的推理能力上限。最近，若干前沿模型引入了 Heavy Thinking [Team, 2025, OpenAI, 2025a, MoonshotAI, 2025, Hu et al., 2025]，旨在测试时联合扩展推理深度和宽度。在实践中，这些模式优于仅扩展深度或宽度的策略。然而，这类 Heavy Thinking 的具体实现细节大多尚未披露，限制了其可复现性与系统性研究。</p>
 <p>为进一步释放推理能力、突破现有性能上限，我们提出简单有效的 Heavy Thinking 框架，将测试时计算分为两个互补阶段：并行推理与深度思考。如图 10 所示，在第一阶段，我们允许思考模型并行生成，产生多个候选推理轨迹，以扩展探索广度。在第二阶段，我们利用摘要模型对这些轨迹进行反思性推理，综合其中的中间推理和结果，形成最终决策。为支持工具使用和多轮对话场景，我们还引入上下文记忆模块，保存消息历史。如图 11 所示，每一轮中，摘要模型都会接收来自并行推理阶段的历史消息，以感知上下文。我们设计专门的提示词模板，组织当前轮并行轨迹的排列组合（仅保留回答内容），并引导摘要模型生成最终响应，以汇总或完善并行推理阶段得到的回答。</p>
 <p class="continuation">（摘要模型输出与额外 RL 阶段的说明在原文第 17 页接续。）</p>
-<footer>原文第 16 页</footer></section><section class="page" id="page-17"><figure><img height="660" width="1416" decoding="async" loading="lazy" alt="原文第 17 页图表或公式" src="assets/images/0f0232827c9d65b838c80573aedc3f3a6f994f2dfbe411079e7e1832ccf8a172.png"></figure>
+<footer>原文第 16 页</footer></section><section class="page" id="page-17" aria-label="原文第 17 页"><figure><img alt="原文第 17 页图表或公式" src="assets/images/0f0232827c9d65b838c80573aedc3f3a6f994f2dfbe411079e7e1832ccf8a172.png" width="1416" height="660" loading="lazy" decoding="async"></figure>
 <p class="continuation">（接原文第 16 页。）</p>
 <p>我们还约束摘要模型的最终输出响应，使其风格和格式与并行推理阶段保持一致，从而可以直接将摘要模型的响应与消息历史拼接。值得注意的是，思考模块和摘要模块既可以共享同一组模型参数，也可以实例化为不同模型。</p>
 <p>为进一步提升表现，我们还引入专门针对摘要阶段的额外 RL 阶段。在实践中，我们发现 Heavy Thinking 在广泛设定中都有效，包括长 CoT 推理、tool-integrated reasoning，以及完整的 agent 工具使用场景。通过允许测试时计算沿推理深度与宽度两个方向自适应扩展，Heavy Thinking 始终优于自一致性方法，而且随着测试时计算预算增加，其性能优势越来越明显。</p>
@@ -180,7 +181,7 @@
 <p>我们在 BrowseComp [Wei et al., 2025] 和 BrowseComp-ZH [Zhou et al., 2025] 上评估 agent 搜索能力，并同时报告启用与未启用上下文管理的结果。对于 BrowseComp-zh，我们发现原始标注中的一些错误，并人工修正了 24 个案例的答案<sup>3</sup>。我们尝试在自身 agent 搜索框架下，复现开源及闭源模型在这些基准上所报告的结果。然而，我们观察到的表现始终低于其报告值。因此，对外部模型，我们采用其官方报告结果。为实现公平、受控的搜索能力比较，我们还构建了 RWSearch。</p>
 <p class="continuation">（RWSearch 的说明在原文第 18 页接续。）</p>
 <p class="note"><sup>2</sup> <a href="https://github.com/meituan-longcat/AMO-Bench/">https://github.com/meituan-longcat/AMO-Bench/</a><br><sup>3</sup> <a href="https://github.com/AGI-Eval-Official/BrowseComp-ZH-revised">https://github.com/AGI-Eval-Official/BrowseComp-ZH-revised</a></p>
-<footer>原文第 17 页</footer></section><section class="page" id="page-18"><figure><img height="1005" width="1416" decoding="async" loading="lazy" alt="原文第 18 页图表或公式" src="assets/images/cdf108f5c0afdc5dabd9b655d77c7ff997646760bfb32d7ff3c38a3315cd0d98.png"></figure>
+<footer>原文第 17 页</footer></section><section class="page" id="page-18" aria-label="原文第 18 页"><figure><img alt="原文第 18 页图表或公式" src="assets/images/cdf108f5c0afdc5dabd9b655d77c7ff997646760bfb32d7ff3c38a3315cd0d98.png" width="1416" height="1005" loading="lazy" decoding="async"></figure>
 <p class="continuation">（接原文第 17 页。）</p>
 <p>RWSearch<sup>4</sup> 是一个具有挑战性的 agent 搜索基准，包含 200 个需要复杂推理和多步骤信息检索的真实搜索查询。所有模型均在不使用上下文管理的情况下在 RWSearch 上评测，以确保公平比较。</p>
 <h4>Agent 工具使用</h4>
@@ -188,7 +189,7 @@
 <p>接下来介绍 \(\tau ^{2}\)-Noise、Vita-Noise 和 Random Complex Tasks 的构建与评测协议。</p>
 <ul><li><strong>\(\tau ^{2}\)-Noise 与 Vita-Noise。</strong>为评估 agent 推理能力的稳健性，我们系统性分析真实环境中观察到的偏差，并设计自动化噪声注入流程，能够向任意基准注入真实噪声。基于这一流程，我们多次向 \(\tau ^{2}\) 和 Vita 基准随机注入噪声，构建 \(\tau ^{2}\)-Noise 和 Vita-Noise，并报告多个含噪实例上的平均表现。</li></ul>
 <p class="note"><sup>4</sup> <a href="https://github.com/AGI-Eval-Official/RW-Search">https://github.com/AGI-Eval-Official/RW-Search</a><br><sup>5</sup> <a href="https://github.com/AGI-Eval-Official/tau2-bench-revised">https://github.com/AGI-Eval-Official/tau2-bench-revised</a><br><sup>6</sup> <a href="https://github.com/meituan-longcat/vitabench">https://github.com/meituan-longcat/vitabench</a></p>
-<footer>原文第 18 页</footer></section><section class="page" id="page-19"><ul><li><strong>Random Complex Tasks（随机复杂任务）。</strong>为评估 agent 推理能力的泛化，我们引入新的评测协议 Random Complex Tasks。它基于自动化任务合成过程，受环境扩展流程启发，在多样化场景中随机生成复杂、可执行且可验证的 agent 任务。每次评测，我们随机采样跨越四个以上领域的 100 个多样化复杂任务，并计算 Avg@4 分数。为保证可靠性，我们独立重复评测三次，报告三次运行的平均结果。</li></ul>
+<footer>原文第 18 页</footer></section><section class="page" id="page-19" aria-label="原文第 19 页"><ul><li><strong>Random Complex Tasks（随机复杂任务）。</strong>为评估 agent 推理能力的泛化，我们引入新的评测协议 Random Complex Tasks。它基于自动化任务合成过程，受环境扩展流程启发，在多样化场景中随机生成复杂、可执行且可验证的 agent 任务。每次评测，我们随机采样跨越四个以上领域的 100 个多样化复杂任务，并计算 Avg@4 分数。为保证可靠性，我们独立重复评测三次，报告三次运行的平均结果。</li></ul>
 <p>我们将发布噪声注入流程，并将 Random Complex Tasks 集成到开放评测平台中，以支持后续复现和基准测试。</p>
 <h4>通用问答</h4>
 <p>我们在 GPQA-Diamond [Rein et al., 2023] 和 HLE [Phan et al., 2025] 上评估通用推理，它们覆盖广泛的知识密集型和侧重推理的任务。对于 GPQA-Diamond，我们报告 Avg@16，以减少采样随机性引入的方差。对于 HLE，由于我们的模型仅处理文本，我们报告纯文本子集上的结果，并确保所有比较模型采用相同设置。我们观察到 HLE 结果对提示词模板和评分模型敏感。为保证公平比较，所有模型均使用 HLE 官方推荐的提示词模板评测，并使用官方 o3-mini 评分模型及模板评分。</p>
@@ -201,30 +202,30 @@
 <li><strong>Agent 工具使用：</strong>LongCat-Flash-Thinking-2601 展现出开源模型中最先进的 agent 工具使用能力。它在 \(\tau ^{2}\)-Bench 和 VitaBench 上取得优异表现，在其噪声增强版本上也具有竞争力。特别是，我们的模型在使用任意生成工具的随机复杂任务上取得最先进结果。这些结果表明，模型对真实环境噪声具有强大稳健性，并能优秀地泛化到此前未见过的任务分布。</li></ul>
 <p class="note">译者核对注：原文第 2 页引言将 RWSearch 分数写为 77.7%，本页及表 2 为 79.5；77.7 同时是 BrowseComp-ZH 启用上下文管理后的分数。译文保留了原文各处的数值。本页对 RWSearch 的“私有基准”表述与第 18 页给出的仓库链接也均按原文保留。</p>
 <p class="note"><sup>7</sup> <a href="https://github.com/R2E-Gym/R2E-Gym">https://github.com/R2E-Gym/R2E-Gym</a></p>
-<footer>原文第 19 页</footer></section><section class="page" id="page-20"><ul><li><strong>通用问答：</strong>在扩展 agent 推理和 tool-integrated reasoning 的同时，LongCat-Flash-Thinking-2601 在通用问答基准上保持优异表现。它在 HLE 纯文本子集上取得 25.2 分，并在 Heavy 模式下的 GPQA-Diamond 上取得 85.2 分，接近开源最先进结果。</li>
+<footer>原文第 19 页</footer></section><section class="page" id="page-20" aria-label="原文第 20 页"><ul><li><strong>通用问答：</strong>在扩展 agent 推理和 tool-integrated reasoning 的同时，LongCat-Flash-Thinking-2601 在通用问答基准上保持优异表现。它在 HLE 纯文本子集上取得 25.2 分，并在 Heavy 模式下的 GPQA-Diamond 上取得 85.2 分，接近开源最先进结果。</li>
 <li><strong>编程：</strong>LongCat-Flash-Thinking-2601 在代码推理和 agent 编程基准上都展现出具有竞争力的表现。在 LiveCodeBench 系列的算法问题求解任务上，它位列顶尖开源模型之中。在 OJBench 和 OIBench 等更困难基准上，我们的模型分别取得开源第二好和最好的表现。值得注意的是，与 GLM-4.7 相比，LongCat-Flash-Thinking-2601 以显著更低的推理成本取得相近表现，每道问题需要约 45k token，而后者需要 57k token。在 SWE-bench Verified 上，LongCat-Flash-Thinking-2601 在开源模型第一梯队中表现出竞争力，进一步验证了其在真实软件工程任务中的能力。</li></ul>
 <h2>6　还有一件事：Zig-Zag Attention 设计</h2>
 <p>长上下文效率已成为现代 LLM 日益关键的挑战。推理轨迹持续变长的趋势，构成了标准全 attention 的根本限制：其二次复杂度很快使长上下文 agent 训练和推理的成本高得难以承受。此外，在 Heavy Thinking 模式下，多条并行推理轨迹同时 decoding 进一步放大推理延迟，使高效 attention 机制更加不可或缺。包括稀疏和线性 attention 方法在内的现有方案 [Yuan et al., 2025, Lu et al., 2025b, Du et al., 2025, Sun et al., 2025]，尝试通过降低 attention 计算复杂度缓解这一问题。然而，这些方法通常需要大量重新训练，使模型适应新的 attention 架构，引入可观的额外计算开销和工程成本。为应对这一限制，我们探索一种实验性的高效 attention 设计，并同时发布开源模型 LongCat-Flash-Thinking-ZigZag<sup>8</sup>。具体而言，我们提出 Zigzag Attention，这是一种稀疏 attention 机制，能在中期训练期间将现有全 attention 模型高效转换为稀疏版本。这一转换只带来可忽略的开销，同时使模型能够高效扩展到超长上下文，支持最高 1M token 的序列长度。</p>
 <p>具体而言，Zigzag Attention [Zhang et al., 2026] 将 MLA（Multi-head Latent Attention）与流式稀疏 attention（Streaming Sparse Attention，SSA）[Xiao et al., 2024] 相结合，使计算量相对于完整上下文长度呈次二次增长。对于每个查询 token \(h_{t}\)，attention 被限制在一组固定的键值 token 上，包括：（\(i\)）近期 token 的局部窗口；（ii）序列开头的少量初始 token。形式上，attention 输出计算为：</p>
-<figure><img height="54" width="1041" decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/0317656f20a67dd5ceb45071645992bf93eb36c28706279d8d32ed1b982aa2ff.png"></figure>
+<figure><img alt="原文第 20 页图表或公式" src="assets/images/0317656f20a67dd5ceb45071645992bf93eb36c28706279d8d32ed1b982aa2ff.png" width="1041" height="54" loading="lazy" decoding="async"></figure>
 <p>其中，\(W\) 表示局部上下文窗口大小，\(B\) 表示保留的前缀 token 数量。与全 attention 相比，这一设计在保留短期上下文与全局锚点的同时，显著降低计算和内存复杂度。</p>
-<figure><img height="513" width="1416" decoding="async" loading="lazy" alt="原文第 20 页图表或公式" src="assets/images/0bd3f7ee97e47d0c3cbac61b70c8537f56ab3b62823d440c87db9f962443de60.png"></figure>
+<figure><img alt="原文第 20 页图表或公式" src="assets/images/0bd3f7ee97e47d0c3cbac61b70c8537f56ab3b62823d440c87db9f962443de60.png" width="1416" height="513" loading="lazy" decoding="async"></figure>
 <h4>Zigzag 连通性</h4>
 <p>Zigzag Attention 采用按层交错的稀疏化策略。具体而言，约 50% 的全 attention 层被替换为 SSA 层，其余层保留基于 MLA 的全 attention。</p>
 <p class="continuation">（按层稀疏化的说明在原文第 21 页接续。）</p>
 <p class="note"><sup>8</sup> <a href="https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking-ZigZag">https://huggingface.co/meituan-longcat/LongCat-Flash-Thinking-ZigZag</a></p>
-<footer>原文第 20 页</footer></section><section class="page" id="page-21"><p class="continuation">（接原文第 20 页“Zigzag 连通性”。）</p>
+<footer>原文第 20 页</footer></section><section class="page" id="page-21" aria-label="原文第 21 页"><p class="continuation">（接原文第 20 页“Zigzag 连通性”。）</p>
 <p>这种层级稀疏性避免了按 attention 头稀疏化通常引入的计算不均衡和 GPU 线程分歧，提高了硬件利用效率。虽然每个 SSA 层内部的 attention 是稀疏且局部的，但全局信息通过跨层组合得到保留。通过交替设置稀疏层和全 attention 层，信息在多层中跨越远距离位置传播，沿序列形成之字形连通路径。因此，尽管每层具有稀疏性，长距离依赖仍然可以访问。</p>
 <h4>Zigzag 集成</h4>
 <p>Zigzag Attention 通过结构化稀疏化流程，在中期训练期间引入。首先，我们使用校准数据集，估计预训练模型中各 attention 层的相对重要性。其次，将重要性分数最低的一部分层替换为 SSA 层。稀疏化后，模型继续进行长上下文中期训练，并结合基于 YaRN 的位置编码扩展，使上下文长度达到最高 1M token。在实践中，我们采用 128 的块大小，设置一个 sink 块和七个局部块，使每层有效 attention 跨度为 1,024 token。如图 12 所示，将约一半全 attention 层替换为 Zigzag Attention，带来约 \(1.5\times\) 的端到端推理加速，同时保留各基准上的推理表现与 agent 能力。</p>
 <p>为释放处理更长上下文的能力，我们为这些方案配备 YaRN [Peng et al., 2024]，使 LongCat-Flash-Thinking-ZigZag 能够外推到处理最高 1M token。此外，我们提供模型涉及的几个关键参数：块大小为 128，sink 块数量为 1，局部块数量为 7，总计 1,024 token。</p>
 <p>LongCat-Flash-Thinking-ZigZag 在性能与速度之间取得良好权衡。图 13 简要展示了它如何在保持有竞争力表现的同时提高效率。</p>
-<figure><img height="789" width="1416" decoding="async" loading="lazy" alt="原文第 21 页图表或公式" src="assets/images/359c2377e3c993af1f26dcb5307c14589b57cacffea5aee2b7232ee4eb24d26e.png"></figure>
+<figure><img alt="原文第 21 页图表或公式" src="assets/images/359c2377e3c993af1f26dcb5307c14589b57cacffea5aee2b7232ee4eb24d26e.png" width="1416" height="789" loading="lazy" decoding="async"></figure>
 <h2>7　结论</h2>
 <p>我们介绍了 LongCat-Flash-Thinking-2601，这是一个开放权重的 560B MoE 推理模型，具备卓越的 agent 推理能力。该模型建立在统一、端到端训练流程之上，对架构、预训练、后训练、数据构建和可扩展 RL 基础设施进行协同设计，全部明确面向长程、交互驱动的 agent 推理。支撑 LongCat-Flash-Thinking-2601 的核心创新如下：（i）可扩展的环境构建与多领域强化学习框架，使模型能够稳定获得可泛化的 agent 技能；（ii）稳健的 agent 训练流程，通过基于课程的强化学习，系统性纳入真实环境噪声；（iii）Heavy Thinking 模式，通过同时扩展推理宽度和深度，实现推理的有效 test-time scaling。通过这一整体设计，LongCat-Flash-Thinking-2601 在广泛 agent 基准上树立开源模型的新最先进水平，缩小与领先闭源模型的性能差距。</p>
-<footer>原文第 21 页</footer></section><section class="page" id="page-22"><h2>贡献者</h2>
+<footer>原文第 21 页</footer></section><section class="page" id="page-22" aria-label="原文第 22 页"><h2>贡献者</h2>
 <p>作者名单按字母顺序排列。英文姓名相同的条目，将根据中文笔画数和读音排序。星号（*）表示已离开团队的成员。</p>
-<div  class="layout-7"><table class="names layout-12" ><tbody>
+<div class="layout-7"><div class="table-wrap"><table class="names layout-12"><tbody>
 <tr><td>Anchun Gui</td><td>Hongyan Hao</td><td>Mingyang Zhu</td><td>Xiandi Ma</td><td>Yongwei Zhou</td></tr>
 <tr><td>Bei Li</td><td>Hongyin Tang</td><td>Peiguang Li</td><td>Xiangcheng Liu</td><td>Youshao Xiao</td></tr>
 <tr><td>Bingyang Tao</td><td>Hongyu Zang*</td><td>Peng Pei</td><td>Xiangyu Xi</td><td>Yu Wang</td></tr>
@@ -258,7 +259,7 @@
 <tr><td>Ziran Li</td><td>Haonan Yan</td><td>Linsen Guo</td><td>Wentao Chen</td><td>Yi-Kai Zhang</td></tr>
 <tr><td>Ziwen Wang</td><td>Haoxiang Ma</td><td>Mengshen Zhu</td><td>Wentao Shi*</td><td>Yitao Zhai</td></tr>
 <tr><td>Ziyuan Zhuang</td><td>Haoxing Wen</td><td>Mengxia Shen</td><td>Xi Su</td><td>Yongjing Yin</td></tr>
-</tbody></table></div>
+</tbody></table></div></div>
 <p class="note">LongCat-Flash</p>
 <h2>参考文献</h2>
 <p class="reference" data-reference="1">DeepSeek-AI. DeepSeek-R1：通过强化学习激发 LLM 的推理能力. CoRR, abs/2501.12948, 2025.</p>
@@ -267,7 +268,7 @@
 <p class="reference" data-reference="4">Google. Gemini 3 开启智能新时代, 2025. URL <a href="https://blog.google/products-and-platforms/products/gemini/gemini-3/#note-from-ceo">https://blog.google/products-and-platforms/products/gemini/gemini-3/#note-from-ceo</a>.</p>
 <p class="reference" data-reference="5">MoonshotAI. Kimi-K2 文档, 2025. URL <a href="https://moonshotai.github.io/Kimi-K2/">https://moonshotai.github.io/Kimi-K2/</a>.</p>
 <p class="reference" data-reference="6">DeepSeek-AI, Aixin Liu, Aoxue Mei, Bangcai Lin, Bing Xue, Bingxuan Wang, Bingzheng Xu, Bochao Wu, Bowei Zhang, Chaofan Lin, Chen Dong, Chengda Lu, Chenggang Zhao, Chengqi Deng, Chenhao Xu, Chong Ruan, Damai Dai, Daya Guo, Dejian Yang, Deli Chen, Erhang Li, Fangqi Zhou, Fangyun Lin, Fucong Dai, Guangbo Hao, Guanting Chen, Guowei Li, H. Zhang, Hanwei Xu, Hao Li, Haofen Liang, Haoran Wei, Haowei Zhang, Haowen Luo, Haozhe Ji, Honghui Ding, Hongxuan Tang, Huanqi Cao, Huazuo Gao, Hui Qu, Hui Zeng, Jialiang Huang, Jiashi Li, Jiaxin Xu, Jiewen Hu, Jingchang Chen, Jingting Xiang, Jingyang Yuan, Jingyuan Cheng, Jinhua Zhu, Jun Ran, Junguang</p>
-<p class="continuation">（本页末条文献的作者名单在下一原文页接续。）</p><footer>原文第 22 页</footer></section><section class="page" id="page-23"><h3>参考文献（续）</h3>
+<p class="continuation">（本页末条文献的作者名单在下一原文页接续。）</p><footer>原文第 22 页</footer></section><section class="page" id="page-23" aria-label="原文第 23 页"><h3>参考文献（续）</h3>
 <p class="reference" data-reference="6">Jiang, Junjie Qiu, Junlong Li, Junxiao Song, Kai Dong, Kaige Gao, Kang Guan, Kexin Huang, Kexing Zhou, Kezhao Huang, Kuai Yu, Lean Wang, Lecong Zhang, Lei Wang, Liang Zhao, Liangsheng Yin, Lihua Guo, Lingxiao Luo, Linwang Ma, Litong Wang, Liyue Zhang, M. S. Di, M. Y Xu, Mingchuan Zhang, Minghua Zhang, Minghui Tang, Mingxu Zhou, Panpan Huang, Peixin Cong, Peiyi Wang, Qiancheng Wang, Qihao Zhu, Qingyang Li, Qinyu Chen, Qiushi Du, Ruiling Xu, Ruiqi Ge, Ruisong Zhang, Ruizhe Pan, Runji Wang, Runqiu Yin, Runxin Xu, Ruomeng Shen, Ruoyu Zhang, S. H. Liu, Shanghao Lu, Shangyan Zhou, Shanhuang Chen, Shaofei Cai, Shaoyuan Chen, Shengding Hu, Shengyu Liu, Shiqiang Hu, Shirong Ma, Shiyu Wang, Shuiping Yu, Shunfeng Zhou, Shuting Pan, Songyang Zhou, Tao Ni, Tao Yun, Tian Pei, Tian Ye, Tianyuan Yue, Wangding Zeng, Wen Liu, Wenfeng Liang, Wenjie Pang, Wenjing Luo, Wenjun Gao, Wentao Zhang, Xi Gao, Xiangwen Wang, Xiao Bi, Xiaodong Liu, Xiaohan Wang, Xiaokang Chen, Xiaokang Zhang, Xiaotao Nie, Xin Cheng, Xin Liu, Xin Xie, Xingchao Liu, Xingkai Yu, Xingyou Li, Xinyu Yang, Xinyuan Li, Xu Chen, Xuecheng Su, Xuehai Pan, Xuheng Lin, Xuwei Fu, Y. Q. Wang, Yang Zhang, Yanhong Xu, Yanru Ma, Yao Li, Yao Li, Yao Zhao, Yaofeng Sun, Yaohui Wang, Yi Qian, Yi Yu, Yichao Zhang, Yifan Ding, Yifan Shi, Yiliang Xiong, Ying He, Ying Zhou, Yinmin Zhong, Yishi Piao, Yisong Wang, Yixiao Chen, Yixuan Tan, Yixuan Wei, Yiyang Ma, Yiyuan Liu, Yonglun Yang, Yongqiang Guo, Yongtong Wu, Yu Wu, Yuan Cheng, Yuan Ou, Yuanfan Xu, Yuduan Wang, Yue Gong, Yuhan Wu, Yuheng Zou, Yukun Li, Yunfan Xiong, Yuxiang Luo, Yuxiang You, Yuxuan Liu, Yuyang Zhou, Z. F. Wu, Z. Z. Ren, Zehua Zhao, Zehui Ren, Zhangli Sha, Zhe Fu, Zhean Xu, Zhenda Xie, Zhengyan Zhang, Zhewen Hao, Zhibin Gou, Zhicheng Ma, Zhigang Yan, Zhihong Shao, Zhixian Huang, Zhiyu Wu, Zhuoshu Li, Zhuping Zhang, Zian Xu, Zihao Wang, Zihui Gu, Zijia Zhu, Zilin Li, Zipeng Zhang, Ziwei Xie, Ziyi Gao, Zizheng Pan, Zongqing Yao, Bei Feng, Hui Li, J. L. Cai, Jiaqi Ni, Lei Xu, Meng Li, Ning Tian, R. J. Chen, R. L. Jin, S. S. Li, Shuang Zhou, Tianyu Sun, X. Q. Li, Xiangyue Jin, Xiaojin Shen, Xiaosha Chen, Xinnan Song, Xinyi Zhou, Y. X. Zhu, Yanping Huang, Yaohui Li, Yi Zheng, Yuchen Zhu, Yunxian Ma, Zhen Huang, Zhipeng Xu, Zhongyu Zhang, Dongjie Ji, Jian Liang, Jianzhong Guo, Jin Chen, Leyi Xia, Miaojun Wang, Mingming Li, Peng Zhang, Ruyi Chen, Shangmian Sun, Shaoqing Wu, Shengfeng Ye, T. Wang, W. L. Xiao, Wei An, Xianzu Wang, Xiaowen Sun, Xiaoxiang Wang, Ying Tang, Yukun Zha, Zekai Zhang, Zhe Ju, Zhen Zhang, and Zihua Qu. DeepSeek-V3.2：推进开放 LLM 的前沿, 2025. URL <a href="https://arxiv.org/abs/2512.02556">https://arxiv.org/abs/2512.02556</a>.</p>
 <p class="reference" data-reference="7">MiniMax. MiniMax M2 与 agent：简约中的巧思, 2025. URL <a href="https://www.minimax.io/news/minimax-m2">https://www.minimax.io/news/minimax-m2</a>.</p>
 <p class="reference" data-reference="8">LongCat Team Meituan, Bayan, Bei Li, Bingye Lei, Bo Wang, Bolin Rong, Chao Wang, Chao Zhang, Chen Gao, Chen Zhang, Cheng Sun, Chengcheng Han, Chenguang Xi, Chi Zhang, Chong Peng, Chuan Qin, Chuyu Zhang, Cong Chen, Congkui Wang, Dan Ma, Daoru Pan, Defei Bu, Dengchang Zhao, Deyang Kong, Dishan Liu, Feiye Huo, Fengcun Li, Fubao Zhang, Gan Dong, Gang Liu, Gang Xu, Ge Li, Guoqiang Tan, Guoyuan Lin, Haihang Jing, Haomin Fu, Haonan Yan, Haoxing Wen, Haozhe Zhao, Hong Liu, Hongmei Shi, Hongyan Hao, Hongyin Tang, Huantian Lv, Hui Su, Jiacheng Li, Jiahao Liu, Jiahuan Li, Jiajun Yang, Jiaming Wang, Jian Yang, Jianchao Tan, Jiaqi Sun, Jiaqi Zhang, Jiawei Fu, Jiawei Yang, Jiaxi Hu, Jiayu Qin, Jingang Wang, Jiyuan He, Jun Kuang, Junhui Mei, Kai Liang, Ke He, Kefeng Zhang, Keheng Wang, Keqing He, Liang Gao, Liang Shi, Lianhui Ma, Lin Qiu, Lingbin Kong, Lingtong Si, Linkun Lyu, Linsen Guo, Liqi Yang, Lizhi Yan, Mai Xia, Man Gao, Manyuan Zhang, Meng Zhou, Mengxia Shen, Mingxiang Tuo, Mingyang Zhu, Peiguang Li, Peng Pei, Peng Zhao, Pengcheng Jia, Pingwei Sun, Qi Gu, Qianyun Li, Qingyuan Li, Qiong Huang, Qiyuan Duan, Ran Meng, Rongxiang Weng, Ruichen Shao, Rumei Li, Shizhe Wu, and Shuai Liang. LongCat-Flash 技术报告. CoRR, abs/2509.01322, 2025.</p>
@@ -275,7 +276,7 @@
 <p class="reference" data-reference="10">Chengying Tu, Xuemiao Zhang, Rongxiang Weng, Rumei Li, Chen Zhang, Yang Bai, Hongfei Yan, Jingang Wang, and Xunliang Cai. LLM 中期训练综述, 2025. URL <a href="https://arxiv.org/abs/2510.23081">https://arxiv.org/abs/2510.23081</a>.</p>
 <p class="reference" data-reference="11">Zhihao Xu, Rumei Li, Jiahuan Li, Rongxiang Weng, Jingang Wang, Xunliang Cai, and Xiting Wang. 释放隐式经验：从文本合成工具使用轨迹, 2026. URL <a href="https://arxiv.org/abs/2601.10355">https://arxiv.org/abs/2601.10355</a>.</p>
 <p class="reference" data-reference="12">LongCat Team Meituan., Anchun Gui, Bei Li, Bingyang Tao, Bole Zhou, Borun Chen, Chao Zhang, Chengcheng Han, Chenhui Yang, Chi Zhang, Chong Peng, Chuyu Zhang, Cong Chen, Fengcun Li, Gang Xu, Guoyuan Lin, Hao Jiang, Hao Liang, Haomin Fu, Haoxiang Ma, Hong Liu, Hongyan Hao, Hongyin Tang, Hongyu Zang, Hongzhi Ni, Hui Su, Jiahao Liu, Jiahuan Li, Jialin Liu, Jianfei Zhang, Jianhao Xu, Jianing Wang, Jiaqi Sun, Jiaqi Zhang, Jiarong Shi, Jiawei Yang, Jingang Wang, Jinrui Ding, Jun Kuang, Jun Xu, Ke He, Kefeng Zhang, Keheng Wang, Keqing He, Li Wei, Liang Shi, Lin Qiu, Lingbin Kong, Lingchuan Liu, Linsen Guo, Longfei An, Mai Xia, Meng Zhou, Mengshen Zhu, Peng Pei, Pengcheng Jia, Qi Gu, Qi Guo, Qiong Huang, Quan Chen, Quanchi Weng, Rongxiang Weng, Ruichen Shao, Rumei Li, Shanglin Lei, Shuai Du, Shuaikang Liu, Shuang Zhou, Shuhao Hu, Siyu Xu, Songshan Gong, Tao Liang, Tianhao Hu, Wei He, Wei Shi, Wei Wang, Wei Wu, Wei Zhuo, Weifeng Tang, Wenjie Shi, Wenlong Zhu, Xi Su, Xiangcheng Liu, Xiangyu Xi, Xiangzhou Huang, Xiao Liu, Xiaochen Jiang, Xiaowei Shi, Xiaowen Shi,</p>
-<p class="continuation">（本页末条文献的作者名单在下一原文页接续。）</p><footer>原文第 23 页</footer></section><section class="page" id="page-24"><h3>参考文献（续）</h3>
+<p class="continuation">（本页末条文献的作者名单在下一原文页接续。）</p><footer>原文第 23 页</footer></section><section class="page" id="page-24" aria-label="原文第 24 页"><h3>参考文献（续）</h3>
 <p class="reference" data-reference="12">Xiaoyu Li, Xin Chen, Xinyue Zhao, Xuan Huang, Xuemiao Zhang, Xuezhi Cao, Xunliang Cai, Yajie Zhang, Yang Chen, and Yang Liu. LongCat-Flash-Thinking 技术报告. CoRR, abs/2509.18883, 2025.</p>
 <p class="reference" data-reference="13">Ozan Sener and Silvio Savarese. 卷积神经网络的主动学习：核心集方法. 发表于 ICLR（海报）。 OpenReview.net, 2018.</p>
 <p class="reference" data-reference="14">Qianlong Du, Chengqing Zong, and Jiajun Zhang. MODS：面向模型的指令微调数据选择. CoRR, abs/2311.15653, 2023.</p>
@@ -297,7 +298,7 @@
 <p class="reference" data-reference="30">DeepMind. Gemini 2.5 Pro, 2025. URL <a href="https://deepmind.google/models/gemini/pro/">https://deepmind.google/models/gemini/pro/</a>.</p>
 <p class="reference" data-reference="31">Gemma Team. Gemma 3 技术报告. CoRR, abs/2503.19786, 2025.</p>
 <p class="reference" data-reference="32">OpenAI. 介绍 GPT-5, 2025a. URL <a href="https://openai.com/index/introducing-gpt-5/">https://openai.com/index/introducing-gpt-5/</a>.</p>
-<p class="reference" data-reference="33">Jingcheng Hu, Yinmin Zhang, Shijie Shang, Xiaobo Yang, Yue Peng, Zhewei Huang, Hebin Zhou, Xin Wu, Jie Cheng, Fanqi Wan, Xiangwen Kong, Chengyuan Yao, Ailin Huang, Hongyu Zhou, Qi Han, Zheng Ge, Daxin Jiang, Xiangyu Zhang, and Heung-Yeung Shum. PaCoRe：学习利用并行协调推理扩展测试时计算, 2025. URL <a href="https://github.com/stepfun-ai/PaCoRe/blob/main/pacore_report.pdf">https://github.com/stepfun-ai/PaCoRe/blob/main/pacore_report.pdf</a>.</p><footer>原文第 24 页</footer></section><section class="page" id="page-25"><h3>参考文献（续）</h3>
+<p class="reference" data-reference="33">Jingcheng Hu, Yinmin Zhang, Shijie Shang, Xiaobo Yang, Yue Peng, Zhewei Huang, Hebin Zhou, Xin Wu, Jie Cheng, Fanqi Wan, Xiangwen Kong, Chengyuan Yao, Ailin Huang, Hongyu Zhou, Qi Han, Zheng Ge, Daxin Jiang, Xiangyu Zhang, and Heung-Yeung Shum. PaCoRe：学习利用并行协调推理扩展测试时计算, 2025. URL <a href="https://github.com/stepfun-ai/PaCoRe/blob/main/pacore_report.pdf">https://github.com/stepfun-ai/PaCoRe/blob/main/pacore_report.pdf</a>.</p><footer>原文第 24 页</footer></section><section class="page" id="page-25" aria-label="原文第 25 页"><h3>参考文献（续）</h3>
 <p class="reference" data-reference="34">Yifan Zhang and Team Math-AI. 美国数学邀请赛（AIME）2025, 2025.</p>
 <p class="reference" data-reference="35">HMMT. HMMT 2025, 2025. URL <a href="https://www.hmmt.org/">https://www.hmmt.org/</a>.</p>
 <p class="reference" data-reference="36">Thang Luong, Dawsen Hwang, Hoang H. Nguyen, Golnaz Ghiasi, Yuri Chervonyi, Insuk Seo, Junsu Kim, Garrett Bingham, Jonathan Lee, Swaroop Mishra, Alex Zhai, Clara Huiyi Hu, Henryk Michalewski, Jimin Kim, Jeonghyun Ahn, Junhwi Bae, Xingyou Song, Trieu H. Trinh, Quoc V. Le, and Junehyuk Jung. 迈向稳健的数学推理. CoRR, abs/2511.01846, 2025.</p>
@@ -312,15 +313,15 @@
 <p class="reference" data-reference="45">Zhexu Wang, Yiping Liu, Yejie Wang, Wenyang He, Bofei Gao, Muxi Diao, Yanxu Chen, Kelin Fu, Flood Sung, Zhilin Yang, Tianyu Liu, and Weiran Xu. OJBench：面向 LLM 的竞赛级代码基准. CoRR, abs/2506.16395, 2025.</p>
 <p class="reference" data-reference="46">Yaoming Zhu, Junxin Wang, Yiyang Li, Lin Qiu, ZongYu Wang, Jun Xu, Xuezhi Cao, Yuhuai Wei, Mingshi Wang, Xunliang Cai, and Rong Ma. OIBench：利用信息学奥林匹克竞赛评测强推理模型. CoRR, abs/2506.10481, 2025.</p>
 <p class="reference" data-reference="47">An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chang Gao, Chengen Huang, Chenxu Lv, Chujie Zheng, Dayiheng Liu, Fan Zhou, Fei Huang, Feng Hu, Hao Ge, Haoran Wei, Huan Lin, Jialong Tang, Jian Yang, Jianhong Tu, Jianwei Zhang, Jian Yang, Jiaxi Yang, Jingren Zhou, Junyang Lin, Kai Dang, Keqin Bao, Kexin Yang, Le Yu, Lianghao Deng, Mei Li, Mingfeng Xue, Mingze Li, Pei Zhang, Peng Wang, Qin Zhu, Rui Men, Ruize Gao, Shixuan Liu, Shuang Luo, Tianhao Li, Tianyi Tang, Wenbiao Yin, Xingzhang Ren, Xinyu Wang, Xinyu Zhang, Xuancheng Ren, Yang Fan, Yang Su, Yichang Zhang, Yinger Zhang, Yu Wan, Yuqiong Liu, Zekun Wang, Zeyu Cui, Zhenru Zhang, Zhipeng Zhou, and Zihan Qiu. Qwen3 技术报告. CoRR, abs/2505.09388, 2025.</p>
-<p class="reference" data-reference="48">Z.AI. GLM-4.7：提升编程能力, 2025. URL <a href="https://z.ai/blog/glm-4.7">https://z.ai/blog/glm-4.7</a>.</p><footer>原文第 25 页</footer></section><section class="page" id="page-26"><h3>参考文献（续）</h3>
+<p class="reference" data-reference="48">Z.AI. GLM-4.7：提升编程能力, 2025. URL <a href="https://z.ai/blog/glm-4.7">https://z.ai/blog/glm-4.7</a>.</p><footer>原文第 25 页</footer></section><section class="page" id="page-26" aria-label="原文第 26 页"><h3>参考文献（续）</h3>
 <p class="reference" data-reference="49">Jingyang Yuan, Huazuo Gao, Damai Dai, Junyu Luo, Liang Zhao, Zhengyan Zhang, Zhenda Xie, Yuxing Wei, Lean Wang, Zhiping Xiao, Yuqing Wang, Chong Ruan, Ming Zhang, Wenfeng Liang, and Wangding Zeng. 原生稀疏 attention：与硬件适配且可原生训练的稀疏 attention. 发表于 ACL（1），页码 23078–23097. Association for Computational Linguistics, 2025.</p>
 <p class="reference" data-reference="50">Enzhe Lu, Zhejun Jiang, Jingyuan Liu, Yulun Du, Tao Jiang, Chao Hong, Shaowei Liu, Weiran He, Enming Yuan, Yuzhi Wang, Zhiqi Huang, Huan Yuan, Suting Xu, Xinran Xu, Guokun Lai, Yanru Chen, Huabin Zheng, Junjie Yan, Jianlin Su, Yuxin Wu, Neo Y. Zhang, Zhilin Yang, Xinyu Zhou, Mingxing Zhang, and Jiezhong Qiu. MoBA：面向长上下文 LLM 的混合块 attention. CoRR, abs/2502.13189, 2025b.</p>
 <p class="reference" data-reference="51">Jusen Du, Weigao Sun, Disen Lan, Jiaxi Hu, and Yu Cheng. MoM：利用混合记忆进行线性序列建模. CoRR, abs/2502.13685, 2025.</p>
 <p class="reference" data-reference="52">Weigao Sun, Disen Lan, Tong Zhu, Xiaoye Qu, and Yu Cheng. Linear-MoE：线性序列建模与 MoE 结合. CoRR, abs/2503.05447, 2025.</p>
 <p class="reference" data-reference="53">Chen Zhang, Yang Bai, Jiahuan Li, Anchun Gui, Keheng Wang, Feifan Liu, Guanyu Wu, Yuwei Jiang, Defei Bu, Li Wei, Haihang Jing, Hongyin Tang, Xin Chen, Xiangzhou Huang, Fengcun Li, Rongxiang Weng, Yulei Qian, Yifan Lu, Yerui Sun, Jingang Wang, Yuchen Xie, and Xunliang Cai. 利用 LongCat Zigzag Attention 高效扩展上下文, 2026. URL <a href="https://arxiv.org/abs/2512.23966">https://arxiv.org/abs/2512.23966</a>.</p>
 <p class="reference" data-reference="54">Guangxuan Xiao, Jiaming Tang, Jingwei Zuo, Junxian Guo, Shang Yang, Haotian Tang, Yao Fu, and Song Han. DuoAttention：利用检索头和流式头实现高效的长上下文 LLM 推理. CoRR, abs/2410.10819, 2024. doi:<a href="https://doi.org/10.48550/ARXIV.2410.10819">10.48550/ARXIV.2410.10819</a>. URL <a href="https://doi.org/10.48550/arXiv.2410.10819">https://doi.org/10.48550/arXiv.2410.10819</a>.</p>
-<p class="reference" data-reference="55">Bowen Peng, Jeffrey Quesnelle, Honglu Fan, and Enrico Shippole. YaRN：高效扩展 LLM 的上下文窗口. 发表于第十二届国际学习表征会议，ICLR 2024，奥地利维也纳，2024 年 5 月 7–11 日。 OpenReview.net, 2024. URL <a href="https://openreview.net/forum?id=wHBfxhZu1u">https://openreview.net/forum?id=wHBfxhZu1u</a>.</p><footer>原文第 26 页</footer></section><section class="page" id="page-27"><figure><img height="597" width="1416" decoding="async" loading="lazy" alt="原文第 27 页图表或公式" src="assets/images/705456604584ea7f426edf69ade8440f2449b85d44dab6c2d235ac6d3eeadfeb.png"></figure>
-<figure><img height="450" width="1416" decoding="async" loading="lazy" alt="原文第 27 页图表或公式" src="assets/images/c3b5a2cee95852da2dcdb421bc47411ce716f8d0f58d6616926ce42a227109b1.png"></figure>
+<p class="reference" data-reference="55">Bowen Peng, Jeffrey Quesnelle, Honglu Fan, and Enrico Shippole. YaRN：高效扩展 LLM 的上下文窗口. 发表于第十二届国际学习表征会议，ICLR 2024，奥地利维也纳，2024 年 5 月 7–11 日。 OpenReview.net, 2024. URL <a href="https://openreview.net/forum?id=wHBfxhZu1u">https://openreview.net/forum?id=wHBfxhZu1u</a>.</p><footer>原文第 26 页</footer></section><section class="page" id="page-27" aria-label="原文第 27 页"><figure><img alt="原文第 27 页图表或公式" src="assets/images/705456604584ea7f426edf69ade8440f2449b85d44dab6c2d235ac6d3eeadfeb.png" width="1416" height="597" loading="lazy" decoding="async"></figure>
+<figure><img alt="原文第 27 页图表或公式" src="assets/images/c3b5a2cee95852da2dcdb421bc47411ce716f8d0f58d6616926ce42a227109b1.png" width="1416" height="450" loading="lazy" decoding="async"></figure>
 <h2>附录 A　最优超参数预测</h2>
 <p>考虑到庞大的搜索空间和高昂计算成本，高效识别最优超参数是大规模中期训练的核心挑战之一。为应对这一挑战，我们提出一种新的最优超参数预测方法，专门用于最大限度降低寻找最佳配置的计算成本。</p>
 <p>我们的方法包含两个关键步骤：</p>
@@ -329,4 +330,4 @@
 <p>通过这一方法，我们能够预测支持高效持续训练的最优超参数，以极小的计算开销提升模型表现。</p>
 <h2>附录 B　上下文管理 Token 阈值的性能评估</h2>
 <p>如图 15 所示，我们在不同摘要上下文 token 长度下评估 BrowseComp 的 Pass@1 准确率，最大上下文轮数限制为 500。准确率从 20K token 时的 63.86% 持续上升，在 80K token 时达到峰值 66.58%，随后在 100K token 时降至 65.9%。这表明 80K 是基于摘要的上下文管理的最优上下文长度，因此，在所有后续实验中，我们将 80K 上下文长度固定为触发摘要的阈值。</p>
-<footer>原文第 27 页</footer></section></body></html>
+<footer>原文第 27 页</footer></section></main></body></html>

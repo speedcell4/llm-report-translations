@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Qwen3.5到3.7的官方博客、HF Hub配置和Transformers实现对照，含历史思考、工具协议、MTP、视觉与上下文细节。"><title>Qwen3.5–3.7 技术演进与源码核查</title><link rel="stylesheet" href="assets/document.css?v=d55ff23067b7"></head><body class="technical-note"><nav class="document-nav" aria-label="文档与章节导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-meta">核查日期：2026-10-10 · 技术核查汇总（非论文译文）</div><div class="nav-links"><a href="#overview">概览</a><a href="#blog">版本更新</a><a href="#code">配置与代码</a><a href="#sources">来源与范围</a></div></nav><main><section class="page" id="overview"><header><a href="https://speedcell4.github.io/llm-report-translations/">大模型技术资料</a><time datetime="2026-10-10">2026年10月10日</time></header><h1>Qwen3.5–3.7 技术演进与源码核查</h1><p class="intro">汇总官方博客中的架构、训练与 agent 更新，并用HF Hub配置、聊天模板、权重索引及Transformers实现补足具体细节。</p><div class="note"><strong>核心结论：</strong>本次未找到3.5、3.6、3.7主系列的统一官方技术报告。开放3.6-27B与35B-A3B沿用对应3.5主体结构；历史思考输入、工具参数序列化和部分推理默认值存在可确认变化。相同推理结构不能说明训练方法相同；闭源3.7-Max内部细节仍以官方披露为限。</div><div class="contents"><a href="#blog">博客与版本更新</a><a href="#code">Hub与代码细节</a><a href="#sources">来源版本</a><a href="qwen38-next-zh.html">2608.30320v1全文译文</a></div></section><section class="page" id="blog"><h2>一　官方博客与版本更新</h2><h3 id="blog-1">结论</h3>
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Qwen3.5到3.7的官方博客、HF Hub配置和Transformers实现对照，含历史思考、工具协议、MTP、视觉与上下文细节。"><title>Qwen3.5–3.7 技术演进与源码核查</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"></head><body class="technical-note"><nav class="document-nav" aria-label="文档与章节导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-meta">核查日期：2026-10-10 · 技术核查汇总（非论文译文）</div><div class="nav-links"><a href="#overview">概览</a><a href="#blog">版本更新</a><a href="#code">配置与代码</a><a href="#sources">来源与范围</a></div></nav><main><section class="page" id="overview"><header><a href="https://speedcell4.github.io/llm-report-translations/">大模型技术资料</a><time datetime="2026-10-10">2026年10月10日</time></header><h1>Qwen3.5–3.7 技术演进与源码核查</h1><p class="intro">汇总官方博客中的架构、训练与 agent 更新，并用HF Hub配置、聊天模板、权重索引及Transformers实现补足具体细节。</p><div class="note"><strong>核心结论：</strong>本次未找到3.5、3.6、3.7主系列的统一官方技术报告。开放3.6-27B与35B-A3B沿用对应3.5主体结构；历史思考输入、工具参数序列化和部分推理默认值存在可确认变化。相同推理结构不能说明训练方法相同；闭源3.7-Max内部细节仍以官方披露为限。</div><div class="contents"><a href="#blog">博客与版本更新</a><a href="#code">Hub与代码细节</a><a href="#sources">来源版本</a><a href="qwen38-next-zh.html">2608.30320v1全文译文</a></div></section><section class="page" id="blog"><h2>一　官方博客与版本更新</h2><h3 id="blog-1">结论</h3>
 <p>此次未找到 Qwen3.5、Qwen3.6、Qwen3.7 主系列的统一官方技术报告。3.5、3.7 博客仍提到 upcoming technical report；这表示公开材料有缺口，不证明报告绝对不存在。各版本仍有具体技术披露，不能理解为只有模型名和榜单变化。</p>
 <h3 id="blog-2">主系列逐项变化</h3>
 <h4 id="blog-3">Qwen3.5：原生多模态、混合 Attention 与训练系统</h4>
@@ -27,36 +27,36 @@
 <div class="table-wrap" tabindex="0" role="region" aria-label="横向滚动查看完整表格"><table>
 <thead>
 <tr>
-<th>任务</th>
-<th  class="layout-10">3.5-35B → 3.6-35B</th>
-<th  class="layout-10">3.5-27B → 3.6-27B</th>
+<th scope="col">任务</th>
+<th class="layout-10" scope="col">3.5-35B → 3.6-35B</th>
+<th class="layout-10" scope="col">3.5-27B → 3.6-27B</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>SWE-Verified</td>
-<td  class="layout-10">70.0 → 73.4</td>
-<td  class="layout-10">75.0 → 77.2</td>
+<td class="layout-10">70.0 → 73.4</td>
+<td class="layout-10">75.0 → 77.2</td>
 </tr>
 <tr>
 <td>SWE-Pro</td>
-<td  class="layout-10">44.6 → 49.5</td>
-<td  class="layout-10">51.2 → 53.5</td>
+<td class="layout-10">44.6 → 49.5</td>
+<td class="layout-10">51.2 → 53.5</td>
 </tr>
 <tr>
 <td>SWE-Multilingual</td>
-<td  class="layout-10">60.3 → 67.2</td>
-<td  class="layout-10">69.3 → 71.3</td>
+<td class="layout-10">60.3 → 67.2</td>
+<td class="layout-10">69.3 → 71.3</td>
 </tr>
 <tr>
 <td>Terminal-Bench 2.0</td>
-<td  class="layout-10">40.5 → 51.5</td>
-<td  class="layout-10">41.6 → 59.3</td>
+<td class="layout-10">40.5 → 51.5</td>
+<td class="layout-10">41.6 → 59.3</td>
 </tr>
 <tr>
 <td>SkillsBench</td>
-<td  class="layout-10">4.4 → 28.7</td>
-<td  class="layout-10">27.2 → 48.2</td>
+<td class="layout-10">4.4 → 28.7</td>
+<td class="layout-10">27.2 → 48.2</td>
 </tr>
 </tbody>
 </table></div>
@@ -76,9 +76,9 @@
 <div class="table-wrap" tabindex="0" role="region" aria-label="横向滚动查看完整表格"><table>
 <thead>
 <tr>
-<th>项目</th>
-<th>资料</th>
-<th>应如何理解</th>
+<th scope="col">项目</th>
+<th scope="col">资料</th>
+<th scope="col">应如何理解</th>
 </tr>
 </thead>
 <tbody>
@@ -124,85 +124,85 @@
 <div class="table-wrap" tabindex="0" role="region" aria-label="横向滚动查看完整表格"><table>
 <thead>
 <tr>
-<th>Checkpoint</th>
-<th  class="layout-10">层数 L/F</th>
-<th  class="layout-10">hidden size</th>
-<th  class="layout-10">full attention Q/KV heads</th>
-<th>FFN 或 MoE</th>
-<th  class="layout-10">vision depth/hidden</th>
+<th scope="col">Checkpoint</th>
+<th class="layout-10" scope="col">层数 L/F</th>
+<th class="layout-10" scope="col">hidden size</th>
+<th class="layout-10" scope="col">full attention Q/KV heads</th>
+<th scope="col">FFN 或 MoE</th>
+<th class="layout-10" scope="col">vision depth/hidden</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>3.5-0.8B</td>
-<td  class="layout-10">24，18/6</td>
-<td  class="layout-10">1024</td>
-<td  class="layout-10">8/2</td>
+<td class="layout-10">24，18/6</td>
+<td class="layout-10">1024</td>
+<td class="layout-10">8/2</td>
 <td>dense intermediate3584</td>
-<td  class="layout-10">12/768</td>
+<td class="layout-10">12/768</td>
 </tr>
 <tr>
 <td>3.5-2B</td>
-<td  class="layout-10">24，18/6</td>
-<td  class="layout-10">2048</td>
-<td  class="layout-10">8/2</td>
+<td class="layout-10">24，18/6</td>
+<td class="layout-10">2048</td>
+<td class="layout-10">8/2</td>
 <td>dense6144</td>
-<td  class="layout-10">24/1024</td>
+<td class="layout-10">24/1024</td>
 </tr>
 <tr>
 <td>3.5-4B</td>
-<td  class="layout-10">32，24/8</td>
-<td  class="layout-10">2560</td>
-<td  class="layout-10">16/4</td>
+<td class="layout-10">32，24/8</td>
+<td class="layout-10">2560</td>
+<td class="layout-10">16/4</td>
 <td>dense9216</td>
-<td  class="layout-10">24/1024</td>
+<td class="layout-10">24/1024</td>
 </tr>
 <tr>
 <td>3.5-9B</td>
-<td  class="layout-10">32，24/8</td>
-<td  class="layout-10">4096</td>
-<td  class="layout-10">16/4</td>
+<td class="layout-10">32，24/8</td>
+<td class="layout-10">4096</td>
+<td class="layout-10">16/4</td>
 <td>dense12288</td>
-<td  class="layout-10">27/1152</td>
+<td class="layout-10">27/1152</td>
 </tr>
 <tr>
 <td>3.5/3.6-27B</td>
-<td  class="layout-10">64，48/16</td>
-<td  class="layout-10">5120</td>
-<td  class="layout-10">24/4</td>
+<td class="layout-10">64，48/16</td>
+<td class="layout-10">5120</td>
+<td class="layout-10">24/4</td>
 <td>dense17408</td>
-<td  class="layout-10">27/1152</td>
+<td class="layout-10">27/1152</td>
 </tr>
 <tr>
 <td>3.5/3.6-35B-A3B</td>
-<td  class="layout-10">40，30/10</td>
-<td  class="layout-10">2048</td>
-<td  class="layout-10">16/2</td>
+<td class="layout-10">40，30/10</td>
+<td class="layout-10">2048</td>
+<td class="layout-10">16/2</td>
 <td>256路由专家选8；专家/共享intermediate512</td>
-<td  class="layout-10">27/1152</td>
+<td class="layout-10">27/1152</td>
 </tr>
 <tr>
 <td>3.5-122B-A10B</td>
-<td  class="layout-10">48，36/12</td>
-<td  class="layout-10">3072</td>
-<td  class="layout-10">32/2</td>
+<td class="layout-10">48，36/12</td>
+<td class="layout-10">3072</td>
+<td class="layout-10">32/2</td>
 <td>256选8；专家/共享intermediate1024</td>
-<td  class="layout-10">27/1152</td>
+<td class="layout-10">27/1152</td>
 </tr>
 <tr>
 <td>3.5-397B-A17B</td>
-<td  class="layout-10">60，45/15</td>
-<td  class="layout-10">4096</td>
-<td  class="layout-10">32/2</td>
+<td class="layout-10">60，45/15</td>
+<td class="layout-10">4096</td>
+<td class="layout-10">32/2</td>
 <td>512选10；专家/共享intermediate1024</td>
-<td  class="layout-10">27/1152</td>
+<td class="layout-10">27/1152</td>
 </tr>
 </tbody>
 </table></div>
 <p>注意full attention 的head_dim显式为256，不能用hidden_size/num_attention_heads自行推导。GatedDeltaNet有另一组key/value head数量：27B为16/48，35B为16/32，维度各128。小模型0.8B/2B/4B还使用tie_word_embeddings=true；27B/35B则不共享输入输出词 embedding。</p>
 <p>两组3.5→3.6对应模型的vision_config、image/video预处理配置完全一致，非 MTP 的权重键名集合也一致。这证明公开计算结构/参数布局高度延续，不证明权重数值相同，也不揭示新增数据或训练步骤。</p>
 <h3 id="code-2">上次留下的swish疑点可以收窄了</h3>
-<p>3.6-27B新增<code>output_gate_type=&quot;swish&quot;</code>，但固定版本的六份configuration/modeling/modular文件都不读取该字段。代码实际使用两种不同的门：</p>
+<p>3.6-27B新增<code>output_gate_type="swish"</code>，但固定版本的六份configuration/modeling/modular文件都不读取该字段。代码实际使用两种不同的门：</p>
 <ul>
 <li>GatedDeltaNet：RMSNorm后乘SiLU(z)，activation在RMSNormGated中已固定为silu（通常称Swish，beta=1）。</li>
 <li>Full attention：q_proj同时投影query和gate，attention 输出乘 sigmoid(gate)，再o_proj。</li>
@@ -233,7 +233,7 @@
 <p>因此3.6的变化不能解释为新 tokenizer 带来的压缩率提升。这个结论限定上述27B/35B checkpoint，不外推闭源Plus/Max。来源为各模型固定revision的官方Hub文件元数据；仓库版本列于本页来源表。</p>
 <h3 id="code-7">MTP 确有权重，但支持取决于引擎</h3>
 <p>四个 checkpoint 配置均为mtp_num_hidden_layers=1、mtp_use_dedicated_embeddings=false；权重索引都有 mtp.*参数。27B两版各15个 MTP 键；35B从785键变19键，原因是3.5的 MTP 专家以256组gate/up/down分别存储，3.6打包成experts.gate_up_proj和experts.down_proj。键数减少不表示减少专家。主干非 MTP 键集合两版相同。</p>
-<p>当前Transformers模型代码把<code>^mtp.*</code>作为可忽略的unexpected keys，没有对应 MTP 模块和forward。普通AutoModel加载并generate不能自动获得该 checkpoint 的 MTP 加速。官方模型卡提供vLLM参数<code>--speculative-config '{&quot;method&quot;:&quot;qwen3_next_mtp&quot;,&quot;num_speculative_tokens&quot;:2}'</code>，说明引擎层需要明确启用；本次没有审计或运行vLLM实现。MTP 隐藏层数1也不能直接当作一次可预测 token 数上限。</p>
+<p>当前Transformers模型代码把<code>^mtp.*</code>作为可忽略的unexpected keys，没有对应 MTP 模块和forward。普通AutoModel加载并generate不能自动获得该 checkpoint 的 MTP 加速。官方模型卡提供vLLM参数<code>--speculative-config '{"method":"qwen3_next_mtp","num_speculative_tokens":2}'</code>，说明引擎层需要明确启用；本次没有审计或运行vLLM实现。MTP 隐藏层数1也不能直接当作一次可预测 token 数上限。</p>
 <p>来源：<a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/blob/59d61f3ce65a6d9863b86d2e96597125219dc754/model.safetensors.index.json">3.5-35B权重索引</a>、<a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/model.safetensors.index.json">3.6-35B权重索引</a>、<a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L903-L913">Transformers忽略 MTP L903–913</a>。</p>
 <h3 id="code-8">混合 Attention、MoE、位置编码的实际运算</h3>
 <ul>
@@ -250,4 +250,4 @@
 <p>来源：<a href="https://huggingface.co/Qwen/Qwen3.6-27B-FP8/blob/e89b16ebf1988b3d6befa7de50abc2d76f26eb09/config.json">27B-FP8配置</a>、<a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B-FP8/blob/95a723d08a9490559dae23d0cff1d9466213d989/config.json">35B-FP8配置</a>，固定revision见extra-manifest。</p>
 <h3 id="code-11">仍不能确认的部分</h3>
 <p>未执行模型推理、数值等价测试或性能benchmark；未完整检查vLLM/SGLang和官方内部训练代码。当前Transformers main可能晚于模型发布，不能反推发布日期支持状态。相同结构不能证明3.6仅做 RL 或 SFT，博客和Hub仍不足以还原完整训练数据、阶段与参数。3.7-Max闭源实现无法从当前公开Hub补齐。</p>
-</section><section class="page" id="sources"><h2>三　来源版本与核查范围</h2><p>核查日期为2026年10月10日。博客与模型卡提供训练和能力披露，Hub配置与模板提供具体文件差异，代码结论限定下列固定版本。相同结构不能还原训练数据、阶段或奖励配方。</p><p>Transformers commit：<a href="https://github.com/huggingface/transformers/tree/536ecc007387a50e77603bb5d92100e9b07514cc"><code>536ecc007387a50e77603bb5d92100e9b07514cc</code></a>。</p><div class="table-wrap" tabindex="0" role="region" aria-label="模型来源版本"><table><thead><tr><th>官方模型仓库</th><th>固定 revision</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-0.8B/tree/2fc06364715b967f1860aea9cf38778875588b17">Qwen3.5-0.8B</a></td><td><code>2fc06364715b967f1860aea9cf38778875588b17</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-2B/tree/15852e8c16360a2fea060d615a32b45270f8a8fc">Qwen3.5-2B</a></td><td><code>15852e8c16360a2fea060d615a32b45270f8a8fc</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-4B/tree/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a">Qwen3.5-4B</a></td><td><code>851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-9B/tree/c202236235762e1c871ad0ccb60c8ee5ba337b9a">Qwen3.5-9B</a></td><td><code>c202236235762e1c871ad0ccb60c8ee5ba337b9a</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-27B/tree/fc05daec18b0a78c049392ed2e771dde82bdf654">Qwen3.5-27B</a></td><td><code>fc05daec18b0a78c049392ed2e771dde82bdf654</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/tree/59d61f3ce65a6d9863b86d2e96597125219dc754">Qwen3.5-35B-A3B</a></td><td><code>59d61f3ce65a6d9863b86d2e96597125219dc754</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-122B-A10B/tree/dc4d348443bc740c68e2d77492492c11606384d5">Qwen3.5-122B-A10B</a></td><td><code>dc4d348443bc740c68e2d77492492c11606384d5</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-397B-A17B/tree/8472618112abcbd45acbcdc58436aff4233c23f7">Qwen3.5-397B-A17B</a></td><td><code>8472618112abcbd45acbcdc58436aff4233c23f7</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-27B/tree/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9">Qwen3.6-27B</a></td><td><code>6a9e13bd6fc8f0983b9b99948120bc37f49c13e9</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/tree/995ad96eacd98c81ed38be0c5b274b04031597b0">Qwen3.6-35B-A3B</a></td><td><code>995ad96eacd98c81ed38be0c5b274b04031597b0</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-27B-FP8/tree/e89b16ebf1988b3d6befa7de50abc2d76f26eb09">Qwen3.6-27B-FP8</a></td><td><code>e89b16ebf1988b3d6befa7de50abc2d76f26eb09</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B-FP8/tree/95a723d08a9490559dae23d0cff1d9466213d989">Qwen3.6-35B-A3B-FP8</a></td><td><code>95a723d08a9490559dae23d0cff1d9466213d989</code></td></tr></tbody></table></div><p>已完成配置递归比较、来源文件哈希核对、聊天模板实际渲染和关键源码静态检查。未下载大模型张量、未执行GPU推理、未复跑性能，也未完整审计vLLM/SGLang。当前代码不能反推模型发布当天的支持状态，闭源3.7-Max的内部实现仍无法补齐。</p><h3>官方来源</h3><ol class="source-list"><li><a href="https://qwen.ai/blog?id=qwen3.5">官方发布博客</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6">Plus 博客</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6-35b-a3b">35B-A3B 博客</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B">35B 官方模型卡</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6-27b">27B 博客</a></li><li><a href="https://qwen.ai/blog?id=qwen3.7">Qwen3.7: The Agent Frontier</a></li><li><a href="https://qwen.ai/blog?id=qwen3.5-max-preview">公告</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6-max-preview">博客</a></li><li><a href="https://arxiv.org/abs/2604.15804">报告2604.15804</a></li><li><a href="https://qwen.ai/blog?id=qwen3.5-livetranslate">博客</a></li><li><a href="https://qwen.ai/blog?id=qwen-scope">博客</a></li><li><a href="https://arxiv.org/abs/2605.11887">报告2605.11887</a></li><li><a href="https://qwen.ai/blog?id=qwen-agentworld">博客</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L204-L220">RMSNormGated L204–220</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L735-L807">full attention L735–807</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/configuration_qwen3_5.py#L90-L119">配置兼容默认 L90–119</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/blob/59d61f3ce65a6d9863b86d2e96597125219dc754/chat_template.jinja">3.5-35B</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/chat_template.jinja">3.6-35B</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/README.md">3.6模型卡</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.5-27B/blob/fc05daec18b0a78c049392ed2e771dde82bdf654/generation_config.json">3.5-27B generation_config</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-27B/blob/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9/generation_config.json">3.6-27B generation_config</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-27B/blob/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9/README.md">3.6-27B模型卡</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/blob/59d61f3ce65a6d9863b86d2e96597125219dc754/model.safetensors.index.json">3.5-35B权重索引</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/model.safetensors.index.json">3.6-35B权重索引</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L903-L913">Transformers忽略 MTP L903–913</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L490-L647">实现L490–647</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py#L871-L909">实现L871–909</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L135-L200">实现L135–200</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L779-L783">full KV L779–783</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L947-L980">patch/merger L947–980</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L1601-L1645">特征替换 L1601–1645</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-27B-FP8/blob/e89b16ebf1988b3d6befa7de50abc2d76f26eb09/config.json">27B-FP8配置</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B-FP8/blob/95a723d08a9490559dae23d0cff1d9466213d989/config.json">35B-FP8配置</a></li></ol><h3>相关全文译文</h3><p><a href="qwen38-next-zh.html">Qwen3.8-Next 架构报告全文中文译文</a> · arXiv:2608.30320v1 · 28页。该报告属于后续Next分支，不替代3.5–3.7主系列报告。</p><footer>本页为技术资料综合整理，不是Qwen团队发布的技术报告。模型、参数、基准名称与源码标识保留英文。</footer></section></main></body></html>
+</section><section class="page" id="sources"><h2>三　来源版本与核查范围</h2><p>核查日期为2026年10月10日。博客与模型卡提供训练和能力披露，Hub配置与模板提供具体文件差异，代码结论限定下列固定版本。相同结构不能还原训练数据、阶段或奖励配方。</p><p>Transformers commit：<a href="https://github.com/huggingface/transformers/tree/536ecc007387a50e77603bb5d92100e9b07514cc"><code>536ecc007387a50e77603bb5d92100e9b07514cc</code></a>。</p><div class="table-wrap" tabindex="0" role="region" aria-label="模型来源版本"><table><thead><tr><th scope="col">官方模型仓库</th><th scope="col">固定 revision</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-0.8B/tree/2fc06364715b967f1860aea9cf38778875588b17">Qwen3.5-0.8B</a></td><td><code>2fc06364715b967f1860aea9cf38778875588b17</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-2B/tree/15852e8c16360a2fea060d615a32b45270f8a8fc">Qwen3.5-2B</a></td><td><code>15852e8c16360a2fea060d615a32b45270f8a8fc</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-4B/tree/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a">Qwen3.5-4B</a></td><td><code>851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-9B/tree/c202236235762e1c871ad0ccb60c8ee5ba337b9a">Qwen3.5-9B</a></td><td><code>c202236235762e1c871ad0ccb60c8ee5ba337b9a</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-27B/tree/fc05daec18b0a78c049392ed2e771dde82bdf654">Qwen3.5-27B</a></td><td><code>fc05daec18b0a78c049392ed2e771dde82bdf654</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/tree/59d61f3ce65a6d9863b86d2e96597125219dc754">Qwen3.5-35B-A3B</a></td><td><code>59d61f3ce65a6d9863b86d2e96597125219dc754</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-122B-A10B/tree/dc4d348443bc740c68e2d77492492c11606384d5">Qwen3.5-122B-A10B</a></td><td><code>dc4d348443bc740c68e2d77492492c11606384d5</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-397B-A17B/tree/8472618112abcbd45acbcdc58436aff4233c23f7">Qwen3.5-397B-A17B</a></td><td><code>8472618112abcbd45acbcdc58436aff4233c23f7</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-27B/tree/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9">Qwen3.6-27B</a></td><td><code>6a9e13bd6fc8f0983b9b99948120bc37f49c13e9</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/tree/995ad96eacd98c81ed38be0c5b274b04031597b0">Qwen3.6-35B-A3B</a></td><td><code>995ad96eacd98c81ed38be0c5b274b04031597b0</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-27B-FP8/tree/e89b16ebf1988b3d6befa7de50abc2d76f26eb09">Qwen3.6-27B-FP8</a></td><td><code>e89b16ebf1988b3d6befa7de50abc2d76f26eb09</code></td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B-FP8/tree/95a723d08a9490559dae23d0cff1d9466213d989">Qwen3.6-35B-A3B-FP8</a></td><td><code>95a723d08a9490559dae23d0cff1d9466213d989</code></td></tr></tbody></table></div><p>已完成配置递归比较、来源文件哈希核对、聊天模板实际渲染和关键源码静态检查。未下载大模型张量、未执行GPU推理、未复跑性能，也未完整审计vLLM/SGLang。当前代码不能反推模型发布当天的支持状态，闭源3.7-Max的内部实现仍无法补齐。</p><h3>官方来源</h3><ol class="source-list"><li><a href="https://qwen.ai/blog?id=qwen3.5">官方发布博客</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6">Plus 博客</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6-35b-a3b">35B-A3B 博客</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B">35B 官方模型卡</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6-27b">27B 博客</a></li><li><a href="https://qwen.ai/blog?id=qwen3.7">Qwen3.7: The Agent Frontier</a></li><li><a href="https://qwen.ai/blog?id=qwen3.5-max-preview">公告</a></li><li><a href="https://qwen.ai/blog?id=qwen3.6-max-preview">博客</a></li><li><a href="https://arxiv.org/abs/2604.15804">报告2604.15804</a></li><li><a href="https://qwen.ai/blog?id=qwen3.5-livetranslate">博客</a></li><li><a href="https://qwen.ai/blog?id=qwen-scope">博客</a></li><li><a href="https://arxiv.org/abs/2605.11887">报告2605.11887</a></li><li><a href="https://qwen.ai/blog?id=qwen-agentworld">博客</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L204-L220">RMSNormGated L204–220</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L735-L807">full attention L735–807</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/configuration_qwen3_5.py#L90-L119">配置兼容默认 L90–119</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/blob/59d61f3ce65a6d9863b86d2e96597125219dc754/chat_template.jinja">3.5-35B</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/chat_template.jinja">3.6-35B</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/README.md">3.6模型卡</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.5-27B/blob/fc05daec18b0a78c049392ed2e771dde82bdf654/generation_config.json">3.5-27B generation_config</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-27B/blob/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9/generation_config.json">3.6-27B generation_config</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-27B/blob/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9/README.md">3.6-27B模型卡</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B/blob/59d61f3ce65a6d9863b86d2e96597125219dc754/model.safetensors.index.json">3.5-35B权重索引</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/995ad96eacd98c81ed38be0c5b274b04031597b0/model.safetensors.index.json">3.6-35B权重索引</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L903-L913">Transformers忽略 MTP L903–913</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L490-L647">实现L490–647</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py#L871-L909">实现L871–909</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L135-L200">实现L135–200</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L779-L783">full KV L779–783</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L947-L980">patch/merger L947–980</a></li><li><a href="https://github.com/huggingface/transformers/blob/536ecc007387a50e77603bb5d92100e9b07514cc/src/transformers/models/qwen3_5/modeling_qwen3_5.py#L1601-L1645">特征替换 L1601–1645</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-27B-FP8/blob/e89b16ebf1988b3d6befa7de50abc2d76f26eb09/config.json">27B-FP8配置</a></li><li><a href="https://huggingface.co/Qwen/Qwen3.6-35B-A3B-FP8/blob/95a723d08a9490559dae23d0cff1d9466213d989/config.json">35B-FP8配置</a></li></ol><h3>相关全文译文</h3><p><a href="qwen38-next-zh.html">Qwen3.8-Next 架构报告全文中文译文</a> · arXiv:2608.30320v1 · 28页。该报告属于后续Next分支，不替代3.5–3.7主系列报告。</p><footer>本页为技术资料综合整理，不是Qwen团队发布的技术报告。模型、参数、基准名称与源码标识保留英文。</footer></section></main></body></html>

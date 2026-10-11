@@ -1,12 +1,13 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeekMath-V2：迈向可自验证的数学推理 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=d55ff23067b7"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">DeepSeekMath-V2：迈向可自验证的数学推理</div><div class="document-meta">DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning<br>首次提交：2025-11-27 · 译文版本：arXiv:2511.22570v1（2025-11-27） · 页码覆盖 19/19 页<br><a href="https://arxiv.org/abs/2511.22570v1">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2511.22570v1">原文 PDF</a></div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a></div></nav><section class="page" id="page-1"><h1>DeepSeekMath-V2：迈向可自验证的数学推理</h1>
-<p class="authors cover-info">Zhihong Shao*，Yuxiang Luo*，Chengda Lu*†，Z.Z. Ren*<br>Jiewen Hu，Tian Ye，Zhibin Gou，Shirong Ma，Xiaokang Zhang</p><p class="cover-info">DeepSeek-AI<br/><a href="mailto:zhihongshao@deepseek.com">zhihongshao@deepseek.com</a><br/><a href="https://github.com/deepseek-ai/DeepSeek-Math-V2">https://github.com/deepseek-ai/DeepSeek-Math-V2</a></p>
-<p class="meta cover-info">arXiv:2511.22570v1 [cs.AI] · 2025 年 11 月 27 日</p>
-<h2>摘要</h2>
-<p>LLM 在数学推理方面取得了显著进展；数学推理是 AI 的重要试验场，如果进一步发展，可能对科学研究产生影响。通过使用奖励正确最终答案的强化学习来扩展推理能力，LLM 在一年内从表现不佳发展到在 AIME 和 HMMT 等定量推理竞赛中达到饱和。然而，这种方法存在根本性局限。追求更高的最终答案准确率并不能解决一个关键问题：正确答案并不保证正确推理。此外，定理证明等许多数学任务要求严谨的逐步推导，而不是数值答案，因此最终答案奖励并不适用。为了推进深度推理的极限，我们认为有必要验证数学推理的全面性与严谨性。自验证对于扩展测试时计算量尤其重要，特别是面对没有已知解答的开放问题。为实现可自验证的数学推理，我们研究如何训练一个准确、忠实的基于 LLM 的定理证明验证器。随后，我们以验证器作为 RM 训练证明生成器，并激励生成器在最终完成证明之前，尽可能发现并解决自己证明中的问题。为了在生成器越来越强的过程中维持生成与验证之间的能力差距，我们提出扩大验证计算量，自动标注新的难以验证的证明，创建训练数据以进一步改进验证器。最终得到的模型 DeepSeekMath-V2 展现出强大的定理证明能力：在扩大测试时计算量后，在 IMO 2025 和 CMO 2024 上取得金牌水平的成绩，并在 Putnam 2024 上取得接近满分的 118/120。虽然仍有大量工作有待完成，这些结果表明，可自验证的数学推理是一条可行的研究方向，可能有助于开发能力更强的数学 AI 系统。</p>
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepSeekMath-V2：迈向可自验证的数学推理 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">DeepSeekMath-V2：迈向可自验证的数学推理</div><div class="document-meta">DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning<br>首次提交：2025-11-27 · 译文版本：arXiv:2511.22570v1（2025-11-27） · 页码覆盖 19/19 页<br><a href="https://arxiv.org/abs/2511.22570v1">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2511.22570v1">原文 PDF</a></div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a></div></nav><main class="document-content"><section class="page" id="page-1" aria-label="原文第 1 页"><header class="paper-header"><h1>DeepSeekMath-V2：迈向可自验证的数学推理</h1>
+<p class="cover-info authors">Zhihong Shao*，Yuxiang Luo*，Chengda Lu*†，Z.Z. Ren*<br>Jiewen Hu，Tian Ye，Zhibin Gou，Shirong Ma，Xiaokang Zhang</p><p class="cover-info links">DeepSeek-AI<br><a href="mailto:zhihongshao@deepseek.com">zhihongshao@deepseek.com</a><br><a href="https://github.com/deepseek-ai/DeepSeek-Math-V2">https://github.com/deepseek-ai/DeepSeek-Math-V2</a></p>
+<p class="cover-info cover-meta">arXiv:2511.22570v1 [cs.AI] · 2025 年 11 月 27 日</p>
+</header><h2>摘要</h2>
+<p class="abstract">LLM 在数学推理方面取得了显著进展；数学推理是 AI 的重要试验场，如果进一步发展，可能对科学研究产生影响。通过使用奖励正确最终答案的强化学习来扩展推理能力，LLM 在一年内从表现不佳发展到在 AIME 和 HMMT 等定量推理竞赛中达到饱和。然而，这种方法存在根本性局限。追求更高的最终答案准确率并不能解决一个关键问题：正确答案并不保证正确推理。此外，定理证明等许多数学任务要求严谨的逐步推导，而不是数值答案，因此最终答案奖励并不适用。为了推进深度推理的极限，我们认为有必要验证数学推理的全面性与严谨性。自验证对于扩展测试时计算量尤其重要，特别是面对没有已知解答的开放问题。为实现可自验证的数学推理，我们研究如何训练一个准确、忠实的基于 LLM 的定理证明验证器。随后，我们以验证器作为 RM 训练证明生成器，并激励生成器在最终完成证明之前，尽可能发现并解决自己证明中的问题。为了在生成器越来越强的过程中维持生成与验证之间的能力差距，我们提出扩大验证计算量，自动标注新的难以验证的证明，创建训练数据以进一步改进验证器。最终得到的模型 DeepSeekMath-V2 展现出强大的定理证明能力：在扩大测试时计算量后，在 IMO 2025 和 CMO 2024 上取得金牌水平的成绩，并在 Putnam 2024 上取得接近满分的 118/120。虽然仍有大量工作有待完成，这些结果表明，可自验证的数学推理是一条可行的研究方向，可能有助于开发能力更强的数学 AI 系统。</p>
 <h2>1. 引言</h2>
 <p>针对数学推理的传统强化学习（RL）方法，根据 LLM 对定量推理问题预测的最终答案是否与标准答案一致来给予奖励（Guo et al., 2025）。这种方法足以让前沿 LLM 在主要评估最终答案的数学竞赛中达到饱和，例如 AIME 和 HMMT。然而，这种奖励机制存在两个根本性局限。首先，它是推理正确性的一个不可靠替代指标：模型可能通过有缺陷的逻辑或碰巧相互抵消的错误得到正确答案。其次，它<span class="continuation">（接下一页）</span></p>
-<p class="footnote">* 核心贡献者。<br/>† 本工作在 DeepSeek-AI 实习期间完成。</p>
-<p class="links">原文链接：<a href="https://arxiv.org/abs/2511.22570v1">https://arxiv.org/abs/2511.22570v1</a></p><footer>原文第 1 页</footer></section><section class="page" id="page-2"><p class="continuation">（接上一页）不适用于定理证明任务，因为这类问题可能不要求生成数值形式的最终答案，而是以严谨推导为主要目标。</p>
+<p class="footnote" role="doc-footnote">* 核心贡献者。<br>† 本工作在 DeepSeek-AI 实习期间完成。</p>
+<p class="links">原文链接：<a href="https://arxiv.org/abs/2511.22570v1">https://arxiv.org/abs/2511.22570v1</a></p><footer>原文第 1 页</footer></section><section class="page" id="page-2" aria-label="原文第 2 页"><p class="continuation">（接上一页）不适用于定理证明任务，因为这类问题可能不要求生成数值形式的最终答案，而是以严谨推导为主要目标。</p>
 <p>因此，使用此类最终答案奖励在定量推理问题上训练的 LLM，仍经常生成数学上无效或逻辑上不一致的自然语言证明。此外，这种训练方法并不会自然培养模型验证证明有效性的能力：它们的误报率很高，即使错误证明包含明显逻辑缺陷，也常常声称这些证明是有效的。</p>
 <p>自然语言定理证明中缺少生成与验证之间的能力差距，阻碍了进一步改进。为解决这一问题，我们提出发展 LLM 的证明验证能力。我们的方法受到以下几个关键观察的启发：</p>
 <ul><li>即使没有参考解答，人类也能找出证明中的问题；这是解决开放问题时的一项关键能力。</li><li>如果在扩大验证投入后仍找不到问题，证明就更有可能是有效的。</li><li>找出确实存在的问题所需的投入，可作为证明质量的替代指标，用于优化证明生成。</li></ul>
@@ -14,21 +15,21 @@
 <p>我们基于 DeepSeek-V3.2-Exp-Base（DeepSeek-AI, 2025）开发了 DeepSeekMath-V2，这是一个针对自然语言定理证明优化的 LLM，展现了可自验证的数学推理能力。我们的模型能够评估并迭代改进自身证明，在 IMO 2025 和 CMO 2024 等顶级高中数学竞赛中达到金牌水平。在 Putnam 2024 本科生竞赛中，它取得 118/120 分，超过人类参赛者获得的最高分 90<sup>1</sup>。</p>
 <h2>2. 方法</h2><h3>2.1. 证明验证</h3><h4>2.1.1. 训练验证器以发现问题并为证明评分</h4>
 <p>我们制定了用于证明评估的高层次评分规则 \(I_{v}\)（见附录 A.2），目的是训练验证器按照这些规则评估证明，模仿数学专家的评估过程。具体而言，给定问题 \(X\) 和证明 \(Y\)，验证器 \(\pi _{\phi}(\cdot |X,Y,I_{v})\) 被设计为生成一份证明分析：先总结发现的问题（如果存在），然后按照三个等级给出评分：对完整、严谨且所有逻辑步骤都有明确依据的证明给 1 分；对整体逻辑正确但有小错误或细节省略的证明给 0.5 分；对含有致命逻辑错误或关键缺漏、存在根本缺陷的证明给 0 分。</p>
-<p class="footnote"><sup>1</sup> <a href="https://kskedlaya.org/putnam-archive/putnam2024stats.html">https://kskedlaya.org/putnam-archive/putnam2024stats.html</a></p>
-<footer>原文第 2 页</footer></section><section class="page" id="page-3"><h4>整理冷启动 RL 数据</h4><p>我们通过以下过程构建初始训练数据：</p>
+<p class="footnote" role="doc-footnote"><sup>1</sup> <a href="https://kskedlaya.org/putnam-archive/putnam2024stats.html">https://kskedlaya.org/putnam-archive/putnam2024stats.html</a></p>
+<footer>原文第 2 页</footer></section><section class="page" id="page-3" aria-label="原文第 3 页"><h4>整理冷启动 RL 数据</h4><p>我们通过以下过程构建初始训练数据：</p>
 <ol><li>我们从 Art of Problem Solving（AoPS）的竞赛题库<sup>2</sup>中抓取题目，优先选择数学奥林匹克竞赛题、队伍选拔测试题以及 2010 年之后明确要求证明的题目，总共 17,503 道。这个问题集记为 \(D_{p}\)。</li><li>我们使用 DeepSeek-V3.2-Exp-Thinking 的一个变体生成候选证明。由于该模型未针对定理证明进行优化，倾向于生成简洁但容易出错的输出，我们通过提示让它经过多轮迭代改进证明，以提高全面性与严谨性。</li><li>我们从代数、数论等不同题型中随机抽取证明，并让数学专家按照上述评估规则为每个证明评分。</li></ol>
 <p>这一过程产生了初始 RL 数据集 \(D_{v} = \{(X_{i},Y_{i},s_{i})\}\)，其中每个样本由问题 \(X_{i}\)、证明 \(Y_{i}\) 和总体证明评分 \(s_{i} \in  \{0,0.5,1\}\) 构成。</p>
 <h4>RL 目标</h4><p>我们以 DeepSeek-V3.2-Exp-SFT 的一个版本为基础；该版本在数学和代码相关推理数据上经过 SFT。我们使用强化学习训练模型生成证明分析，并使用两种奖励成分：</p>
 <ul><li><strong>格式奖励 \(R_{format}\)：</strong>一个指示函数，通过检查最终回复是否包含关键短语 <code>Here is my evaluation of the solution:</code>，以及在 <code>Based on my evaluation, the final overall score should be:</code> 之后是否存在包含在 <code>\boxed{}</code> 中的分数，要求模型同时生成发现问题的总结和证明评分。</li><li><strong>评分奖励 \(R_{score}\)：</strong>根据预测评分 \({s'}_{i}\) 与标注评分 \(s_{i}\) 的接近程度给予奖励：</li></ul>
 <p class="equation">R<sub>score</sub>(s′<sub>i</sub>,s<sub>i</sub>) = 1 − |s′<sub>i</sub> − s<sub>i</sub>|　（1）</p>
 <p>训练验证器的 RL 目标为：</p>
-<figure><img height="90" width="1143" decoding="async" loading="lazy" alt="原文第 3 页图表或公式" src="assets/images/5538d206a29630222ab135125fbf004c13e9f6c91bf5ad3d709f55bfb35e24ba.png"></figure>
+<figure><img alt="原文第 3 页图表或公式" src="assets/images/5538d206a29630222ab135125fbf004c13e9f6c91bf5ad3d709f55bfb35e24ba.png" width="1143" height="90" loading="lazy" decoding="async"></figure>
 <p>其中 \({V'}_{i}\) 表示验证器的最终回复，\({s'}_{i}\) 是从中提取出的证明评分。</p>
 <h4>2.1.2. 引入元验证以审查证明分析</h4>
 <p>第 2.1.1 节描述的方法通过 RL 训练证明验证，使预测的证明评分与专家标注保持一致，但并不直接监督所发现的问题本身。这会造成一个关键漏洞：训练过程中，在评估有缺陷的证明（\(s_{i} &lt; 1\)）时，验证器可以一边臆造不存在的问题，一边预测正确的评分并获得全部奖励，从而破坏其可信度。</p>
 <p>为解决这个问题，我们引入元验证：一个二次评估过程，用于判断验证器发现的问题是否确实存在，以及根据评估规则 \(I_{v}\)，这些问题是否在逻辑上足以支持所预测的证明评分。完整的元验证规则 \(I_{mv}\) 详见附录 A.3。</p>
-<p class="footnote"><sup>2</sup> <a href="https://artofproblemsolving.com/community/c13_contest_collections">https://artofproblemsolving.com/community/c13_contest_collections</a></p>
-<footer>原文第 3 页</footer></section><section class="page" id="page-4"><p>我们使用 RL 训练了专门的元验证器来执行这一评估。通过将元验证器的反馈纳入验证器训练，我们可以提高验证器发现问题时的忠实性。</p>
+<p class="footnote" role="doc-footnote"><sup>2</sup> <a href="https://artofproblemsolving.com/community/c13_contest_collections">https://artofproblemsolving.com/community/c13_contest_collections</a></p>
+<footer>原文第 3 页</footer></section><section class="page" id="page-4" aria-label="原文第 4 页"><p>我们使用 RL 训练了专门的元验证器来执行这一评估。通过将元验证器的反馈纳入验证器训练，我们可以提高验证器发现问题时的忠实性。</p>
 <h4>元验证器训练过程</h4>
 <ol><li>我们按照第 2.1.1 节获得初始验证器 \(\pi _{\phi}\)。</li><li>数学专家按照 \(I_{mv}\) 为验证器回复的质量评分，创建数据集 \(D_{mv} = \{(X_{i},Y_{i},V_{i},ms_{i})\}\)，其中 \(V_{i}\) 是对证明 \(Y_{i}\) 的分析，\(ms_{i} \in  \{0,0.5,1\}\) 是专家标注的质量评分。</li><li>我们训练元验证器 \(\pi _{\eta}(\cdot |X,Y,V,I_{mv})\)，用于分析验证器的证明分析 \(V\)。元验证器先总结在分析本身中发现的问题，然后给出质量评分，衡量验证器分析的准确性与依据充分程度。RL 目标与验证器训练采用相同结构，包括格式奖励和评分奖励。</li></ol>
 <p>利用训练好的元验证器 \(\pi _{\eta}\)，我们将元验证反馈整合进奖励函数，以增强验证器训练：</p>
@@ -38,12 +39,12 @@
 <p>在 \(D_{v}\) 的验证集划分上，验证器证明分析的平均质量评分（由元验证器评估）从 0.85 提升至 0.96，同时证明评分预测的准确率保持不变。</p>
 <h3>2.2. 证明生成</h3><h4>2.2.1. 训练用于定理证明的生成器</h4>
 <p>以验证器 \(\pi _{\phi}\) 作为 GenRM，我们训练证明生成器 \(\pi _{\theta}(\cdot |X)\)，其 RL 目标为：</p>
-<figure><img height="84" width="906" decoding="async" loading="lazy" alt="原文第 4 页图表或公式" src="assets/images/f353575be7b97e453f4ad4e5cbe2cb80b0ce13027bb8a38847acefab32949e70.png"></figure>
+<figure><img alt="原文第 4 页图表或公式" src="assets/images/f353575be7b97e453f4ad4e5cbe2cb80b0ce13027bb8a38847acefab32949e70.png" width="906" height="84" loading="lazy" decoding="async"></figure>
 <p>其中 \(R_{Y}\) 是 \(\pi _{\phi}(\cdot |X_{i},Y_{i},I_{v})\) 产生的证明评分。</p>
 <h4>2.2.2. 通过自验证增强推理</h4>
 <p>当证明生成器无法一次生成完全正确的证明时（对于 IMO 和 CMO 等竞赛中的困难问题，这很常见），迭代验证与改进可以提升结果。这涉及用外部验证器分析证明，并通过提示让生成器解决发现的问题。</p>
 <p>然而，我们观察到一个关键局限：当提示生成器一次性生成并分析自己的证明时，即使外部验证器<span class="continuation">（接下一页）</span></p>
-<footer>原文第 4 页</footer></section><section class="page" id="page-5"><p class="continuation">（接上一页）能够轻易发现缺陷，生成器也倾向于声称证明正确。换言之，虽然生成器可以根据外部反馈改进证明，但它无法像专门的验证器那样严谨地评估自己的工作。</p>
+<footer>原文第 4 页</footer></section><section class="page" id="page-5" aria-label="原文第 5 页"><p class="continuation">（接上一页）能够轻易发现缺陷，生成器也倾向于声称证明正确。换言之，虽然生成器可以根据外部反馈改进证明，但它无法像专门的验证器那样严谨地评估自己的工作。</p>
 <p>这一观察促使我们赋予证明生成器真正的验证能力。训练时，我们提示生成器 \(\pi _{\theta}\) 先生成证明 \(Y\)，再生成自我分析 \(Z\)，自我分析遵循与验证器相同的格式和评分规则 \(I_{v}\)（见附录 A.1）。我们把自我分析中预测的证明评分记为 \(s\)′。</p>
 <p>为确保自我评估忠实可靠，我们使用验证器 \(\pi _{\phi}\) 评估这两个部分：证明 \(Y\) 获得评分 \(R_{Y} = s\)，自我分析 \(Z\) 获得元验证评分 \(R_{meta}(Z) =\) ms。奖励函数结合这两项评估：</p>
 <p class="equation">R = R<sub>format</sub>(Y,Z) · (α · R<sub>Y</sub> + β · R<sub>Z</sub>)　（5）</p>
@@ -57,38 +58,38 @@
 <ol><li>增加验证器样本数量，可以提高在有缺陷的证明中发现真实问题的概率。</li><li>审查验证器发现的问题恰好就是元验证，这比从零开始找出问题更容易。对 LLM 而言，元验证也具有更高的样本效率，更容易掌握。</li></ol>
 <p>基于这些观察，我们开发了以下自动标注过程：</p>
 <ol><li>为每个证明生成 n 份相互独立的验证分析。<span class="continuation">（接下一页）</span></li></ol>
-<footer>原文第 5 页</footer></section><section class="page" id="page-6"><ol start="2"><li>对于报告了问题的分析（评分为 0 或 0.5），生成 m 份元验证评估，以验证所发现的问题。如果多数元评估确认其发现，该分析就被视为有效。</li><li>对于每个证明，我们检查给予最低评分的分析。如果至少有 k 份这样的分析被视为有效，就给证明标注这个最低评分。如果在所有验证尝试中都未发现确实存在的问题，就给证明标注 1 分。否则，丢弃该证明，或交由人类专家标注。</li></ol>
+<footer>原文第 5 页</footer></section><section class="page" id="page-6" aria-label="原文第 6 页"><ol start="2"><li>对于报告了问题的分析（评分为 0 或 0.5），生成 m 份元验证评估，以验证所发现的问题。如果多数元评估确认其发现，该分析就被视为有效。</li><li>对于每个证明，我们检查给予最低评分的分析。如果至少有 k 份这样的分析被视为有效，就给证明标注这个最低评分。如果在所有验证尝试中都未发现确实存在的问题，就给证明标注 1 分。否则，丢弃该证明，或交由人类专家标注。</li></ol>
 <p>在最后两次训练迭代中，这条完全自动化的流水线彻底取代了人工标注。质量检查确认，自动标注与专家判断具有良好的一致性。</p>
 <h2>3. 实验</h2>
-<figure><img height="630" width="1386" decoding="async" loading="lazy" alt="原文第 6 页图表或公式" src="assets/images/8da492f04b6a08026c4d34deb0204d4fdb5ab9018b4d1564aae1ecbc76541937.png"></figure>
+<figure><img alt="原文第 6 页图表或公式" src="assets/images/8da492f04b6a08026c4d34deb0204d4fdb5ab9018b4d1564aae1ecbc76541937.png" width="1386" height="630" loading="lazy" decoding="async"></figure>
 <h3>3.1. 训练设置</h3>
 <p>我们使用 Group Relative Policy Optimization（GRPO）（Shao et al., 2024）进行强化学习，按照第 2 节所述，迭代优化证明验证与生成能力。在每次迭代中，我们先优化证明验证，然后从验证器 checkpoint 初始化证明生成器，并优化其证明生成能力。从第二次迭代开始，证明验证器使用一个 checkpoint 初始化；该 checkpoint 通过拒绝采样微调整合了前一次迭代中的验证与生成能力。</p>
 <h3>3.2. 评估基准</h3><p>我们在以下定理证明基准上评估最终的证明生成器：</p>
 <p><strong>内部 CNML 难度问题：</strong>91 道定理证明题，涵盖代数（13 道）、几何（24 道）、数论（19 道）、组合（24 道）和不等式（11 道），难度与全国高中数学联赛（CNML）题目相当。</p>
 <p><strong>竞赛问题：</strong></p>
 <ul><li><strong>IMO 2025（6 道题）：</strong>国际数学奥林匹克，是面向大学前学生的世界顶级数学竞赛。<span class="continuation">（竞赛列表接下一页）</span></li></ul>
-<footer>原文第 6 页</footer></section><section class="page" id="page-7"><ul><li><strong>CMO 2024（6 道题）：</strong>中国数学奥林匹克，即中国的全国数学竞赛锦标赛。</li><li><strong>Putnam 2024（12 道题）：</strong>William Lowell Putnam Competition，是北美最重要的本科生数学竞赛。</li><li><strong>ISL 2024（31 道题）：</strong>IMO Shortlist，是参与国提出、由选题委员会考虑是否纳入 IMO 2024 的题目合集。</li><li><strong>IMO-ProofBench（60 道题）：</strong>由开发 DeepThink IMO-Gold 的 DeepMind 团队（Luong and Lockhart, 2025）构建，该基准（Luong et al., 2025）分为基础集（30 道题，难度从 pre-IMO 到 IMO-Medium）和高级集（30 道困难题，模拟完整的 IMO 考试，最高达到 IMO-Hard 难度）。</li></ul>
+<footer>原文第 6 页</footer></section><section class="page" id="page-7" aria-label="原文第 7 页"><ul><li><strong>CMO 2024（6 道题）：</strong>中国数学奥林匹克，即中国的全国数学竞赛锦标赛。</li><li><strong>Putnam 2024（12 道题）：</strong>William Lowell Putnam Competition，是北美最重要的本科生数学竞赛。</li><li><strong>ISL 2024（31 道题）：</strong>IMO Shortlist，是参与国提出、由选题委员会考虑是否纳入 IMO 2024 的题目合集。</li><li><strong>IMO-ProofBench（60 道题）：</strong>由开发 DeepThink IMO-Gold 的 DeepMind 团队（Luong and Lockhart, 2025）构建，该基准（Luong et al., 2025）分为基础集（30 道题，难度从 pre-IMO 到 IMO-Medium）和高级集（30 道困难题，模拟完整的 IMO 考试，最高达到 IMO-Hard 难度）。</li></ul>
 <h3>3.3. 评估结果</h3><h4>3.3.1. 单次生成</h4>
 <p>我们首先评估模型在不进行迭代改进的情况下生成正确证明的能力。在内部题目上，我们为每个受评模型、每道题生成 8 个证明样本。证明正确性通过最终验证器产生的 8 份验证分析进行多数投票衡量。如图 1 所示，在 CNML 难度问题的所有类别（代数、几何、数论、组合和不等式）中，DeepSeekMath-V2 均持续优于 GPT-5-Thinking-High（OpenAI, 2025）和 Gemini 2.5-Pro（DeepMind, 2025），展现出跨领域的更强定理证明能力。</p>
 <h4>3.3.2. 结合自验证的顺序改进</h4>
-<figure><img height="675" width="735" decoding="async" loading="lazy" alt="原文第 7 页图表或公式" src="assets/images/4a73d59e90f4c0fca767d6851fcba6397b73f56a9164b4b1e3ecf57cbb8f6033.png"></figure>
+<figure><img alt="原文第 7 页图表或公式" src="assets/images/4a73d59e90f4c0fca767d6851fcba6397b73f56a9164b4b1e3ecf57cbb8f6033.png" width="735" height="675" loading="lazy" decoding="async"></figure>
 <p>对于 IMO 和 CMO 等竞赛中的困难问题，模型通常无法在 128K token 限制内，一次性生成全面、严谨的证明。发生这种情况时，我们的证明生成器通过自验证认识到自己的证明无效，但缺少足够的上下文长度，无法在单次尝试中解决所有发现的问题。</p>
 <p>为了探索更长上下文与自验证如何提高证明质量，我们评估了结合自验证的顺序改进。这种方法先生成带有自我分析的证明，然后使用生成器之前的输出反复重新提示它（改进提示见附录 A.4），使它能够解决发现的问题。该过程持续进行，直到生成器给自己打出满分，或达到顺序尝试次数的上限。</p>
 <p>图 2 展示了在 IMO Shortlist 2024 题目上，通过顺序改进提升证明质量的情况。对于每道题，我们启动 32 条独立的改进线程。证明正确性通过最终验证器产生的 32 份验证分析进行多数投票衡量。图 2 报告两个指标：（1）Pass@1，即各线程最终<span class="continuation">（接下一页）</span></p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><p class="continuation">（接上一页）证明的平均评分；（2）Best@32，即根据所有线程中的自评分数选出的每道题最佳证明的评分。通过自我选择得到的最佳证明，其验证评分显著高于线程平均值，表明我们的生成器能够准确评估证明质量。此外，随着最大顺序尝试次数增加，Pass@1 显著提升，说明自验证能够有效指导迭代改进。这些结果证实，我们的生成器能够可靠区分高质量证明和有缺陷的证明，并利用这种自我认知系统性地改进数学推理。</p>
-<figure><img height="492" width="1389" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/7745e09461fabf795001771c89abb9fa8fe98bb9678f628227901762a63ef69d.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8" aria-label="原文第 8 页"><p class="continuation">（接上一页）证明的平均评分；（2）Best@32，即根据所有线程中的自评分数选出的每道题最佳证明的评分。通过自我选择得到的最佳证明，其验证评分显著高于线程平均值，表明我们的生成器能够准确评估证明质量。此外，随着最大顺序尝试次数增加，Pass@1 显著提升，说明自验证能够有效指导迭代改进。这些结果证实，我们的生成器能够可靠区分高质量证明和有缺陷的证明，并利用这种自我认知系统性地改进数学推理。</p>
+<figure><img alt="原文第 8 页图表或公式" src="assets/images/7745e09461fabf795001771c89abb9fa8fe98bb9678f628227901762a63ef69d.png" width="1389" height="492" loading="lazy" decoding="async"></figure>
 <h4>3.3.3. 高计算量搜索</h4>
-<figure><img height="378" width="735" decoding="async" loading="lazy" alt="原文第 8 页图表或公式" src="assets/images/488e9bc861250ddf4e7cb183470635db72fec00218253db132dd5797a8b5d29c.png"></figure>
+<figure><img alt="原文第 8 页图表或公式" src="assets/images/488e9bc861250ddf4e7cb183470635db72fec00218253db132dd5797a8b5d29c.png" width="735" height="378" loading="lazy" decoding="async"></figure>
 <p>为了解决最困难的问题，我们同时扩大验证和生成计算量：使用大量验证来发现细微问题，并通过并行生成探索不同的证明策略。</p>
 <p>我们的方法为每道题维护一个候选证明池，初始包含 64 个证明样本，并为每个样本生成 64 份验证分析。在每次改进迭代中，我们根据平均验证评分选出分数最高的 64 个证明，并分别为每个证明随机配对 8 份分析，优先选择发现了问题的分析（评分为 0 或 0.5）。每个“证明—分析”对用于生成一个改进后的证明，随后更新候选池。该过程最多持续 16 次迭代，或在某个证明成功通过全部 64 次验证尝试时结束；这表明对其正确性具有较高置信度。所有实验都使用同一个模型，即最终的证明生成器，它同时执行证明生成和验证。</p>
 <p>为验证结果，数学专家评估了评分最高的证明。如表 1 所示，我们的方法解决了 IMO 2025 的 6 道题中的 5 道，以及 CMO 2024 的 4 道题，并在另 1 道题上获得部分分数，在这两项顶级高中竞赛中均达到金牌水平。在最重要的本科生数学竞赛 Putnam 2024 上，我们的模型完整解决了 12 道题中的 11 道，剩下 1 道题仅有小错误，得到 118/120 分，超过人类最高分 90。图 3 展示 IMO-ProofBench 上的结果。我们的方法在基础集上优于 DeepMind 的 DeepThink（IMO Gold），在高级集上保持竞争力，同时大幅超过所有其他基线。我们观察到，最困难的 IMO 级别问题对我们的模型而言仍具有挑战性。</p>
-<footer>原文第 8 页</footer></section><section class="page" id="page-9"><p>值得注意的是，对于没有完全解决的问题，我们的生成器通常能发现自身证明中确实存在的问题；而完全解决的问题则通过全部 64 次验证尝试。这表明，我们可以成功训练基于 LLM 的验证器，评估此前被认为难以自动验证的证明。在验证器指导下扩大测试时计算量，我们的模型解决了人类参赛者需要花费数小时才能解决的问题。</p>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9" aria-label="原文第 9 页"><p>值得注意的是，对于没有完全解决的问题，我们的生成器通常能发现自身证明中确实存在的问题；而完全解决的问题则通过全部 64 次验证尝试。这表明，我们可以成功训练基于 LLM 的验证器，评估此前被认为难以自动验证的证明。在验证器指导下扩大测试时计算量，我们的模型解决了人类参赛者需要花费数小时才能解决的问题。</p>
 <h2>4. 相关工作</h2>
 <p>推理模型（OpenAI, 2024；Guo et al., 2025）在一年内就在 AIME 和 HMMT 等定量推理基准上达到饱和。这种快速进步部分归功于明确的评估标准：如果我们只关心最终答案，那么定量推理就容易验证。然而，这种最终答案指标不适用于定理证明；定理证明通常不需要数值答案，而要求严谨的逐步推导。非形式化数学证明长期以来被认为难以自动验证，缺少可靠的证明正确性评估方法。近期发展表明，这个障碍可能可以克服。Gemini-2.5 Pro 等模型已经展现出一定程度的自验证能力，能够改进自身解答以提升质量（Huang and Yang, 2025）。更显著的是，DeepMind 内部的 DeepThink 变体（Luong and Lockhart, 2025）通过纯自然语言推理在 IMO 2025 达到金牌水平，为基于 LLM 验证复杂证明的可实现性提供了存在性证明。近期研究已经开始探索推理模型能否在有参考解答和无参考解答两种情况下评估证明（Dekoninck et al., 2025；Luong et al., 2025），并取得了有希望的结果。在本工作中，我们开源 DeepSeekMath-V2 及训练方法，作为迈向可自验证数学推理的具体步骤，展示模型如何学习验证并改进自身证明。</p>
 <p>Lean（de Moura et al., 2015）和 Isabelle（Paulson, 1994）等证明助手提供了一种可靠的证明验证方法：证明必须使用形式化语言编写，但一旦通过编译，正确性就能得到保证。AlphaProof（AlphaProof and teams, 2024；Trinh et al., 2024；Chervonyi et al., 2025）是一个专门从事形式化证明搜索的系统，在 IMO 2024 达到银牌水平，但需要大量计算。尽管使用非形式化推理指导形式化证明生成的做法已经得到广泛探索（Jiang et al., 2023），近期推理模型大幅提高了非形式化推理质量，使这种指导变得有效得多。DeepSeek-Prover-V2（Ren et al., 2025）和 Seed-Prover（Chen et al., 2025）等系统如今能够在相同计算预算内生成显著更多的有效形式化证明，其中 Seed-Prover 解决了 IMO 2025 的 6 道题中的 5 道。值得注意的是，这些结果是在没有针对定理证明任务专门优化非形式化推理部分的情况下取得的。我们认为，推进自然语言定理证明将显著造福形式化推理。我们希望为真正可靠的数学推理系统作出贡献；这样的系统将同时利用非形式化洞见和形式化保证，推动数学研究。</p>
 <h2>5. 结论</h2>
 <p>我们提出了 DeepSeekMath-V2，一个能够同时生成和验证数学证明的模型。通过训练模型发现自身推理中的问题，并激励其在最终完成输出之前解决这些问题，我们超越了基于最终答案的奖励所带来的局限，迈向可自验证的数学推理。我们的迭代训练过程交替改进验证能力，再利用这些能力增强生成，形成了一个可持续的循环，各部分互相推动。我们的<span class="continuation">（接下一页）</span></p>
-<footer>原文第 9 页</footer></section><section class="page" id="page-10"><p class="continuation">（接上一页）关键技术贡献包括：（1）训练准确、忠实的基于 LLM 的数学证明验证器；（2）使用元验证大幅减少臆造的问题，并确保验证质量；（3）激励证明生成器通过自验证最大化证明质量；（4）扩大验证计算量，自动标注越来越难以验证的证明，从而在无需人工标注的情况下改进验证器。DeepSeekMath-V2 在竞赛数学方面展现出强大表现。扩大测试时计算量后，它在 IMO 2025 和 CMO 2024 等高中竞赛中取得金牌成绩，并在本科生 Putnam 2024 竞赛中获得接近满分的成绩。这项工作表明，LLM 可以为复杂推理任务发展出有意义的自我评估能力。虽然仍面临重大挑战，我们希望这一研究方向有助于实现创建可自验证 AI 系统的目标，使其能够解决研究级数学问题。</p>
+<footer>原文第 9 页</footer></section><section class="page" id="page-10" aria-label="原文第 10 页"><p class="continuation">（接上一页）关键技术贡献包括：（1）训练准确、忠实的基于 LLM 的数学证明验证器；（2）使用元验证大幅减少臆造的问题，并确保验证质量；（3）激励证明生成器通过自验证最大化证明质量；（4）扩大验证计算量，自动标注越来越难以验证的证明，从而在无需人工标注的情况下改进验证器。DeepSeekMath-V2 在竞赛数学方面展现出强大表现。扩大测试时计算量后，它在 IMO 2025 和 CMO 2024 等高中竞赛中取得金牌成绩，并在本科生 Putnam 2024 竞赛中获得接近满分的成绩。这项工作表明，LLM 可以为复杂推理任务发展出有意义的自我评估能力。虽然仍面临重大挑战，我们希望这一研究方向有助于实现创建可自验证 AI 系统的目标，使其能够解决研究级数学问题。</p>
 <h2>参考文献</h2>
 <p class="reference">AlphaProof and A. teams. AI 解答国际数学奥林匹克问题达到银牌标准, 2024. URL <a href="https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level">https://deepmind.google/blog/ai-solves-imo-problems-at-silver-medal-level</a>.</p>
 <p class="reference">L. Chen, J. Gu, L. Huang, W. Huang, Z. Jiang, A. Jie, X. Jin, X. Jin, C. Li, K. Ma, C. Ren, J. Shen, W. Shi, T. Sun, H. Sun, J. Wang, S. Wang, Z. Wang, C. Wei, S. Wei, Y. Wu, Y. Wu, Y. Xia, H. Xin, F. Yang, H. Ying, H. Yuan, Z. Yuan, T. Zhan, C. Zhang, Y. Zhang, G. Zhang, T. Zhao, J. Zhao, Y. Zhou, and T. H. Zhu. Seed-Prover：面向自动定理证明的深入而广泛的推理. CoRR, abs/2507.23726, 2025. doi: 10.48550/ARXIV.2507.23726. URL <a href="https://doi.org/10.48550/arXiv.2507.23726">https://doi.org/10.48550/arXiv.2507.23726</a>.</p>
@@ -97,7 +98,7 @@
 <p class="reference">G. DeepMind. Gemini 2.5 Pro, 2025. URL <a href="https://deepmind.google/models/gemini/pro">https://deepmind.google/models/gemini/pro</a>.</p>
 <p class="reference">DeepSeek-AI. DeepSeek-V3.2-Exp：通过 DeepSeek Sparse Attention 提高长上下文效率, 2025.</p>
 <p class="reference">J. Dekoninck, I. Petrov, K. Minchev, M. Balunovic, M. T. Vechev, M. Marinov, M. Drencheva, L. Konova, M. Shumanov, K. Tsvetkov, N. Drenchev, L. Todorov, K. Nikolova, N. Georgiev, V. Kalinkova, and M. Ismoldayev. 开放证明语料库：LLM 生成数学证明的大规模研究. CoRR, abs/2506.21621, 2025. doi: 10.48550/ARXIV.2506.21621. URL <a href="https://doi.org/10.48550/arXiv.2506.21621">https://doi.org/10.48550/arXiv.2506.21621</a>.</p>
-<p class="reference">D. Guo, D. Yang, H. Zhang, J. Song, P. Wang, Q. Zhu, R. Xu, R. Zhang, S. Ma, X. Bi, X. Zhang, X. Yu, Y. Wu, Z. F. Wu, Z. Gou, Z. Shao, Z. Li, Z. Gao, A. Liu, B. Xue, B. Wang, B. Wu, B. Feng,</p><footer>原文第 10 页</footer></section><section class="page" id="page-11"><p class="continuation">（接上一页的 Guo et al. 参考文献作者列表）</p>
+<p class="reference">D. Guo, D. Yang, H. Zhang, J. Song, P. Wang, Q. Zhu, R. Xu, R. Zhang, S. Ma, X. Bi, X. Zhang, X. Yu, Y. Wu, Z. F. Wu, Z. Gou, Z. Shao, Z. Li, Z. Gao, A. Liu, B. Xue, B. Wang, B. Wu, B. Feng,</p><footer>原文第 10 页</footer></section><section class="page" id="page-11" aria-label="原文第 11 页"><p class="continuation">（接上一页的 Guo et al. 参考文献作者列表）</p>
 <p class="reference">C. Lu, C. Zhao, C. Deng, C. Ruan, D. Dai, D. Chen, D. Ji, E. Li, F. Lin, F. Dai, F. Luo, G. Hao, G. Chen, G. Li, H. Zhang, H. Xu, H. Ding, H. Gao, H. Qu, H. Li, J. Guo, J. Li, J. Chen, J. Yuan, J. Tu, J. Qiu, J. Li, J. L. Cai, J. Ni, J. Liang, J. Chen, K. Dong, K. Hu, K. You, K. Gao, K. Guan, K. Huang, K. Yu, L. Wang, L. Zhang, L. Zhao, L. Wang, L. Zhang, L. Xu, L. Xia, M. Zhang, M. Zhang, M. Tang, M. Zhou, M. Li, M. Wang, M. Li, N. Tian, P. Huang, P. Zhang, Q. Wang, Q. Chen, Q. Du, R. Ge, R. Zhang, R. Pan, R. Wang, R. J. Chen, R. L. Jin, R. Chen, S. Lu, S. Zhou, S. Chen, S. Ye, S. Wang, S. Yu, S. Zhou, S. Pan, S. S. Li, S. Zhou, S. Wu, T. Yun, T. Pei, T. Sun, T. Wang, W. Zeng, W. Liu, W. Liang, W. Gao, W. Yu, W. Zhang, W. L. Xiao, W. An, X. Liu, X. Wang, X. Chen, X. Nie, X. Cheng, X. Liu, X. Xie, X. Liu, X. Yang, X. Li, X. Su, X. Lin, X. Q. Li, X. Jin, X. Shen, X. Chen, X. Sun, X. Wang, X. Song, X. Zhou, X. Wang, X. Shan, Y. K. Li, Y. Q. Wang, Y. X. Wei, Y. Zhang, Y. Xu, Y. Li, Y. Zhao, Y. Sun, Y. Wang, Y. Yu, Y. Zhang, Y. Shi, Y. Xiong, Y. He, Y. Piao, Y. Wang, Y. Tan, Y. Ma, Y. Liu, Y. Guo, Y. Ou, Y. Wang, Y. Gong, Y. Zou, Y. He, Y. Xiong, Y. Luo, Y. You, Y. Liu, Y. Zhou, Y. X. Zhu, Y. Huang, Y. Li, Y. Zheng, Y. Zhu, Y. Ma, Y. Tang, Y. Zha, Y. Yan, Z. Z. Ren, Z. Ren, Z. Sha, Z. Fu, Z. Xu, Z. Xie, Z. Zhang, Z. Hao, Z. Ma, Z. Yan, Z. Wu, Z. Gu, Z. Zhu, Z. Liu, Z. Li, Z. Xie, Z. Song, Z. Pan, Z. Huang, Z. Xu, Z. Zhang, and Z. Zhang. DeepSeek-R1 通过强化学习激发 LLM 的推理能力. Nat., 645(8081):633–638, 2025. doi: 10.1038/S41586-025-09422-Z. URL <a href="https://doi.org/10.1038/s41586-025-09422-z">https://doi.org/10.1038/s41586-025-09422-z</a>.</p>
 <p class="reference">Y. Huang and L. F. Yang. Gemini 2.5 Pro 能够在 IMO 2025 获得金牌. CoRR, abs/2507.15855, 2025. doi: 10.48550/ARXIV.2507.15855. URL <a href="https://doi.org/10.48550/arXiv.2507.15855">https://doi.org/10.48550/arXiv.2507.15855</a>.</p>
 <p class="reference">A. Q. Jiang, S. Welleck, J. P. Zhou, T. Lacroix, J. Liu, W. Li, M. Jamnik, G. Lample, and Y. Wu. 起草、概述与证明：使用非形式化证明指导形式化定理证明器. 收录于 第十一届国际学习表征会议, ICLR 2023, 卢旺达基加利，2023 年 5 月 1–5 日. OpenReview.net, 2023. URL <a href="https://openreview.net/forum?id=SMa9EAovKMC">https://openreview.net/forum?id=SMa9EAovKMC</a>.</p>
@@ -106,8 +107,8 @@
 <p class="reference">OpenAI. 学习使用 LLM 进行推理, 2024. URL <a href="https://openai.com/index/learning-to-reason-with-llms/">https://openai.com/index/learning-to-reason-with-llms/</a>.</p>
 <p class="reference">OpenAI. 介绍 GPT-5, 2025. URL <a href="https://openai.com/index/introducing-gpt-5">https://openai.com/index/introducing-gpt-5</a>.</p>
 <p class="reference">L. C. Paulson. Isabelle：通用定理证明器（包含 T. Nipkow 的贡献）, 《计算机科学讲义》第 828 卷. Springer, 1994. ISBN 3-540-58244-4. doi: 10.1007/BFB0030541. URL <a href="https://doi.org/10.1007/BFb0030541">https://doi.org/10.1007/BFb0030541</a>.</p>
-<p class="reference">Z. Z. Ren, Z. Shao, J. Song, H. Xin, H. Wang, W. Zhao, L. Zhang, Z. Fu, Q. Zhu, D. Yang, Z. F. Wu, Z. Gou, S. Ma, H. Tang, Y. Liu, W. Gao, D. Guo, and C. Ruan. DeepSeek-Prover-V2：通过面向子目标分解的强化学习推进形式化数学推理. CoRR, abs/2504.21801, 2025. doi: 10.48550/ARXIV.2504.21801. URL <a href="https://doi.org/10.48550/arXiv.2504.21801">https://doi.org/10.48550/arXiv.2504.21801</a>.</p><footer>原文第 11 页</footer></section><section class="page" id="page-12"><p class="reference">Z. Shao, P. Wang, Q. Zhu, R. Xu, J. Song, M. Zhang, Y. K. Li, Y. Wu, and D. Guo. DeepSeekMath：推进开放语言模型数学推理的极限. CoRR, abs/2402.03300, 2024. doi: 10.48550/ARXIV.2402.03300. URL <a href="https://doi.org/10.48550/arXiv.2402.03300">https://doi.org/10.48550/arXiv.2402.03300</a>.</p>
-<p class="reference">T. H. Trinh, Y. Wu, Q. V. Le, H. He, and T. Luong. 无需人类示范解答奥林匹克几何题. Nat., 625(7995):476–482, 2024. doi: 10.1038/S41586-023-06747-5. URL <a href="https://doi.org/10.1038/s41586-023-06747-5">https://doi.org/10.1038/s41586-023-06747-5</a>.</p><footer>原文第 12 页</footer></section><section class="page" id="page-13"><h2>A. 提示模板</h2><h3>A.1. 证明生成提示</h3>
+<p class="reference">Z. Z. Ren, Z. Shao, J. Song, H. Xin, H. Wang, W. Zhao, L. Zhang, Z. Fu, Q. Zhu, D. Yang, Z. F. Wu, Z. Gou, S. Ma, H. Tang, Y. Liu, W. Gao, D. Guo, and C. Ruan. DeepSeek-Prover-V2：通过面向子目标分解的强化学习推进形式化数学推理. CoRR, abs/2504.21801, 2025. doi: 10.48550/ARXIV.2504.21801. URL <a href="https://doi.org/10.48550/arXiv.2504.21801">https://doi.org/10.48550/arXiv.2504.21801</a>.</p><footer>原文第 11 页</footer></section><section class="page" id="page-12" aria-label="原文第 12 页"><p class="reference">Z. Shao, P. Wang, Q. Zhu, R. Xu, J. Song, M. Zhang, Y. K. Li, Y. Wu, and D. Guo. DeepSeekMath：推进开放语言模型数学推理的极限. CoRR, abs/2402.03300, 2024. doi: 10.48550/ARXIV.2402.03300. URL <a href="https://doi.org/10.48550/arXiv.2402.03300">https://doi.org/10.48550/arXiv.2402.03300</a>.</p>
+<p class="reference">T. H. Trinh, Y. Wu, Q. V. Le, H. He, and T. Luong. 无需人类示范解答奥林匹克几何题. Nat., 625(7995):476–482, 2024. doi: 10.1038/S41586-023-06747-5. URL <a href="https://doi.org/10.1038/s41586-023-06747-5">https://doi.org/10.1038/s41586-023-06747-5</a>.</p><footer>原文第 12 页</footer></section><section class="page" id="page-13" aria-label="原文第 13 页"><h2>A. 提示模板</h2><h3>A.1. 证明生成提示</h3>
 <pre>你的任务是解答给定的问题。该问题可能要求你证明一个命题，或求出一个答案。如果要求求出答案，你应该得出这个答案，并且最终解答也应该是对该答案有效性的严谨证明。
 
 你对问题的最终解答应该极其全面且易于理解，并将按照以下评估指令评分：
@@ -128,7 +129,7 @@
 - 为了给出好的最终回复，你应该尽最大努力，按照上述评估指令找出自己（部分）解答中的潜在问题，并尽可能多地修正它们。
 - 好的最终回复应该如实呈现你的进展，包括你能给出的最佳解答，以及对该解答的忠实评估。
 </pre>
-<footer>原文第 13 页</footer></section><section class="page" id="page-14"><pre>- 只有当你无法在解答中找出任何问题时，才应该给它打 1 分。
+<footer>原文第 13 页</footer></section><section class="page" id="page-14" aria-label="原文第 14 页"><pre>- 只有当你无法在解答中找出任何问题时，才应该给它打 1 分。
 - 如果你确实发现了解答中的一些问题，但尽了最大努力也无法解决，在最终回复中如实给出这些问题完全没有关系。
 - 最糟糕的最终回复会给出错误解答，却谎称它正确，或者未经仔细检查错误就声称它正确。更好的回复应该如实指出解答中的错误。记住！你不能作弊！如果你作弊，我们会知道，而且你会受到惩罚！
 
@@ -153,7 +154,7 @@ Based on my evaluation, the final overall score should be:
 <h3>A.2. 证明验证提示</h3>
 <pre>## Instruction
 你的任务是评估问题解答的质量。问题可能要求证明一个命题，或求出一个<span class="continuation">（接下一页）</span></pre>
-<footer>原文第 14 页</footer></section><section class="page" id="page-15"><pre><span class="continuation">（接上一页）</span>答案。如果要求求出答案，解答应该给出答案，并且也应该是对该答案有效性的严谨证明。
+<footer>原文第 14 页</footer></section><section class="page" id="page-15" aria-label="原文第 15 页"><pre><span class="continuation">（接上一页）</span>答案。如果要求求出答案，解答应该给出答案，并且也应该是对该答案有效性的严谨证明。
 
 请评估解答，并根据以下标准评分：
 - 如果解答完全正确，所有步骤都正确执行并清楚展示，评分为 1。
@@ -180,7 +181,7 @@ Based on my evaluation, the final overall score should be:
 </pre>
 <h3>A.3. 元验证提示</h3>
 <pre>给你一个“问题”、“解答”和“解答评估”，你需要判断这个“解答<span class="continuation">（接下一页）</span></pre>
-<footer>原文第 15 页</footer></section><section class="page" id="page-16"><pre><span class="continuation">（接上一页）</span>评估”是否合理。
+<footer>原文第 15 页</footer></section><section class="page" id="page-16" aria-label="原文第 16 页"><pre><span class="continuation">（接上一页）</span>评估”是否合理。
 
 首先，“解答评估”是通过使用以下规则提示验证器而生成的，用于评估“解答”的质量（这些不是你需要遵循的规则）：
 ```
@@ -206,7 +207,7 @@ Based on my evaluation, the final overall score should be:
 
 评分分析：“解答评估”给出的最终分数是否与它发现的缺陷相匹配。你需要根据上述评分规则进行分析。
 </pre>
-<footer>原文第 16 页</footer></section><section class="page" id="page-17"><pre>3. 最重要的部分是**缺陷分析**：在这一部分，你的核心任务是检查“解答评估”所指出的“解答”错误或缺陷是否合理。换言之，“解答评估”中关于“解答”的任何正面内容，无论是否合理，都不属于你的评估范围。
+<footer>原文第 16 页</footer></section><section class="page" id="page-17" aria-label="原文第 17 页"><pre>3. 最重要的部分是**缺陷分析**：在这一部分，你的核心任务是检查“解答评估”所指出的“解答”错误或缺陷是否合理。换言之，“解答评估”中关于“解答”的任何正面内容，无论是否合理，都不属于你的评估范围。
 - 例如：如果“解答评估”说“解答”中的某个结论是正确的，但实际上这个结论是错误的，你不需要在意这一点。所有被“解答评估”认为正确的部分都不属于你的评估范围。
 - 具体而言：如果“解答评估”认为“解答”完全准确，而且没有发现任何错误或缺陷，那么无论“解答”本身实际上是否准确，即使存在明显错误，你仍应该认为它对错误的分析是合理的。
 
@@ -227,7 +228,7 @@ Based on my evaluation, the final overall score should be:
 首先，如果“解答评估”发现的缺陷中，至少有一个缺陷不合理，那么你只需要进行**缺陷分析**：
 - 如果“解答评估”发现的全部缺陷都不合理，应该给它评分 \(0\)。
 </pre>
-<footer>原文第 17 页</footer></section><section class="page" id="page-18"><pre>- 如果“解答评估”发现的缺陷中，有些合理、有些不合理，那么应该给它评分 \(0.5\)。
+<footer>原文第 17 页</footer></section><section class="page" id="page-18" aria-label="原文第 18 页"><pre>- 如果“解答评估”发现的缺陷中，有些合理、有些不合理，那么应该给它评分 \(0.5\)。
 
 接下来，如果“解答评估”没有指出任何错误或缺陷，或者它发现的所有缺陷都合理，那么你应该进行以下操作：
 - 分析“解答评估”中是否存在“表述错误”（**表述分析**），或者“解答评估”是否按照“解答评估”的规则给出了错误评分（**评分分析**）。如果是，应该给“解答评估”评分 \(0.5\)；如果否，应该给它评分 \(1\)。
@@ -263,5 +264,5 @@ Based on my analysis, I will rate the "solution evaluation" as:
 
 ## Final Instruction
 你的最终回复应该遵循上述格式，包含一个 `## Solution` 部分，之后接一个 `## Self Evaluation`<span class="continuation">（接下一页）</span></pre>
-<footer>原文第 18 页</footer></section><section class="page" id="page-19"><pre><span class="continuation">（接上一页）</span>部分。</pre>
-<footer>原文第 19 页</footer></section></body></html>
+<footer>原文第 18 页</footer></section><section class="page" id="page-19" aria-label="原文第 19 页"><pre><span class="continuation">（接上一页）</span>部分。</pre>
+<footer>原文第 19 页</footer></section></main></body></html>

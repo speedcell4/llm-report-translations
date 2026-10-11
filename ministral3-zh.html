@@ -1,46 +1,47 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ministral 3 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=d55ff23067b7"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="原文页码导航">已翻译 14/14 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a><div class="nav-links"><a href="index.html">全部文档</a><a href="https://arxiv.org/abs/2601.08584v1">arXiv:2601.08584v1（2026-01-13）</a><a href="https://arxiv.org/pdf/2601.08584v1">原文 PDF</a></div><p class="document-meta">页码覆盖 14/14 页</p></nav><section class="page" id="page-1"><h1>Ministral 3</h1>
-<p class="note">原文版本：arXiv:2601.08584v1，2026 年 1 月 13 日。</p>
-<figure><img height="330" width="975" decoding="async" loading="lazy" alt="Ministral 3 原文第 1 页图表或代码" src="assets/images/dd4637ed002deda35f4695be646d9cc541475f62084caaf43d312264130034d0.png"></figure>
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ministral 3 · 中文翻译</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js" defer></script></head><body class="translation"><nav class="document-nav" aria-label="原文页码导航">已翻译 14/14 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a><div class="nav-links"><a href="index.html">全部文档</a><a href="https://arxiv.org/abs/2601.08584v1">arXiv:2601.08584v1（2026-01-13）</a><a href="https://arxiv.org/pdf/2601.08584v1">原文 PDF</a></div><p class="document-meta">页码覆盖 14/14 页</p></nav><main class="document-content"><section class="page" id="page-1" aria-label="原文第 1 页"><header class="paper-header"><h1>Ministral 3</h1>
+<p class="note cover-info cover-meta">原文版本：arXiv:2601.08584v1，2026 年 1 月 13 日。</p>
+</header><figure><img alt="Ministral 3 原文第 1 页图表或代码" src="assets/images/dd4637ed002deda35f4695be646d9cc541475f62084caaf43d312264130034d0.png" width="975" height="330" loading="lazy" decoding="async"></figure>
 <h2>摘要</h2>
 <p class="abstract">我们介绍 Ministral 3 系列，这是一个参数高效的稠密语言模型家族，面向计算和内存受限的应用，提供三种参数规模：3B、8B 和 14B。对于每种模型规模，我们发布三个变体：用于通用用途的预训练基础模型、经过指令微调的模型，以及用于复杂问题求解的推理模型。此外，我们介绍通过级联蒸馏得到 Ministral 3 模型的方法：这是一种迭代剪枝并通过蒸馏继续训练的技术。每个模型都具备图像理解能力，全部采用 Apache 2.0 许可证。</p>
-<p>网页：<a href="https://mistral.ai/news/mistral-3">https://mistral.ai/news/mistral-3</a><br>模型：<a href="https://huggingface.co/collections/mistralai/ministral-3">https://huggingface.co/collections/mistralai/ministral-3</a></p>
+<p class="abstract">网页：<a href="https://mistral.ai/news/mistral-3">https://mistral.ai/news/mistral-3</a><br>模型：<a href="https://huggingface.co/collections/mistralai/ministral-3">https://huggingface.co/collections/mistralai/ministral-3</a></p>
 <h2>1　引言</h2>
 <p>在这项工作中，我们介绍 Ministral 3，一个通过从父预训练模型迭代缩小和蒸馏，以计算和数据高效的方式训练的稠密模型家族。Qwen3 [Yang et al., 2025] 或 Llama3 [Dubey et al., 2024] 等流行预训练模型分别在 36 万亿和 15 万亿 token 上训练；与它们不同，我们利用强大的 24B 参数父模型 Mistral Small 3.1，能够得到仅在 1 万亿至 3 万亿 token 上训练而具有竞争力的模型。</p>
 <p>所有 Ministral 3 模型均通过级联蒸馏方法从 Mistral Small 3.1<sup>1</sup> 衍生而来，提供 3B、8B 和 14B 三种参数规模。我们为每种规模提供 base、instruct 和 reasoning 三种变体，每种都具备图像理解能力，上下文长度最高达 256k token（推理模型为 128k）。</p>
 <p>Ministral 3 的一个关键组成部分是我们的级联蒸馏训练策略，这是一种迭代剪枝与蒸馏方法，将大型父模型的预训练知识逐步迁移到一组紧凑子模型中。我们的方法使模型能够达到与训练预算大得多的模型相竞争的表现。例如，Ministral 3 14B Base 模型的表现接近 Mistral Small 3.1 Base，但规模小了超过 40%，训练历程也短得多。</p>
 <p>后训练后，我们取得了与相近规模的开放权重模型相竞争的结果，例如 Gemma 3 [Kamath et al., 2025]、Qwen 3 [Yang et al., 2025, Bai et al., 2025] 和 Mistral Small 3.2 2506。</p>
-<p class="footnote"><sup>1</sup> <a href="https://mistral.ai/news/mistral-small-3-1">https://mistral.ai/news/mistral-small-3-1</a></p>
-<footer>原文第 1 页</footer></section><section class="page" id="page-2"><figure><img height="936" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/fdfc34fda4aff3b904062213a57dab18bc069d2f4c16f56d3f37ae39a04f2056.png"></figure>
+<p class="footnote" role="doc-footnote"><sup>1</sup> <a href="https://mistral.ai/news/mistral-small-3-1">https://mistral.ai/news/mistral-small-3-1</a></p>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2" aria-label="原文第 2 页"><figure><img alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/fdfc34fda4aff3b904062213a57dab18bc069d2f4c16f56d3f37ae39a04f2056.png" width="1206" height="936" loading="lazy" decoding="async"></figure>
 <p>主要贡献可以概括如下：</p>
 <ul><li>我们介绍 Ministral 3，一个由 9 个稠密语言模型组成的家族：在 14B、8B 和 3B 每种参数规模上各提供一个预训练模型、一个指令微调模型和一个推理模型。所有 Ministral 3 模型（3 种规模 \(\times  3\) 种变体）均在 Apache 2.0 许可证下开放权重。</li>
 <li>我们介绍一种计算高效的预训练方法——级联蒸馏，使这些模型的预训练成本仅为从头预训练所需成本的一小部分。</li>
 <li>我们独立验证了先前工作的发现：(a) 存在“容量差距”，在预训练中，更强的教师不会产生更强的学生模型，但后训练仍能受益于更强的教师；(b) 在对学生模型进行预训练时，从后训练教师蒸馏，相较于从预训练教师蒸馏，会得到更好的基准分数；(c) 从经过人类偏好优化的教师蒸馏，优于从仅经过 SFT 后训练的教师蒸馏。</li></ul>
 <h2>2　模型架构</h2>
-<figure><img height="258" width="939" decoding="async" loading="lazy" alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/cd67f347a38e896e4d1b4a89732aa4aa3556cd2d6b2fccd10089beb2a2c2b947.png"></figure>
+<figure><img alt="Ministral 3 原文第 2 页图表或代码" src="assets/images/cd67f347a38e896e4d1b4a89732aa4aa3556cd2d6b2fccd10089beb2a2c2b947.png" width="939" height="258" loading="lazy" decoding="async"></figure>
 <p>Ministral 3 家族基于仅解码器 transformer 架构 [Vaswani et al., 2017]。所有模型共享共同的架构基础，并按各自规模进行缩放。如表 1 所示，该家族包含 3B、8B 和 14B 三种参数规模，分别具有 26、34 和 40 层。（句子接下一页。）</p>
-<footer>原文第 2 页</footer></section><section class="page" id="page-3"><p class="continuation">（接上一页：各规模模型的层数已在上一页列出。）</p>
+<footer>原文第 2 页</footer></section><section class="page" id="page-3" aria-label="原文第 3 页"><p class="continuation">（接上一页：各规模模型的层数已在上一页列出。）</p>
 <p>其他架构选择包括具有 32 个 query head 和 8 个 key-value head 的分组查询 attention（Grouped Query Attention）[Ainslie et al., 2023]、RoPE [Su et al., 2021] 位置 embeddings、SwiGLU 激活 [Shazeer, 2020] 和 RMSNorm [Zhang and Sennrich, 2019]。对于长上下文扩展，我们使用 YaRN [Peng et al., 2023]，以及 attention 层中基于位置的 softmax 温度缩放 [Nakanishi, 2025, MetaAI, 2025]。3B 模型共享输入与输出 embeddings，以避免 embedding 参数在总参数量中占据主导。所有模型均使用含 131K token 的词表，并支持最长 256K token 的上下文。</p>
 <p><strong>视觉编码器。</strong>所有 Ministral 3 模型均使用参数量为 410M 的 ViT 作为图像理解的视觉编码器，该编码器复制自 Mistral Small 3.1 Base，保持冻结，采用 Pixtral [Agrawal et al., 2024] 中描述的相同架构。我们丢弃从 ViT 映射到语言模型空间的预训练投影层，并为每个模型训练一个新的投影层。</p>
 <h2>3　训练方法</h2>
 <p>图 1 展示了 Ministral 3 模型的训练流程，其中包含预训练，以及随后两个不同的后训练阶段，分别产生指令微调和推理变体。</p>
 <h3>3.1　预训练</h3>
 <p>算法 1：级联蒸馏。</p>
-<figure><img height="516" width="1236" decoding="async" loading="lazy" alt="Ministral 3 原文第 3 页图表或代码" src="assets/images/ba3d8f5c78554e610960603ab6c364c80f6b6962a641f9172f56537aade695cc.png"></figure>
+<figure><img alt="Ministral 3 原文第 3 页图表或代码" src="assets/images/ba3d8f5c78554e610960603ab6c364c80f6b6962a641f9172f56537aade695cc.png" width="1236" height="516" loading="lazy" decoding="async"></figure>
 <p><strong>级联蒸馏。</strong>Ministral 3 模型的预训练从 Mistral Small 3.1 Base（MS3.1）模型开始。我们采用级联蒸馏，一种将 MS3.1 剪枝并蒸馏成更小后继模型的迭代方法。给定一个较大的预训练父模型，级联蒸馏是一种对目标规模逐步减小的子模型进行预训练的计算高效流程。如算法 1 所概括，它依赖于迭代的“剪枝—蒸馏—重复”方法：</p>
 <ol><li>剪枝：通过剪枝更大的预训练模型，初始化子模型的权重。</li><li>蒸馏：通过教师模型 logits 的蒸馏，对刚完成剪枝的模型继续训练。</li><li>重复：反复应用这一策略，将子模型缩小到更小的规模。</li></ol>
 <p>各阶段的模型剪枝采用与 Minitron 和 Wanda [Sun et al., 2023, Sreenivas et al., 2024, Muralidharan et al., 2024] 相似的方法，所有变体的蒸馏教师均为 Mistral Small 3.1。剪枝和蒸馏的细节见后续段落。</p>
 <p>与对每个小模型从头训练相比，级联蒸馏在 FLOPs 方面高效得多。还值得指出，端到端流程可以视为父模型结合权重剪枝进行持续预训练的一种形式。如图 2 所示，整个流程避免了数据重复，因为级联蒸馏在单次运行中遍历混合数据，并在途中进行剪枝。</p>
-<footer>原文第 3 页</footer></section><section class="page" id="page-4"><p><strong>剪枝。</strong>与 Minitron 类似，我们的剪枝策略旨在缩小模型规模的同时，保留原模型中最关键的组成部分（在验证数据集上衡量）。我们采用以下关键剪枝技术：</p>
+<footer>原文第 3 页</footer></section><section class="page" id="page-4" aria-label="原文第 4 页"><p><strong>剪枝。</strong>与 Minitron 类似，我们的剪枝策略旨在缩小模型规模的同时，保留原模型中最关键的组成部分（在验证数据集上衡量）。我们采用以下关键剪枝技术：</p>
 <ul><li><strong>层剪枝：</strong>Sreenivas et al. [2024] 依赖于移除单个层后得到的反事实下游困惑度；与其不同，我们发现输入与输出激活范数之比，为层重要性提供了更简单但有效的代理指标。</li>
 <li><strong>隐藏维度剪枝：</strong>对跨所有层的 attention 归一化层和前馈归一化层的激活进行拼接，然后应用主成分分析（PCA）。这会得到一个在整个网络中一致的旋转矩阵，在最大化解释方差的同时，将模型投影到较低维空间。</li>
 <li><strong>前馈维度剪枝：</strong>对于具有 SwiGLU [Shazeer, 2020] 等门控线性激活函数的 MLP，给定一个非常大的 batch \(x\)，其表达式为 \(W_{2}(SiLU(W_{1}x) \ast  W_{3}x)\)，我们剪枝矩阵 \(W_{1}\)、\(W_{2}\)、\(W_{3}\) 的维度。为确定保留 \(W_{1}\)、\(W_{3}\) 的哪些列，我们计算重要性分数，其定义为上述表达式每个维度绝对值的平均值。然后，我们仅保留 \(W_{2}\) 中与上述索引对应的行。</li></ul>
 <p>算法 2 提供了我们剪枝策略的更多细节：</p>
 <p><strong>算法 2：</strong>级联蒸馏的剪枝阶段。其输入为一个预训练模型，以及要剪枝到的目标规模配置。我们使用 <code>input_x</code> 和 <code>output_x</code> 表示大型校准 batch 的激活。</p>
-<figure><img height="834" width="1242" decoding="async" loading="lazy" alt="Ministral 3 原文第 4 页图表或代码" src="assets/images/6a2fe4d23919c7eb15936331b53d79f212414752eae662d2bd6aa786c78c89d9.png"></figure>
+<figure><img alt="Ministral 3 原文第 4 页图表或代码" src="assets/images/6a2fe4d23919c7eb15936331b53d79f212414752eae662d2bd6aa786c78c89d9.png" width="1242" height="834" loading="lazy" decoding="async"></figure>
 <p><strong>蒸馏。</strong>权重初始化后，每个子模型在纯文本数据及文本与图像交错数据的混合上训练，并从教师模型进行 logit 蒸馏。我们发现，仅使用前向 KL 蒸馏目标进行训练，优于调节分别赋予蒸馏目标和下一个 token 预测目标不同权重的目标函数系数。对于所有阶段和模型规模，我们都使用父模型作为教师模型（更多细节见 §5.1）。</p>
 <p>预训练阶段由两个阶段组成：</p>
 <p>(1) <strong>短上下文阶段</strong>，上下文窗口长度为 16,384。该阶段的输出是下一个子模型剪枝阶段的输入。</p>
-<footer>原文第 4 页</footer></section><section class="page" id="page-5"><p>(2) <strong>长上下文阶段</strong>，使用 YaRN [Peng et al., 2023] 和基于位置的温度缩放 [Nakanishi, 2025, MetaAI, 2025]，将上下文窗口从 16,384 扩展至 262,144。</p>
+<footer>原文第 4 页</footer></section><section class="page" id="page-5" aria-label="原文第 5 页"><p>(2) <strong>长上下文阶段</strong>，使用 YaRN [Peng et al., 2023] 和基于位置的温度缩放 [Nakanishi, 2025, MetaAI, 2025]，将上下文窗口从 16,384 扩展至 262,144。</p>
 <h3>3.2　后训练：Ministral Instruct</h3>
 <p>为赋予指令遵循能力 [Ouyang et al., 2022]，我们使用精心整理的数据集对预训练模型进行微调，该数据集由高质量多模态和纯文本指令遵循数据构成。微调阶段也包括两个阶段：监督微调（SFT）和在线直接偏好优化（Online Direct Preference Optimization，ODPO）。</p>
 <h4>3.2.1　监督微调</h4>
@@ -55,7 +56,7 @@
 <h4>3.3.1　推理监督微调</h4>
 <p>在这一阶段，模型在短 CoT 和长 CoT 样本的混合上微调。前者来自我们的通用 SFT 混合数据，后者由添加了推理专用系统提示前缀的推理轨迹组成。</p>
 <p>推理轨迹来自多种领域，包括数学、代码、通用对话、指令遵循、多语言任务、工具使用和视觉推理。我们进行轻量过滤，移除格式不佳、包含过多重复或存在不希望出现的语言切换的样本，确保模型接触到干净且结构清晰的 chain-of-thought。</p>
-<footer>原文第 5 页</footer></section><section class="page" id="page-6"><p><strong>3B 的 SFT：</strong>对于 3B 模型，普通 SFT 会产生一个不稳定、过于冗长的模型，输出中有大量重复和无限生成。为缓解这一问题，我们以 Magistral Small 1.2 为教师进行 logit 蒸馏。这有助于减少冗长程度，并稳定后续 RL 训练。</p>
+<footer>原文第 5 页</footer></section><section class="page" id="page-6" aria-label="原文第 6 页"><p><strong>3B 的 SFT：</strong>对于 3B 模型，普通 SFT 会产生一个不稳定、过于冗长的模型，输出中有大量重复和无限生成。为缓解这一问题，我们以 Magistral Small 1.2 为教师进行 logit 蒸馏。这有助于减少冗长程度，并稳定后续 RL 训练。</p>
 <h4>3.3.2　强化学习</h4>
 <p>我们在 SFT checkpoint 之上进行 GRPO [DeepSeek-AI et al., 2025]，以完善模型的思考，并进一步提升推理任务表现。训练分为两个阶段：</p>
 <p><strong>STEM RL：</strong>第一阶段，我们在数学、代码和视觉推理任务上训练模型。我们从多种开放和专有来源收集问答对。通过严格的多步骤流程（详见 Rastogi et al. [2025]）对样本进行过滤和清理，移除无效、不完整和过于简单／困难的问题。</p>
@@ -69,28 +70,28 @@
 <h3>4.1　预训练结果</h3>
 <p>在表 2 中，我们将 Ministral 3 Base 模型与来自 Gemma 3 家族和 Qwen 3 家族、规模相近的其他开放权重模型进行比较。</p>
 <p>在 14B 规模，Ministral 3 展现出强大性能，在 TriviaQA 和 MATH 上超过 Qwen 3 14B，同时在其他基准上具有竞争力。我们的 14B 模型在所有基准上也明显优于 Gemma 12B。在 8B 规模，我们观察到类似趋势。还值得指出，Ministral 3 8B 在大多数评估中超过规模更大的 Gemma 12B（TrivaiQA 除外），凸显了 Ministral 3 模型很高的参数效率。</p>
-<p class="footnote"><sup>2</sup> <a href="https://huggingface.co/datasets/mistralai/MM-MT-Bench">https://huggingface.co/datasets/mistralai/MM-MT-Bench</a></p>
-<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img height="531" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/dc0915414b586fbac23df1ded1b51165be1f5793e1e7e4182a149e58d39a5ee5.png"></figure>
-<figure><img height="978" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/89e7e34a984ae43fb59a9a313c735c0589709fb8ec3ac592b0fcb2e69b1199d9.png"></figure>
+<p class="footnote" role="doc-footnote"><sup>2</sup> <a href="https://huggingface.co/datasets/mistralai/MM-MT-Bench">https://huggingface.co/datasets/mistralai/MM-MT-Bench</a></p>
+<footer>原文第 6 页</footer></section><section class="page" id="page-7" aria-label="原文第 7 页"><figure><img alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/dc0915414b586fbac23df1ded1b51165be1f5793e1e7e4182a149e58d39a5ee5.png" width="1206" height="531" loading="lazy" decoding="async"></figure>
+<figure><img alt="Ministral 3 原文第 7 页图表或代码" src="assets/images/89e7e34a984ae43fb59a9a313c735c0589709fb8ec3ac592b0fcb2e69b1199d9.png" width="1206" height="978" loading="lazy" decoding="async"></figure>
 <p>在 3B 规模，整体趋势仍然相同，但模型间的性能差距更加明显。表 3 提供了 Ministral 3 Base 模型以及教师模型的更多预训练评估结果。</p>
 <h3>4.2　后训练结果</h3>
 <p>在表 4 中，我们将 Ministral 3 Instruct 模型与来自 Gemma 3 家族和 Qwen 3 家族的 Instruct 模型进行比较。对于 Qwen 3，我们报告最新支持视觉的 instruct 变体（Qwen3-VL）的结果。</p>
-<footer>原文第 7 页</footer></section><section class="page" id="page-8"><figure><img height="507" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/1c4433ff9d2fe9b4c2db2fb8a848842dc8f1ef9fc1e553c88b495dbcdafea66f.png"></figure>
-<figure><img height="384" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/8d891346d202133e58f4c10d529430ac19b6e54897f99cbebb1aab7289ef6a8a.png"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8" aria-label="原文第 8 页"><figure><img alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/1c4433ff9d2fe9b4c2db2fb8a848842dc8f1ef9fc1e553c88b495dbcdafea66f.png" width="1206" height="507" loading="lazy" decoding="async"></figure>
+<figure><img alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/8d891346d202133e58f4c10d529430ac19b6e54897f99cbebb1aab7289ef6a8a.png" width="1206" height="384" loading="lazy" decoding="async"></figure>
 <p>在表 5 中，我们将 Ministral 3 Reasoning 模型与 Qwen 3 家族的推理模型进行比较。为确保公平比较，所有模型都使用相同的评估流程。为降低方差，我们报告 pass@16，但 LiveCodeBench 使用 pass@5 评估。</p>
 <h2>5　讨论</h2>
 <h3>5.1　蒸馏教师模型的选择</h3>
-<figure><img height="498" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/14fb768b8beb5ce435abb66ef88e82f843ee9048e81b6a472859f05f0c06f447.png"></figure>
+<figure><img alt="Ministral 3 原文第 8 页图表或代码" src="assets/images/14fb768b8beb5ce435abb66ef88e82f843ee9048e81b6a472859f05f0c06f447.png" width="1206" height="498" loading="lazy" decoding="async"></figure>
 <p>在为蒸馏流程选择合适的教师模型时，我们发现了几个值得关注的现象，它们显著影响了我们的设计选择：</p>
-<footer>原文第 8 页</footer></section><section class="page" id="page-9"><p><strong>更强的教师不会带来更好的结果：</strong>对于预训练，即便在未匹配 FLOPs 的设置下，从 Mistral Small 3.1 蒸馏也优于从强大得多的 Mistral Medium 3<sup>3</sup> 蒸馏，这与 Busbridge et al. [2025] 的观察相似（图 3）。然而，在后训练期间，Ministral 3 模型会受益于从能力更强的 Mistral Medium 3.1 蒸馏。</p>
-<figure><img height="504" width="1209" decoding="async" loading="lazy" alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/3b9427a9aa2833538a25676cf94cd6a353a30f6c589d28e4b9fcdbfd4e8cbb39.png"></figure>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9" aria-label="原文第 9 页"><p><strong>更强的教师不会带来更好的结果：</strong>对于预训练，即便在未匹配 FLOPs 的设置下，从 Mistral Small 3.1 蒸馏也优于从强大得多的 Mistral Medium 3<sup>3</sup> 蒸馏，这与 Busbridge et al. [2025] 的观察相似（图 3）。然而，在后训练期间，Ministral 3 模型会受益于从能力更强的 Mistral Medium 3.1 蒸馏。</p>
+<figure><img alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/3b9427a9aa2833538a25676cf94cd6a353a30f6c589d28e4b9fcdbfd4e8cbb39.png" width="1209" height="504" loading="lazy" decoding="async"></figure>
 <p><strong>教师版本（base／instruct）的选择很重要：</strong>与 Goyal et al. [2025] 一致，我们发现，在预训练阶段从经过后训练的教师蒸馏，相较于从预训练教师蒸馏，会产生更强的模型（图 4）。特别是，这对数学（MATH）和代码能力有显著影响，对多模态评估（例如 MMMU）有较小但一致的影响，对知识指标（MMLU／Trivia-QA）的影响则可以忽略不计。</p>
 <p><strong>经过人类偏好调优的模型是更好的教师：</strong>我们使用 Mistral Medium 3 的两个内部版本来回答这个问题：在 SFT 期间，从 SFT checkpoint 蒸馏还是从经过偏好调优的 checkpoint 蒸馏更好？我们发现，从经过偏好调优的 checkpoint 蒸馏始终明显更好。即便学生模型经历了自身的偏好调优阶段，这些收益仍然存在。</p>
 <h3>5.2　模型的冗长程度</h3>
-<figure><img height="600" width="1206" decoding="async" loading="lazy" alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/c347a624d30c4488b143c6a181516713028f8667a5da767ff7ec72623335d942.png"></figure>
+<figure><img alt="Ministral 3 原文第 9 页图表或代码" src="assets/images/c347a624d30c4488b143c6a181516713028f8667a5da767ff7ec72623335d942.png" width="1206" height="600" loading="lazy" decoding="async"></figure>
 <p>我们对 Ministral 3 Instruct 的后训练与 Qwen 3 不同：它不在“通用 RL”阶段之前进行“推理 RL”（见 Yang et al. [2025] 的图 1）。这很可能导致两个模型的冗长程度不同，如图 5 所示。</p>
-<p class="footnote"><sup>3</sup> <a href="https://docs.mistral.ai/models/mistral-medium-3-1-25-08">https://docs.mistral.ai/models/mistral-medium-3-1-25-08</a></p>
-<footer>原文第 9 页</footer></section><section class="page" id="page-10"><p>在一项试图让 Ministral 3 Instruct 模型产生更长 chain-of-thought 的实验中，我们研究了向 SFT 训练数据中加入不同比例的长 chain-of-thought（CoT）推理轨迹，并配以精心整理的系统提示。提高这类长 CoT 数据的比例改善了 STEM 基准表现；然而，这也会导致过度反思、内心独白和回溯行为（如下所示），对于通用聊天模型而言，这些行为是不希望出现且不自然的。</p>
+<p class="footnote" role="doc-footnote"><sup>3</sup> <a href="https://docs.mistral.ai/models/mistral-medium-3-1-25-08">https://docs.mistral.ai/models/mistral-medium-3-1-25-08</a></p>
+<footer>原文第 9 页</footer></section><section class="page" id="page-10" aria-label="原文第 10 页"><p>在一项试图让 Ministral 3 Instruct 模型产生更长 chain-of-thought 的实验中，我们研究了向 SFT 训练数据中加入不同比例的长 chain-of-thought（CoT）推理轨迹，并配以精心整理的系统提示。提高这类长 CoT 数据的比例改善了 STEM 基准表现；然而，这也会导致过度反思、内心独白和回溯行为（如下所示），对于通用聊天模型而言，这些行为是不希望出现且不自然的。</p>
 <blockquote><h4>Instruct 模型中的推理行为</h4>
 <p>好，让我们尝试逐步解决这个问题。问题是：求所有满足 \(b &gt; 9\) 且 \(17_{b}\) 是 \(97_{b}\) 的约数的整数进制 \(b\) 之和。首先，我需要回忆如何将 \(b\) 进制数字转换为十进制。\(b\) 进制中的一个数 \(d_{n}d_{n-1}\ldots d_{1}d_{0}\)，在十进制中等于 \(d_{n}b^{n}\)＋\(d_{n-1}b^{n-1}\)＋…＋\(d_{1}b\)＋\(d_{0}\)。</p><p>…</p>
 <p>等等，问题说明 \(b &gt; 9\)，因此我们需要检查 56 中大于 9 的约数（因为 \(b = d - 7\)</p><p>…</p>
@@ -99,16 +100,16 @@
 <p>因此，有效进制为 21 和 49。这些进制之和为：</p><p>21 + 49 = 70</p>
 <p>所以，答案是 <strong>70</strong>。</p></blockquote>
 <h3>5.3　Ministral 3 Reasoning 的 ODPO</h3>
-<figure><img height="618" width="1209" decoding="async" loading="lazy" alt="Ministral 3 原文第 10 页图表或代码" src="assets/images/ea8ca11a6bfca34f712731c09aed412a116432d90ead690f566abbea069b7650.png"></figure>
+<figure><img alt="Ministral 3 原文第 10 页图表或代码" src="assets/images/ea8ca11a6bfca34f712731c09aed412a116432d90ead690f566abbea069b7650.png" width="1209" height="618" loading="lazy" decoding="async"></figure>
 <p>推理模型虽然更擅长解决有挑战性的问题，但往往在通用对话质量方面落后，我们在 Ministral 3 推理变体上也观察到了这一模式。为解决这个问题，我们在经过 RL 训练的 checkpoint 之上进行了 ODPO 训练。如图 6 所示，这显著改善了 14B 和 8B 模型在对齐基准上的表现。然而，3B 模型在这一阶段后未在公开基准上展现出显著提升<sup>4</sup>。尽管如此，该模型在我们内部的人工评估中表现更好，因此我们选择 ODPO checkpoint 作为发布候选。</p>
-<p class="footnote"><sup>4</sup> 我们还发现，在微调中，3B 基础模型比 14B 和 8B 对超参数选择更加敏感。</p>
-<footer>原文第 10 页</footer></section><section class="page" id="page-11"><h2>6　结论</h2>
+<p class="footnote" role="doc-footnote"><sup>4</sup> 我们还发现，在微调中，3B 基础模型比 14B 和 8B 对超参数选择更加敏感。</p>
+<footer>原文第 10 页</footer></section><section class="page" id="page-11" aria-label="原文第 11 页"><h2>6　结论</h2>
 <p>我们介绍了 Ministral 3，一个为资源受限环境设计的高效稠密语言模型家族。通过从较大的教师模型（Mistral Small 3.1 和 Medium 3）进行迭代蒸馏，我们构建了三种模型规模（14B、8B、3B），每种均提供基础、指令遵循和推理增强变体。所有模型都支持视觉能力，并能处理最长 256K token 的上下文。总体而言，Ministral 3 模型凸显了 Mistral 对支持和推进开源工作的持续承诺。我们希望它们能为社区提供价值，并为更强大、更有活力的开源生态系统作出贡献。</p>
 <h3>核心贡献者</h3>
 <p class="names">Alexander H. Liu, Kartik Khandelwal, Sandeep Subramanian, Victor Jouault</p>
 <h3>贡献者</h3>
 <p class="names">Abhinav Rastogi, Adrien Sadé, Alan Jeffares, Albert Jiang, Alexandre Cahill, Alexandre Gavaudan, Alexandre Sablayrolles, Amélie Héliou, Amos You, Andy Ehrenberg, Andy Lo, Anton Eliseev, Antonia Calvi, Avinash Sooriyarachchi, Baptiste Bout, Baptiste Rozière, Baudouin De Monicault, Clémence Lanfranchi, Corentin Barreau, Cyprien Courtot, Daniele Grattarola, Darius Dabert, Diego de las Casas, Elliot Chane-Sane, Faruk Ahmed, Gabrielle Berrada, Gaëtan Ecrepont, Gauthier Guinet, Georgii Novikov, Guillaume Kunsch, Guillaume Lample, Guillaume Martin, Gunshi Gupta, Jan Ludziejewski, Jason Rute, Joachim Studnia, Jonas Amar, Joséphine Delas, Josselin Somerville Roberts, Karmesh Yadav, Khyathi Chandu, Kush Jain, Laurence Aitchison, Laurent Fainsin, Léonard Blier, Lingxiao Zhao, Louis Martin, Lucile Saulnier, Luyu Gao, Maarten Buyl, Margaret Jennings, Marie Pellat, Mark Prins, Mathieu Poirée, Mathilde Guillaumin, Matthieu Dinot, Matthieu Futeral, Maxime Darrin, Maximilian Augustin, Mia Chiquier, Michel Schimpf, Nathan Grinsztajn, Neha Gupta, Nikhil Raghuraman, Olivier Bousquet, Olivier Duchenne, Patricia Wang, Patrick von Platen, Paul Jacob, Paul Wambergue, Paula Kurylowicz, Pavankumar Reddy Muddireddy, Philomène Chagniot, Pierre Stock, Pravesh Agrawal, Quentin Torroba, Romain Sauvestre, Roman Soletskyi, Rupert Menneer, Sagar Vaze, Samuel Barry, Sanchit Gandhi, Siddhant Waghjale, Siddharth Gandhi, Soham Ghosh, Srijan Mishra, Sumukh Aithal, Szymon Antoniak, Teven Le Scao, Théo Cachet, Theo Simon Sorg, Thibaut Lavril, Thiziri Nait Saada, Thomas Chabal, Thomas Foubert, Thomas Robert, Thomas Wang, Tim Lawson, Tom Bewley, Tom Bewley, Tom Edwards, Umar Jamil, Umberto Tomasini, Valeriia Nemychnikova, Van Phung, Vincent Maladière, Virgile Richard, Wassim Bouaziz, Wen-Ding Li, William Marshall, Xinghui Li, Xinyu Yang, Yassine El Ouahidi, Yihan Wang, Yunhao Tang, Zaccharie Ramzi</p>
-<footer>原文第 11 页</footer></section><section class="page" id="page-12"><h2>参考文献</h2>
+<footer>原文第 11 页</footer></section><section class="page" id="page-12" aria-label="原文第 12 页"><h2>参考文献</h2>
 <p class="reference">Pravesh Agrawal, Szymon Antoniak, Emma Bou Hanna, Baptiste Bout, Devendra Chaplot, Jessica Chudnovsky, Diogo Costa, Baudouin De Monicault, Saurabh Garg, Theophile Gervet, 等。 Pixtral 12B。 arXiv 预印本 <a href="https://arxiv.org/abs/2410.07073">arXiv:2410.07073</a>, 2024.</p>
 <p class="reference">Joshua Ainslie, James Lee-Thorp, Michiel de Jong, Yury Zemlyanskiy, Federico Lebrón, and Sumit Sanghai. GQA：从 multi-head checkpoint 训练广义多查询 transformer 模型。 arXiv 预印本 <a href="https://arxiv.org/abs/2305.13245">arXiv:2305.13245</a>, 2023.</p>
 <p class="reference">Jacob Austin, Augustus Odena, Maxwell Nye, Maarten Bosma, Henryk Michalewski, David Dohan, Ellen Jiang, Carrie Cai, Michael Terry, Quoc Le, 等。 使用大语言模型进行程序合成。 arXiv 预印本 <a href="https://arxiv.org/abs/2108.07732">arXiv:2108.07732</a>, 2021.</p>
@@ -126,7 +127,7 @@
 <p class="reference">Aishwarya Kamath, Johan Ferret, Shreya Pathak, 等。 Gemma 3 技术报告, 2025. 链接 <a href="https://arxiv.org/abs/2503.19786">https://arxiv.org/abs/2503.19786</a>.</p>
 <p class="reference">Tom Kwiatkowski, Jennimaria Palomaki, Olivia Redfield, Michael Collins, Ankur Parikh, Chris Alberti, Danielle Epstein, Illia Polosukhin, Jacob Devlin, Kenton Lee, 等。 Natural Questions：一个用于问答研究的基准。 《计算语言学协会会刊》, 7:453–466, 2019.</p>
 <p class="reference">Guokun Lai, Qizhe Xie, Hanxiao Liu, Yiming Yang, and Eduard Hovy. RACE：一个源自考试的大规模阅读理解数据集。 载于 2017 年自然语言处理实证方法会议论文集, 页 785–794, 2017.</p>
-<footer>原文第 12 页</footer></section><section class="page" id="page-13"><h2>参考文献（续）</h2>
+<footer>原文第 12 页</footer></section><section class="page" id="page-13" aria-label="原文第 13 页"><h2>参考文献（续）</h2>
 <p class="reference">Tianle Li, Wei-Lin Chiang, Evan Frick, Lisa Dunlap, Tianhao Wu, Banghua Zhu, Joseph E Gonzalez, and Ion Stoica. 从众包数据到高质量基准：Arena-Hard 与 BenchBuilder 流程。 arXiv 预印本 <a href="https://arxiv.org/abs/2406.11939">arXiv:2406.11939</a>, 2024.</p>
 <p class="reference">Bill Yuchen Lin, Yuntian Deng, Khyathi Chandu, Faeze Brahman, Abhilasha Ravichander, Valentina Pyatkin, Nouha Dziri, Ronan Le Bras, and Yejin Choi. WildBench：使用真实用户的有挑战性任务评估 LLM。 arXiv 预印本 <a href="https://arxiv.org/abs/2406.04770">arXiv:2406.04770</a>, 2024.</p>
 <p class="reference">Zihan Liu, Zijian Wang, Yue Zhang, Jianing Wang, Jian Tang, Xiang He, and Xiangyu Zhang. PhyBench：全面评估大语言模型的物理感知和推理。 arXiv 预印本 <a href="https://arxiv.org/abs/2504.16074">arXiv:2504.16074</a>, 2025.</p>
@@ -144,7 +145,7 @@
 <p class="reference">Keisuke Sakaguchi, Ronan Le Bras, Chandra Bhagavatula, and Yejin Choi. WinoGrande：大规模对抗性 Winograd Schema 挑战。 《ACM 通讯》, 64(9):99–106, 2021.</p>
 <p class="reference">Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Y. Wu, and Daya Guo. DeepSeekMath：推动开放语言模型的数学推理极限, 2024. 链接 <a href="https://arxiv.org/abs/2402.03300">https://arxiv.org/abs/2402.03300</a>.</p>
 <p class="reference">Noam Shazeer. GLU 变体改进 transformer。 arXiv 预印本 <a href="https://arxiv.org/abs/2002.05202">arXiv:2002.05202</a>, 2020.</p>
-<footer>原文第 13 页</footer></section><section class="page" id="page-14"><h2>参考文献（续）</h2>
+<footer>原文第 13 页</footer></section><section class="page" id="page-14" aria-label="原文第 14 页"><h2>参考文献（续）</h2>
 <p class="reference">Sharath Turuvekere Sreenivas, Saurav Muralidharan, Raviraj Joshi, Marcin Chochowski, Ameya Sunil Mahabaleshwarkar, Gerald Shen, Jiaqi Zeng, Zijia Chen, Yoshi Suhara, Shizhe Diao, Chenhan Yu, Wei-Chun Chen, Hayley Ross, Oluwatobi Olabiyi, Ashwath Aithal, Oleksii Kuchaiev, Daniel Korzekwa, Pavlo Molchanov, Mostofa Patwary, Mohammad Shoeybi, Jan Kautz, and Bryan Catanzaro. LLM 剪枝与蒸馏实践：Minitron 方法。 arXiv 预印本 <a href="https://arxiv.org/abs/2408.11796">arXiv:2408.11796</a>, 2024.</p>
 <p class="reference">Jianlin Su, Yu Lu, Shengfeng Pan, Ahmed Murtadha, Bo Wen, and Yunfeng Liu. RoFormer：使用旋转位置 embedding 增强的 transformer。 arXiv 预印本 <a href="https://arxiv.org/abs/2104.09864">arXiv:2104.09864</a>, 2021.</p>
 <p class="reference">Mingjie Sun, Zhuang Liu, Anna Bair, and J Zico Kolter. 一种简单而有效的大语言模型剪枝方法。 arXiv 预印本 <a href="https://arxiv.org/abs/2306.11695">arXiv:2306.11695</a>, 2023.</p>
@@ -154,4 +155,4 @@
 <p class="reference">Rowan Zellers, Ari Holtzman, Yonatan Bisk, Ali Farhadi, and Yejin Choi. HellaSwag：机器真的能补完你的句子吗？ arXiv 预印本 <a href="https://arxiv.org/abs/1905.07830">arXiv:1905.07830</a>, 2019.</p>
 <p class="reference">Biao Zhang and Rico Sennrich. 均方根层归一化。 《神经信息处理系统进展》, 32, 2019.</p>
 <p class="reference">Wanjun Zhong, Ruixiang Cui, Yiduo Guo, Yaobo Liang, Shuai Lu, Yanlin Wang, Amin Saied, Weizhu Chen, and Nan Duan. AGIEval：一个以人为中心、用于评估基础模型的基准。 arXiv 预印本 <a href="https://arxiv.org/abs/2304.06364">arXiv:2304.06364</a>, 2023.</p>
-<footer>原文第 14 页</footer></section></body></html>
+<footer>原文第 14 页</footer></section></main></body></html>
