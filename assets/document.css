@@ -603,3 +603,19 @@ figure.formula { max-width: 350px; margin: 18px auto; }
   .translation .document-nav { display: none; }
   .translation .page { margin: 0; }
 }
+
+/* Keep screenshots readable on phones; swipe wide figures horizontally. */
+@media screen and (max-width: 640px) {
+  .page figure, .page .equation {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .page figure img, .page .equation img {
+    max-width: 804px !important;
+    height: auto;
+  }
+  .page figure img.layout-58, .page figure img.layout-61 {
+    width: auto !important;
+  }
+}
