@@ -428,3 +428,26 @@ figure.formula { max-width: 350px; margin: 18px auto; }
 
 /* Leave room for paragraph indentation when a formula starts the line. */
 .page p > span:first-child > .katex { max-width: calc(100% - 2em); }
+
+/* Shared translation cover and source metadata. */
+.translation .page h1 {
+  text-align: center;
+  text-indent: 0;
+}
+.translation .cover-info,
+.translation .page header p,
+.translation .page header h2 {
+  text-align: center;
+  text-indent: 0;
+}
+.translation .document-nav {
+  text-align: center;
+}
+.translation .document-nav .nav-links {
+  justify-content: center;
+}
+.translation .document-meta {
+  line-height: 1.6;
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
