@@ -1,60 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LongCat-Flash-Thinking-2601 技术报告 · 中文翻译</title><style>
-* { box-sizing: border-box; }
-body { margin: 0; background: #f1f2f4; color: #191919; font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif; line-height: 1.6; }
-.page, .document-nav { max-width: 900px; margin: 28px auto; padding: 32px 48px; }
-.page { min-height: 0; background: white; box-shadow: 0 3px 20px #0000000c; }
-.document-nav { padding-top: 0; padding-bottom: 0; font-family: system-ui, sans-serif; font-size: 14px; }
-.document-nav .nav-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 12px 0; }
-.document-nav .document-title { font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif; font-size: 22px; font-weight: bold; margin: 14px 0 8px; }
-.document-nav .document-meta, .muted, .meta, .metadata { color: #666; font-size: 14px; }
-.page-links { line-height: 2; }.page-links a { display: inline-block; padding: 0 8px; }
-header { display: block; border-bottom: 1px solid #444; padding-bottom: 12px; }
-header img { width: 103px; height: 41px; object-fit: contain; }
-time { color: #555; font-size: 14px; }
-h1 { font-size: 30px; margin: 24px 0 18px; text-align: left; }
-h2 { font-size: 23px; margin: 24px 0 12px; text-align: left; }
-h3 { font-size: 21px; margin: 18px 0 10px; }h4 { font-size: 19px; }
-p, .abstract { font-size: 18px; line-height: 1.6; margin: 10px 0; text-align: justify; text-indent: 2em; }
-li { font-size: 18px; line-height: 1.6; margin: 6px 0; }
-a { color: #00009b; text-decoration: none; }a:hover { text-decoration: underline; }a:focus-visible { outline: 2px solid #53667b; outline-offset: 3px; }
-p, li, a, code, td, th { overflow-wrap: anywhere; }
-.author, .authors, .affiliations { text-align: center; text-indent: 0; }.author { font-size: 20px; font-weight: bold; }
-.links { margin: 18px 0; font-family: monospace; font-size: 14px; line-height: 1.6; text-indent: 0; }
-.meta, .metadata { text-align: center; text-indent: 0; }
-.note, .footnote, .continuation { font-size: 14px; color: #666; text-indent: 0; }
-.reference { font-size: 16px; line-height: 1.5; margin: 10px 0; text-indent: 0; text-align: left; }
-figure { margin: 18px 0; text-align: center; }figure img { width: 100%; max-width: 100%; height: auto; }
-figcaption { font-size: 15px; text-align: left; }img { max-width: 100%; }
-pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; background: #f5f5f5; padding: 16px; }
-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }sup { font-size: 12px; }
-.names, .contributor { font-size: 15px; line-height: 1.6; text-indent: 0; text-align: left; white-space: pre-wrap; }
-.names-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 14px; }
-.contributors { width: 100%; table-layout: fixed; }.contributors td { padding: 5px; font-size: 13px; }
-.table-wrap { overflow-x: auto; margin: 18px 0; }table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.6; }
-th, td { border: 1px solid #d6d9df; padding: 10px 12px; text-align: left; vertical-align: top; }th { background: #edf0f4; }tr:nth-child(even) { background: #fafbfc; }
-.tag { display: inline-block; font-family: system-ui, sans-serif; font-size: 13px; padding: 2px 7px; border-radius: 4px; background: #e7edf5; color: #233a57; }
-footer { margin-top: 28px; padding-top: 12px; text-align: center; font-size: 14px; color: #666; }
-section { scroll-margin-top: 16px; }.contents, .toc { line-height: 1.6; }
-.reading-list .page { max-width: 1600px; }.reading-list .document-nav { max-width: 1600px; }
-.reading-list p, .directory p, .technical-note p { text-indent: 0; }
-.reading-list table { min-width: 1280px; }.reading-list .inventory { min-width: 850px; }
-.reading-list .note, .technical-note .note { background: #f1f4f8; border-left: 3px solid #53667b; padding: 12px 16px; color: #333; }
-.reading-list nav, .contents { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 18px 0; }
-.directory li { margin: 14px 0; }.directory small { display: block; color: #666; font-size: 14px; }
-.technical-note table { min-width: 650px; }.source-list li { font-size: 15px; line-height: 1.5; }
-@media (max-width: 640px) {
- .page { margin: 16px 0; padding: 24px 18px; }.document-nav { margin: 20px 0; padding: 0 18px; }
- h1 { font-size: 26px; }h2 { font-size: 23px; }h3 { font-size: 20px; }p, li, .abstract { font-size: 17px; }
- .names-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }th, td { padding: 8px; }
-}
-@media print {
- body { background: white; }.page { margin: 0; padding: 12px; max-width: none; box-shadow: none; break-after: page; }
- .document-nav, nav { display: none; }.directory .page, .reading-list .page, .technical-note .page { break-after: auto; }
- .table-wrap { overflow: visible; }.reading-list table, .technical-note table { min-width: 0; font-size: 10px; }th, td { padding: 6px; }a { color: inherit; }
-}
-</style></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">LongCat-Flash-Thinking-2601 技术报告</div><div class="document-meta">LongCat-Flash-Thinking-2601 Technical Report<br>首次提交：2026-01-23 · 译文版本：arXiv:2601.16725v2（2026-02-01） · 页码覆盖 27/27 页<br><a href="https://arxiv.org/abs/2601.16725v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2601.16725v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a></div></nav><section class="page" id="page-1"><h1>LongCat-Flash-Thinking-2601 技术报告</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LongCat-Flash-Thinking-2601 技术报告 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">LongCat-Flash-Thinking-2601 技术报告</div><div class="document-meta">LongCat-Flash-Thinking-2601 Technical Report<br>首次提交：2026-01-23 · 译文版本：arXiv:2601.16725v2（2026-02-01） · 页码覆盖 27/27 页<br><a href="https://arxiv.org/abs/2601.16725v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2601.16725v2">原文 PDF</a></div><div class="document-meta">正文中的原始日期与标注保留；首次提交日和版本日分别列示。页码覆盖不代表本次重新校译或精读。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a></div></nav><section class="page" id="page-1"><h1>LongCat-Flash-Thinking-2601 技术报告</h1>
 <p class="author">美团 LongCat 团队（Meituan LongCat Team）</p>
-<p class="note" style="text-align:center">longcat-team@meituan.com</p>
+<p class="note layout-8" >longcat-team@meituan.com</p>
 <h2>摘要</h2>
 <p>我们介绍 LongCat-Flash-Thinking-2601，这是一个拥有 5,600 亿参数的开源混合专家（MoE）推理模型，具备卓越的智能体推理能力。LongCat-Flash-Thinking-2601 在广泛的智能体基准上达到开源模型中的最先进水平，包括智能体搜索、智能体工具使用和工具集成推理。除基准表现之外，该模型在复杂工具交互中展现出强大的泛化能力，并能在具有噪声的真实环境中保持稳健行为。其先进能力源自一个统一的训练框架：先并行训练各领域专家，再进行融合，同时从预训练到后训练，对数据构建、环境、算法和基础设施进行端到端协同设计。特别是，模型在复杂工具使用中的强大泛化能力，来自我们对环境扩展和系统性任务构建的深入探索。为优化具有长尾偏斜分布的生成过程和多轮智能体交互，并支持跨越 20 多个领域、超过 10,000 个环境的稳定训练，我们系统性扩展了异步强化学习框架 DORA，实现稳定、高效的大规模多环境训练。此外，考虑到真实任务本质上存在噪声，我们对真实世界的噪声模式进行了系统性分析和分解，并设计有针对性的训练流程，将这些不完善之处显式纳入训练过程，从而提高模型在真实应用中的稳健性。为进一步提升复杂推理任务的表现，我们引入 Heavy Thinking（深度思考）模式，通过密集的并行思考，同时扩展推理的深度和宽度，实现有效的测试时扩展。我们发布模型检查点，以促进智能体系统的后续研究和实际应用。</p>
 <p class="note">原文版本：<a href="https://arxiv.org/abs/2601.16725v2">arXiv:2601.16725v2</a> [cs.AI]，2026 年 2 月 1 日。</p>
@@ -114,11 +60,11 @@ section { scroll-margin-top: 16px; }.contents, .toc { line-height: 1.6; }
 <footer>原文第 6 页</footer></section><section class="page" id="page-7"><p class="continuation">（接原文第 6 页。）</p>
 <p>这种受控扩展策略，使我们能够在保留可执行性和可靠监督的同时，逐步增加环境复杂度。</p>
 <p>通过这种受控图扩展，我们将 s₁ 扩展为更复杂的子图 R(s₁)。将得到的扩展环境记为 E₁ = R(s₁)。令 D₁ = G ∖ E₁ 表示 E₁ 尚未使用的工具节点。进一步的设计选择是，是否初始化另一条种子可执行工具链 s₂ ⊆ D₁，并将其扩展为 R(s₂)，以构建环境：</p>
-<p style="text-align:center;text-indent:0">E₂ = R(s₁) ∪ R(s₂)，</p>
+<p  class="layout-9">E₂ = R(s₁) ∪ R(s₂)，</p>
 <p>从而进一步增加环境复杂度。我们根据以下因素作出这一决定：（i）当前环境的结构复杂度 c(E₁)；（ii）从剩余图中识别新有效工具链的难度 g(D₁)；（iii）剩余未使用节点的数量 |D₁|。具体而言，给定当前环境：</p>
-<p style="text-align:center;text-indent:0">Eₙ = ⋃<sub>i=1</sub><sup>n</sup> R(sᵢ)，</p>
+<p  class="layout-9">Eₙ = ⋃<sub>i=1</sub><sup>n</sup> R(sᵢ)，</p>
 <p>我们定义剩余未使用工具集为 Dₙ = G ∖ Eₙ，并以如下概率从 Dₙ 中采样新种子链 sₙ₊₁：</p>
-<p style="text-align:center;text-indent:0">p = f(c(Eₙ), g(Dₙ), |Dₙ|)，</p>
+<p  class="layout-9">p = f(c(Eₙ), g(Dₙ), |Dₙ|)，</p>
 <p>其中，g(Dₙ) 通过强求解器从 Dₙ 中发现另一条有效工具链所需的尝试次数衡量，f(·) 则是控制环境增长过程的单调决策函数。在实践中，当 p &gt; τ 时，其中 τ 是预定义阈值，我们从 Dₙ 中初始化一条新的种子标准工具链 sₙ₊₁，并将其扩展为 R(sₙ₊₁)。为确保环境达到最低复杂度，我们还引入了兜底机制。如果扩展结果 Eₙ 只包含少量工具节点，我们从 G 随机采样一条额外的中等规模工具链，并将其纳入环境，同时确保其与当前工具链的数据库一致性。这保证每个构建的环境至少包含 20 个工具，提供足够的结构复杂度，以支持有意义的智能体交互和探索。这种自动化环境构建策略，使我们能够在维持可靠监督信号的同时逐步扩展环境复杂度，实现稳定、高效的大规模智能体强化学习。</p>
 <h4>3.1.2　初始策略</h4>
 <p>冷启动阶段对后续强化学习阶段的策略初始化具有关键作用。我们的首要目标是让模型做好有效开展大规模探索的准备，而不是优先追求标准基准上的即时提升。高质量的冷启动策略必须展现多样的推理模式和稳定的交互格式，确保后续 RL 阶段能够高效开展，同时保留通用思考能力。因此，我们从更基础的角度评估冷启动模型，重点关注：（1）其在为 RL 阶段指定的特定任务上的熟练程度；（2）通过人工定性检查评估其推理路径的多样性。虽然我们报告标准基准上的 pass@k 表现以衡量底层推理能力，但这一指标只作为参考，并非主要优化目标。</p>
@@ -278,7 +224,7 @@ section { scroll-margin-top: 16px; }.contents, .toc { line-height: 1.6; }
 <p>我们介绍了 LongCat-Flash-Thinking-2601，这是一个开放权重的 560B MoE 推理模型，具备卓越的智能体推理能力。该模型建立在统一、端到端训练流程之上，对架构、预训练、后训练、数据构建和可扩展 RL 基础设施进行协同设计，全部明确面向长程、交互驱动的智能体推理。支撑 LongCat-Flash-Thinking-2601 的核心创新如下：（i）可扩展的环境构建与多领域强化学习框架，使模型能够稳定获得可泛化的智能体技能；（ii）稳健的智能体训练流程，通过基于课程的强化学习，系统性纳入真实环境噪声；（iii）Heavy Thinking 模式，通过同时扩展推理宽度和深度，实现推理的有效测试时扩展。通过这一整体设计，LongCat-Flash-Thinking-2601 在广泛智能体基准上树立开源模型的新最先进水平，缩小与领先闭源模型的性能差距。</p>
 <footer>原文第 21 页</footer></section><section class="page" id="page-22"><h2>贡献者</h2>
 <p>作者名单按字母顺序排列。英文姓名相同的条目，将根据中文笔画数和读音排序。星号（*）表示已离开团队的成员。</p>
-<div style="overflow-x:auto"><table class="names" style="width:100%;font-size:13px;line-height:1.6"><tbody>
+<div  class="layout-7"><table class="names layout-12" ><tbody>
 <tr><td>Anchun Gui</td><td>Hongyan Hao</td><td>Mingyang Zhu</td><td>Xiandi Ma</td><td>Yongwei Zhou</td></tr>
 <tr><td>Bei Li</td><td>Hongyin Tang</td><td>Peiguang Li</td><td>Xiangcheng Liu</td><td>Youshao Xiao</td></tr>
 <tr><td>Bingyang Tao</td><td>Hongyu Zang*</td><td>Peng Pei</td><td>Xiangyu Xi</td><td>Yu Wang</td></tr>

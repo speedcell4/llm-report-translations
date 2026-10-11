@@ -1,60 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZGCM-1：用于数学与智能体搜索的完全开放、高效基础模型 · 中文翻译</title><style>
-* { box-sizing: border-box; }
-body { margin: 0; background: #f1f2f4; color: #191919; font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif; line-height: 1.6; }
-.page, .document-nav { max-width: 900px; margin: 28px auto; padding: 32px 48px; }
-.page { min-height: 0; background: white; box-shadow: 0 3px 20px #0000000c; }
-.document-nav { padding-top: 0; padding-bottom: 0; font-family: system-ui, sans-serif; font-size: 14px; }
-.document-nav .nav-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 12px 0; }
-.document-nav .document-title { font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif; font-size: 22px; font-weight: bold; margin: 14px 0 8px; }
-.document-nav .document-meta, .muted, .meta, .metadata { color: #666; font-size: 14px; }
-.page-links { line-height: 2; }.page-links a { display: inline-block; padding: 0 8px; }
-header { display: block; border-bottom: 1px solid #444; padding-bottom: 12px; }
-header img { width: 103px; height: 41px; object-fit: contain; }
-time { color: #555; font-size: 14px; }
-h1 { font-size: 30px; margin: 24px 0 18px; text-align: left; }
-h2 { font-size: 23px; margin: 24px 0 12px; text-align: left; }
-h3 { font-size: 21px; margin: 18px 0 10px; }h4 { font-size: 19px; }
-p, .abstract { font-size: 18px; line-height: 1.6; margin: 10px 0; text-align: justify; text-indent: 2em; }
-li { font-size: 18px; line-height: 1.6; margin: 6px 0; }
-a { color: #00009b; text-decoration: none; }a:hover { text-decoration: underline; }a:focus-visible { outline: 2px solid #53667b; outline-offset: 3px; }
-p, li, a, code, td, th { overflow-wrap: anywhere; }
-.author, .authors, .affiliations { text-align: center; text-indent: 0; }.author { font-size: 20px; font-weight: bold; }
-.links { margin: 18px 0; font-family: monospace; font-size: 14px; line-height: 1.6; text-indent: 0; }
-.meta, .metadata { text-align: center; text-indent: 0; }
-.note, .footnote, .continuation { font-size: 14px; color: #666; text-indent: 0; }
-.reference { font-size: 16px; line-height: 1.5; margin: 10px 0; text-indent: 0; text-align: left; }
-figure { margin: 18px 0; text-align: center; }figure img { width: 100%; max-width: 100%; height: auto; }
-figcaption { font-size: 15px; text-align: left; }img { max-width: 100%; }
-pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; background: #f5f5f5; padding: 16px; }
-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }sup { font-size: 12px; }
-.names, .contributor { font-size: 15px; line-height: 1.6; text-indent: 0; text-align: left; white-space: pre-wrap; }
-.names-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 14px; }
-.contributors { width: 100%; table-layout: fixed; }.contributors td { padding: 5px; font-size: 13px; }
-.table-wrap { overflow-x: auto; margin: 18px 0; }table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.6; }
-th, td { border: 1px solid #d6d9df; padding: 10px 12px; text-align: left; vertical-align: top; }th { background: #edf0f4; }tr:nth-child(even) { background: #fafbfc; }
-.tag { display: inline-block; font-family: system-ui, sans-serif; font-size: 13px; padding: 2px 7px; border-radius: 4px; background: #e7edf5; color: #233a57; }
-footer { margin-top: 28px; padding-top: 12px; text-align: center; font-size: 14px; color: #666; }
-section { scroll-margin-top: 16px; }.contents, .toc { line-height: 1.6; }
-.reading-list .page { max-width: 1600px; }.reading-list .document-nav { max-width: 1600px; }
-.reading-list p, .directory p, .technical-note p { text-indent: 0; }
-.reading-list table { min-width: 1280px; }.reading-list .inventory { min-width: 850px; }
-.reading-list .note, .technical-note .note { background: #f1f4f8; border-left: 3px solid #53667b; padding: 12px 16px; color: #333; }
-.reading-list nav, .contents { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 18px 0; }
-.directory li { margin: 14px 0; }.directory small { display: block; color: #666; font-size: 14px; }
-.technical-note table { min-width: 650px; }.source-list li { font-size: 15px; line-height: 1.5; }
-@media (max-width: 640px) {
- .page { margin: 16px 0; padding: 24px 18px; }.document-nav { margin: 20px 0; padding: 0 18px; }
- h1 { font-size: 26px; }h2 { font-size: 23px; }h3 { font-size: 20px; }p, li, .abstract { font-size: 17px; }
- .names-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }th, td { padding: 8px; }
-}
-@media print {
- body { background: white; }.page { margin: 0; padding: 12px; max-width: none; box-shadow: none; break-after: page; }
- .document-nav, nav { display: none; }.directory .page, .reading-list .page, .technical-note .page { break-after: auto; }
- .table-wrap { overflow: visible; }.reading-list table, .technical-note table { min-width: 0; font-size: 10px; }th, td { padding: 6px; }a { color: inherit; }
-}
-
-.page{min-height:0}p,li,.abstract{line-height:1.6}p,.abstract{margin:10px 0}li{margin:6px 0}figure{margin:18px 0}.reference{line-height:1.5}pre{background:#f5f5f5;padding:16px}figure img{max-width:100%;height:auto}.names{white-space:pre-wrap;line-height:1.6}sup{font-size:12px}
-</style></head><body><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">ZGCM-1：数学与智能体搜索基础模型 · 中文翻译</div><div class="document-meta">首次提交：2026-09-11 · 译文版本：arXiv:2609.13356v2（2026-09-20） · <a href="https://arxiv.org/abs/2609.13356v2">原文记录</a> · <a href="https://arxiv.org/pdf/2609.13356v2">原文 PDF</a></div><div class="page-links">已翻译 48/48 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a> <a href="#page-41">41</a> <a href="#page-42">42</a> <a href="#page-43">43</a> <a href="#page-44">44</a> <a href="#page-45">45</a> <a href="#page-46">46</a> <a href="#page-47">47</a> <a href="#page-48">48</a></div></nav><section class="page" id="page-1"><h1>ZGCM-1：用于数学与智能体搜索的完全开放、极其高效的基础模型</h1>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZGCM-1：用于数学与智能体搜索的完全开放、高效基础模型 · 中文翻译</title><link rel="stylesheet" href="assets/document.css"></head><body><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="tech-report-reading-list.html">精读清单</a></div><div class="document-title">ZGCM-1：数学与智能体搜索基础模型 · 中文翻译</div><div class="document-meta">首次提交：2026-09-11 · 译文版本：arXiv:2609.13356v2（2026-09-20） · <a href="https://arxiv.org/abs/2609.13356v2">原文记录</a> · <a href="https://arxiv.org/pdf/2609.13356v2">原文 PDF</a></div><div class="page-links">已翻译 48/48 页：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a> <a href="#page-31">31</a> <a href="#page-32">32</a> <a href="#page-33">33</a> <a href="#page-34">34</a> <a href="#page-35">35</a> <a href="#page-36">36</a> <a href="#page-37">37</a> <a href="#page-38">38</a> <a href="#page-39">39</a> <a href="#page-40">40</a> <a href="#page-41">41</a> <a href="#page-42">42</a> <a href="#page-43">43</a> <a href="#page-44">44</a> <a href="#page-45">45</a> <a href="#page-46">46</a> <a href="#page-47">47</a> <a href="#page-48">48</a></div></nav><section class="page" id="page-1"><h1>ZGCM-1：用于数学与智能体搜索的完全开放、极其高效的基础模型</h1>
 <p class="names">ZGCM Team<sup>1,2</sup><br><sup>1</sup>中关村学院　<sup>2</sup>中关村人工智能研究院</p>
 <p>基础模型持续推进数学推理和智能体问题求解的前沿，但高昂的计算需求和封闭的训练方案，使更广泛的学术界在很大程度上无法参与这一进展。在本研究中，我们提出 ZGCM-1：一个完全开放的 7B 稠密基础模型，以极高的数据、系统和算法效率从头训练而成。ZGCM-1 建立在一个核心前提之上：小型模型无法被动记住开放网络，但可以将审慎的内部思考与主动的外部工具使用相结合，突破参数容量的限制。为在 256K 上下文中支持这一范式，我们开发了一套端到端、高效率的开放训练方案：（1）架构与系统协同设计：交错排列的门控滑动窗口注意力与全局注意力，以及稳定的 FP8 Muon 优化器；（2）渐进式课程与 MDP 中期训练：上下文依次扩展至 16K、64K 和 256K，并将交互轨迹重新表述为马尔可夫决策过程。此外，我们建立了一套 AI 原生研发工作流，由智能体群自主管理集群运维、数据整理和快速诊断评估。广泛的评估表明，ZGCM-1-7B 在通用基准上与 7B 模型家族中的模型具有竞争力。在若干具有挑战性的数学推理和智能体搜索测试中，它仍能与规模大几个数量级的前沿模型竞争，例如 Qwen3-235B-A22B 和 GLM-5.1。我们还表明，预训练设计使 16K 预训练达到给定损失所需时间的效率提高约 4.2 倍。在完整开发生命周期中，我们提炼出八项可付诸实践的实证发现，涉及架构扩展、SFT 质量筛选、长上下文泛化以及智能体联合训练动态。为促进社区研究，我们开源预训练、中期训练和后训练阶段的模型权重、中间检查点、训练代码、各阶段数据及数据方案，以及 W&amp;B 日志。</p>
 <p>代码：<a href="https://github.com/zgcagi/ZGCM-1">https://github.com/zgcagi/ZGCM-1</a><br>模型：<a href="https://huggingface.co/zgcagi/ZGCM-1-7B">https://huggingface.co/zgcagi/ZGCM-1-7B</a><br>数据：<a href="https://huggingface.co/datasets/zgcagi/ZGCM-1-Data">https://huggingface.co/datasets/zgcagi/ZGCM-1-Data</a></p>
@@ -110,7 +54,7 @@ section { scroll-margin-top: 16px; }.contents, .toc { line-height: 1.6; }
 <p><strong>数值精度。</strong>矩阵乘法采用 Transformer Engine 混合 FP8（前向 E4M3、反向 E5M2）（Micikevicius et al., 2022）和延迟缩放；缩放因子根据 1,024 步历史中的最大绝对值更新。其他所有操作保留 BF16 或 FP32 精度。TWEO（Liang et al., 2025）作为激活正则化器抑制极端中间值，补充延迟缩放规则。16K 生产训练持续达到约 585 模型 TFLOP/s/GPU，即相对于 H100 BF16 稠密峰值 989 TFLOP/s，约 60% 的 BF16 等效 MFU。完整并行配置见附录 A.1。</p>
 <blockquote><strong>发现 2（TWEO 支持 FP8 预训练）：</strong>抑制中间激活离群值对 FP8 训练稳定性至关重要；将延迟缩放与 TWEO（Liang et al., 2025）正则化结合，可防止数值发散，同时在规模化训练中保持 60% 的 BF16 等效 MFU。</blockquote>
 <p><strong>训练效率。</strong>我们相对于一个可比的 OLMo 3 风格 7B BF16/AdamW 基线（Team Olmo, 2025），估算 16K 预训练达到给定损失所需时间。四项因素产生贡献：SWA 5:1 在 16K 时相对于全注意力带来 1.4 倍吞吐量提升（第 2.2 节，图 4）；FP8 精度与系统配置贡献约 1.5 倍；Muon 相比 AdamW 提供约 1.8 倍达到给定损失所需步数的效率；根据探索性的 7B 证据，Pre-LN 贡献估计为 1.1 倍的数据效率。相乘得到：</p>
-<p style="text-align:center;text-indent:0">1.4 × 1.5 × 1.8 × 1.1 ≈ 4.2。</p>
+<p  class="layout-9">1.4 × 1.5 × 1.8 × 1.1 ≈ 4.2。</p>
 <p>这大致表明，16K 预训练达到给定损失所需时间的效率提高了四倍。</p>
 <blockquote><strong>发现 3（预训练效率提升）：</strong>混合 SWA（1.4 倍）、FP8 混合精度系统（1.5 倍）、Muon 优化器（1.8 倍）和 Pre-LN（1.1 倍）的协同设计，相对于标准 BF16/AdamW 基线，累计使 16K 预训练达到给定损失所需时间缩短约 4.2 倍。</blockquote>
 <h3>3.2 中期训练</h3><h4>3.2.1 数据混合</h4>
