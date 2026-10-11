@@ -418,10 +418,13 @@ blockquote { margin: 10px 0; padding: 0 18px; border-left: 3px solid #ddd; }
 
 figure.formula { max-width: 350px; margin: 18px auto; }
 
-.translation .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
-.translation .katex-display > .katex { width: max-content; min-width: 100%; }
+.page .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+.page .katex-display > .katex { width: max-content; min-width: 100%; }
 
 .image-centered-325 { width: 325px !important; max-width: 100% !important; display: block !important; margin: auto !important; }
 
-.translation .katex { display: inline-block; max-width: 100%; overflow-x: auto; vertical-align: middle; }
-.translation .katex-display { max-width: 100%; }
+.page .katex { display: inline-block; max-width: 100%; overflow-x: auto; vertical-align: middle; text-indent: 0; }
+.page .katex-display { max-width: 100%; }
+
+/* Leave room for paragraph indentation when a formula starts the line. */
+.page p > span:first-child > .katex { max-width: calc(100% - 2em); }
