@@ -1,0 +1,44 @@
+{
+  "original": {
+    "paperId": "e07a7e57745b69c0f08601fbdd19cfdcafbe1152",
+    "title": "DeepSeek-V3 Technical Report",
+    "year": 2024,
+    "citationCount": 0,
+    "externalIds": {
+      "ArXiv": "2412.19437",
+      "CorpusId": 282749848
+    }
+  },
+  "candidates": [
+    {
+      "paperId": "3fd64a944156e8309dbab86895a494a02e123157",
+      "title": "DeepSeek-V3: Architecture and Optimizations-A Practical Review",
+      "year": 2026,
+      "citationCount": 0,
+      "externalIds": {
+        "DOI": "10.1051/epjconf/202638002002",
+        "CorpusId": 290933718
+      }
+    },
+    {
+      "paperId": "5b6fdb2aea424d02c141da81d62b04d739d62b96",
+      "title": "DeepSeek-V3 Technical Report",
+      "year": 2024,
+      "citationCount": 4229,
+      "externalIds": {
+        "DBLP": "journals/corr/abs-2412-19437",
+        "CorpusId": 275118643
+      }
+    },
+    {
+      "paperId": "e07a7e57745b69c0f08601fbdd19cfdcafbe1152",
+      "title": "DeepSeek-V3 Technical Report",
+      "year": 2024,
+      "citationCount": 0,
+      "externalIds": {
+        "ArXiv": "2412.19437",
+        "CorpusId": 282749848
+      }
+    }
+  ]
+}
