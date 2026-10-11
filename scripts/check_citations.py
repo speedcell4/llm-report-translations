@@ -80,49 +80,67 @@ def main():
     if os.environ.get('SEMANTIC_SCHOLAR_API_KEY'):
         headers['x-api-key'] = os.environ['SEMANTIC_SCHOLAR_API_KEY']
     fields = 'title,citationCount,externalIds,year,authors'
-    saved_ids = sorted({row['paperId'] for row in previous['reports'].values() if row.get('paperId')})
-    requested = ['ARXIV:' + identifier for identifier in ids] + saved_ids
-    records = query_api('paper/batch?fields=' + fields, headers, {'ids': requested})
-    if not isinstance(records, list) or len(records) != len(requested):
-        raise ValueError('Invalid batch response; previous results retained')
-    saved = {record['paperId']: record for record in records[len(ids):] if record}
-    records = records[:len(ids)]
-    for start in range(0, len(ids), 8):
-        group = records[start:start + 8]
-        titles = list(dict.fromkeys(record['title'] for record in group if record))
-        if not titles:
-            continue
-        candidates = []
-        token = None
-        while True:
-            params = {'query': ' | '.join('"' + title.replace('"', '') + '"' for title in titles), 'fields': fields}
-            if token:
-                params['token'] = token
-            result = query_api('paper/search/bulk?' + urllib.parse.urlencode(params), headers)
-            if not isinstance(result.get('data'), list):
-                raise ValueError('Invalid title search response; previous results retained')
-            candidates.extend(result['data'])
-            token = result.get('token')
-            time.sleep(1)
-            if not token:
-                break
-        for position, original in enumerate(group, start):
-            if original is None:
-                continue
-            identifier = ids[position]
-            cached = saved.get(previous['reports'].get(identifier, {}).get('paperId'))
-            selected = select_record(identifier, original, candidates + [cached])
-            records[position] = selected
-            if selected['paperId'] != original['paperId']:
-                print(f'{identifier}: resolved duplicate {original["citationCount"]} -> {selected["citationCount"]} ({selected["paperId"]})', flush=True)
-        print(f'Duplicate audit: {min(start + 8, len(ids))}/{len(ids)} papers', flush=True)
-    checked_at = datetime.now(timezone.utc).isoformat()
-    reports = merge_reports(ids, records, previous['reports'], checked_at)
-    result = {'checkedAt': checked_at, 'reports': reports}
-    temporary = target.with_suffix('.tmp')
-    temporary.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
-    temporary.replace(target)
-    print(f'Citation counts: {sum(row["citationCount"] is not None for row in reports.values())}/{len(ids)} papers')
+    result = dict(previous)
+    result['reports'] = {identifier: row for identifier, row in previous['reports'].items() if identifier in ids}
+    resume = result.get('resumeFrom')
+    start = ids.index(resume) if resume in ids else 0
+
+    def save():
+        temporary = target.with_suffix('.tmp')
+        temporary.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+        temporary.replace(target)
+
+    for position in range(start, len(ids)):
+        identifier = ids[position]
+        current_title = result['reports'].get(identifier, {}).get('title') or identifier
+        try:
+            requested = ['ARXIV:' + identifier]
+            cached = result['reports'].get(identifier, {})
+            if cached.get('paperId') and (cached.get('externalIds') or {}).get('ArXiv') != identifier:
+                requested.append(cached['paperId'])
+            records = query_api('paper/batch?fields=' + fields, headers, {'ids': requested})
+            if not isinstance(records, list) or len(records) != len(requested):
+                raise ValueError('Invalid batch response; previous results retained')
+            original = records[0]
+            selected = original
+            if original is not None:
+                current_title = original['title']
+                selected = select_record(identifier, original, records[1:])
+                token = None
+                while True:
+                    params = {'query': '"' + original['title'].replace('"', '') + '"', 'fields': fields}
+                    if token:
+                        params['token'] = token
+                    time.sleep(1)
+                    search = query_api('paper/search/bulk?' + urllib.parse.urlencode(params), headers)
+                    if not isinstance(search.get('data'), list):
+                        raise ValueError('Invalid title search response; previous results retained')
+                    selected = select_record(identifier, selected, search['data'])
+                    token = search.get('token')
+                    if not token:
+                        break
+                if selected['paperId'] != original['paperId']:
+                    print(f'{identifier}: resolved duplicate {original["citationCount"]} -> {selected["citationCount"]}', flush=True)
+        except urllib.error.HTTPError as error:
+            if error.code != 429:
+                raise
+            result['resumeFrom'] = identifier
+            result['rateLimitedAt'] = datetime.now(timezone.utc).isoformat()
+            result['rateLimitedTitle'] = current_title
+            save()
+            print(f'Rate limited after 3 retries: {identifier} ({result["rateLimitedTitle"]}); saved progress, next run resumes here', flush=True)
+            return
+        checked_at = datetime.now(timezone.utc).isoformat()
+        updated = merge_reports([identifier], [selected], result['reports'], checked_at)
+        result['reports'].update(updated)
+        result['checkedAt'] = checked_at
+        result['resumeFrom'] = ids[position + 1] if position + 1 < len(ids) else None
+        result.pop('rateLimitedAt', None)
+        result.pop('rateLimitedTitle', None)
+        save()
+        print(f'Duplicate audit: {position + 1}/{len(ids)} papers ({identifier})', flush=True)
+        time.sleep(1)
+    print(f'Citation counts: {sum(row["citationCount"] is not None for row in result["reports"].values())}/{len(ids)} papers')
 
 
 if __name__ == '__main__':

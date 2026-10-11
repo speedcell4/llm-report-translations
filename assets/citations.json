@@ -1,10 +1,10 @@
 {
-  "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+  "checkedAt": "2026-10-11T13:14:27.520688+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4019,
       "url": "https://www.semanticscholar.org/paper/db633c6b1c286c0386f0078d8a2e6224e03a6227",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:12:56.920764+00:00",
       "paperId": "db633c6b1c286c0386f0078d8a2e6224e03a6227",
       "title": "Mistral 7B",
       "externalIds": {
@@ -17,7 +17,7 @@
     "2401.04088": {
       "citationCount": 2203,
       "url": "https://www.semanticscholar.org/paper/411114f989a3d1083d90afd265103132fee94ebe",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:12:59.684987+00:00",
       "paperId": "411114f989a3d1083d90afd265103132fee94ebe",
       "title": "Mixtral of Experts",
       "externalIds": {
@@ -30,7 +30,7 @@
     "2401.06066": {
       "citationCount": 1197,
       "url": "https://www.semanticscholar.org/paper/16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:13:47.143206+00:00",
       "paperId": "16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
       "title": "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models",
       "externalIds": {
@@ -43,7 +43,7 @@
     "2402.03300": {
       "citationCount": 9762,
       "url": "https://www.semanticscholar.org/paper/35b142ea69598e6241f0011312128031df55895c",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:13:51.647906+00:00",
       "paperId": "35b142ea69598e6241f0011312128031df55895c",
       "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
       "externalIds": {
@@ -56,7 +56,7 @@
     "2402.04617": {
       "citationCount": 230,
       "url": "https://www.semanticscholar.org/paper/26e13e1da4f47c93c9ad0daf9cc9e2bb4ffd063d",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:14:16.239432+00:00",
       "paperId": "26e13e1da4f47c93c9ad0daf9cc9e2bb4ffd063d",
       "title": "InfLLM: Training-Free Long-Context Extrapolation for LLMs with an Efficient Context Memory",
       "externalIds": {
@@ -69,7 +69,7 @@
     "2402.06332": {
       "citationCount": 137,
       "url": "https://www.semanticscholar.org/paper/af1d4a4141eaf52384ca85f1d468443f8f3d5c06",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:14:19.289597+00:00",
       "paperId": "af1d4a4141eaf52384ca85f1d468443f8f3d5c06",
       "title": "InternLM-Math: Open Math Large Language Models Toward Verifiable Reasoning",
       "externalIds": {
@@ -82,7 +82,7 @@
     "2403.17297": {
       "citationCount": 440,
       "url": "https://www.semanticscholar.org/paper/75b2ae5ee35611ecfbd3dc2c3d0799cfb4fd98e4",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:14:21.865114+00:00",
       "paperId": "75b2ae5ee35611ecfbd3dc2c3d0799cfb4fd98e4",
       "title": "InternLM2 Technical Report",
       "externalIds": {
@@ -95,7 +95,7 @@
     "2406.11704": {
       "citationCount": 139,
       "url": "https://www.semanticscholar.org/paper/d0e7353189feb4501c637b7008ff993de603c3f0",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:14:24.629889+00:00",
       "paperId": "d0e7353189feb4501c637b7008ff993de603c3f0",
       "title": "Nemotron-4 340B Technical Report",
       "externalIds": {
@@ -108,7 +108,7 @@
     "2406.11794": {
       "citationCount": 443,
       "url": "https://www.semanticscholar.org/paper/874e957f6bcbfeb9f69d4475456abb13335ec05b",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:14:27.520688+00:00",
       "paperId": "874e957f6bcbfeb9f69d4475456abb13335ec05b",
       "title": "DataComp-LM: In search of the next generation of training sets for language models",
       "externalIds": {
@@ -752,7 +752,7 @@
     "2101.00027": {
       "citationCount": 3098,
       "url": "https://www.semanticscholar.org/paper/db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-11T13:12:38.850095+00:00",
       "paperId": "db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
       "title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
       "externalIds": {
@@ -761,5 +761,6 @@
         "CorpusId": 230435736
       }
     }
-  }
+  },
+  "resumeFrom": "2406.17557"
 }

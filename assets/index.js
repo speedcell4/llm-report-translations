@@ -80,7 +80,7 @@ async function loadCitationCounts() {
       entry.append(link);
     });
     const stale = Date.now() - checkedAt.getTime() > 48 * 60 * 60 * 1000;
-    status.textContent = `Semantic Scholar 引用量：${checkedAt.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })}（北京时间）更新 · 每日自动更新${unknown ? ` · ${unknown} 篇未取得引用量` : ''}${stale ? ' · 缓存已超过 48 小时，请核查自动任务' : ''}。`;
+    status.textContent = `Semantic Scholar 引用量：${checkedAt.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })}（北京时间）更新 · 每小时自动更新${unknown ? ` · ${unknown} 篇未取得引用量` : ''}${data.rateLimitedAt ? ` · 上次限流：${data.rateLimitedTitle || data.resumeFrom}，下次从此篇继续` : ''}${stale ? ' · 缓存已超过 48 小时，请核查自动任务' : ''}。`;
   } catch (error) {
     document.querySelectorAll('.citation-count').forEach((entry) => { entry.textContent = '引用量：暂不可用'; });
     status.textContent = 'Semantic Scholar 引用量：缓存读取失败；请联网打开已发布页面。';

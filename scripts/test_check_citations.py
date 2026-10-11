@@ -67,6 +67,52 @@ class CitationTests(unittest.TestCase):
                     check_citations.main()
             self.assertEqual((root / 'assets/citations.json').read_bytes(), old)
 
+    def test_rate_limit_retries_three_times_then_stops(self):
+        import urllib.error
+        from unittest.mock import patch
+        import check_citations
+        error = urllib.error.HTTPError('url', 429, 'rate limited', {}, None)
+        with patch.object(check_citations.urllib.request, 'urlopen', side_effect=error) as request, patch.object(check_citations.time, 'sleep') as sleep:
+            with self.assertRaises(urllib.error.HTTPError):
+                check_citations.query_api('paper/batch', {}, {'ids': ['ARXIV:2412.19437']})
+        self.assertEqual(request.call_count, 4)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [10, 20, 30])
+
+    def test_rate_limit_preserves_progress_and_resumes_current_paper(self):
+        import json
+        import tempfile
+        import urllib.error
+        from unittest.mock import patch
+        import check_citations
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'assets').mkdir()
+            (root / 'index.html').write_text('arXiv:2401.00001v1 arXiv:2401.00002v1')
+            target = root / 'assets/citations.json'
+            target.write_text(json.dumps({'checkedAt': 'old', 'reports': {'2401.00002': {'citationCount': 7, 'title': 'Second'}}}))
+            first = {'paperId': 'a' * 40, 'title': 'First', 'citationCount': 20,
+                     'externalIds': {'ArXiv': '2401.00001'}}
+            second = dict(first, paperId='b' * 40, title='Second', citationCount=30,
+                          externalIds={'ArXiv': '2401.00002'})
+            error = urllib.error.HTTPError('url', 429, 'rate limited', {}, None)
+            with patch.object(check_citations, 'ROOT', root), patch.object(check_citations.time, 'sleep'), patch.object(
+                    check_citations, 'query_api', side_effect=[[first], {'data': []}, [second], error]):
+                check_citations.main()
+            stopped = json.loads(target.read_text())
+            self.assertEqual(stopped['resumeFrom'], '2401.00002')
+            self.assertEqual(stopped['rateLimitedTitle'], 'Second')
+            self.assertEqual(stopped['reports']['2401.00001']['citationCount'], 20)
+            self.assertEqual(stopped['reports']['2401.00002']['citationCount'], 7)
+            with patch.object(check_citations, 'ROOT', root), patch.object(check_citations.time, 'sleep'), patch.object(
+                    check_citations, 'query_api', side_effect=[[second], {'data': []}]) as query:
+                check_citations.main()
+            self.assertEqual(query.call_args_list[0].args[2]['ids'], ['ARXIV:2401.00002'])
+            completed = json.loads(target.read_text())
+            self.assertIsNone(completed['resumeFrom'])
+            self.assertNotIn('rateLimitedAt', completed)
+            self.assertEqual(completed['reports']['2401.00001'], stopped['reports']['2401.00001'])
+            self.assertEqual(completed['reports']['2401.00002']['citationCount'], 30)
+
     def test_invalid_response_does_not_replace_cache(self):
         for records in ([], {}, [{'citationCount': -1, 'paperId': 'a' * 40}]):
             with self.assertRaises(ValueError):
