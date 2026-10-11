@@ -1,0 +1,406 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mistral Small 4 · 中文模型卡</title><link rel="stylesheet" href="assets/document.css?v=015ab614052d"></head><body class="translation"><nav class="document-nav" aria-label="文档导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603">官方原文</a></div><div class="document-title">Mistral Small 4</div><div class="document-meta">发布：2026-03-16 · 模型卡核查：2026-10-11 · Apache 2.0</div></nav><main><section class="page" id="model-card"><h1>Mistral Small 4 119B A6B</h1>
+<p>Mistral Small 4 是一个强大的混合模型，既可用作通用指令模型，也可用作推理模型。它将三个不同模型系列——<strong>Instruct</strong>、<strong>Reasoning</strong>（此前称为 Magistral）和 <strong>Devstral</strong>——的能力整合到一个统一模型中。</p>
+<p>凭借多模态能力、高效架构和灵活的模式切换，它成为可用于各类任务的强大通用模型。在针对延迟优化的配置下，Mistral Small 4 的<strong>端到端完成时间缩短 40%</strong>；在针对吞吐量优化的配置下，与 Mistral Small 3 相比，它<strong>每秒可处理的请求数量达到 3 倍</strong>。</p>
+<p>要进一步提高效率，可以利用以下任一种方式：</p>
+<ul>
+<li>借助我们训练的 eagle head 进行 speculative decoding：<a href="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603-eagle" rel="nofollow"><code class="notranslate">mistralai/Mistral-Small-4-119B-2603-eagle</code></a>。</li>
+<li>借助我们的 NVFP4 checkpoint 进行 4 位浮点精度量化：<a href="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603-NVFP4" rel="nofollow"><code class="notranslate">mistralai/Mistral-Small-4-119B-2603-NVFP4</code></a>。</li>
+</ul>
+<h2>主要特性</h2>
+<p>Mistral Small 4 采用以下架构设计：</p>
+<ul>
+<li><strong>MoE</strong>：128 个专家，其中 4 个处于激活状态。</li>
+<li><strong>119B 参数</strong>，<strong>每个 token 激活 6.5B 参数</strong>。</li>
+<li><strong>256k 上下文长度</strong>。</li>
+<li><strong>多模态输入</strong>：接受文本和图像输入，输出文本。</li>
+<li><strong>指令与推理功能</strong>，支持函数调用（可针对每次请求配置推理强度）。</li>
+</ul>
+<p>Mistral Small 4 提供以下能力：</p>
+<ul>
+<li><strong>推理模式</strong>：在快速即时回复模式与推理模式之间切换，在需要时通过测试时计算提升性能。</li>
+<li><strong>视觉</strong>：除文本外，还能分析图像，并根据视觉内容提供见解。</li>
+<li><strong>多语言</strong>：支持数十种语言，包括英语、法语、西班牙语、德语、意大利语、葡萄牙语、荷兰语、中文、日语、韩语和阿拉伯语。</li>
+<li><strong>系统提示词</strong>：能够严格遵循并支持系统提示词。</li>
+<li><strong>agent 能力</strong>：同类领先的 agent 能力，原生支持函数调用和 JSON 输出。</li>
+<li><strong>速度优化</strong>：提供同类领先的性能与速度。</li>
+<li><strong>Apache 2.0 许可</strong>：允许商业和非商业用途的开源许可。</li>
+<li><strong>大上下文窗口</strong>：支持 256k 上下文窗口。</li>
+</ul>
+<h2>推荐设置</h2>
+<ul>
+<li><strong>推理强度</strong>：
+<ul>
+<li><code class="notranslate">'none'</code> → 不使用推理</li>
+<li><code class="notranslate">'high'</code> → 使用推理（推荐用于复杂提示词）<br>
+对复杂任务使用 <code class="notranslate">reasoning_effort="high"</code></li>
+</ul>
+</li>
+<li><strong>温度</strong>：<code class="notranslate">reasoning_effort="high"</code> 时使用 0.7；<code class="notranslate">reasoning_effort="none"</code> 时，根据任务在 0.0 到 0.7 之间设置温度。</li>
+</ul>
+<h2>使用场景</h2>
+<p>Mistral Small 4 面向通用聊天助手、编程、agent 任务和推理任务（开启推理模式）。其多模态能力还支持理解文档与图像，以进行数据提取和分析。</p>
+<p>它的能力尤其适合：</p>
+<ul>
+<li>对用于软件工程自动化与代码库探索的编程及 agent 能力感兴趣的开发者。</li>
+<li>寻求通用聊天助手、agent 和文档理解能力的企业。</li>
+<li>利用其数学与研究能力的研究人员。</li>
+</ul>
+<p>Mistral Small 4 也非常适合通过定制和微调来处理更专业的任务。</p>
+<h3>示例</h3>
+<ul>
+<li>通用聊天助手</li>
+<li>文档解析与提取</li>
+<li>编程 agent</li>
+<li>研究助手</li>
+<li>定制与微调</li>
+<li>以及更多场景……</li>
+</ul>
+<h2>基准</h2>
+<h3>与内部模型比较</h3>
+<p>通过支持<strong>逐请求</strong>设置的 <code class="notranslate">reasoning_effort</code> 参数，可以根据任务触发推理。将其设置为：</p>
+<ul>
+<li><code class="notranslate">reasoning_effort="none"</code>：为日常任务提供快速、轻量的回复，聊天风格与 <a href="https://huggingface.co/mistralai/Mistral-Small-3.2-24B-Instruct-2506" rel="nofollow"><code class="notranslate">mistralai/Mistral-Small-3.2-24B-Instruct-2506</code></a> 相同。</li>
+<li><code class="notranslate">reasoning_effort="high"</code>：针对复杂问题进行深入、逐步的推理，详细程度与此前的 Magistral 模型相当，例如 <a href="https://huggingface.co/mistralai/Magistral-Small-2509" rel="nofollow"><code class="notranslate">mistralai/Magistral-Small-2509</code></a>。</li>
+</ul>
+<figure><img src="assets/images/abde364d45a8f25096dbe279b15db1acd1d4ea6f74fe858281266d5748ffd377.png" alt="Internal benchmark" data-canonical-src="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603/resolve/main/images/image2.png" width="2429" height="1787" loading="lazy" decoding="async"></figure><h4>推理模型比较</h4>
+<figure><img src="assets/images/b38c8a96b124ff831fa9e7270939123565b396485b48f3219f0387142661b735.png" alt="Internal benchmark - Reasoning" data-canonical-src="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603/resolve/main/images/image3.png" width="1999" height="1585" loading="lazy" decoding="async"></figure><h3>与其他模型比较</h3>
+<p>启用推理的 Mistral Small 4 取得了有竞争力的分数，在全部三个基准上达到或超过 GPT-OSS 120B，同时生成明显<br>
+更短的输出。在 AA LCR 上，Mistral Small 4 仅用 <strong>1.6K 字符</strong>就得到 <strong>0.72</strong> 分，而 Qwen 模型需要 <strong>3.5–4 倍的输出量</strong>（5.8–6.1K）<br>
+才能获得相近的性能。在 LiveCodeBench 上，Mistral Small 4 超过 GPT-OSS 120B，同时<strong>输出量减少 20%</strong>。<br>
+这种效率降低了延迟和推理成本，并改善了用户体验。</p>
+<figure><img src="assets/images/bbbe6dd105653d399b6641ab2093502e4d0d9dddf485480e18b93c67c1bf1bba.png" alt="Comparison benchmark - LCR" data-canonical-src="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603/resolve/main/images/lcr.png" width="2559" height="1538" loading="lazy" decoding="async"></figure><figure><img src="assets/images/f7e7c298ddfd1730e14aa79983bf94c6cfac332558561f083e85787629ecaea3.png" alt="Comparison benchmark - LiveCodeBench" data-canonical-src="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603/resolve/main/images/livecode.png" width="2559" height="1463" loading="lazy" decoding="async"></figure><figure><img src="assets/images/da1ee41ac7cebc824d1e732bef13853ac855dacf08b8c5811fd201f7c7cb7180.png" alt="Comparison benchmark - AIME25" data-canonical-src="https://huggingface.co/mistralai/Mistral-Small-4-119B-2603/resolve/main/images/aime.png" width="2559" height="1463" loading="lazy" decoding="async"></figure><h2>使用方法</h2>
+<p>多个库已支持 Mistral Small 4 的推理与微调。我们在此感谢帮助实现这些支持的每一位贡献者和维护者。</p>
+<h3>推理</h3>
+<p>模型可以通过以下方式部署：</p>
+<ul>
+<li><a href="https://github.com/vllm-project/vllm"><code class="notranslate">vllm（推荐）</code></a>：参见<a href="#vllm-recommended">此处</a></li>
+<li><a href="https://github.com/ggml-org/llama.cpp"><code class="notranslate">llama.cpp</code></a>：Unsloth 的 GGUF 参见<a href="https://huggingface.co/unsloth/Mistral-Small-4-119B-2603-GGUF" rel="nofollow">此处</a></li>
+<li><a href="https://lmstudio.ai/" rel="nofollow"><code class="notranslate">LM studio</code></a>：参见<a href="https://lmstudio.ai/models/mistralai/mistral-small-4" rel="nofollow">此处</a></li>
+<li><a href="https://github.com/sgl-project/sglang"><code class="notranslate">SGLang</code></a>：参见<a href="https://docs.sglang.io/basic_usage/send_request.html" rel="nofollow">此处</a></li>
+<li><a href="https://github.com/huggingface/transformers"><code class="notranslate">transformers</code></a>：参见<a href="#transformers">此处</a></li>
+</ul>
+<p>如果本地部署的服务表现不佳，为获得最佳性能，我们推荐使用 Mistral AI API。</p>
+<h3>微调</h3>
+<p>可通过以下方式微调模型：</p>
+<ul>
+<li><a href="https://github.com/axolotl-ai-cloud/axolotl"><code class="notranslate">Axolotl</code></a>：参见<a href="https://github.com/axolotl-ai-cloud/axolotl/tree/main/examples/mistral4">此处</a>。</li>
+</ul>
+<h2 id="vllm-recommended">vLLM（推荐）</h2>
+<p>我们推荐使用 <a href="https://github.com/vllm-project/vllm">vLLM 库</a>运行 Mistral Small 4，以实现可用于生产环境的推理。</p>
+<h3>安装</h3>
+<p>安装最新版 <strong>vllm</strong>：</p>
+<pre class="notranslate"><code class="notranslate">uv pip install -U vllm
+</code></pre>
+<p>这样应该会自动安装 <a href="https://github.com/mistralai/mistral-common/releases/tag/v1.11.0"><code class="notranslate">mistral_common &gt;= 1.11.0</code></a>。</p>
+<p>检查方法：</p>
+<pre class="notranslate"><code class="notranslate">python -c "import mistral_common; print(mistral_common.__version__)"
+</code></pre>
+<p>也可以使用现成的 <a href="https://github.com/vllm-project/vllm/blob/main/docker/Dockerfile">docker 镜像</a>，或使用 <a href="https://hub.docker.com/layers/vllm/vllm-openai/latest" rel="nofollow">docker hub</a>上的镜像。</p>
+<h3>启动模型服务</h3>
+<p>我们推荐采用服务器／客户端配置：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">vllm serve mistralai/Mistral-Small-4-119B-2603 --max-model-len 262144 --tensor-parallel-size 2 --attention-backend FLASH_ATTN_MLA \
+  --tool-call-parser mistral --enable-auto-tool-choice --reasoning-parser mistral --max_num_batched_tokens 16384 --max_num_seqs 128 \
+  --gpu_memory_utilization 0.8</pre></div>
+<h3>请求服务器</h3>
+<details>
+  <summary>指令遵循</summary>
+<p>Mistral Small 4 能够严格遵循你的指令。</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">datetime</span> <span class="pl-k">import</span> <span class="pl-s1">datetime</span>, <span class="pl-s1">timedelta</span>
+
+<span class="pl-k">from</span> <span class="pl-s1">openai</span> <span class="pl-k">import</span> <span class="pl-v">OpenAI</span>
+<span class="pl-k">from</span> <span class="pl-s1">huggingface_hub</span> <span class="pl-k">import</span> <span class="pl-s1">hf_hub_download</span>
+
+<span class="pl-c"># Modify OpenAI's API key and API base to use vLLM's API server.</span>
+<span class="pl-s1">openai_api_key</span> <span class="pl-c1">=</span> <span class="pl-s">"EMPTY"</span>
+<span class="pl-s1">openai_api_base</span> <span class="pl-c1">=</span> <span class="pl-s">"http://localhost:8000/v1"</span>
+
+<span class="pl-c1">TEMP</span> <span class="pl-c1">=</span> <span class="pl-c1">0.1</span>
+<span class="pl-c"># use TEMP = 0.7 for reasoning="high"</span>
+
+<span class="pl-s1">client</span> <span class="pl-c1">=</span> <span class="pl-en">OpenAI</span>(
+    <span class="pl-s1">api_key</span><span class="pl-c1">=</span><span class="pl-s1">openai_api_key</span>,
+    <span class="pl-s1">base_url</span><span class="pl-c1">=</span><span class="pl-s1">openai_api_base</span>,
+)
+
+<span class="pl-s1">models</span> <span class="pl-c1">=</span> <span class="pl-s1">client</span>.<span class="pl-c1">models</span>.<span class="pl-c1">list</span>()
+<span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-c1">data</span>[<span class="pl-c1">0</span>].<span class="pl-c1">id</span>
+
+
+<span class="pl-k">def</span> <span class="pl-en">load_system_prompt</span>(<span class="pl-s1">repo_id</span>: <span class="pl-smi">str</span>, <span class="pl-s1">filename</span>: <span class="pl-smi">str</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">str</span>:
+    <span class="pl-s1">file_path</span> <span class="pl-c1">=</span> <span class="pl-en">hf_hub_download</span>(<span class="pl-s1">repo_id</span><span class="pl-c1">=</span><span class="pl-s1">repo_id</span>, <span class="pl-s1">filename</span><span class="pl-c1">=</span><span class="pl-s1">filename</span>)
+    <span class="pl-k">with</span> <span class="pl-en">open</span>(<span class="pl-s1">file_path</span>, <span class="pl-s">"r"</span>) <span class="pl-k">as</span> <span class="pl-s1">file</span>:
+        <span class="pl-s1">system_prompt</span> <span class="pl-c1">=</span> <span class="pl-s1">file</span>.<span class="pl-c1">read</span>()
+    <span class="pl-s1">today</span> <span class="pl-c1">=</span> <span class="pl-s1">datetime</span>.<span class="pl-c1">today</span>().<span class="pl-c1">strftime</span>(<span class="pl-s">"%Y-%m-%d"</span>)
+    <span class="pl-s1">yesterday</span> <span class="pl-c1">=</span> (<span class="pl-s1">datetime</span>.<span class="pl-c1">today</span>() <span class="pl-c1">-</span> <span class="pl-en">timedelta</span>(<span class="pl-s1">days</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)).<span class="pl-c1">strftime</span>(<span class="pl-s">"%Y-%m-%d"</span>)
+    <span class="pl-s1">model_name</span> <span class="pl-c1">=</span> <span class="pl-s1">repo_id</span>.<span class="pl-c1">split</span>(<span class="pl-s">"/"</span>)[<span class="pl-c1">-</span><span class="pl-c1">1</span>]
+    <span class="pl-k">return</span> <span class="pl-s1">system_prompt</span>.<span class="pl-c1">format</span>(<span class="pl-s1">name</span><span class="pl-c1">=</span><span class="pl-s1">model_name</span>, <span class="pl-s1">today</span><span class="pl-c1">=</span><span class="pl-s1">today</span>, <span class="pl-s1">yesterday</span><span class="pl-c1">=</span><span class="pl-s1">yesterday</span>)
+
+
+<span class="pl-c1">SYSTEM_PROMPT</span> <span class="pl-c1">=</span> <span class="pl-en">load_system_prompt</span>(<span class="pl-s1">model</span>, <span class="pl-s">"SYSTEM_PROMPT.txt"</span>)
+
+<span class="pl-s1">messages</span> <span class="pl-c1">=</span> [
+    {<span class="pl-s">"role"</span>: <span class="pl-s">"system"</span>, <span class="pl-s">"content"</span>: <span class="pl-c1">SYSTEM_PROMPT</span>},
+    {
+        <span class="pl-s">"role"</span>: <span class="pl-s">"user"</span>,
+        <span class="pl-s">"content"</span>: <span class="pl-s">"Write me a sentence where every word starts with the next letter in the alphabet - start with 'a' and end with 'z'."</span>,
+    },
+]
+
+<span class="pl-s1">response</span> <span class="pl-c1">=</span> <span class="pl-s1">client</span>.<span class="pl-c1">chat</span>.<span class="pl-c1">completions</span>.<span class="pl-c1">create</span>(
+    <span class="pl-s1">model</span><span class="pl-c1">=</span><span class="pl-s1">model</span>,
+    <span class="pl-s1">messages</span><span class="pl-c1">=</span><span class="pl-s1">messages</span>,
+    <span class="pl-s1">temperature</span><span class="pl-c1">=</span><span class="pl-c1">TEMP</span>,
+    <span class="pl-s1">reasoning_effort</span><span class="pl-c1">=</span><span class="pl-s">"none"</span>,
+)
+
+<span class="pl-s1">assistant_message</span> <span class="pl-c1">=</span> <span class="pl-s1">response</span>.<span class="pl-c1">choices</span>[<span class="pl-c1">0</span>].<span class="pl-c1">message</span>.<span class="pl-c1">content</span>
+<span class="pl-en">print</span>(<span class="pl-s1">assistant_message</span>)</pre></div>
+</details>
+<details>
+  <summary>工具调用</summary>
+<p>借助这个简单的 Python 计算器工具，我们来求解一些方程。</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">json</span>
+<span class="pl-k">from</span> <span class="pl-s1">datetime</span> <span class="pl-k">import</span> <span class="pl-s1">datetime</span>, <span class="pl-s1">timedelta</span>
+
+<span class="pl-k">from</span> <span class="pl-s1">openai</span> <span class="pl-k">import</span> <span class="pl-v">OpenAI</span>
+<span class="pl-k">from</span> <span class="pl-s1">huggingface_hub</span> <span class="pl-k">import</span> <span class="pl-s1">hf_hub_download</span>
+
+<span class="pl-c"># Modify OpenAI's API key and API base to use vLLM's API server.</span>
+<span class="pl-s1">openai_api_key</span> <span class="pl-c1">=</span> <span class="pl-s">"EMPTY"</span>
+<span class="pl-s1">openai_api_base</span> <span class="pl-c1">=</span> <span class="pl-s">"http://localhost:8000/v1"</span>
+
+<span class="pl-c1">TEMP</span> <span class="pl-c1">=</span> <span class="pl-c1">0.1</span>
+
+<span class="pl-s1">client</span> <span class="pl-c1">=</span> <span class="pl-en">OpenAI</span>(
+    <span class="pl-s1">api_key</span><span class="pl-c1">=</span><span class="pl-s1">openai_api_key</span>,
+    <span class="pl-s1">base_url</span><span class="pl-c1">=</span><span class="pl-s1">openai_api_base</span>,
+)
+
+<span class="pl-s1">models</span> <span class="pl-c1">=</span> <span class="pl-s1">client</span>.<span class="pl-c1">models</span>.<span class="pl-c1">list</span>()
+<span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-c1">data</span>[<span class="pl-c1">0</span>].<span class="pl-c1">id</span>
+
+
+<span class="pl-k">def</span> <span class="pl-en">load_system_prompt</span>(<span class="pl-s1">repo_id</span>: <span class="pl-smi">str</span>, <span class="pl-s1">filename</span>: <span class="pl-smi">str</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">str</span>:
+    <span class="pl-s1">file_path</span> <span class="pl-c1">=</span> <span class="pl-en">hf_hub_download</span>(<span class="pl-s1">repo_id</span><span class="pl-c1">=</span><span class="pl-s1">repo_id</span>, <span class="pl-s1">filename</span><span class="pl-c1">=</span><span class="pl-s1">filename</span>)
+    <span class="pl-k">with</span> <span class="pl-en">open</span>(<span class="pl-s1">file_path</span>, <span class="pl-s">"r"</span>) <span class="pl-k">as</span> <span class="pl-s1">file</span>:
+        <span class="pl-s1">system_prompt</span> <span class="pl-c1">=</span> <span class="pl-s1">file</span>.<span class="pl-c1">read</span>()
+    <span class="pl-s1">today</span> <span class="pl-c1">=</span> <span class="pl-s1">datetime</span>.<span class="pl-c1">today</span>().<span class="pl-c1">strftime</span>(<span class="pl-s">"%Y-%m-%d"</span>)
+    <span class="pl-s1">yesterday</span> <span class="pl-c1">=</span> (<span class="pl-s1">datetime</span>.<span class="pl-c1">today</span>() <span class="pl-c1">-</span> <span class="pl-en">timedelta</span>(<span class="pl-s1">days</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)).<span class="pl-c1">strftime</span>(<span class="pl-s">"%Y-%m-%d"</span>)
+    <span class="pl-s1">model_name</span> <span class="pl-c1">=</span> <span class="pl-s1">repo_id</span>.<span class="pl-c1">split</span>(<span class="pl-s">"/"</span>)[<span class="pl-c1">-</span><span class="pl-c1">1</span>]
+    <span class="pl-k">return</span> <span class="pl-s1">system_prompt</span>.<span class="pl-c1">format</span>(<span class="pl-s1">name</span><span class="pl-c1">=</span><span class="pl-s1">model_name</span>, <span class="pl-s1">today</span><span class="pl-c1">=</span><span class="pl-s1">today</span>, <span class="pl-s1">yesterday</span><span class="pl-c1">=</span><span class="pl-s1">yesterday</span>)
+
+
+<span class="pl-c1">SYSTEM_PROMPT</span> <span class="pl-c1">=</span> <span class="pl-en">load_system_prompt</span>(<span class="pl-s1">model</span>, <span class="pl-s">"SYSTEM_PROMPT.txt"</span>)
+
+<span class="pl-s1">image_url</span> <span class="pl-c1">=</span> <span class="pl-s">"https://math-coaching.com/img/fiche/46/expressions-mathematiques.jpg"</span>
+
+
+<span class="pl-k">def</span> <span class="pl-en">my_calculator</span>(<span class="pl-s1">expression</span>: <span class="pl-smi">str</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">str</span>:
+    <span class="pl-k">return</span> <span class="pl-en">str</span>(<span class="pl-en">eval</span>(<span class="pl-s1">expression</span>))
+
+
+<span class="pl-s1">tools</span> <span class="pl-c1">=</span> [
+    {
+        <span class="pl-s">"type"</span>: <span class="pl-s">"function"</span>,
+        <span class="pl-s">"function"</span>: {
+            <span class="pl-s">"name"</span>: <span class="pl-s">"my_calculator"</span>,
+            <span class="pl-s">"description"</span>: <span class="pl-s">"A calculator that can evaluate a mathematical expression."</span>,
+            <span class="pl-s">"parameters"</span>: {
+                <span class="pl-s">"type"</span>: <span class="pl-s">"object"</span>,
+                <span class="pl-s">"properties"</span>: {
+                    <span class="pl-s">"expression"</span>: {
+                        <span class="pl-s">"type"</span>: <span class="pl-s">"string"</span>,
+                        <span class="pl-s">"description"</span>: <span class="pl-s">"The mathematical expression to evaluate."</span>,
+                    },
+                },
+                <span class="pl-s">"required"</span>: [<span class="pl-s">"expression"</span>],
+            },
+        },
+    },
+    {
+        <span class="pl-s">"type"</span>: <span class="pl-s">"function"</span>,
+        <span class="pl-s">"function"</span>: {
+            <span class="pl-s">"name"</span>: <span class="pl-s">"rewrite"</span>,
+            <span class="pl-s">"description"</span>: <span class="pl-s">"Rewrite a given text for improved clarity"</span>,
+            <span class="pl-s">"parameters"</span>: {
+                <span class="pl-s">"type"</span>: <span class="pl-s">"object"</span>,
+                <span class="pl-s">"properties"</span>: {
+                    <span class="pl-s">"text"</span>: {
+                        <span class="pl-s">"type"</span>: <span class="pl-s">"string"</span>,
+                        <span class="pl-s">"description"</span>: <span class="pl-s">"The input text to rewrite"</span>,
+                    }
+                },
+            },
+        },
+    },
+]
+
+<span class="pl-s1">messages</span> <span class="pl-c1">=</span> [
+    {<span class="pl-s">"role"</span>: <span class="pl-s">"system"</span>, <span class="pl-s">"content"</span>: <span class="pl-c1">SYSTEM_PROMPT</span>},
+    {
+        <span class="pl-s">"role"</span>: <span class="pl-s">"user"</span>,
+        <span class="pl-s">"content"</span>: [
+            {
+                <span class="pl-s">"type"</span>: <span class="pl-s">"text"</span>,
+                <span class="pl-s">"text"</span>: <span class="pl-s">"Thanks to your calculator, compute the results for the equations that involve numbers displayed in the image."</span>,
+            },
+            {
+                <span class="pl-s">"type"</span>: <span class="pl-s">"image_url"</span>,
+                <span class="pl-s">"image_url"</span>: {
+                    <span class="pl-s">"url"</span>: <span class="pl-s1">image_url</span>,
+                },
+            },
+        ],
+    },
+]
+
+<span class="pl-s1">response</span> <span class="pl-c1">=</span> <span class="pl-s1">client</span>.<span class="pl-c1">chat</span>.<span class="pl-c1">completions</span>.<span class="pl-c1">create</span>(
+    <span class="pl-s1">model</span><span class="pl-c1">=</span><span class="pl-s1">model</span>,
+    <span class="pl-s1">messages</span><span class="pl-c1">=</span><span class="pl-s1">messages</span>,
+    <span class="pl-s1">temperature</span><span class="pl-c1">=</span><span class="pl-c1">TEMP</span>,
+    <span class="pl-s1">tools</span><span class="pl-c1">=</span><span class="pl-s1">tools</span>,
+    <span class="pl-s1">tool_choice</span><span class="pl-c1">=</span><span class="pl-s">"auto"</span>,
+    <span class="pl-s1">reasoning_effort</span><span class="pl-c1">=</span><span class="pl-s">"none"</span>,
+)
+
+<span class="pl-s1">tool_calls</span> <span class="pl-c1">=</span> <span class="pl-s1">response</span>.<span class="pl-c1">choices</span>[<span class="pl-c1">0</span>].<span class="pl-c1">message</span>.<span class="pl-c1">tool_calls</span>
+
+<span class="pl-s1">results</span> <span class="pl-c1">=</span> []
+<span class="pl-k">for</span> <span class="pl-s1">tool_call</span> <span class="pl-c1">in</span> <span class="pl-s1">tool_calls</span>:
+    <span class="pl-s1">function_name</span> <span class="pl-c1">=</span> <span class="pl-s1">tool_call</span>.<span class="pl-c1">function</span>.<span class="pl-c1">name</span>
+    <span class="pl-s1">function_args</span> <span class="pl-c1">=</span> <span class="pl-s1">tool_call</span>.<span class="pl-c1">function</span>.<span class="pl-c1">arguments</span>
+    <span class="pl-k">if</span> <span class="pl-s1">function_name</span> <span class="pl-c1">==</span> <span class="pl-s">"my_calculator"</span>:
+        <span class="pl-s1">result</span> <span class="pl-c1">=</span> <span class="pl-en">my_calculator</span>(<span class="pl-c1">**</span><span class="pl-s1">json</span>.<span class="pl-c1">loads</span>(<span class="pl-s1">function_args</span>))
+        <span class="pl-s1">results</span>.<span class="pl-c1">append</span>(<span class="pl-s1">result</span>)
+
+<span class="pl-s1">messages</span>.<span class="pl-c1">append</span>({<span class="pl-s">"role"</span>: <span class="pl-s">"assistant"</span>, <span class="pl-s">"tool_calls"</span>: <span class="pl-s1">tool_calls</span>})
+<span class="pl-k">for</span> <span class="pl-s1">tool_call</span>, <span class="pl-s1">result</span> <span class="pl-c1">in</span> <span class="pl-en">zip</span>(<span class="pl-s1">tool_calls</span>, <span class="pl-s1">results</span>):
+    <span class="pl-s1">messages</span>.<span class="pl-c1">append</span>(
+        {
+            <span class="pl-s">"role"</span>: <span class="pl-s">"tool"</span>,
+            <span class="pl-s">"tool_call_id"</span>: <span class="pl-s1">tool_call</span>.<span class="pl-c1">id</span>,
+            <span class="pl-s">"name"</span>: <span class="pl-s1">tool_call</span>.<span class="pl-c1">function</span>.<span class="pl-c1">name</span>,
+            <span class="pl-s">"content"</span>: <span class="pl-s1">result</span>,
+        }
+    )
+
+
+<span class="pl-s1">response</span> <span class="pl-c1">=</span> <span class="pl-s1">client</span>.<span class="pl-c1">chat</span>.<span class="pl-c1">completions</span>.<span class="pl-c1">create</span>(
+    <span class="pl-s1">model</span><span class="pl-c1">=</span><span class="pl-s1">model</span>,
+    <span class="pl-s1">messages</span><span class="pl-c1">=</span><span class="pl-s1">messages</span>,
+    <span class="pl-s1">temperature</span><span class="pl-c1">=</span><span class="pl-c1">TEMP</span>,
+    <span class="pl-s1">reasoning_effort</span><span class="pl-c1">=</span><span class="pl-s">"none"</span>,
+)
+
+<span class="pl-en">print</span>(<span class="pl-s1">response</span>.<span class="pl-c1">choices</span>[<span class="pl-c1">0</span>].<span class="pl-c1">message</span>.<span class="pl-c1">content</span>)</pre></div>
+</details>
+<details>
+  <summary>视觉推理</summary>
+<p>看看 Mistral Small 4 是否知道什么时候该发起战斗！</p>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">from</span> <span class="pl-s1">datetime</span> <span class="pl-k">import</span> <span class="pl-s1">datetime</span>, <span class="pl-s1">timedelta</span>
+
+<span class="pl-k">from</span> <span class="pl-s1">openai</span> <span class="pl-k">import</span> <span class="pl-v">OpenAI</span>
+<span class="pl-k">from</span> <span class="pl-s1">huggingface_hub</span> <span class="pl-k">import</span> <span class="pl-s1">hf_hub_download</span>
+
+<span class="pl-c"># Modify OpenAI's API key and API base to use vLLM's API server.</span>
+<span class="pl-s1">openai_api_key</span> <span class="pl-c1">=</span> <span class="pl-s">"EMPTY"</span>
+<span class="pl-s1">openai_api_base</span> <span class="pl-c1">=</span> <span class="pl-s">"http://localhost:8000/v1"</span>
+
+<span class="pl-c1">TEMP</span> <span class="pl-c1">=</span> <span class="pl-c1">0.7</span>
+
+<span class="pl-s1">client</span> <span class="pl-c1">=</span> <span class="pl-en">OpenAI</span>(
+    <span class="pl-s1">api_key</span><span class="pl-c1">=</span><span class="pl-s1">openai_api_key</span>,
+    <span class="pl-s1">base_url</span><span class="pl-c1">=</span><span class="pl-s1">openai_api_base</span>,
+)
+
+<span class="pl-s1">models</span> <span class="pl-c1">=</span> <span class="pl-s1">client</span>.<span class="pl-c1">models</span>.<span class="pl-c1">list</span>()
+<span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-c1">data</span>[<span class="pl-c1">0</span>].<span class="pl-c1">id</span>
+
+
+<span class="pl-k">def</span> <span class="pl-en">load_system_prompt</span>(<span class="pl-s1">repo_id</span>: <span class="pl-smi">str</span>, <span class="pl-s1">filename</span>: <span class="pl-smi">str</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">str</span>:
+    <span class="pl-s1">file_path</span> <span class="pl-c1">=</span> <span class="pl-en">hf_hub_download</span>(<span class="pl-s1">repo_id</span><span class="pl-c1">=</span><span class="pl-s1">repo_id</span>, <span class="pl-s1">filename</span><span class="pl-c1">=</span><span class="pl-s1">filename</span>)
+    <span class="pl-k">with</span> <span class="pl-en">open</span>(<span class="pl-s1">file_path</span>, <span class="pl-s">"r"</span>) <span class="pl-k">as</span> <span class="pl-s1">file</span>:
+        <span class="pl-s1">system_prompt</span> <span class="pl-c1">=</span> <span class="pl-s1">file</span>.<span class="pl-c1">read</span>()
+    <span class="pl-s1">today</span> <span class="pl-c1">=</span> <span class="pl-s1">datetime</span>.<span class="pl-c1">today</span>().<span class="pl-c1">strftime</span>(<span class="pl-s">"%Y-%m-%d"</span>)
+    <span class="pl-s1">yesterday</span> <span class="pl-c1">=</span> (<span class="pl-s1">datetime</span>.<span class="pl-c1">today</span>() <span class="pl-c1">-</span> <span class="pl-en">timedelta</span>(<span class="pl-s1">days</span><span class="pl-c1">=</span><span class="pl-c1">1</span>)).<span class="pl-c1">strftime</span>(<span class="pl-s">"%Y-%m-%d"</span>)
+    <span class="pl-s1">model_name</span> <span class="pl-c1">=</span> <span class="pl-s1">repo_id</span>.<span class="pl-c1">split</span>(<span class="pl-s">"/"</span>)[<span class="pl-c1">-</span><span class="pl-c1">1</span>]
+    <span class="pl-k">return</span> <span class="pl-s1">system_prompt</span>.<span class="pl-c1">format</span>(<span class="pl-s1">name</span><span class="pl-c1">=</span><span class="pl-s1">model_name</span>, <span class="pl-s1">today</span><span class="pl-c1">=</span><span class="pl-s1">today</span>, <span class="pl-s1">yesterday</span><span class="pl-c1">=</span><span class="pl-s1">yesterday</span>)
+
+
+<span class="pl-c1">SYSTEM_PROMPT</span> <span class="pl-c1">=</span> <span class="pl-en">load_system_prompt</span>(<span class="pl-s1">model</span>, <span class="pl-s">"SYSTEM_PROMPT.txt"</span>)
+<span class="pl-s1">image_url</span> <span class="pl-c1">=</span> <span class="pl-s">"https://static.wikia.nocookie.net/essentialsdocs/images/7/70/Battle.png/revision/latest?cb=20220523172438"</span>
+
+<span class="pl-s1">messages</span> <span class="pl-c1">=</span> [
+    {<span class="pl-s">"role"</span>: <span class="pl-s">"system"</span>, <span class="pl-s">"content"</span>: <span class="pl-c1">SYSTEM_PROMPT</span>},
+    {
+        <span class="pl-s">"role"</span>: <span class="pl-s">"user"</span>,
+        <span class="pl-s">"content"</span>: [
+            {
+                <span class="pl-s">"type"</span>: <span class="pl-s">"text"</span>,
+                <span class="pl-s">"text"</span>: <span class="pl-s">"What action do you think I should take in this situation? List all the possible actions and explain why you think they are good or bad."</span>,
+            },
+            {<span class="pl-s">"type"</span>: <span class="pl-s">"image_url"</span>, <span class="pl-s">"image_url"</span>: {<span class="pl-s">"url"</span>: <span class="pl-s1">image_url</span>}},
+        ],
+    },
+]
+
+
+<span class="pl-s1">response</span> <span class="pl-c1">=</span> <span class="pl-s1">client</span>.<span class="pl-c1">chat</span>.<span class="pl-c1">completions</span>.<span class="pl-c1">create</span>(
+    <span class="pl-s1">model</span><span class="pl-c1">=</span><span class="pl-s1">model</span>,
+    <span class="pl-s1">messages</span><span class="pl-c1">=</span><span class="pl-s1">messages</span>,
+    <span class="pl-s1">temperature</span><span class="pl-c1">=</span><span class="pl-c1">TEMP</span>,
+    <span class="pl-s1">reasoning_effort</span><span class="pl-c1">=</span><span class="pl-s">"high"</span>,
+)
+
+<span class="pl-en">print</span>(<span class="pl-s1">response</span>.<span class="pl-c1">choices</span>[<span class="pl-c1">0</span>].<span class="pl-c1">message</span>.<span class="pl-c1">content</span>)</pre></div>
+</details>
+<h2 id="transformers">Transformers</h2>
+<h3>安装</h3>
+<p>要使用 Mistral Small 4，需要安装 Transformers 的 main 分支：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">uv pip install git+https://github.com/huggingface/transformers.git</pre></div>
+<h3>推理</h3>
+<details>
+<summary>Python 推理代码片段</summary>
+<div class="highlight highlight-source-python"><pre class="notranslate"><span class="pl-k">import</span> <span class="pl-s1">torch</span>
+<span class="pl-k">from</span> <span class="pl-s1">transformers</span> <span class="pl-k">import</span> <span class="pl-v">AutoProcessor</span>, <span class="pl-v">Mistral3ForConditionalGeneration</span>
+
+
+<span class="pl-s1">model_id</span> <span class="pl-c1">=</span> <span class="pl-s">"mistralai/Mistral-Small-4-119B-2603"</span>
+
+<span class="pl-s1">processor</span> <span class="pl-c1">=</span> <span class="pl-v">AutoProcessor</span>.<span class="pl-c1">from_pretrained</span>(<span class="pl-s1">model_id</span>)
+<span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-v">Mistral3ForConditionalGeneration</span>.<span class="pl-c1">from_pretrained</span>(
+    <span class="pl-s1">model_id</span>, <span class="pl-s1">device_map</span><span class="pl-c1">=</span><span class="pl-s">"auto"</span>
+)
+
+<span class="pl-s1">image_url</span> <span class="pl-c1">=</span> <span class="pl-s">"https://static.wikia.nocookie.net/essentialsdocs/images/7/70/Battle.png/revision/latest?cb=20220523172438"</span>
+
+<span class="pl-s1">messages</span> <span class="pl-c1">=</span> [
+    {
+        <span class="pl-s">"role"</span>: <span class="pl-s">"user"</span>,
+        <span class="pl-s">"content"</span>: [
+            {
+                <span class="pl-s">"type"</span>: <span class="pl-s">"text"</span>,
+                <span class="pl-s">"text"</span>: <span class="pl-s">"What action do you think I should take in this situation? List all the possible actions and explain why you think they are good or bad."</span>,
+            },
+            {<span class="pl-s">"type"</span>: <span class="pl-s">"image_url"</span>, <span class="pl-s">"image_url"</span>: {<span class="pl-s">"url"</span>: <span class="pl-s1">image_url</span>}},
+        ],
+    },
+]
+
+<span class="pl-s1">inputs</span> <span class="pl-c1">=</span> <span class="pl-s1">processor</span>.<span class="pl-c1">apply_chat_template</span>(<span class="pl-s1">messages</span>, <span class="pl-s1">return_tensors</span><span class="pl-c1">=</span><span class="pl-s">"pt"</span>, <span class="pl-s1">tokenize</span><span class="pl-c1">=</span><span class="pl-c1">True</span>, <span class="pl-s1">return_dict</span><span class="pl-c1">=</span><span class="pl-c1">True</span>, <span class="pl-s1">reasoning_effort</span><span class="pl-c1">=</span><span class="pl-s">"high"</span>)
+<span class="pl-s1">inputs</span> <span class="pl-c1">=</span> <span class="pl-s1">inputs</span>.<span class="pl-c1">to</span>(<span class="pl-s1">model</span>.<span class="pl-c1">device</span>)
+
+<span class="pl-s1">output</span> <span class="pl-c1">=</span> <span class="pl-s1">model</span>.<span class="pl-c1">generate</span>(
+    <span class="pl-c1">**</span><span class="pl-s1">inputs</span>,
+    <span class="pl-s1">max_new_tokens</span><span class="pl-c1">=</span><span class="pl-c1">1024</span>,
+    <span class="pl-s1">do_sample</span><span class="pl-c1">=</span><span class="pl-c1">True</span>,
+    <span class="pl-s1">temperature</span><span class="pl-c1">=</span><span class="pl-c1">0.7</span>,
+)[<span class="pl-c1">0</span>]
+
+<span class="pl-c"># Setting `skip_special_tokens=False` to visualize reasoning trace between [THINK] [/THINK] tags.</span>
+<span class="pl-s1">decoded_output</span> <span class="pl-c1">=</span> <span class="pl-s1">processor</span>.<span class="pl-c1">decode</span>(<span class="pl-s1">output</span>[<span class="pl-en">len</span>(<span class="pl-s1">inputs</span>[<span class="pl-s">"input_ids"</span>][<span class="pl-c1">0</span>]):], <span class="pl-s1">skip_special_tokens</span><span class="pl-c1">=</span><span class="pl-c1">False</span>) 
+<span class="pl-en">print</span>(<span class="pl-s1">decoded_output</span>)</pre></div>
+</details>
+<h2>许可</h2>
+<p>本模型采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.txt" rel="nofollow">Apache 2.0 许可</a>。</p>
+<p><em>不得以侵犯、盗用或违反任何第三方权利（包括知识产权）的方式使用本模型。</em></p></section><footer class="page-footer">Mistral AI 官方模型卡中文译文 · 正文完整翻译，代码保持原样。本文属于译作，原始模型卡见官方链接。<a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 许可</a></footer></main></body></html>
