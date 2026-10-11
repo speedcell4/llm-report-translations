@@ -1,0 +1,332 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f1f2f4;
+  color: #191919;
+  font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif;
+  line-height: 1.6;
+}
+.page, .document-nav {
+  max-width: 900px;
+  margin: 28px auto;
+  padding: 32px 48px;
+}
+.page {
+  min-height: 0;
+  background: white;
+  box-shadow: 0 3px 20px #0000000c;
+}
+.document-nav {
+  padding-top: 0;
+  padding-bottom: 0;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+}
+.document-nav .nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 12px 0;
+}
+.document-nav .document-title {
+  font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 14px 0 8px;
+}
+.document-nav .document-meta, .muted, .meta, .metadata {
+  color: #666;
+  font-size: 14px;
+}
+.page-links {
+  line-height: 2;
+}
+.page-links a {
+  display: inline-block;
+  padding: 0 8px;
+}
+header {
+  display: block;
+  border-bottom: 1px solid #444;
+  padding-bottom: 12px;
+}
+header img {
+  width: 103px;
+  height: 41px;
+  object-fit: contain;
+}
+time {
+  color: #555;
+  font-size: 14px;
+}
+h1 {
+  font-size: 30px;
+  margin: 24px 0 18px;
+  text-align: left;
+}
+h2 {
+  font-size: 23px;
+  margin: 24px 0 12px;
+  text-align: left;
+}
+h3 {
+  font-size: 21px;
+  margin: 18px 0 10px;
+}
+h4 {
+  font-size: 19px;
+}
+p, .abstract {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 10px 0;
+  text-align: justify;
+  text-indent: 2em;
+}
+li {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 6px 0;
+}
+a {
+  color: #00009b;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:focus-visible {
+  outline: 2px solid #53667b;
+  outline-offset: 3px;
+}
+p, li, a, code, td, th {
+  overflow-wrap: anywhere;
+}
+.author, .authors, .affiliations {
+  text-align: center;
+  text-indent: 0;
+}
+.author {
+  font-size: 20px;
+  font-weight: bold;
+}
+.links {
+  margin: 18px 0;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  text-indent: 0;
+}
+.meta, .metadata {
+  text-align: center;
+  text-indent: 0;
+}
+.note, .footnote, .continuation {
+  font-size: 14px;
+  color: #666;
+  text-indent: 0;
+}
+.reference {
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 10px 0;
+  text-indent: 0;
+  text-align: left;
+}
+figure {
+  margin: 18px 0;
+  text-align: center;
+}
+figure img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+figcaption {
+  font-size: 15px;
+  text-align: left;
+}
+img {
+  max-width: 100%;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  background: #f5f5f5;
+  padding: 16px;
+}
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .85em;
+}
+sup {
+  font-size: 12px;
+}
+.names, .contributor {
+  font-size: 15px;
+  line-height: 1.6;
+  text-indent: 0;
+  text-align: left;
+  white-space: pre-wrap;
+}
+.names-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 14px;
+}
+.contributors {
+  width: 100%;
+  table-layout: fixed;
+}
+.contributors td {
+  padding: 5px;
+  font-size: 13px;
+}
+.table-wrap {
+  overflow-x: auto;
+  margin: 18px 0;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 15px;
+  line-height: 1.6;
+}
+th, td {
+  border: 1px solid #d6d9df;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #edf0f4;
+}
+tr:nth-child(even) {
+  background: #fafbfc;
+}
+.tag {
+  display: inline-block;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #e7edf5;
+  color: #233a57;
+}
+footer {
+  margin-top: 28px;
+  padding-top: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+section {
+  scroll-margin-top: 16px;
+}
+.contents, .toc {
+  line-height: 1.6;
+}
+.reading-list .page {
+  max-width: 1600px;
+}
+.reading-list .document-nav {
+  max-width: 1600px;
+}
+.reading-list p, .directory p, .technical-note p {
+  text-indent: 0;
+}
+.reading-list table {
+  min-width: 1280px;
+}
+.reading-list .inventory {
+  min-width: 850px;
+}
+.reading-list .note, .technical-note .note {
+  background: #f1f4f8;
+  border-left: 3px solid #53667b;
+  padding: 12px 16px;
+  color: #333;
+}
+.reading-list nav, .contents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 18px 0;
+}
+.directory li {
+  margin: 14px 0;
+}
+.directory small {
+  display: block;
+  color: #666;
+  font-size: 14px;
+}
+.technical-note table {
+  min-width: 650px;
+}
+.source-list li {
+  font-size: 15px;
+  line-height: 1.5;
+}
+@media (max-width: 640px) {
+  .page {
+    margin: 16px 0;
+    padding: 24px 18px;
+  }
+  .document-nav {
+    margin: 20px 0;
+    padding: 0 18px;
+  }
+  h1 {
+    font-size: 26px;
+  }
+  h2 {
+    font-size: 23px;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  p, li, .abstract {
+    font-size: 17px;
+  }
+  .names-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  th, td {
+    padding: 8px;
+  }
+}
+@media print {
+  body {
+    background: white;
+  }
+  .page {
+    margin: 0;
+    padding: 12px;
+    max-width: none;
+    box-shadow: none;
+    break-after: page;
+  }
+  .document-nav, nav {
+    display: none;
+  }
+  .directory .page, .reading-list .page, .technical-note .page {
+    break-after: auto;
+  }
+  .table-wrap {
+    overflow: visible;
+  }
+  .reading-list table, .technical-note table {
+    min-width: 0;
+    font-size: 10px;
+  }
+  th, td {
+    padding: 6px;
+  }
+  a {
+    color: inherit;
+  }
+}
