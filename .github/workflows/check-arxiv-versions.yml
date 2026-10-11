@@ -1,13 +1,10 @@
 name: Check arXiv versions
 on:
   schedule:
-    - cron: '17 1 * * *'
+    # arXiv announces at 20:00 Eastern; check two hours later, including DST.
+    - cron: '0 22 * * *'
+      timezone: America/New_York
   workflow_dispatch:
-  push:
-    paths:
-      - index.html
-      - scripts/check_arxiv_versions.py
-      - .github/workflows/check-arxiv-versions.yml
 permissions:
   contents: write
   pages: write
