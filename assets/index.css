@@ -264,6 +264,10 @@ section {
   color: #666;
   font-size: 14px;
 }
+.directory .version-outdated {
+  color: #b42318;
+  font-weight: bold;
+}
 .technical-note table {
   min-width: 650px;
 }

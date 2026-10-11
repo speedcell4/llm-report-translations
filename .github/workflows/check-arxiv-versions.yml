@@ -1,0 +1,38 @@
+name: Check arXiv versions
+on:
+  schedule:
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - index.html
+      - scripts/check_arxiv_versions.py
+      - .github/workflows/check-arxiv-versions.yml
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: arxiv-version-check
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: python scripts/check_arxiv_versions.py
+      - name: Save latest versions
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git add assets/arxiv-versions.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update arXiv version checks"
+            git pull --rebase
+            git push
+          fi
+      - name: Publish updated version checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
