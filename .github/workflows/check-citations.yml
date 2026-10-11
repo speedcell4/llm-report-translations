@@ -1,0 +1,36 @@
+name: Update Semantic Scholar citations
+on:
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: semantic-scholar-citations
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: python -m unittest discover -s scripts -p test_check_citations.py
+      - run: python scripts/check_citations.py
+        env:
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+      - name: Save citation cache
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git add assets/citations.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update Semantic Scholar citation counts"
+            git pull --rebase
+            git push
+          fi
+      - name: Publish citation cache
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
