@@ -1,7 +1,5 @@
 name: Update Semantic Scholar citations
 on:
-  schedule:
-    - cron: '30 * * * *'
   workflow_dispatch:
 permissions:
   contents: write

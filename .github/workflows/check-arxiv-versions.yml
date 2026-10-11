@@ -1,4 +1,4 @@
-name: Check arXiv versions
+name: Check arXiv versions and Semantic Scholar citations
 on:
   schedule:
     # arXiv announces at 20:00 Eastern; check two hours later, including DST.
@@ -19,17 +19,21 @@ jobs:
         with:
           python-version: '3.x'
       - run: python scripts/check_arxiv_versions.py
-      - name: Save latest versions
+      - run: python -m unittest discover -s scripts -p test_check_citations.py
+      - run: python scripts/check_citations.py
+        env:
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+      - name: Save latest versions and citation cache
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
-          git add assets/arxiv-versions.json
+          git add assets/arxiv-versions.json assets/citations.json
           if ! git diff --cached --quiet; then
-            git commit -m "Update arXiv version checks"
+            git commit -m "Update arXiv versions and Semantic Scholar citation counts"
             git pull --rebase
             git push
           fi
-      - name: Publish updated version checks
+      - name: Publish updated versions and citations
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
