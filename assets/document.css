@@ -418,4 +418,10 @@ blockquote { margin: 10px 0; padding: 0 18px; border-left: 3px solid #ddd; }
 
 figure.formula { max-width: 350px; margin: 18px auto; }
 
+.translation .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+.translation .katex-display > .katex { width: max-content; min-width: 100%; }
+
 .image-centered-325 { width: 325px !important; max-width: 100% !important; display: block !important; margin: auto !important; }
+
+.translation .katex { display: inline-block; max-width: 100%; overflow-x: auto; vertical-align: middle; }
+.translation .katex-display { max-width: 100%; }
