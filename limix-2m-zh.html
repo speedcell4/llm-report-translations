@@ -1,0 +1,325 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LimiX-2M：缓解表格基础模型中的低秩坍塌与 attention 瓶颈</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"><link rel="stylesheet" href="assets/image-fit.css"><link rel="stylesheet" href="assets/katex/katex.min.css"><script src="assets/katex/katex.min.js" defer></script><script src="assets/katex/auto-render.min.js" defer></script><script src="assets/inline-math.js?v=limix-20261012" defer></script></head><body class="translation"><nav class="document-nav" aria-label="文档与原文页码导航"><div class="nav-links"><a href="index.html">全部文档</a></div><div class="document-title">LimiX-2M：缓解表格基础模型中的低秩坍塌与 attention 瓶颈</div><div class="document-meta">LimiX-2M: Mitigating Low-Rank Collapse and Attention Bottlenecks in Tabular Foundation Models<br>译文版本：arXiv:2606.04485v2（2026-06-04） · 首次提交：2026-06-03 · 页码覆盖 30/30 页<br><a href="https://arxiv.org/abs/2606.04485v2">原文版本与提交记录</a> · <a href="https://arxiv.org/pdf/2606.04485v2">原文 PDF</a><br>原作：Yuanrui Wang、Xingxuan Zhang 等；原作许可：<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本页为中文翻译，图表保留原文。</div><div class="page-links">原文页码：<a href="#page-1">1</a> <a href="#page-2">2</a> <a href="#page-3">3</a> <a href="#page-4">4</a> <a href="#page-5">5</a> <a href="#page-6">6</a> <a href="#page-7">7</a> <a href="#page-8">8</a> <a href="#page-9">9</a> <a href="#page-10">10</a> <a href="#page-11">11</a> <a href="#page-12">12</a> <a href="#page-13">13</a> <a href="#page-14">14</a> <a href="#page-15">15</a> <a href="#page-16">16</a> <a href="#page-17">17</a> <a href="#page-18">18</a> <a href="#page-19">19</a> <a href="#page-20">20</a> <a href="#page-21">21</a> <a href="#page-22">22</a> <a href="#page-23">23</a> <a href="#page-24">24</a> <a href="#page-25">25</a> <a href="#page-26">26</a> <a href="#page-27">27</a> <a href="#page-28">28</a> <a href="#page-29">29</a> <a href="#page-30">30</a></div></nav><section class="page" id="page-1"><h1>LimiX-2M：缓解表格基础模型中的低秩坍塌与 attention 瓶颈</h1>
+<p>Yuanrui Wang<sup>* 1 2</sup>、Xingxuan Zhang<sup>* 1 2</sup>、Han Yu<sup>2</sup>、Mingchao Hao<sup>1</sup>、Gang Ren<sup>1</sup>、Hao Yuan<sup>1</sup>、Li Mao<sup>1</sup>、Yunjia Zhang<sup>1</sup>、Chun Yuan<sup>2</sup>、Peng Cui<sup>† 1 2</sup></p>
+<h2>摘要</h2>
+<p>表格基础模型（TFM）越来越能与树集成模型相媲美，但其性能往往缺乏计算效率：在标准的仿射标量 token 化方式下，每个特征基本上通过一个一维通道引入取值变化，而特征 ID／位置信号无法增加特征内部取值的自由度，导致早期层对取值的敏感性较弱，并产生冗余的隐藏状态。我们提出一个统一的 token 化与路由框架来构建强大的 TFM：RaBEL 将每个标量展开为紧凑、局部化的 RBF 特征（可选地采用指数门控），以改善条件性和浅层的有效秩；同时，重新排序的双向模块 \(S\to N\to F\) 在特征混合之前聚合跨样本上下文，并使用 attention 池化，使计算与读出对齐。这些改动共同构成了 LimiX-2M：一个具有 2M 参数的模型，在广泛使用的表格基准上超越规模更大的 TabPFN-v2 和 TabICL 基线，同时降低训练与推理成本。这些结果表明，感知取值的 token 化和与读出对齐的路由，是改善 TFM 准确率与效率权衡的关键手段。模型 checkpoint 和推理代码见 <a href="https://github.com/limix-ldm-ai/LimiX">https://github.com/limix-ldm-ai/LimiX</a>。</p>
+<h2>1. 引言</h2>
+<p>表格基础模型的最新进展——尤其是 TabPFN／TabPFN-v2（Hollmann et al., 2025; 2022）、TabICL（Qu et al., 2025）和 LimiX（Zhang et al., 2025）——已经缩小了与长期占据主导地位的基线之间的差距，并在许多情形下超过了它们。这些基线包括 gradient 提升决策树（Chen &amp; Guestrin, 2016; Ke et al., 2017; Prokhorenkova et al., 2018）和专门的深度表格架构（Somepalli et al., 2021; Arik &amp; Pfister, 2021）。考虑到树集成模型在中等规模表格任务上的历史优势，以及深度模型在不规则函数、重尾分布和混合数据类型上遇到的困难，这些结果十分引人注目（Grinsztajn et al., 2022）。</p>
+<p>尽管取得了这些进展，输入 embedding 层仍是一个核心限制。主流做法是通过一个线性层映射每个标量单元格，并加入列标识（例如位置 embedding 或特征 ID embedding），TabTransformer 和 FT-Transformer 即采用这种方式（Huang et al., 2020; Gorishniy et al., 2021）。系统性分析表明，这类数值 embedding 往往限制过强，相比表达力更丰富的编码方案，仍有大量性能潜力未被利用（Gorishniy et al., 2022）。在我们的性能分析中，这种设计会在网络早期产生高度相关的激活：浅层的特征矩阵可能表现出极低的有效秩，在常见基准上有时甚至坍塌到个位数的秩。这意味着显著的参数冗余，提示我们可以用小得多的参数预算取得相当的性能。此外，它也揭示了尚未利用的表示容量：通过纠正这种秩坍塌、充分利用潜在空间，有望获得丰富得多的特征表示。</p>
+<p>我们认为，表格基础模型的 embedding 层应在引入非线性方面发挥更大作用，让早期表示能够区分常见的表格现象，例如分段趋势、局部周期性、量化、重尾边缘分布和异方差性。为此，我们提出 RaBEL，即径向基 embedding 层，用一组局部化的非线性特征替代一次性的线性投影。经典理论与实践支持将 RBF 特征作为通用、局部化的近似器，它们与核方法紧密相关（Broomhead &amp; Lowe, 1988; Park &amp; Sandberg, 1991; Scholkopf &amp; Smola, 2018; Rasmussen &amp; Williams, 2006）。相比直接的线性 embedding，RBF 的局部性能够：（i）在不同取值区间产生多样化的激活模式；（ii）改善第一个可学习层的条件性；（iii）提高浅层表示的有效秩，而无需堆叠许多层之后才发现曲率。（接续下页。）</p>
+<p class="muted">* 同等贡献。† 通讯作者。<sup>1</sup> Stable AI；<sup>2</sup> 清华大学。通讯联系：Peng Cui，<a href="mailto:cuip@tsinghua.edu.cn">cuip@tsinghua.edu.cn</a>。</p>
+<p class="muted">第 43 届国际机器学习会议论文集，韩国首尔。PMLR 306，2026。版权 © 2026，归作者所有。</p>
+<footer>原文第 1 页</footer></section><section class="page" id="page-2"><p>（接上页。）这一方法与周期性／Bochner 风格的映射（例如随机 Fourier 特征）互为补充，在预期存在周期性时，还可以扩展或混合使用（Rahimi &amp; Recht, 2007）。</p>
+<p>除了 embedding，我们还发现现有表格基础模型所用双向 attention 的排列顺序存在第二个限制。在广泛使用的设计中（例如 TabPFN 风格或 LimiX 风格的堆叠），attention 通常按特征 attention → 样本 attention 排列。这种顺序引入两个问题。（1）在第一层中，特征层面的 attention 必须仅依据原始取值整合各列，此时尚未建立任何列层面的统计量或相关性；这使 attention 缺少信息丰富的上下文，并加剧低秩坍塌。（2）预测时，许多架构仅使用最后一层的目标 token，因此在特征上计算的样本层面 attention 实际上被忽略，导致不直接影响读出的网络部分所获得的训练信号较弱。</p>
+<p>我们通过将 attention 堆叠重新排序为样本 attention →（FFN）→ 特征 attention 来解决这些问题。输入阶段的样本 attention 使模型能够在进行特征层面 attention 之前，先聚合列层面的相关性与分布统计量（例如矩、出现频率和缺失模式）。中间的 FFN 随后压缩并调节这些信号，再由特征 attention 使用更丰富、条件性更好的输入学习特征间关系。这种排列确保所有 attention 计算都为最终预测作出贡献：样本层面汇集的信息直接塑造流向读出的特征层面表示。这一改进的机制能够更好地捕捉特征关系，并促使模型发现关键特征；我们在第 5.3 节进一步分析这一能力。</p>
+<p>将 RaBEL 与重新排序的样本 attention → FFN → 特征 attention 架构结合，我们提出了具有 2M 参数、名为 LimiX-2M 的模型。它在主流基准上超越具有 7M 参数的 TabPFN-v2 基线，同时降低训练与推理的计算成本。这些结果表明，有理论依据的非线性 embedding 与 attention 顺序重设计相结合，可以为表格基础模型带来更好的准确率与效率权衡，以及更可靠的扩展能力。</p>
+<p>我们的贡献总结如下。</p>
+<ol><li>我们诊断并量化了线性＋ID embedding 引起的低秩坍塌，并提出 RaBEL：一种紧凑、基于 RBF 的单元格编码器，可提高浅层秩并改善条件性。</li><li>我们揭示标准双向 attention（特征 attention → 样本 attention）的排列顺序问题，并引入样本 attention → FFN → 特征 attention 堆叠，以（i）在聚合特征前建立列层面的统计量；（ii）将所有 attention 信号路由至读出。</li><li>我们基于这两个组件提出具有 2M 参数的 LimiX-2M，在大多数基准上超越具有 7M 参数的 TabPFN-v2 和具有 27M 参数的 TabICL，同时降低训练与推理成本。</li></ol>
+<p><strong>利益冲突披露。</strong>部分作者隶属于 Stable AI。Stable AI 主导 LimiX 模型家族的开发，其中包括本文评估的模型之一 LimiX-16M。</p>
+<h2>2. 相关工作</h2>
+<p><strong>面向表格数据的深度模型。</strong>XGBoost、LightGBM 和 CatBoost 等 gradient 提升决策树（GBDT）长期主导表格预测（Chen &amp; Guestrin, 2016; Ke et al., 2017; Prokhorenkova et al., 2018）。为应对这一局面，研究者提出了专门的神经网络架构。TabNet 以具有可解释性的 attention 方式选择特征（Arik &amp; Pfister, 2021）；TabTransformer 对特征应用自 attention，对类别输入尤其有效（Huang et al., 2020）；SAINT 在特征 attention 之外加入样本间（行方向）attention 和对比预训练（Somepalli et al., 2021）。尽管有这些进展，广泛评估仍经常发现树模型在中等规模基准上具有竞争力（Grinsztajn et al., 2022），这凸显了混合数据类型和不规则目标函数带来的挑战，也推动了基础模型式的方法。</p>
+<p><strong>表格基础模型。</strong>TabPFN 将表格学习重新表述为上下文内推理：一个在合成任务上预训练的 Transformer 在推理时接收小型训练集，无需 gradient 更新即可预测（Hollmann et al., 2022; 2025）。TabICL 采用两阶段设计，先以特征 attention 后接行 attention 构建逐样本表示，再进行高效的上下文内推理（Qu et al., 2025）。LimiX 将表格视为特征与缺失性的联合分布，并使用掩码建模，让一个模型支持多种任务（Zhang et al., 2025）。Mitra 等近期系统（Zhang et al., 2026）探索结合合成先验的行列混合 attention，以改善跨数据集泛化。</p>
+<p><strong>数值特征的 embedding 策略。</strong>一个关键设计选择是如何编码连续值单元格。常见做法是对每个数值列应用一次线性投影，有时还加入列身份 embedding，（接续下页。）</p>
+<footer>原文第 2 页</footer></section><section class="page" id="page-3"><p>（接上页。）FT-Transformer 和 TabTransformer 就是如此（Gorishniy et al., 2021; Huang et al., 2020）。系统性分析表明，相比表达力更强的方案，这些编码可能受到限制（Gorishniy et al., 2022）。有效的补救方法包括：（i）将取值范围划分为可学习区段的分段线性编码；（ii）通过正弦特征进行周期性编码，其概念与随机 Fourier 特征有关（Gorishniy et al., 2022; Rahimi &amp; Recht, 2007）。互补的自监督预训练（例如 VIME、MET）通过掩码重建，在监督微调前捕捉特征间依赖（Yoon et al., 2020; Majmundar et al., 2022）。基于径向基函数（RBF）的核启发替代方案提供局部感受野和通用近似能力（Broomhead &amp; Lowe, 1988; Park &amp; Sandberg, 1991），并与 Gaussian RBF 核和 Gaussian 过程紧密相关（Scholkopf &amp; Smola, 2018; Rasmussen &amp; Williams, 2006）。因此，可学习的 RBF 特征化提供了局部非线性变换，可以补充随机 Fourier 特征等全局周期性映射，并自然融入基于 Transformer 的表格骨干网络。</p>
+<h2>3. 当前 embedding 中的低秩问题</h2>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-03-376-52.png" alt="图 1：LimiX-2M 与 TabPFN-v2 的逐层秩比较及原文图注" width="729" height="576" loading="lazy" decoding="async"></figure>
+<p>TabPFN-v2 当前采用的 embedding 策略只是通过一个 \(1\times p\) 线性投影，将每个单元格（即每个标量）映射到高维隐藏空间。这种简单策略隐含地导致低秩问题：Transformer 层输出的隐藏状态往往是低秩的，尤其是在网络早期。这可能严重削弱网络的表达力，导致潜在的性能下降。本节通过理论和实验分析，揭示 TabPFN-v2 中的低秩问题。</p>
+<p>首先，我们从理论上证明低秩问题的存在。</p>
+<p><strong>命题 3.1。</strong>假设采用不含位置 embedding 的线性 embedding 策略，给定标量序列 \(x_1,x_2,\ldots,x_n\in\mathbb{R}\)，embedding 后输入矩阵的秩至多为 2。对于标准自 attention，输出矩阵的秩至多为 2。对于头数为 \(H\) 的多头 attention，输出的秩至多为 \(H+1\)。</p>
+<p>详细证明见附录 A。定理 3.1 揭示，在采用线性 embedding 策略且没有引入其他非线性的情况下，embedding 后的输入和较浅 Transformer 层的隐藏状态可能具有极低的秩。对于如此高维的隐藏空间，这非常低效。</p>
+<p>为研究潜在表示的冗余，我们分析 OpenML-CC18 基准上各层隐藏状态的谱性质。令 \(X\in\mathbb{R}^{B\times S\times D}\) 表示某一层的隐藏状态，其中 \(B\)、\(S\) 和 \(D\) 分别为 batch 大小、序列长度和隐藏维度。我们将 \(X\) 重塑为二维矩阵 \(\hat X\in\mathbb{R}^{(B\cdot S)\times D}\)，以进行奇异值分解（SVD）。</p>
+<p>图 1 报告数值秩，它由超过标准容差阈值的奇异值数量确定。此外，我们引入 Rank@99% 和 Rank@95%，定义为保留累计谱能量的 99% 和 95% 所需的最少奇异分量数。为保持一致，所有秩指标都除以隐藏维度 \(D\) 进行归一化。</p>
+<p>为进一步验证表示冗余的程度，我们对 TabPFN-v2 进行低秩近似实验。该架构由 12 层网络组成，每层包含三个不同模块：特征 attention、样本 attention 和 FFN，共计 36 个模块。前向传播过程中，对每个模块的输入矩阵应用截断 SVD，只保留前 \(r\) 个奇异值来重建低秩近似。</p>
+<p>如表 1 所示，即使将秩截断到 \(r=50\)（约为隐藏维度的 25%），模型相对全秩基线的性能下降仍可忽略。此外，即使 \(r=20\)（约为隐藏维度的 10%），模型仍保持有竞争力的 AUC 得分。这些发现说明高维潜在空间的利用严重不足，强调了采用更高效 embedding 策略的必要性。</p>
+<p>在附录 B 中，我们从理论上说明：在标准仿射标量 tokenizer 下，特征 ID／位置信号能区分不同列，却无法增加取值进入模型时的内在自由度，从而导致早期层对取值的敏感性较弱，以及冗余的（接续下页。）</p>
+<footer>原文第 3 页</footer></section><section class="page" id="page-4"><p>（接上页。）表示。RaBEL 在投影之前将每个标量展开为紧凑的局部基，从而打破这一取值瓶颈，增加输入端的取值多样性，并启发以机制为依据的诊断（以取值为中心的有效秩和 Jacobian 秩），这些诊断能够预测观察到的准确率与效率提升。</p>
+<h2>4. 方法</h2><h3>4.1. 问题设定与记号</h3>
+<p>令 \(X\in\mathbb{R}^{N\times D}\) 表示包含 \(N\) 个样本（行）和 \(D\) 个特征（列）的表格数据集。用 \(x_{i,j}\) 表示样本 \(i\) 的特征 \(j\) 的标量取值。我们的目标是将每个单元格 \(x_{i,j}\) 映射为 embedding \(e_{i,j}\in\mathbb{R}^d\)，再输入沿样本轴和特征轴执行双向 attention 的 Transformer。用 \(E\in\mathbb{R}^{N\times D\times d}\) 表示单元格 embedding 的完整张量，用 \(L\) 表示骨干网络中的 attention 模块数。</p>
+<p>本节介绍：（i）紧凑的径向基 embedding 层 RaBEL，用于替代标量单元格的标准线性投影；（ii）重新排序的双向 attention 模块，将特征 attention → 样本 attention → FFN（简称 \(F\to S\to N\)）改为样本 attention → FFN → 特征 attention（简称 \(S\to N\to F\)），以改善条件性并确保所有 attention 计算都参与最终预测。</p>
+<h3>4.2. RaBEL：径向基 embedding 层</h3>
+<p>直接对数值单元格进行线性投影，会产生高度相关的早期激活和前几层极低的有效秩，限制下游容量。RaBEL 将非线性前置：把每个标量展开成一小组局部响应，再通过轻量投影映射到模型维度。</p>
+<p><strong>逐列归一化。</strong>为保证数值稳定性，我们使用 z-score 对每列进行标准化。令 \(\bar x_j\) 和 \(s_j\) 表示样本均值与标准差：</p>
+<p>\[\tilde x_{i,j}=\frac{x_{i,j}-\bar x_j}{s_j+\epsilon},\qquad \bar x_j=\frac1N\sum_{i=1}^N x_{i,j}.\tag{1}\]</p>
+<p>\[s_j=\sqrt{\frac1{N-1}\sum_{i=1}^N(x_{i,j}-\bar x_j)^2}.\tag{2}\]</p>
+<p>其中，\(\epsilon&gt;0\) 是保证数值稳定性的小常数。以下所有公式均可用于 \(x_{i,j}\) 或 \(\tilde x_{i,j}\)；为简洁起见，我们省略波浪号。</p>
+<p><strong>RBF 展开。</strong>对每个特征 \(j\)，选取 \(M\) 个中心 \(\{c_{j,m}\}_{m=1}^M\) 和带宽 \(\{\sigma_{j,m}\}_{m=1}^M\)。中心初始化为 \(X_{\cdot,j}\) 的经验分位数；带宽按局部变异程度（例如四分位距）成比例初始化，随后所有参数均以端到端方式学习。令第 \(m\) 个分量为 \(\kappa_{j,m}=\exp\!\left(-\frac{(x_{i,j}-c_{j,m})^2}{2\sigma_{j,m}^2}\right)\)。径向基特征映射为</p>
+<p>\[\phi_j(x_{i,j})=[\kappa_{j,1},\ldots,\kappa_{j,M}]\in\mathbb{R}^M.\tag{3}\]</p>
+<p><strong>投影到模型维度。</strong>共享线性投影结合 LayerNorm，将展开的特征映射到模型宽度：</p>
+<p>\[e_{i,j}=\operatorname{LN}(W_{\mathrm{rbf}}\phi_j(x_{i,j})+b_{\mathrm{rbf}})\in\mathbb{R}^d,\tag{4}\]</p>
+<p>其中，\(W_{\mathrm{rbf}}\in\mathbb{R}^{d\times M}\) 和 \(b_{\mathrm{rbf}}\in\mathbb{R}^d\) 为可学习参数，并在各列之间共享。对于类别列，我们使用标准的实体 embedding 查表映射到 \(\mathbb{R}^d\)，再应用相同的 LayerNorm。</p>
+<p><strong>采用共享门控的指数门控 RaBEL。</strong>现实表格取值跨越多个数量级，且常具有异方差性。为使 RaBEL 感知尺度而不失去局部性，我们引入指数门控，通过统一应用于全部 \(M\) 个基函数的共享标量门控，调节 RBF 函数组的参数。</p>
+<p><strong>指数提取（软、可微）。</strong>固定底数 \(\beta&gt;1\)（我们使用 \(\beta=2\)）以及小偏移 \(\tau&gt;0\)。定义对数幅值 \(\ell_{i,j}=\log_\beta(|x_{i,j}|+\tau)\)。令 \(\mathcal B=\{b_{\min},\ldots,b_{\max}\}\subset\mathbb Z\) 为有界的指数分箱集合。通过温度控制的核构造软分配：</p>
+<p>\[\pi_{i,j}(b)=\frac{\exp(-(\ell_{i,j}-b)^2/T)}{\sum_{b'\in\mathcal B}\exp(-(\ell_{i,j}-b')^2/T)},\quad b\in\mathcal B.\tag{5}\]</p>
+<p>每个分箱 \(b\) 有一个可学习的 embedding \(u_b\in\mathbb R^h\)，我们还为 \(\operatorname{sgn}(x_{i,j})\) 加入符号 embedding \(u_{\mathrm{sgn}}\)。通过拼接得到尺度上下文向量 \(z^{\mathrm{exp}}_{i,j}\in\mathbb R^{h+h_s}\)：</p>
+<p>\[z^{\mathrm{exp}}_{i,j}=\left(\sum_{b\in\mathcal B}\pi_{i,j}(b)u_b\right)\mathbin\Vert u_{\mathrm{sgn}(x_{i,j})}.\tag{6}\]</p>
+<p><strong>对 \((c,\sigma)\) 的共享门控。</strong>一个小型 MLP 为每个单元格产生两个正标量，在 RBF 函数组之间共享：</p>
+<p>\[[\gamma^c_{i,j},\gamma^\sigma_{i,j}]=\operatorname{MLP}_{\mathrm{shared}}(z^{\mathrm{exp}}_{i,j})\in\mathbb R^2,\tag{7}\]</p>
+<p>通过 Softplus 保证正值。计算以指数为条件的中心和宽度：</p>
+<p>\[c^{(\mathrm{exp})}_{j,m}=\gamma^c_{i,j}c_{j,m},\qquad\sigma^{(\mathrm{exp})}_{j,m}=\gamma^\sigma_{i,j}\sigma_{j,m}.\tag{8}\]</p>
+<p>门控 RBF 分量定义为：</p>
+<p>\[\kappa^{(\mathrm{exp})}_{j,m}=\exp\!\left(-\frac{(x_{i,j}-c^{(\mathrm{exp})}_{j,m})^2}{2(\sigma^{(\mathrm{exp})}_{j,m})^2}\right).\tag{9}\]</p>
+<footer>原文第 4 页</footer></section><section class="page" id="page-5"><figure><img class="fit-page" src="assets/images/limix-2m/page-05-63-52.png" alt="表 1：低秩近似后 TabPFN-v2 的 AUC 及原文表注" width="1479" height="192" loading="lazy" decoding="async"></figure>
+<p>最终的门控特征向量为：</p><p>\[\phi_j^{(\mathrm{exp})}(x_{i,j})=[\kappa^{(\mathrm{exp})}_{j,1},\ldots,\kappa^{(\mathrm{exp})}_{j,M}].\tag{10}\]</p>
+<p>最后应用投影 \(e_{i,j}=\operatorname{LN}(W_{\mathrm{rbf}}\phi_j^{(\mathrm{exp})}(x_{i,j})+b_{\mathrm{rbf}})\)。</p>
+<p>指数门控有三个益处：（i）<strong>尺度等变性：</strong>将输入乘以 \(\beta\) 会让 \(\ell\) 平移 1，因此门控能使 RBF 函数组适应不同数量级，产生对单位和尺度稳健的 embedding；（ii）<strong>异方差稳健性：</strong>宽度和幅值在高／低方差区间扩张／收缩，保持凸起函数有用的局部性；（iii）<strong>更好的条件性：</strong>将幅值（经指数路径）与同一数量级内的模式（经 RBF 响应）分离，能在早期层产生更高的有效秩和更平滑的 gradient。软分配 \(\pi_{i,j}\) 使模块完全可微，并避免脆弱的硬分箱。计算开销很小：额外的 \(O(|\mathcal B|)\) 核计算和一个微型两层 MLP。</p>
+<h3>4.3. 重新排序的双向 attention</h3>
+<p>表格 Transformer 的双向 attention 通常交替在特征之间（逐样本）和样本之间（逐特征）执行 attention。常见堆叠顺序为 FSN（特征 attention → 样本 attention → FFN）。这迫使最初的特征 attention 使用未经充分调节的原始取值整合各列。此外，最终预测只使用目标 token，使其他特征 embedding 以及最后的样本 attention 计算没有得到充分利用。</p>
+<p>我们通过重新排列模块、而不引入任何额外组件，将双向模块改为 SNF（样本 attention → FFN → 特征 attention）。在这一设计中，样本 attention 层先聚合列层面的统计量和跨样本规律，轻量 FFN 调节这些信号，然后特征 attention 层基于条件性更好的输入建模特征间关系。用于预测的最终 embedding 通过对所有特征 token 进行 attention 池化得到，因此每一次 attention 计算都直接参与输出。该机制更好地捕捉特征交互，并促进关键属性的发现，第 5.3 节对此作了分析。</p>
+<h2>5. 实验</h2><h3>5.1. embedding 比较</h3><h4>5.1.1. 基于 MLP 的方法</h4>
+<p>我们在多种数据集上将 RaBEL 与四个基线比较：No-embedding、MLP、PLE 和 Periodic（表 7）。对于各 embedding 方法，采用统一的形式：先用函数 \(\phi_\theta:\mathbb R\to\mathbb R^d\) 变换每个标量输入 \(x_{j,i}\)，再展平并通过线性层映射到最终维度 \(e\)。这些方法只在 \(\phi_\theta\) 上不同：MLP 使用逐点 FFN；PLE 和 Periodic 分别使用分段线性和正弦编码（Gorishniy et al., 2022）。注意，我们修改 PLE 和 Periodic，使用共享而非特征专属的线性投影，将编码后的取值映射到 \(\mathbb R^d\)。这种调整适应可变的特征数量，便于随后应用于基础模型。No-embedding 基线直接把原始输入 \(x\) 投影到 \(\mathbb R^{s\times e}\)。详细结果见表 2。</p>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-05-391-303.png" alt="图 2：生成数据集的 DAG、FSN 与 SNF 的特征 attention 热图及原文图注" width="729" height="852" loading="lazy" decoding="async"></figure>
+<h4>5.1.2. 基于 Transformer 的方法</h4>
+<p>我们将不同 embedding 方法融入一个具有 2M 参数的 Transformer 骨干网络，使用与前一节相同的设置。（接续下页。）</p>
+<footer>原文第 5 页</footer></section><section class="page" id="page-6"><figure><img class="fit-page" src="assets/images/limix-2m/page-06-63-52.png" alt="表 2：采用不同 embedding 模块的 MLP 结果及原文表注" width="1479" height="453" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-06-228-61.png" alt="表 3：不同 embedding 在 BCCO-CLS 上的结果及原文表注" width="669" height="249" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-06-317-61.png" alt="表 4：不同 embedding 在 BCCO-REG 上的结果及原文表注" width="669" height="252" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-06-228-310.png" alt="表 5：LimiX-2M 与 2M SNF 基线的秩比较及原文表注" width="684" height="219" loading="lazy" decoding="async"></figure>
+<p>（接上页。）按照基础模型训练范式（在生成数据上训练），我们在 BCCO-CLS 和 BCCO-REG 上评估它们（Zhang et al., 2025）。结果见表 3 和表 4。</p>
+<h3>5.2. LimiX-2M 与 2M 基线的比较</h3>
+<p>为验证观察到的提升具体来自 RaBEL，而非采用自 LimiX 的实验优化设置，我们对 LimiX-2M 和一个具有 2M 参数的基线进行比较分析。两个模型具有完全相同的训练配置和 SNF 层顺序，但 embedding 机制不同：基线采用标准线性投影，LimiX-2M 则采用 RaBEL。表 5 报告前三层的秩比较，结果表明，相比基线，LimiX-2M 显著提高了浅层的秩。此外，第 C.7 节详述了涉及基线、LimiX-2M 和其他竞争模型的全面数据集层面性能比较。</p>
+<h3>5.3. RBA 的示例实验</h3>
+<p>为实证验证 SNF 捕捉潜在特征依赖的能力，我们使用从有向无环图（DAG）生成的合成数据集进行示例实验。图 2(a) 显示 DAG 结构，其中目标 \(y\) 以阴影标出。对应的特征 attention 图见图 2(b) 和 (c)。这些图通过纵向堆叠所有样本的 attention 向量，展示目标 \(y\) 对其他特征的 attention 得分。与高度依赖自 attention 的 FSN 相比，SNF 减少了自 attention，并有效地将 attention 分配给不同特征。关键的是，SNF 为 \(y\) 的直接原因（例如节点 0）分配了显著更高的 attention 得分，从而确认其在建模特征交互方面的优越性能。</p>
+<h3>5.4. 与 SOTA 模型的比较</h3>
+<p><strong>训练设置。</strong>我们遵循 PFN 系列（Hollmann et al., 2022; 2025）和 LimiX（Zhang et al., 2025）确立的数据生成流程，使用层次化结构因果模型（SCM）构建预训练语料。在每个训练回合中，首先采样随机 DAG 和函数机制，以定义一个特定的联合分布，再从中抽取合成数据样本。LimiX-2M 的骨干网络是具有 12 个模块的 Transformer 架构，旨在捕捉样本间和特征内依赖。每个模块依次由三个组件组成：样本 attention 模块、FFN 和特征 attention 模块。样本 attention 机制促进不同数据样本（行）之间的交互，而特征 attention 机制建模单个样本中变量（列）之间的关系。模型的隐藏 embedding 维度配置为 \(d_{\mathrm{model}}=96\)，并且（接续第 8 页。）</p>
+<footer>原文第 6 页</footer></section><section class="page" id="page-7"><figure><img class="fit-page" src="assets/images/limix-2m/page-07-117-52.png" alt="表 6：各分类与回归基准上的平均排名汇总，含完整表注" width="1482" height="1641" loading="lazy" decoding="async"></figure>
+<footer>原文第 7 页</footer></section><section class="page" id="page-8"><p>（接第 6 页。）每个 attention 模块采用 \(H=6\) 个 attention 头，以平衡计算效率和表达能力。</p>
+<h4>5.4.1. 分类</h4>
+<p><strong>基准。</strong>我们采用六个基准套件：TALENT-CLS（Ye et al., 2025）、OpenML-CC18（Bischl et al., 2017）、PFN-CLS（Hollmann et al., 2025）、TabZilla（McElfresh et al., 2023）、TabArena-CLS（Erickson et al., 2025）和 BCCO-CLS（Zhang et al., 2025）。遵循通用流程，排除训练样本超过 50,000、特征超过 10,000 或目标类别超过 10 的数据集。过滤后最终集合包括：TALENT-CLS 的 179 个数据集、OpenML-CC18 的 62 个、PFN-CLS 的 29 个、TabZilla 的 27 个、TabArena-CLS 的 33 个，以及 BCCO-CLS 的 106 个。计算多分类 AUC 和 F1 时采用 one-vs-one 策略。</p>
+<p><strong>指标。</strong>我们使用三个指标评估性能：AUC（ROC 曲线下面积）、Acc.（准确率）和 F1（F1 得分）。</p>
+<h4>5.4.2. 回归</h4>
+<p><strong>基准。</strong>我们采用五个开源基准：TALENT-REG（Ye et al., 2025）、PFN-REG（Hollmann et al., 2025）、TabArena-REG（Erickson et al., 2025）、CTR23（Fischer et al., 2023）和 BCCO-REG（Zhang et al., 2025）。应用与分类基准相同的过滤标准，得到 CTR23 的 33 个数据集、PFN-REG 的 28 个、TabArena-REG 的 13 个、TALENT-REG 的 99 个，以及 BCCO-REG 的 50 个。</p>
+<p><strong>指标。</strong>我们使用两个指标评估回归性能：\(R^2\)（决定系数）和 RMSE（均方根误差）。</p>
+<p>更多详情见附录 C。</p>
+<h4>5.4.3. 结果</h4>
+<p>表 6 报告汇总排名结果。为在推理效率与预测质量之间取得良好平衡，我们训练了紧凑变体 LimiX-2M（1.92M）。尽管架构轻量，LimiX-2M 仍表现出卓越的泛化能力，在多种分类和回归基准上持续取得第二好的性能（蓝色高亮），仅次于 LimiX（16.52M）。值得注意的是，LimiX-2M 显著超越规模大得多的基础模型，例如 Mitra（75M）和 TabICL（27M），以及专门的 TabPFN-v2（7M）。此外，它也超过了 AutoGluon 和 XGBoost 等强大的传统集成模型。这些结果有力验证了所提出的 RaBEL 框架和重新排序的双向 attention 机制能够实现高参数效率，而不牺牲表示能力。每个数据集的详细性能指标见第 C.5 节。</p>
+<h3>5.5. 消融研究</h3><h4>5.5.1. 模块与 RBA 的消融</h4>
+<p>我们在 TabZilla 和 TabArena 两个分类基准上进行消融研究，评估重新排序的双向 attention（RBA）和 SNF 模块设计。首先，图 3 的结果验证了 RBA 机制的有效性。其次，对于 SNF 架构，我们比较 attention 和 FFN 的不同顺序。实证结果倾向于优先进行样本 attention；具体而言，将 FFN 放在 attention 层之间（SFN）能够最佳地平衡性能与参数效率。</p>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-08-283-303.png" alt="图 3：TabArena 与 TabZilla 上的模块和结构消融研究及原文图注" width="729" height="879" loading="lazy" decoding="async"></figure>
+<h4>5.5.2. RaBEL 的消融</h4>
+<p>我们对 RaBEL 的超参数进行消融研究，遍历 token embedding 维度、核数量、\(\sigma\)、初始化方案和核形式等设置。结果见第 C.3 节。</p>
+<h2>6. 结论</h2>
+<p>我们提出径向基 embedding 层 RaBEL，用于替代线性数值编码器，并通过提供局部化、感知尺度的表示来解决早期层的低秩瓶颈。（接续下页。）</p>
+<footer>原文第 8 页</footer></section><section class="page" id="page-9"><p>（接上页。）我们还重新审视双向 attention，并证明它改善了条件性，保证每次 attention 计算均参与预测。由此得到的 LimiX-2M，以远小于以往表格基础模型的参数预算实现更高准确率，同时降低计算量。未来工作将探索混合基函数库、更强的自监督预训练，以及将 LimiX-2M 扩展至更广泛的领域与分布偏移。</p>
+<h2>致谢</h2><p>本工作部分获得 SSTIC 项目（KJZD20230923115106012、KJZD20230923114916032、GJHZ20240218113604008）和清华大学—西门子联合研究中心（JCIIOT）的支持。</p>
+<h2>影响声明</h2><p>本文有助于推动机器学习的发展。尽管我们的工作可能具有更广泛的社会影响，但我们未发现任何具体后果需要在通常与机器学习研究进展相关的影响之外进一步讨论。</p>
+<h2>参考文献</h2>
+<p class="reference">Arik, S. Ö. and Pfister, T. TabNet：具有可解释性的 attention 表格学习. In Proceedings of the AAAI Conference on Artificial Intelligence, 2021.</p>
+<p class="reference">Bischl, B., Casalicchio, G., Feurer, M., Gijsbers, P., Hutter, F., Lang, M., Mantovani, R. G., van Rijn, J. N., and Vanschoren, J. OpenML 基准套件. arXiv 预印本 arXiv:1708.03731, 2017.</p>
+<p class="reference">Broomhead, D. S. and Lowe, D. 多变量函数插值与自适应网络. Complex Systems, 2:321–355, 1988.</p>
+<p class="reference">Chen, T. and Guestrin, C. XGBoost：可扩展的树提升系统. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, pp. 785–794, 2016. doi: 10.1145/2939672.2939785.</p>
+<p class="reference">Erickson, N., Purucker, L., Tschalzev, A., Holzmüller, D., Desai, P. M., Salinas, D., and Hutter, F. TabArena：表格数据机器学习的持续更新基准. arXiv 预印本 arXiv:2506.16791, 2025.</p>
+<p class="reference">Fischer, S. F., Feurer, M., and Bischl, B. OpenML-CTR23：精心整理的表格回归基准套件. In AutoML Conference 2023 (Workshop), 2023.</p>
+<p class="reference">Glorot, X. and Bengio, Y. 理解训练深度前馈神经网络的困难. In Teh, Y. W. and Titterington, M. (eds.), Proceedings of the Thirteenth International Conference on Artificial Intelligence and Statistics, volume 9 of Proceedings of Machine Learning Research, pp. 249– 256, Chia Laguna Resort, Sardinia, Italy, 13–15 May 2010. PMLR. URL <a href="https://proceedings.mlr.press/v9/glorot10a.html">https://proceedings.mlr.press/v9/glorot10a.html</a>.</p>
+<p class="reference">Gorishniy, Y., Rubachev, I., Khrulkov, V., and Babenko, A. 重新审视表格数据的深度学习模型. In Advances in Neural Information Processing Systems 34 (NeurIPS), 2021.</p>
+<p class="reference">Gorishniy, Y., Rubachev, I., and Babenko, A. 论表格深度学习中的数值特征 embeddings. In Advances in Neural Information Processing Systems 35 (NeurIPS), pp. 24991–25004, 2022.</p>
+<p class="reference">Grinsztajn, L., Oyallon, E., and Varoquaux, G. 为什么基于树的模型在表格数据上仍优于深度学习？ arXiv 预印本 arXiv:2207.08815, 2022.</p>
+<p class="reference">Grinsztajn, L., Flöge, K., Key, O., Birkel, F., Jund, P., Roof, B., Jäger, B., Safaric, D., Alessi, S., Hayler, A., Manium, M., Yu, R., Jablonski, F., Hoo, S. B., Garg, A., Robertson, J., Bühler, M., Moroshan, V., Purucker, L., Cornu, C., Wehrhahn, L. C., Bonetto, A., Schölkopf, B., Gambhir, S., Hollmann, N., and Hutter, F. TabPFN-2.5：推进表格基础模型的技术前沿, 2026. URL <a href="https://arxiv.org/abs/2511.08667">https://arxiv.org/abs/2511.08667</a>.</p>
+<p class="reference">He, K., Zhang, X., Ren, S., and Sun, J. 深入研究整流器：在 ImageNet 分类上超越人类水平. In 2015 IEEE International Conference on Computer Vision (ICCV), pp. 1026–1034, 2015. doi: 10.1109/ICCV.2015.123.</p>
+<p class="reference">Hollmann, N., Müller, S., Eggensperger, K., and Hutter, F. TabPFN：在一秒内解决小型表格分类问题的 Transformer. arXiv 预印本 arXiv:2207.01848, 2022. doi: 10.48550/arXiv.2207.01848.</p>
+<p class="reference">Hollmann, N., Müller, S., Purucker, L. O., Schirrmeister, R. T., Hutter, F., 等。 利用表格基础模型在小数据上进行准确预测. Nature, 637:319–326, 2025. doi: 10.1038/s41586-024-08328-6.</p>
+<p class="reference">Huang, X., Khetan, A., Cvitkovic, M., and Karnin, Z. TabTransformer：使用上下文 embeddings 的表格数据建模. arXiv 预印本 arXiv:2012.06678, 2020.</p>
+<p class="reference">Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q., and Liu, T.-Y. LightGBM：高效的 gradient 提升决策树. In Advances in Neural</p><footer>原文第 9 页</footer></section><section class="page" id="page-10"><p class="reference">（接上页 Ke 等的条目。）Information Processing Systems 30（NeurIPS），第 3149–3157 页。2017。</p>
+<p class="reference">Majmundar, K., Goyal, S., Netrapalli, P., and Jain, P. MET：表格数据的掩码编码. arXiv 预印本 arXiv:2206.08564, 2022.</p>
+<p class="reference">McElfresh, D., Khandagale, S., Valverde, J., Prasad C, V., Ramakrishnan, G., Goldblum, M., and White, C. 神经网络何时在表格数据上优于提升树？ Advances in Neural Information Processing Systems, 36: 76336–76369, 2023.</p>
+<p class="reference">Park, J. and Sandberg, I. W. 利用径向基函数网络进行通用近似. Neural Computation, 3 (2):246–257, 1991.</p>
+<p class="reference">Prokhorenkova, L., Gusev, G., Vorobev, A., Dorogush, A. V., and Gulin, A. CatBoost：包含类别特征的无偏提升. Advances in neural information processing systems, 31, 2018.</p>
+<p class="reference">Qu, J., Holzmüller, D., Varoquaux, G., and Le Morvan, M. TabICL：面向大数据上下文学习的表格基础模型. In Proceedings of the 42nd International Conference on Machine Learning (ICML), 2025. arXiv:2502.05564, DOI:10.48550/arXiv.2502.05564.</p>
+<p class="reference">Rahimi, A. and Recht, B. 大规模核机器的随机特征. In Advances in Neural Information Processing Systems 20 (NeurIPS), pp. 1177–1184, 2007.</p>
+<p class="reference">Rasmussen, C. E. and Williams, C. K. I. 面向机器学习的 Gaussian 过程. MIT Press, 2006.</p>
+<p class="reference">Scholkopf, B. and Smola, A. J. 核学习：支持向量机、正则化、优化及其他. MIT press, 2018.</p>
+<p class="reference">Somepalli, G., Goldblum, M., Schwarzschild, A., Bruss, C. B., and Goldstein, T. SAINT：通过行 attention 和对比预训练改进表格数据的神经网络. arXiv 预印本 arXiv:2106.01342, 2021.</p>
+<p class="reference">Ye, H.-J., Liu, S.-Y., and Chao, W.-L. 深入审视 TabPFN v2：优势、局限与扩展. arXiv e-prints, pp. arXiv–2502, 2025.</p>
+<p class="reference">Yoon, J., Zhang, Y., Jordon, J., and van der Schaar, M. VIME：将自监督与半监督学习的成功扩展至表格领域. In Advances in Neural Information Processing Systems 33 (NeurIPS), 2020.</p>
+<p class="reference">Zhang, X., Ren, G., Yu, H., Yuan, H., Wang, H., Li, J., Wu, J., Mo, L., Mao, L., Hao, M., 等。 LimiX：释放面向通用智能的结构化数据建模能力. arXiv 预印本 arXiv:2509.03505, 2025.</p>
+<p class="reference">Zhang, X., Maddix Robinson, D., Yin, J., Erickson, N., Ansari, A. F., Han, B., Zhang, S., Akoglu, L., Faloutsos, C., Mahoney, M., 等。 Mitra：用于增强表格基础模型的混合合成先验. Advances in neural information processing systems, 38:15795–15840, 2026.</p><footer>原文第 10 页</footer></section><section class="page" id="page-11"><h2>A. 理论分析的证明</h2>
+<p><strong>定理 3.1 的证明。</strong>embedding 模块包含两个 \(p\) 维参数向量 \(\alpha,\beta\in\mathbb{R}^{p\times1}\)。因此，\(x_i\) 被映射为 \(z_i^T=x_i\alpha^T+\beta^T\)，输入 embedding 矩阵为 \(z^T=[z_1,z_2,\ldots,z_n]^T\in\mathbb{R}^{n\times p}\)。该矩阵的秩显然至多为 2，因为它的所有行向量都能写成 \(\alpha\) 与 \(\beta\) 的线性组合。</p>
+<p>自 attention 的参数矩阵为 \(W_Q,W_K,W_V\in\mathbb{R}^{p\times p}\)。因此，查询 \(x_i\) 对 \(x_j\) 的 attention 得分为：</p>
+<div class="equation">\[\begin{aligned}a_{ij}&=(x_i\alpha^T+\beta^T)W_Q\big((x_j\alpha^T+\beta^T)W_K\big)^T\\&=x_ix_j\alpha^TW_QW_K^T\alpha+x_i\alpha^TW_QW_K^T\beta+x_j\beta^TW_QW_K^T\alpha+\beta^TW_QW_K^T\beta\\&=\lambda_1x_ix_j+\lambda_2x_i+\lambda_3x_j+\lambda_4.\end{aligned}\tag{11}\]</div>
+<p>其中，\(\lambda_1=\alpha^TW_QW_K^T\alpha\)、\(\lambda_2=\alpha^TW_QW_K^T\beta\)、\(\lambda_3=\beta^TW_QW_K^T\alpha\)、\(\lambda_4=\beta^TW_QW_K^T\beta\)。于是有：</p>
+<div class="equation">\[\begin{aligned}\hat z_i^T&=\sum_{j=1}^n\frac{\exp(a_{ij}/\sqrt p)}{\sum_{j=1}^n\exp(a_{ij}/\sqrt p)}\cdot(x_j\alpha^T+\beta^T)W_V\\&=\left(\sum_{j=1}^n\frac{x_j\exp(a_{ij}/\sqrt p)}{\sum_{j=1}^n\exp(a_{ij}/\sqrt p)}\right)\alpha_V^T+\beta_V^T.\end{aligned}\tag{12}\]</div>
+<p>其中，\(\alpha_V^T=\alpha^TW_V\)，\(\beta_V^T=\beta^TW_V\)。可以看到，\(z_i\) 同样可以写成两个向量 \(\alpha_V\) 和 \(\beta_V\) 的线性组合，因此输出的秩至多为 2。对于多头 attention，每个头的计算与标准自 attention 完全相同。用 \(W_O^{(h)}\) 表示头 \(h\) 的输出投影矩阵，输出投影为：</p>
+<div class="equation">\[\begin{aligned}\hat z_i&=\sum_{h=1}^H\hat z_{i,h}^TW_O^{(h)}=\sum_{h=1}^H(\mu_{i,h}\alpha_V^{(h)}+\beta_V^{(h)})^TW_O^{(h)}\\&=\sum_{h=1}^H(\mu_{i,h}\alpha_O^{(h)}+\beta_O^{(h)})^T\\&=\sum_{h=1}^H(\mu_{i,h}\alpha_O^{(h)})^T+\beta_O^T.\end{aligned}\tag{13}\]</div>
+<p>因此，\(\hat z_i\) 可以写成 \(H+1\) 个向量的线性组合，这意味着输出的秩至多为 \(H+1\)。</p>
+<h2>B. 标准标量 embedding 下的取值敏感性坍塌</h2>
+<p>本节解释常见 TFM 中的一种结构性低效：即使存在特征标识／位置信号，标准标量 token 化仍通过维度极低的通道注入每个取值 \(x_{i,j}\)。这会导致早期层对取值的敏感性较弱、冗余较高，使扩大宽度 \(d\) 的效率低下。我们将这一瓶颈形式化，并推导由机制出发的诊断指标；我们提出的 RaBEL tokenizer 和重新排序的双向 attention 正是为解决这些问题而设计的。</p>
+<h3>B.1. 问题设定与符号</h3>
+<p>令 \(X\in\mathbb{R}^{N\times D}\) 表示包含 \(N\) 个样本（行）和 \(D\) 个特征（列）的表格数据集。用 \(x_{i,j}\) 表示样本 \(i\)、特征 \(j\) 的标量值。我们的目标是把每个单元格 \(x_{i,j}\) 映射为 embedding \(e_{i,j}\in\mathbb{R}^d\)，并将其输入沿样本轴和特征轴执行双向 attention 的 transformer。我们用 \(E\in\mathbb{R}^{N\times D\times d}\) 表示完整的单元格 embedding 张量，用 \(L\) 表示骨干网络中的 attention 模块数。</p>
+<p><strong>仅依赖特征的信号（ID／位置）。</strong>许多 TFM 会添加一个只依赖特征索引 \(j\) 的可学习向量（特征 ID、位置信号等）。我们引入一个仅依赖特征的辅助向量 \(a_j\in\mathbb{R}^d\)（若不存在，则令 \(a_j\equiv0\)）。关键在于，\(a_j\) 不包含任何关于取值 \(x_{i,j}\) 的信息。</p>
+<footer>原文第 11 页</footer></section><section class="page" id="page-12"><h3>B.2. 基线：仿射标量 token 化意味着一维取值通道</h3>
+<p>我们分析数值单元格广泛采用的一种基线：直接线性投影（通常随后使用 LayerNorm），可选地再加上仅依赖特征的信号。具体定义如下：</p>
+<div class="equation">\[e_{i,j}^{\mathrm{lin}}=\mathrm{LN}(W_{\mathrm{lin}}x_{i,j}+b_{\mathrm{lin}})+a_j,\quad W_{\mathrm{lin}}\in\mathbb{R}^{d\times1},\ b_{\mathrm{lin}}\in\mathbb{R}^d.\tag{14}\]</div>
+<p>令 \(E^{\mathrm{lin}}\in\mathbb{R}^{N\times D\times d}\) 表示其 \((i,j)\) 项为 \(e_{i,j}^{\mathrm{lin}}\) 的张量。</p>
+<p>关键并非 ID“毫无作用”——它们能够区分列——而是它们无法增加取值进入模型时所经过通道的内在维度。理解这一点的正确方式，是去除仅依赖特征的偏移，并分离特征内部的取值变化。</p>
+<p><strong>特征内部中心化。</strong>对于任意 embedding 张量 \(E\in\mathbb{R}^{N\times D\times d}\)，将各样本的 embedding 堆叠，定义特征 \(j\) 的切片 \(E_{:,j,:}\in\mathbb{R}^{N\times d}\)。定义逐特征均值与中心化 embedding：</p>
+<div class="equation">\[\bar e_j=\frac1N\sum_{i=1}^Ne_{i,j}\in\mathbb{R}^d,\qquad\tilde e_{i,j}=e_{i,j}-\bar e_j,\qquad\tilde E_j\in\mathbb{R}^{N\times d}:(\tilde E_j)_{i,:}=\tilde e_{i,j}^{\top}.\tag{15}\]</div>
+<p>根据构造，任何仅依赖特征的向量 \(a_j\) 都会在 \(\tilde e_{i,j}\) 中抵消。</p>
+<p><strong>有效秩。</strong>对于奇异值为 \(\{s_k\}\) 的矩阵 \(A\)，定义有效秩：</p>
+<div class="equation">\[r_{\mathrm{eff}}(A)=\exp\left(-\sum_kp_k\log p_k\right),\qquad p_k=\frac{s_k}{\sum_\ell s_\ell}.\tag{16}\]</div>
+<p>我们用 \(r_{\mathrm{eff}}(\tilde E_j)\) 量化特征 \(j\) 内由取值引起的变化的维度。</p>
+<p><strong>定理 B.1（ID 不会增加特征内部取值维度）。</strong>考虑基线 tokenizer：</p>
+<div class="equation">\[e_{i,j}^{\mathrm{lin}}=\mathrm{LN}(W_{\mathrm{lin}}x_{i,j}+b_{\mathrm{lin}})+a_j,\quad W_{\mathrm{lin}}\in\mathbb{R}^{d\times1},\ b_{\mathrm{lin}}\in\mathbb{R}^d,\ a_j\in\mathbb{R}^d,\tag{17}\]</div>
+<p>并定义 LayerNorm 之前的向量：</p>
+<div class="equation">\[z_{i,j}^{\mathrm{lin}}=W_{\mathrm{lin}}x_{i,j}+b_{\mathrm{lin}}\in\mathbb{R}^d.\tag{18}\]</div>
+<p>对于任意特征 \(j\)，将 \(\{z_{i,j}^{\mathrm{lin}}\}_{i=1}^N\) 沿样本中心化，得到 \(\tilde Z_j^{\mathrm{lin}}\in\mathbb{R}^{N\times d}\)：</p>
+<div class="equation">\[(\tilde Z_j^{\mathrm{lin}})_{i,:}=\left(z_{i,j}^{\mathrm{lin}}-\frac1N\sum_{i'=1}^Nz_{i',j}^{\mathrm{lin}}\right)^{\top}.\tag{19}\]</div>
+<p>则 \(\mathrm{rank}(\tilde Z_j^{\mathrm{lin}})\leq1\)。等价地，对于任意 \(i,i'\)，</p>
+<div class="equation">\[z_{i,j}^{\mathrm{lin}}-z_{i',j}^{\mathrm{lin}}=W_{\mathrm{lin}}(x_{i,j}-x_{i',j})\in\mathrm{span}(W_{\mathrm{lin}}),\tag{20}\]</div>
+<p>并且，任何加性的、仅依赖特征的向量 \(a_j\) 都会在沿 \(i\) 的特征内部中心化中精确抵消。</p>
+<p><strong>证明。</strong>固定一个特征索引 \(j\in[D]\)。我们证明三个结论：（i）\(z_{i,j}^{\mathrm{lin}}\) 的显式中心化形式；（ii）秩上界 \(\mathrm{rank}(\tilde Z_j^{\mathrm{lin}})\leq1\)；（iii）仅依赖特征的偏移 \(a_j\) 在特征内部中心化中的抵消。</p>
+<p>根据定义（18），</p>
+<div class="equation">\[\frac1N\sum_{i'=1}^Nz_{i',j}^{\mathrm{lin}}=\frac1N\sum_{i'=1}^N(W_{\mathrm{lin}}x_{i',j}+b_{\mathrm{lin}})=W_{\mathrm{lin}}\frac1N\sum_{i'=1}^Nx_{i',j}+b_{\mathrm{lin}}.\]</div>
+<p>定义特征 \(j\)（沿样本）的经验均值为：</p>
+<div class="equation">\[\bar x_j=\frac1N\sum_{i=1}^Nx_{i,j}.\tag{21}\]</div>
+<footer>原文第 12 页</footer></section><section class="page" id="page-13"><p>于是，\(\{z_{i,j}^{\mathrm{lin}}\}\) 的特征内部均值为：</p>
+<div class="equation">\[\bar z_j\triangleq\frac1N\sum_{i=1}^Nz_{i,j}^{\mathrm{lin}}=W_{\mathrm{lin}}\bar x_j+b_{\mathrm{lin}}.\tag{22}\]</div>
+<p>用（18）减去（22），对于每个 \(i\in[N]\)，得到：</p>
+<div class="equation">\[z_{i,j}^{\mathrm{lin}}-\bar z_j=(W_{\mathrm{lin}}x_{i,j}+b_{\mathrm{lin}})-(W_{\mathrm{lin}}\bar x_j+b_{\mathrm{lin}})=W_{\mathrm{lin}}(x_{i,j}-\bar x_j).\tag{23}\]</div>
+<p>因此，每个中心化向量 \(z_{i,j}^{\mathrm{lin}}-\bar z_j\) 都位于一维子空间 \(\mathrm{span}(W_{\mathrm{lin}})\subseteq\mathbb{R}^d\) 中。令 \(w\triangleq W_{\mathrm{lin}}\in\mathbb{R}^{d\times1}\)，并定义中心化标量向量：</p>
+<div class="equation">\[v_j\triangleq(x_{1,j}-\bar x_j,x_{2,j}-\bar x_j,\ldots,x_{N,j}-\bar x_j)^{\top}\in\mathbb{R}^N.\tag{24}\]</div>
+<p>公式（23）意味着，\(\tilde Z_j^{\mathrm{lin}}\) 的第 \(i\) 行等于：</p>
+<div class="equation">\[(\tilde Z_j^{\mathrm{lin}})_{i,:}=(z_{i,j}^{\mathrm{lin}}-\bar z_j)^{\top}=(w(x_{i,j}-\bar x_j))^{\top}=(x_{i,j}-\bar x_j)w^{\top}.\]</div>
+<p>沿 \(i=1,\ldots,N\) 堆叠，可得精确的矩阵分解：</p>
+<div class="equation">\[\tilde Z_j^{\mathrm{lin}}=v_jw^{\top}\in\mathbb{R}^{N\times d}.\tag{25}\]</div>
+<p>两个向量的外积的秩至多为 1（如果任意一个向量为零，则秩为 0）。因此，</p>
+<div class="equation">\[\mathrm{rank}(\tilde Z_j^{\mathrm{lin}})=\mathrm{rank}(v_jw^{\top})\leq1,\]</div>
+<p>这就证明了关于秩的结论。</p>
+<p>对于任意 \(i,i'\)，</p>
+<div class="equation">\[z_{i,j}^{\mathrm{lin}}-z_{i',j}^{\mathrm{lin}}=(wx_{i,j}+b_{\mathrm{lin}})-(wx_{i',j}+b_{\mathrm{lin}})=w(x_{i,j}-x_{i',j})\in\mathrm{span}(w),\]</div>
+<p>这正是（20）。考虑任意形式为 \(e_{i,j}=g_{i,j}+a_j\) 的 embedding，其中 \(a_j\) 仅依赖 \(j\)（不依赖 \(i\)），而 \(g_{i,j}\in\mathbb{R}^d\) 可以是任意向量（例如（17）中的 \(g_{i,j}=\mathrm{LN}(z_{i,j}^{\mathrm{lin}})\)）。令：</p>
+<div class="equation">\[\bar e_j=\frac1N\sum_{i=1}^Ne_{i,j}=\frac1N\sum_{i=1}^N(g_{i,j}+a_j)=\frac1N\sum_{i=1}^Ng_{i,j}+a_j.\]</div>
+<p>则中心化 embedding 满足：</p>
+<div class="equation">\[e_{i,j}-\bar e_j=(g_{i,j}+a_j)-\left(\frac1N\sum_{i'=1}^Ng_{i',j}+a_j\right)=g_{i,j}-\frac1N\sum_{i'=1}^Ng_{i',j},\]</div>
+<p>所以 \(a_j\) 精确抵消。将这一结论应用于（17），可知任何特征 ID／位置向量 \(a_j\) 都不会对沿 \(i\) 的特征内部变化产生贡献。</p>
+<p><strong>解释（“取值瓶颈”）。</strong>定理 B.1 表明，在归一化之前，每个特征通过一维通道注入取值变化，与宽度 \(d\) 无关。ID／位置信号能够区分特征（通过使均值沿 \(j\) 偏移），但无法增加特征内部取值的自由度，因为它们不依赖 \(x_{i,j}\)，并在（15）中消失。这预示着较低的 \(r_{\mathrm{eff}}(\tilde E_j^{\mathrm{lin}})\) 和高度相关的早期激活。</p>
+<p><strong>LayerNorm 不会消除瓶颈，而会在局部重塑它。</strong>LayerNorm 是非线性的，但在一个 batch 周围的局部区域可以进行一阶近似。令 \(J_{\mathrm{LN}}(z)\in\mathbb{R}^{d\times d}\) 表示 LN 在 \(z\) 处的 Jacobian。对于 \(x_{i,j}\) 的微小扰动，</p>
+<div class="equation">\[\delta\mathrm{LN}(z_{i,j}^{\mathrm{lin}})\approx J_{\mathrm{LN}}(z_{i,j}^{\mathrm{lin}})W_{\mathrm{lin}}\,\delta x_{i,j}.\tag{26}\]</div>
+<p>因此，局部由取值引起的切向方向仍被限制在 \(J_{\mathrm{LN}}(\cdot)W_{\mathrm{lin}}\) 的张成空间中，相对于 \(d\) 而言，该空间通常维度较低。简言之，增大宽度可能使冗余的增长快于取值敏感性的增长。</p>
+<footer>原文第 13 页</footer></section><section class="page" id="page-14"><h3>B.3. 对浅层模块的影响：低维的取值敏感性</h3>
+<p>令 \(H^{(\ell)}\in\mathbb{R}^{N\times D\times d}\) 表示经过 \(\ell\in\{0,1,\ldots,L\}\) 个 attention 模块之后的隐藏张量，其中 \(H^{(0)}=E\)。为衡量特征 \(j\) 能在多少个独立方向上影响表示，我们定义取值敏感性 Jacobian。</p>
+<p><strong>取值敏感性 Jacobian。</strong>对于固定特征 \(j\)，定义：</p>
+<div class="equation">\[J_j^{(\ell)}=\left[\frac{\partial\mathrm{vec}(H^{(\ell)})}{\partial x_{1,j}},\frac{\partial\mathrm{vec}(H^{(\ell)})}{\partial x_{2,j}},\ldots,\frac{\partial\mathrm{vec}(H^{(\ell)})}{\partial x_{N,j}}\right]\in\mathbb{R}^{(NDd)\times N},\tag{27}\]</div>
+<p>并使用 \(r_{\mathrm{eff}}(J_j^{(\ell)})\) 作为取值敏感性的诊断指标。</p>
+<p><strong>命题 B.2（仿射 token 化限制局部取值敏感性（局部线性化））。</strong>考虑一个数值特征 \(j\)，令标量 tokenizer 为：</p>
+<div class="equation">\[e_{i,j}=\mathrm{LN}(wx_{i,j}+b)+a_j,\]</div>
+<p>其中 \(w,b,a_j\in\mathbb{R}^d\)，LayerNorm 使用固定的增益和偏置参数。</p>
+<p>现在考虑一个具有 \(H\) 个 attention 头的第一层样本 attention 模块，它作用于序列：</p>
+<div class="equation">\[\{e_{1,j},\ldots,e_{N,j}\}.\]</div>
+<p>对于任意输出位置 \(t\)，定义输出 token 相对于 \(N\) 个样本中特征 \(j\) 的取值的 Jacobian：</p>
+<div class="equation">\[K_{t,j}=\left[\frac{\partial h^{(1)}_{t,j,:}}{\partial x_{1,j}},\ldots,\frac{\partial h^{(1)}_{t,j,:}}{\partial x_{N,j}}\right]\in\mathbb{R}^{d\times N}.\]</div>
+<p>则存在一个线性子空间 \(U_j\subseteq\mathbb{R}^d\)，与 \(t\) 及具体扰动方向无关，使得：</p>
+<div class="equation">\[\dim(U_j)\leq2H,\]</div>
+<p>并且：</p>
+<div class="equation">\[\frac{\partial h^{(1)}_{t,j,:}}{\partial x_{k,j}}\in U_j,\qquad\forall t,k\in\{1,\ldots,N\}.\]</div>
+<p>因此，</p>
+<div class="equation">\[\mathrm{rank}(K_{t,j})\leq2H\qquad\text{对于每个 }t.\]</div>
+<p>如果将所有输出位置 \(t=1,\ldots,N\) 的 Jacobian 堆叠，则得到完整的第一层取值敏感性 Jacobian：</p>
+<div class="equation">\[J_j^{\mathrm{attn}}\in\mathbb{R}^{Nd\times N},\]</div>
+<p>它满足：</p>
+<div class="equation">\[\mathrm{rank}(J_j^{\mathrm{attn}})\leq2HN.\]</div>
+<p>此外，若在这个 attention 子层之后接入任意在工作点进行线性化的模块，例如 FFN 的一阶近似或特征混合映射 \(L\)，则：</p>
+<div class="equation">\[\mathrm{rank}(LJ_j^{\mathrm{attn}})\leq\mathrm{rank}(J_j^{\mathrm{attn}})\leq2HN.\]</div>
+<p>尤其是，这一上界与隐藏宽度 \(d\) 无关。因此，仅增大宽度不会自动增加浅层中可用的取值敏感方向数。</p>
+<footer>原文第 14 页</footer></section><section class="page" id="page-15"><p><strong>证明。步骤 1：tokenizer 将依赖取值的变化限制在至多二维的仿射子空间内。</strong></p>
+<p>令：</p>
+<div class="equation">\[z(x)=wx+b.\]</div>
+<p>记：</p>
+<div class="equation">\[\bar w=\frac1d\mathbf1^{\top}w,\qquad\bar b=\frac1d\mathbf1^{\top}b,\]</div>
+<p>并定义中心化向量：</p>
+<div class="equation">\[u=w-\bar w\mathbf1,\qquad v=b-\bar b\mathbf1.\]</div>
+<p>那么，中心化的归一化前 token 为：</p>
+<div class="equation">\[z(x)-\frac1d(\mathbf1^{\top}z(x))\mathbf1=xu+v.\]</div>
+<p>因此，LayerNorm 可以写成：</p>
+<div class="equation">\[\mathrm{LN}(z(x))=\beta+\frac{D_\gamma(xu+v)}{\sigma(x)},\]</div>
+<p>其中 \(D_\gamma=\mathrm{diag}(\gamma)\)，并且：</p>
+<div class="equation">\[\sigma(x)=\sqrt{\frac1d\|xu+v\|_2^2+\varepsilon}.\]</div>
+<p>定义：</p>
+<div class="equation">\[u'=D_\gamma u,\qquad v'=D_\gamma v.\]</div>
+<p>则：</p>
+<div class="equation">\[e_{i,j}=a_j+\beta+\alpha_i u'+\eta_i v',\]</div>
+<p>其中标量 \(\alpha_i,\eta_i\) 依赖 \(x_{i,j}\)。因此，对于固定特征 \(j\)，所有 token \(\{e_{i,j}\}_{i=1}^N\) 都位于仿射子空间：</p>
+<div class="equation">\[c_j+\mathrm{span}\{u',v'\},\qquad c_j:=a_j+\beta.\]</div>
+<p>因此，tokenizer 输出中依赖取值的部分被限制在一个维度至多为 2 的子空间内。</p>
+<p>这已经表明，特征标识 \(a_j\) 不会扩展取值敏感子空间：它只会改变仿射偏移。</p>
+<p><strong>步骤 2：每个 attention 头保持这一低维结构。</strong></p>
+<p>考虑一个 attention 头 \(h\)。令：</p>
+<div class="equation">\[p_h=W_V^{(h)}u',\qquad q_h=W_V^{(h)}v',\qquad c_h=W_V^{(h)}c_j.\]</div>
+<p>则 value 向量具有如下形式：</p>
+<div class="equation">\[V_i^{(h)}=W_V^{(h)}e_{i,j}=c_h+\alpha_i p_h+\eta_i q_h.\]</div>
+<p>所以，这个头的所有 value 向量都位于仿射子空间：</p>
+<div class="equation">\[c_h+\mathrm{span}\{p_h,q_h\}.\]</div>
+<p>头 \(h\) 在位置 \(t\) 的输出为：</p>
+<div class="equation">\[o_t^{(h)}=\sum_{s=1}^N\omega_{ts}^{(h)}V_s^{(h)},\qquad\sum_{s=1}^N\omega_{ts}^{(h)}=1.\]</div>
+<p>代入 \(V_s^{(h)}\) 的表达式，得到：</p>
+<div class="equation">\[o_t^{(h)}=c_h+\left(\sum_{s=1}^N\omega_{ts}^{(h)}\alpha_s\right)p_h+\left(\sum_{s=1}^N\omega_{ts}^{(h)}\eta_s\right)q_h.\]</div>
+<footer>原文第 15 页</footer></section><section class="page" id="page-16"><p>因此，对于每个 \(t\)，头 \(h\) 的输出仍位于同一个仿射子空间：</p>
+<div class="equation">\[c_h+\mathrm{span}\{p_h,q_h\}.\]</div>
+<p>拼接并进行输出投影后，完整的多头输出可以写成：</p>
+<div class="equation">\[h^{(1)}_{t,j,:}=c_{\mathrm{out}}+\sum_{h=1}^HA_t^{(h)}r_h+\sum_{h=1}^HB_t^{(h)}s_h,\]</div>
+<p>其中：</p>
+<div class="equation">\[r_h=W_O^{(h)}p_h,\qquad s_h=W_O^{(h)}q_h,\]</div>
+<p>而 \(A_t^{(h)},B_t^{(h)}\) 是依赖输入的标量。</p>
+<p>因此，所有输出都属于仿射子空间：</p>
+<div class="equation">\[c_{\mathrm{out}}+U_j,\qquad U_j:=\mathrm{span}\{r_1,s_1,\ldots,r_H,s_H\},\]</div>
+<p>其中：</p>
+<div class="equation">\[\dim(U_j)\leq2H.\]</div>
+<p><strong>步骤 3：Jacobian 的列必须位于该子空间中。</strong>由于 \(h^{(1)}_{t,j,:}\) 始终属于仿射空间 \(c_{\mathrm{out}}+U_j\)，\(h^{(1)}_{t,j,:}\) 相对于输入取值 \(x_{k,j}\) 的任意导数，必须属于相应的方向空间 \(U_j\)。因此：</p>
+<div class="equation">\[\frac{\partial h^{(1)}_{t,j,:}}{\partial x_{k,j}}\in U_j,\qquad\forall t,k.\]</div>
+<p>这立即意味着：</p>
+<div class="equation">\[\mathrm{rank}(K_{t,j})\leq\dim(U_j)\leq2H.\]</div>
+<p>沿所有输出位置 \(t\) 堆叠，可得上界：</p>
+<div class="equation">\[\mathrm{rank}(J_j^{\mathrm{attn}})\leq2HN.\]</div>
+<p>最后，与任意线性化的下游映射 \(L\) 复合不会增加秩：</p>
+<div class="equation">\[\mathrm{rank}(LJ_j^{\mathrm{attn}})\leq\mathrm{rank}(J_j^{\mathrm{attn}})\leq2HN.\]</div>
+<p><strong>解释。</strong>该命题形式化了低取值敏感性背后的关键观点：</p>
+<ul><li>标准仿射标量 tokenizer 通过极少数方向注入一个数值特征的取值；</li><li>自 attention 能够混合样本，但无法凭空从如此狭窄的输入通道中创造大量新的取值敏感方向；</li><li>因此，即使隐藏宽度 \(d\) 很大，浅层相对于特征取值的 Jacobian 仍然保持低秩。</li></ul>
+<p>因此，仅仅加宽模型不能消除这一瓶颈。要改善取值敏感性，必须丰富依赖取值的输入几何本身，而不能只增加隐藏维度。</p>
+<p><strong>推论。</strong>命题 B.2 将定理 B.1 与深层计算联系起来：虽然 attention 是非线性的，但在（14）下，单个特征的取值影响浅层表示时所经过的切空间仍是低维的。这为 TFM 中常见的两种实证现象提供了机制层面的解释：（i）早期激活具有低有效秩（高冗余）；（ii）除非 tokenizer 扩展内在的取值敏感子空间，否则增大 \(d\) 的收益会递减。</p>
+<footer>原文第 16 页</footer></section><section class="page" id="page-17"><h3>B.4. RaBEL 如何打破瓶颈</h3>
+<p>RaBEL 用紧凑的径向基展开 \(\phi_j(x_{i,j})\in\mathbb{R}^M\) 替换（14）中的标量恒等映射，再投影到 \(\mathbb{R}^d\)：</p>
+<div class="equation">\[e_{i,j}=\mathrm{LN}(W_{\mathrm{rbf}}\phi_j(x_{i,j})+b_{\mathrm{rbf}})\in\mathbb{R}^d.\tag{28}\]</div>
+<p>LN 之前的项 \(W_{\mathrm{rbf}}\phi_j(x_{i,j})\) 可以随着 \(x_{i,j}\) 的变化沿多个方向变化，使特征内部的取值变化在到达骨干网络之前就具有明显更高的有效秩。这正是所期望的机制：在 tokenizer 处注入局部非线性，让早期层能够感知取值，而无需依靠深度来产生曲率。</p>
+<h3>B.5. 设计启示</h3>
+<p>ID／位置信号有助于模型识别一个 token 来自哪个特征，但不会增加取值进入网络时的自由度。在标准仿射 token 化下，特征内部的取值变化本质上是低维的（定理 B.1），导致浅层的局部取值敏感性低维（命题 B.2），并产生大量冗余。第 4 节引入的 RaBEL 和重新排序的双向 attention 模块，旨在解决相互补充的失效模式：RaBEL 在 tokenizer 处扩展取值敏感子空间，重新排序的模块则改善条件性，并将跨样本计算路由到用于预测的表示中。</p>
+<h2>C. 更多实验细节与结果</h2>
+<h3>C.1. 基线设置</h3>
+<p>所有基线结果均遵循 TALENT 基准协议。每个数据集按 64/16/20 划分为训练／验证／测试集；使用 Optuna 在验证集上调优超参数（每个方法–数据集组合进行 100 次试验），分类任务根据验证准确率早停，回归任务根据 RMSE 早停。随后，以选定的配置重新训练，并使用 15 个随机种子评估，最终报告种子平均结果。需要强调的是，TALENT 使用各方法专属的搜索空间，而非一个共享搜索空间。对于 TabPFN-v2 等基础模型，我们在完整数据集上进行评估。我们还严格统一各方法的预处理和集成数量，其余部分采用各方法的标准设置。因此，这些比较受到控制且可复现。</p>
+<h3>C.2. 基于 MLP 的实验的数据集统计</h3>
+<p>我们收集了分类和回归任务的数据集，并汇总其关键统计信息，包括训练样本数量、总特征数、类别特征数、类别数量（针对分类数据集）和缺失值比例。这些结果见表 7。</p>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-17-486-52.png" alt="表 7：数据集统计、指标释义及数据集缩写，原文保留" width="1479" height="462" loading="lazy" decoding="async"></figure>
+<h3>C.3. RaBEL 消融实验</h3>
+<p>我们进行了全面的消融研究，以探究 RaBEL 关键超参数和设计选择对模型性能的影响（表 8–13）。在模型容量方面，我们发现 embedding 维度为 32 时可实现最优权衡（表 8）；增加核数量则持续改善表示能力，在（接续下页。）</p>
+<footer>原文第 17 页</footer></section><section class="page" id="page-18"><p>（接上页。）64 个核时达到峰值（表 9）。在核配置方面，采用固定带宽 \(\sigma=1.0\) 和均匀分布的核最为有效，优于可学习的 \(\sigma\) 和随机分布（表 10、12、13）。尤为突出的是，初始化策略起到关键作用；如表 11 所示，与标准 Xavier（Glorot &amp; Bengio, 2010）或 Kaiming（He et al., 2015）初始化相比，正交初始化带来显著的性能提升（AUC 达到 89.03%），凸显了指数 embedding 中正交性的重要性。</p>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-18-148-82.png" alt="表 8：token embedding 维度的影响及原文表注" width="540" height="213" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-18-148-342.png" alt="表 9：核数量的影响及原文表注" width="492" height="213" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-18-225-107.png" alt="表 10：σ 取值的影响及原文表注" width="390" height="216" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-18-225-340.png" alt="表 11：指数 embedding 初始化方法及原文表注" width="507" height="216" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-18-303-104.png" alt="表 12：核分布形式的影响及原文表注" width="414" height="186" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-18-303-340.png" alt="表 13：可学习与固定 σ 的比较及原文表注" width="510" height="186" loading="lazy" decoding="async"></figure>
+<h3>C.4. 与 TabPFN-v2.5 的针对性比较</h3>
+<p>我们的主要实验在 2025 年 9 月开展，LimiX-2M 于 2025 年 10 月发布。当时，TabPFN-v2.5（Grinsztajn et al., 2026）尚未公开。TabPFN-v2.5 的技术报告及模型随后于 2025 年 11 月发布。因此，正文中的主要比较集中于开展主要实验时已公开的表格基础模型基线，包括 TabPFN-v2 和 TabICL。</p>
+<p>在 TabPFN-v2.5 公开之后，为回应审稿人对这一新近基线的关注，我们在相同评估协议下，在 BCCO 基准上进行了一项额外的针对性比较。该实验旨在进行发布后的合理性核查，而非跨所有数据集和随机种子的完整重新评测。如表 14 所示，LimiX-2M 相对于 TabPFN-v2.5 仍然具有竞争力：它在 BCCO-CLS 上取得了更高的 AUC 和准确率，在 BCCO-REG 上取得了相当的回归性能。这些结果表明，本文主要的实证观察并不完全源于与较早的 PFN 基线比较。</p>
+<h3>C.5. 开源基准上的结果</h3>
+<p>本节提供本研究评估的全部开源基准的完整数据集层面性能指标。正文报告的是汇总性能，而下列表格展示 BCCO、OpenML-cc18、PFN、TabArena、TabZilla、TALENT 和 CTR23 基准上分类与回归任务的具体结果。这些详细分解结果可以支持对各个数据集上模型性能的细粒度分析。</p>
+<h3>C.6. 推理速度比较</h3>
+<p>我们使用一个包含 900 个样本和 60 个特征的合成分类数据集评估推理效率。所有结果均报告在 AMD EPYC 9354 CPU 和 NVIDIA RTX 4090 GPU 上运行三次的平均值（表 26）。LimiX-2M 在 GPU 上取得了 171.40 ms 的出色推理时间，比 TabPFN-v2 快约 2 倍，比 TabICL 快超过 10 倍。此外，在 CPU 环境中，相比 Mitra 等大型模型，LimiX-2M 仍保持显著领先，证实了其实际部署能力。</p>
+<footer>原文第 18 页</footer></section><section class="page" id="page-19"><figure><img class="fit-page" src="assets/images/limix-2m/page-19-63-172.png" alt="表 14：BCCO-CLS 和 BCCO-REG 上的性能比较及原文表注" width="759" height="291" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-19-174-122.png" alt="图 4：Baseline2M 在 TabArena 上取得最优表现的累积百分比及原文图注" width="1044" height="372" loading="lazy" decoding="async"></figure>
+<h3>C.7. 细粒度的数据集层面比较</h3>
+<p>我们在 TabArena（分类）和 CTR23（回归）基准上进行了细粒度的数据集层面比较，以评估每个模型取得领先性能的数据集数量。比较集合包括 TabPFN-v2、TabICL、Mitra、XGBoost 和 CatBoost 等成熟基线。</p>
+<p>需要说明的是，我们在这项可视化中排除了 LimiX。由于 LimiX 在绝大多数数据集上取得最先进的结果，将它纳入会掩盖 LimiX-2M 与其他基线之间的相对性能差异。</p>
+<p>如图 4 至图 7 所示，Baseline-2M 与 XGBoost 相当，但略逊于 TabICL 和 TabPFN-v2，而 LimiX-2M 始终超越这些基线。</p>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-19-443-122.png" alt="图 5：LimiX-2M 在 TabArena 上取得最优表现的累积百分比及原文图注" width="1044" height="375" loading="lazy" decoding="async"></figure>
+<footer>原文第 19 页</footer></section><section class="page" id="page-20"><figure><img class="fit-page" src="assets/images/limix-2m/page-20-87-52.png" alt="表 15：BCCO-CLS 分类结果，按平均 AUC 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1275" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-20-570-122.png" alt="图 6：Baseline2M 在 CTR23 上取得最优表现的累积百分比及原文图注" width="1044" height="372" loading="lazy" decoding="async"></figure>
+<footer>原文第 20 页</footer></section><section class="page" id="page-21"><figure><img class="fit-page" src="assets/images/limix-2m/page-21-87-52.png" alt="表 16：BCCO-REG 回归结果，按平均 R² 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1251" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-21-566-122.png" alt="图 7：LimiX-2M 在 CTR23 上取得最优表现的累积百分比及原文图注" width="1044" height="375" loading="lazy" decoding="async"></figure>
+<footer>原文第 21 页</footer></section><section class="page" id="page-22"><figure><img class="fit-page" src="assets/images/limix-2m/page-22-177-52.png" alt="表 17：CC18 分类结果，按平均 AUC 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1275" loading="lazy" decoding="async"></figure>
+<footer>原文第 22 页</footer></section><section class="page" id="page-23"><figure><img class="fit-page" src="assets/images/limix-2m/page-23-177-52.png" alt="表 18：PFN-CLS 分类结果，按平均 AUC 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1275" loading="lazy" decoding="async"></figure>
+<footer>原文第 23 页</footer></section><section class="page" id="page-24"><figure><img class="fit-page" src="assets/images/limix-2m/page-24-180-52.png" alt="表 19：PFN-REG 回归结果，按平均 R² 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1251" loading="lazy" decoding="async"></figure>
+<footer>原文第 24 页</footer></section><section class="page" id="page-25"><figure><img class="fit-page" src="assets/images/limix-2m/page-25-177-52.png" alt="表 20：TabArena-CLS 分类结果，按平均 AUC 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1275" loading="lazy" decoding="async"></figure>
+<footer>原文第 25 页</footer></section><section class="page" id="page-26"><figure><img class="fit-page" src="assets/images/limix-2m/page-26-180-52.png" alt="表 21：TabArena-REG 回归结果，按平均 R² 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1251" loading="lazy" decoding="async"></figure>
+<footer>原文第 26 页</footer></section><section class="page" id="page-27"><figure><img class="fit-page" src="assets/images/limix-2m/page-27-183-132.png" alt="表 22：TabZilla 分类结果及原文表注" width="999" height="1242" loading="lazy" decoding="async"></figure>
+<footer>原文第 27 页</footer></section><section class="page" id="page-28"><figure><img class="fit-page" src="assets/images/limix-2m/page-28-177-52.png" alt="表 23：TALENT-CLS 分类结果，按平均 AUC 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1275" loading="lazy" decoding="async"></figure>
+<footer>原文第 28 页</footer></section><section class="page" id="page-29"><figure><img class="fit-page" src="assets/images/limix-2m/page-29-180-52.png" alt="表 24：TALENT-REG 回归结果，按平均 R² 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1251" loading="lazy" decoding="async"></figure>
+<footer>原文第 29 页</footer></section><section class="page" id="page-30"><figure><img class="fit-page" src="assets/images/limix-2m/page-30-91-52.png" alt="表 25：CTR23 回归结果，按平均 R² 降序排列；基础模型参数量以蓝色标示，原文保留" width="1479" height="1251" loading="lazy" decoding="async"></figure>
+<figure><img class="fit-page" src="assets/images/limix-2m/page-30-571-52.png" alt="表 26：推理时间比较（毫秒），CPU 为 AMD EPYC 9354 32-Core Processor，GPU 为 NVIDIA GeForce RTX 4090；最佳结果加粗，原文保留" width="1479" height="345" loading="lazy" decoding="async"></figure>
+<footer>原文第 30 页</footer></section></body></html>
