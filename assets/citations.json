@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-11T14:32:24.312849+00:00",
+  "checkedAt": "2026-10-12T08:23:46.741976+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4019,
@@ -553,7 +553,7 @@
     "2601.22966": {
       "citationCount": 21,
       "url": "https://www.semanticscholar.org/paper/fa35ca3519cfdf5ce0085f4aa8b379e06ef23148",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:20:32.870048+00:00",
       "paperId": "fa35ca3519cfdf5ce0085f4aa8b379e06ef23148",
       "title": "A Unified View of Attention and Residual Sinks: Outlier-Driven Rescaling is Essential for Transformer Training",
       "externalIds": {
@@ -564,9 +564,9 @@
       }
     },
     "2602.02276": {
-      "citationCount": 434,
+      "citationCount": 435,
       "url": "https://www.semanticscholar.org/paper/e1c32d718ad38e17d66b1ffb91744a169b592be7",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:21:15.771939+00:00",
       "paperId": "e1c32d718ad38e17d66b1ffb91744a169b592be7",
       "title": "Kimi K2.5: Visual Agentic Intelligence",
       "externalIds": {
@@ -575,9 +575,9 @@
       }
     },
     "2602.15763": {
-      "citationCount": 537,
+      "citationCount": 539,
       "url": "https://www.semanticscholar.org/paper/e0db747ad65d72559e583ff92f729d68949e9daf",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:21:28.101955+00:00",
       "paperId": "e0db747ad65d72559e583ff92f729d68949e9daf",
       "title": "GLM-5: from Vibe Coding to Agentic Engineering",
       "externalIds": {
@@ -588,9 +588,9 @@
       }
     },
     "2603.00729": {
-      "citationCount": 79,
+      "citationCount": 80,
       "url": "https://www.semanticscholar.org/paper/630f18308e963f0c667a0bc7c698191ddf1f5e73",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:21:40.786787+00:00",
       "paperId": "630f18308e963f0c667a0bc7c698191ddf1f5e73",
       "title": "Qwen3-Coder-Next Technical Report",
       "externalIds": {
@@ -601,9 +601,9 @@
       }
     },
     "2603.15031": {
-      "citationCount": 67,
+      "citationCount": 69,
       "url": "https://www.semanticscholar.org/paper/101549ed507f18e10044d127c99a495bb176956f",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:22:46.406538+00:00",
       "paperId": "101549ed507f18e10044d127c99a495bb176956f",
       "title": "Attention Residuals",
       "externalIds": {
@@ -616,7 +616,7 @@
     "2603.19220": {
       "citationCount": 51,
       "url": "https://www.semanticscholar.org/paper/2a119aa94ea1f0b7a9f48fb2718eaa1f1f821bf8",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:22:48.872496+00:00",
       "paperId": "2a119aa94ea1f0b7a9f48fb2718eaa1f1f821bf8",
       "title": "Nemotron-Cascade 2: Post-Training LLMs with Cascade RL and Multi-Domain On-Policy Distillation",
       "externalIds": {
@@ -629,7 +629,7 @@
     "2604.12374": {
       "citationCount": 39,
       "url": "https://www.semanticscholar.org/paper/cd1f4580a1260e73bf73f438bd7afa247dd794ce",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:23:01.568907+00:00",
       "paperId": "cd1f4580a1260e73bf73f438bd7afa247dd794ce",
       "title": "Nemotron 3 Super: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning",
       "externalIds": {
@@ -640,7 +640,7 @@
     "2606.15079": {
       "citationCount": 6,
       "url": "https://www.semanticscholar.org/paper/5ef7aa7efaf62e28fe9402f4d31da8190257403f",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-12T08:23:46.741976+00:00",
       "paperId": "5ef7aa7efaf62e28fe9402f4d31da8190257403f",
       "title": "Ling and Ring 2.6 Technical Report: Efficient and Instant Agentic Intelligence at Trillion-Parameter Scale",
       "externalIds": {
@@ -839,9 +839,22 @@
         "ArXiv": "2306.11644",
         "CorpusId": 259203998
       }
+    },
+    "2606.04485": {
+      "citationCount": 9,
+      "url": "https://www.semanticscholar.org/paper/e2fb872aeae2587e804282e7c55396cb7d60ed38",
+      "checkedAt": "2026-10-12T08:23:44.498811+00:00",
+      "paperId": "e2fb872aeae2587e804282e7c55396cb7d60ed38",
+      "title": "LimiX-2M: Mitigating Low-Rank Collapse and Attention Bottlenecks in Tabular Foundation Models",
+      "externalIds": {
+        "ArXiv": "2606.04485",
+        "DBLP": "journals/corr/abs-2606-04485",
+        "DOI": "10.48550/arXiv.2606.04485",
+        "CorpusId": 288939604
+      }
     }
   },
-  "resumeFrom": "2601.22966",
-  "rateLimitedAt": "2026-10-11T14:33:36.983932+00:00",
-  "rateLimitedTitle": "A Unified View of Attention and Residual Sinks: Outlier-Driven Rescaling is Essential for Transformer Training"
+  "resumeFrom": "2606.19348",
+  "rateLimitedAt": "2026-10-12T08:24:49.351711+00:00",
+  "rateLimitedTitle": "DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence"
 }
