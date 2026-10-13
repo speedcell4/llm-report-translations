@@ -12,7 +12,7 @@
 <ul><li>对抗方能否通过微调 gpt-oss-120b，使其在生物与化学或网络领域达到 High 能力等级？我们模拟攻击者可能采取的行动，对 gpt-oss-120b 模型在这两个类别中进行了对抗性微调。OpenAI 的安全咨询小组（Safety Advisory Group，“SAG”）审查了这些测试，并得出结论：即便利用 OpenAI 业界领先的训练技术栈进行了充分的微调，gpt-oss-120b 也未在生物与化学风险或网络风险方面达到 High 能力等级。</li><li>发布 gpt-oss-120b 是否会显著推进开放基础模型的生物能力前沿？我们发现答案是否定的：在大多数评估中，一个或多个现有开放模型的默认表现已接近经过对抗性微调的 gpt-oss-120b 的表现。</li></ul>
 <p>作为本次发布的一部分，OpenAI 再次确认其推进有益 AI、提高整个生态系统安全标准的承诺。</p>
 <h2>2 模型架构、数据、训练与评估</h2>
-<p>gpt-oss 模型是自回归 MoE transformer [1, 2, 3, 4]，构建于 GPT-2 和 GPT-3 架构之上。我们发布两个规模的模型：gpt-oss-120b 包含 36 层（总参数为 116.8B，每个 token 在每次前向传播中的“激活”参数为 5.1B），</p><p class="note">本句接下一页。</p>
+<p>gpt-oss 模型是自回归混合专家（Mixture-of-Experts，MoE）transformer [1, 2, 3, 4]，构建于 GPT-2 和 GPT-3 架构之上。我们发布两个规模的模型：gpt-oss-120b 包含 36 层（总参数为 116.8B，每个 token 在每次前向传播中的“激活”参数为 5.1B），</p><p class="note">本句接下一页。</p>
 <footer>原文 PDF 第 4 页 · 印刷页码 3</footer></section><section class="page" id="page-5" aria-label="原文 PDF 第 5 页"><p>以及包含 24 层的 gpt-oss-20b（总参数为 20.9B，激活参数为 3.6B）。表 1 给出了参数数量的完整明细。</p>
 <figure><img src="assets/images/da0239364c2fbed22fc3705df3b177a587abd1983f5f6b4a183b114343870307.png" alt="原文 PDF 第 5 页图表或格式示例" width="1380" height="471" loading="lazy" decoding="async"></figure>
 <h3>2.1 量化</h3><p>我们利用量化降低模型的内存占用。我们在后训练期间将模型的 MoE 权重量化为 MXFP4 格式 [5]，其中权重被量化到每个参数 4.25 bit。MoE 权重占总参数数量的 90% 以上，将其量化为 MXFP4，使较大的模型能够放入单张 80GB GPU，并使较小的模型能够在内存低至 16GB 的系统上运行。我们在表 1 中列出了模型的 checkpoint 大小。</p>
@@ -21,7 +21,7 @@
 <p><strong>Attention：</strong>沿用 GPT-3 的方式，attention 块交替采用带状窗口和完全稠密模式 [10][11]，其中带宽为 128 个 token。每一层包含 64 个维度为 64 的查询头，并采用具有 8 个键值头的分组查询 attention（GQA [12][13]）。我们应用旋转位置 embedding [14]，并使用 YaRN [15] 将稠密层的上下文长度扩展到 131,072 个 token。每个 attention 头在 softmax 的分母中都有一个可学习的偏置，类似于 off-by-one attention 和 attention sink [16][17]，使 attention 机制可以不关注任何 token。</p>
 <p class="note"><sup>1</sup>我们的 SwiGLU 实现并非常规实现，其中包含截断和残差连接。</p>
 <footer>原文 PDF 第 5 页 · 印刷页码 4</footer></section><section class="page" id="page-6" aria-label="原文 PDF 第 6 页"><figure><img src="assets/images/4c94d45e7342d62bff08f11f569c23f138c3d9cc66ec3eb54fff998b69b40c62.png" alt="原文 PDF 第 6 页图表或格式示例" width="1380" height="1026" loading="lazy" decoding="async"></figure>
-<h3>2.3 Tokenizer</h3><p>在所有训练阶段，我们都使用 o200k_harmony tokenizer，并在 <a href="https://github.com/openai/tiktoken">TikToken</a> 库中将其开源。这是一种 BPE，它在 GPT-4o、OpenAI o4-mini 等其他 OpenAI 模型所使用的 o200k tokenizer 基础上进行了扩展，加入了专门用于表 18 所述 harmony 对话格式的 token，总计包含 201,088 个 token。</p>
+<h3>2.3 Tokenizer</h3><p>在所有训练阶段，我们都使用 o200k_harmony tokenizer，并在 <a href="https://github.com/openai/tiktoken">TikToken</a> 库中将其开源。这是一种字节对编码（Byte Pair Encoding，BPE），它在 GPT-4o、OpenAI o4-mini 等其他 OpenAI 模型所使用的 o200k tokenizer 基础上进行了扩展，加入了专门用于表 18 所述 harmony 对话格式的 token，总计包含 201,088 个 token。</p>
 <h3>2.4 预训练</h3><p><strong>数据：</strong>我们在一个包含数万亿 token 的纯文本数据集上训练模型，重点涵盖 STEM、编程和通用知识。为了提升模型安全性，我们在预训练期间复用了 GPT-4o 的 CBRN 预训练过滤器 [18]，过滤数据中的有害内容，尤其是危险的生物安全知识。模型的知识截止日期为 2024 年 6 月。</p>
 <p><strong>训练：</strong>gpt-oss 模型在 NVIDIA H100 GPU 上使用 PyTorch 框架 [19] 和经专家优化的 Triton [20] 内核<sup>2</sup>进行训练。gpt-oss-120b 的训练运行共需 210 万 H100 GPU 小时，而 gpt-oss-20b 所需的计算量接近其十分之一。两个模型都利用 Flash Attention [21] 算法降低内存需求并加速训练。</p>
 <footer>原文 PDF 第 6 页 · 印刷页码 5</footer></section><section class="page" id="page-7" aria-label="原文 PDF 第 7 页"><figure><img src="assets/images/0087c24b4042a623781d3f49d3f9e2dc04a60639a0fd4c1caf36af183cebe561.png" alt="原文 PDF 第 7 页图表或格式示例" width="1380" height="684" loading="lazy" decoding="async"></figure>
