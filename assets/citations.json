@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-12T08:23:46.741976+00:00",
+  "checkedAt": "2026-10-14T06:59:21.948214+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4019,
@@ -649,9 +649,9 @@
       }
     },
     "2606.19348": {
-      "citationCount": 1125,
+      "citationCount": 1138,
       "url": "https://www.semanticscholar.org/paper/c055403632ddca2292e8cb62e5e60ba12e65dd25",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:56:08.427172+00:00",
       "paperId": "c055403632ddca2292e8cb62e5e60ba12e65dd25",
       "title": "DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence",
       "externalIds": {
@@ -660,9 +660,9 @@
       }
     },
     "2607.02770": {
-      "citationCount": 219,
+      "citationCount": 221,
       "url": "https://www.semanticscholar.org/paper/bae8d2f66cd289f690db7d3f89e2951e34229d8e",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:56:23.752231+00:00",
       "paperId": "bae8d2f66cd289f690db7d3f89e2951e34229d8e",
       "title": "Gemma 4 Technical Report",
       "externalIds": {
@@ -673,9 +673,9 @@
       }
     },
     "2607.24653": {
-      "citationCount": 93,
+      "citationCount": 94,
       "url": "https://www.semanticscholar.org/paper/4ba72bcb0510a905480e79e318cda842d2b0bff1",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:56:26.063551+00:00",
       "paperId": "4ba72bcb0510a905480e79e318cda842d2b0bff1",
       "title": "Kimi K3: Open Frontier Intelligence",
       "externalIds": {
@@ -684,9 +684,9 @@
       }
     },
     "2608.13505": {
-      "citationCount": 3,
+      "citationCount": 4,
       "url": "https://www.semanticscholar.org/paper/71137b650641f2fc16d1fc094913ab557582d0b8",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:57:29.158759+00:00",
       "paperId": "71137b650641f2fc16d1fc094913ab557582d0b8",
       "title": "Intern-S2-Preview: Scientific Agentic Foundation Model",
       "externalIds": {
@@ -695,9 +695,9 @@
       }
     },
     "2608.30320": {
-      "citationCount": 28,
+      "citationCount": 34,
       "url": "https://www.semanticscholar.org/paper/8f38affde080c4b41ef4540363e4eebfffa26253",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:57:54.129164+00:00",
       "paperId": "8f38affde080c4b41ef4540363e4eebfffa26253",
       "title": "On the Design of Qwen3.8-Next Architecture: Evaluation, Efficiency, and Training Stability",
       "externalIds": {
@@ -708,7 +708,7 @@
     "2609.13356": {
       "citationCount": 0,
       "url": "https://www.semanticscholar.org/paper/5b21150a5fc8704990fcefef09bc12a7cb4e71c3",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:58:29.458075+00:00",
       "paperId": "5b21150a5fc8704990fcefef09bc12a7cb4e71c3",
       "title": "ZGCM-1: A Fully Open and Extremely Efficient Foundation Model for Math and Agentic Search",
       "externalIds": {
@@ -717,9 +717,9 @@
       }
     },
     "2609.19969": {
-      "citationCount": 55,
+      "citationCount": 65,
       "url": "https://www.semanticscholar.org/paper/e79f9541258bb9fc026c129f8a0920cfac7a2063",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:58:54.498478+00:00",
       "paperId": "e79f9541258bb9fc026c129f8a0920cfac7a2063",
       "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression",
       "externalIds": {
@@ -730,7 +730,7 @@
     "2609.39137": {
       "citationCount": 0,
       "url": "https://www.semanticscholar.org/paper/2b121e54f5b1dc7d70330e28cbb387b931050cad",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:59:19.554305+00:00",
       "paperId": "2b121e54f5b1dc7d70330e28cbb387b931050cad",
       "title": "ID Balancing: Stable Training of Extremely Sparse MoE via PID-Based Load Control",
       "externalIds": {
@@ -741,7 +741,7 @@
     "2610.11959": {
       "citationCount": 3,
       "url": "https://www.semanticscholar.org/paper/ca78769b3bef2fba556fac63b6a9cc2abe7fbb75",
-      "checkedAt": "2026-10-11T13:06:05.733583+00:00",
+      "checkedAt": "2026-10-14T06:59:21.948214+00:00",
       "paperId": "ca78769b3bef2fba556fac63b6a9cc2abe7fbb75",
       "title": "MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement",
       "externalIds": {
@@ -852,9 +852,64 @@
         "DOI": "10.48550/arXiv.2606.04485",
         "CorpusId": 288939604
       }
+    },
+    "2606.30406": {
+      "citationCount": 70,
+      "url": "https://www.semanticscholar.org/paper/c005c0cab28d02c214b821878fd9dad76b3f715f",
+      "checkedAt": "2026-10-14T06:56:21.052964+00:00",
+      "paperId": "c005c0cab28d02c214b821878fd9dad76b3f715f",
+      "title": "MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training",
+      "externalIds": {
+        "DBLP": "journals/corr/abs-2606-30406",
+        "ArXiv": "2606.30406",
+        "DOI": "10.48550/arXiv.2606.30406",
+        "CorpusId": 289684667
+      }
+    },
+    "2608.14290": {
+      "citationCount": 0,
+      "url": "https://www.semanticscholar.org/paper/70bbabcab5f8f6cd7d8d9ea3c2bfe5f1d2d85da0",
+      "checkedAt": "2026-10-14T06:57:41.645624+00:00",
+      "paperId": "70bbabcab5f8f6cd7d8d9ea3c2bfe5f1d2d85da0",
+      "title": "Intern-S2-Mobius: Foundation Model with Decoupled Knowledge and Reasoning",
+      "externalIds": {
+        "ArXiv": "2608.14290",
+        "CorpusId": 291167384
+      }
+    },
+    "2609.10715": {
+      "citationCount": 0,
+      "url": "https://www.semanticscholar.org/paper/d26701f78f38ffaa0108d36e9dbc6b04c9706a9d",
+      "checkedAt": "2026-10-14T06:57:56.818539+00:00",
+      "paperId": "d26701f78f38ffaa0108d36e9dbc6b04c9706a9d",
+      "title": "NCP-ArchPreview Technical Report: Moving towards Latent Space Language Models through Next Concept Prediction",
+      "externalIds": {
+        "ArXiv": "2609.10715",
+        "CorpusId": 291902052
+      }
+    },
+    "2609.17488": {
+      "citationCount": 5,
+      "url": "https://www.semanticscholar.org/paper/9e5fc979a813f2ccdac5a600ce19408c7f8cc2d4",
+      "checkedAt": "2026-10-14T06:58:41.942385+00:00",
+      "paperId": "9e5fc979a813f2ccdac5a600ce19408c7f8cc2d4",
+      "title": "LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence",
+      "externalIds": {
+        "ArXiv": "2609.17488",
+        "CorpusId": 292033361
+      }
+    },
+    "2609.26368": {
+      "citationCount": 0,
+      "url": "https://www.semanticscholar.org/paper/4bf5d757d16d7dc5ce19032a4c401909bd1764e2",
+      "checkedAt": "2026-10-14T06:59:06.941520+00:00",
+      "paperId": "4bf5d757d16d7dc5ce19032a4c401909bd1764e2",
+      "title": "HySparse2: Hybrid Sparse Attention with Two-Level KV Sharing",
+      "externalIds": {
+        "ArXiv": "2609.26368",
+        "CorpusId": 292227449
+      }
     }
   },
-  "resumeFrom": "2606.19348",
-  "rateLimitedAt": "2026-10-13T08:46:52.602283+00:00",
-  "rateLimitedTitle": "DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence"
+  "resumeFrom": null
 }
