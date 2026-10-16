@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Step 3.7 Flash · 中文翻译</title><link href="assets/document.css?v=9037c79583a5" rel="stylesheet"/><link href="assets/image-fit.css" rel="stylesheet"/></head><body class="translation"><nav class="document-nav"><div class="nav-links"><a href="index.html">全部文档</a><a href="https://static.stepfun.com/blog/step-3.7-flash/">英文原文</a></div><div class="document-title">Step 3.7 Flash · 中文翻译</div><div class="document-meta">StepFun · 2026-05-29 · 官方博客全文</div><div class="page-links"><a href="#hero">1</a> <a href="#demo-gallery">2</a> <a href="#agentic-coding">3</a> <a href="#enterprise-grade">4</a> <a href="#search-wider-deeper">5</a> <a href="#code-meets-vision">6</a> <a href="#benchmark-table">7</a> <a href="#meet-stepfun">8</a> <a href="#availability">9</a></div></nav><main class="document-content"><section class="page" id="hero">
+<div>
+<div>
+<div>2026-05-29</div>
+<h1>Step 3.7 Flash</h1>
+<div id="taglineAnim">看见。思考。行动。⚡最高 400 TPS</div>
+</div>
+<div>
+<div>
+<p>新的前沿是 agent 效率。</p>
+<p>面向真实世界 agent 的高效率 Flash 模型。</p>
+<p>多模态理解与行动｜网页与视觉搜索增强｜可靠的工具使用与编排｜agent 生态兼容</p>
+<div>
+<a class="link-item" href="https://github.com/stepfun-ai/Step-3.7-Flash" rel="noopener" target="_blank">
+
+                                GitHub
+                            </a>
+<a class="link-item" href="https://huggingface.co/stepfun-ai/Step-3.7-Flash" rel="noopener" target="_blank">
+
+                                HuggingFace
+                            </a>
+<a class="link-item" href="https://modelscope.cn/models/stepfun-ai/Step-3.7-Flash" rel="noopener" target="_blank">
+
+                                ModelScope
+                            </a>
+</div>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/assets/hero_video.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+<div>
+<h3>关键特性</h3>
+<ul>
+<li>
+<h4>原生多模态理解与行动</h4>
+<p>理解各种图像——产品 UI、文档、图表与自然场景——然后编写代码或调用工具，根据所见采取行动。</p>
+</li>
+<li>
+<h4>网页与视觉搜索增强</h4>
+<p>网页搜索覆盖更广——更多来源、更深入的追查。视觉搜索识别其他系统无法识别的内容——长尾实体、新近出现的概念。</p>
+</li>
+<li>
+<h4>可靠的工具使用与编排</h4>
+<p>驱动终端、浏览器、Office 工具、搜索及更多工具——无论运行多久都保持连贯。减少偏离，减少失效的工具调用，减少失败的运行。</p>
+</li>
+<li>
+<h4>agent 生态兼容</h4>
+<p>兼容主流执行框架（Claude Code、KiloCode、Hermes Agent、OpenClaw）和 Skills——降低集成成本，减少工作流调整。</p>
+</li>
+</ul>
+</div>
+<div id="benchmark">
+<div>
+<div>
+<div id="agenticCodingCategory">
+<h4>Agent 编程</h4>
+<div>
+<img alt="原文基准比较图 1" decoding="async" height="584" loading="lazy" src="assets/images/step37/bar-benchmark-panel-0.png" width="620"/>
+<img alt="原文基准比较图 2" decoding="async" height="584" loading="lazy" src="assets/images/step37/bar-benchmark-panel-1.png" width="620"/>
+</div>
+</div>
+<div id="multimodalCategory">
+<h4>多模态</h4>
+<div>
+<img alt="原文基准比较图 3" decoding="async" height="584" loading="lazy" src="assets/images/step37/bar-benchmark-panel-2.png" width="410"/>
+<img alt="原文基准比较图 4" decoding="async" height="584" loading="lazy" src="assets/images/step37/bar-benchmark-panel-3.png" width="408"/>
+</div>
+</div>
+</div>
+<div id="generalAgentCategory">
+<h4>通用 Agent</h4>
+<div>
+<img alt="原文基准比较图 5" decoding="async" height="442" loading="lazy" src="assets/images/step37/bar-benchmark-panel-4.png" width="528"/>
+<img alt="原文基准比较图 6" decoding="async" height="442" loading="lazy" src="assets/images/step37/bar-benchmark-panel-5.png" width="528"/>
+<img alt="原文基准比较图 7" decoding="async" height="442" loading="lazy" src="assets/images/step37/bar-benchmark-panel-6.png" width="528"/>
+<img alt="原文基准比较图 8" decoding="async" height="442" loading="lazy" src="assets/images/step37/bar-benchmark-panel-7.png" width="528"/>
+</div>
+</div>
+</div>
+<p>说明：对于非多模态任务，我们将比较分成两组：左侧面板将 Step 3.7 Flash 与规模相当的开源 Flash 模型 DeepSeek V4 Flash 进行比较，右侧面板则将 Step 3.7 Flash 与前沿闭源模型并列比较。具体而言，Step 3.7 Flash、Gemini 3.5 Flash、DeepSeek V4 Flash、DeepSeek V4 Pro 和 GLM 5.1 在 Terminal-Bench 2.1 上评测；DeepSeek V4 Flash 的指标来自我们的内部测试。Kimi-K2.6、GPT 5.5 和 Claude Opus 4.7 使用 Terminal-Bench 2.0 的官方报告结果。在 GDPval 上，Step 3.7 Flash 的得分通过内部成对评测获得，而对比模型的数据来自 Artificial Analysis 官方排行榜。在 Toolathlon 上，Step 3.7 Flash 的得分在内部固定版本上评测；对于其他模型，我们报告内部测试与官方测试中的最佳得分。</p>
+</div>
+</div>
+</section><section class="page" id="demo-gallery">
+<div>
+<h2>案例展示</h2>
+<div id="galleryCarousel">
+<div>
+<div>
+<div>
+<div>
+<div>
+<span>01 / 08</span>
+<span>落地页</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery3-landing-page-吴鑫.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<span>02 / 08</span>
+<span>历史建筑</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery2-南洋大楼-final-1.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<span>03 / 08</span>
+<span>组合式工具使用</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/mm-section-3-Compositional-Tool-use-case-2-3d地铁站.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<span>04 / 08</span>
+<span>旅行指南</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery4-图片生成旅游指南静音-马老师.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<span>05 / 08</span>
+<span>深度搜索</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery8-Deep-Search-cut-马老师.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<span>06 / 08</span>
+<span>从草稿到代码</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery6-draft2code-吴鑫.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<span>07 / 08</span>
+<span>从视频到摘要</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery7-Video-to-Summary-clip-马老师.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+<div>
+<div>
+<div>
+<span>08 / 08</span>
+<span>从草图到网页</span>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery5-Images-sketch-to-Web-Page-马老师.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<span>
+</span>
+<span>
+</span>
+<div id="galleryDots"></div>
+</div>
+</div>
+</section><section class="page" id="agentic-coding">
+<div>
+<h2>Agent 编程</h2>
+<p>基础模型正在从回答问题转向采取行动，而在数字世界中，行动体现为代码。编程是数字 agent 行动能力的基础，是规划—执行—观察—迭代循环最纯粹的形式，也是模型更广泛的 agent 能力发展方向的先行指标。我们在这一方面为以下模型投入了大量资源：<strong>Step 3.7 Flash</strong>。与 Step 3.5 Flash 相比，它在<strong>SWE-Bench Pro 上提升了 +5%</strong>，并在<strong>Terminal-Bench 2.1 上提升了 6.1%</strong>。</p>
+<div>
+<div>
+<h5>Step-SWE-Bench</h5>
+<img alt="原文 Step-SWE-Bench 图" decoding="async" height="842" loading="lazy" src="assets/images/step37/chart-svg-22.png" width="920"/>
+</div>
+<div>
+<div>
+<div>
+<span></span>
+<span>Step 3.7 Flash</span>
+<span>平均<strong>67.08%</strong></span>
+</div>
+<div>
+<span></span>
+<span>Step 3.5 Flash</span>
+<span>平均<strong>56.50%</strong></span>
+</div>
+</div>
+<figure><img alt="原文英文表格 1" decoding="async" height="522" loading="lazy" src="assets/images/step37/table-1-original.png" width="760"/></figure>
+</div>
+</div>
+<p>在生产环境中，编程 agent 很少仅在单一支架上运行。它们处于由不同执行框架构成的异构技术栈中，每种框架都有各自的提示约定、工具 schema 和编排模式——模型必须在所有框架上都可靠运行，才能真正发挥作用。<strong>Step 3.7 Flash</strong>在这一技术栈中的表现明显比 Step 3.5 Flash 更均衡，在我们内部的 Step-SWE-Bench 上，各执行框架之间的差距大幅缩小。</p>
+<p>为了在保持 Flash 级效率的同时进一步提升质量，<strong>Step 3.7 Flash</strong>支持 Advisor Mode。<strong>Step 3.7 Flash</strong>端到端地主导整个轨迹——调用工具、读取结果并迭代——只有在自身判断不足的少数关键节点，例如规划或从反复失败中恢复时，才会咨询更大的顾问模型。这是 Step 对以下策略的实现：<a href="https://claude.com/blog/the-advisor-strategy" rel="noopener" target="_blank">顾问策略</a>，由 Anthropic 提出；其中小型执行者保持控制，只在必要时向前沿顾问模型求助，使大部分运行保持执行者的成本。启用 Advisor Mode 后，<strong>Step 3.7 Flash</strong>达到<strong>Claude Opus 4.6 编程性能的 97%，而每项任务成本约为其九分之一</strong> (<code>$0.19</code>对比<code>$1.76</code>，每项任务）。</p>
+<div>
+<div>SWE-Bench Verified 上的得分与成本</div>
+<div>（Claude Opus 4.6 的内部复现）</div>
+<img alt="原文顾问模式成本比较图" decoding="async" height="926" loading="lazy" src="assets/images/step37/chart-svg-23.png" width="1788"/>
+</div>
+</div>
+</section><section class="page" id="enterprise-grade">
+<div>
+<h2>面向企业任务的强化</h2>
+<p>企业工作从根本上依赖两大关键支柱：在动态环境中自主执行任务，以及深入的领域专属垂直知识。<strong>Step 3.7 Flash</strong>专门围绕这两个方向构建并严格优化，以独立推进任务并交付生产级成果。</p>
+<p>该模型将强大的 agent 执行能力与准确的意图理解、丰富的多模态感知相结合，顺畅地衔接理解与行动。用户可以将完整的知识工作交给 Step 3.7 Flash，相信它能够独立制定计划、搜索实时来源、提取关键信息，并流畅地编排工具，无需干预即可交付可直接使用的成果。它读取并直接处理混合输入——例如屏幕截图、复杂文档和内容密集的电子表格——同时解析视觉上下文与数字资产。这种长程任务执行能力已在多种环境中得到验证，Step 3.7 Flash 在<strong>Toolathlon 上取得 49.5%</strong>，用于多工具协调；在<strong>ClawEval-1.1 上取得 67.1%</strong>，用于真实环境中的日常自主任务执行。</p>
+<p>从通用智能迈向真正专业能力的道路，始于真实专家的实践。通过与领域专家深入合作，我们将原生行业知识融入模型，并通过金融、会计和数据分析领域的内部基准验证其能力。这种专业能力远远超出了专门领域：Step 3.7 Flash 在<strong>GDPval 上取得 45.8%</strong>，覆盖 44 种职业；在<strong>Tau2-bench Telecom 的不同推理难度等级上通过率超过 98%</strong>。</p>
+<div>
+<div>
+<span>制造 · 生产调度</span>
+<span>工程 · 热处理分析</span>
+</div>
+<div>
+<div id="enterpriseCase1Viewer">
+<div>
+<div>
+<span></span>
+<span></span>
+<span></span>
+</div>
+<span>制造 · 生产调度</span>
+<div>
+<span>结果</span>
+<span>轨迹</span>
+</div>
+</div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/enterprise_case/case1_result.html">查看原文案例结果</a></p>
+<a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/enterprise_case/case1.json">查看原文完整案例轨迹（JSON）</a></div>
+</div>
+<div>
+<div id="enterpriseCase2Viewer">
+<div>
+<div>
+<span></span>
+<span></span>
+<span></span>
+</div>
+<span>工程 · 热处理分析</span>
+<div>
+<span>结果</span>
+<span>轨迹</span>
+</div>
+</div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/enterprise_case/Heat_Treatment_Report.pdf">查看原文案例结果</a></p>
+<a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/enterprise_case/case2.json">查看原文完整案例轨迹（JSON）</a></div>
+</div>
+</div>
+</div>
+</section><section class="page" id="search-wider-deeper">
+<div>
+<h2>搜索更广、更深</h2>
+<p>对于 Step 3.7 Flash 这一规模的模型，目标不是将世界上的每一条知识都装入权重，而是让模型在需要时更善于调用这些知识。因此，我们将其能力聚焦于搜索规划、证据筛选与信息综合，使搜索从外部附加功能转变为推理过程的原生组成部分。</p>
+<p>Step 3.7 Flash 在搜索密集型基准上表现出色。它在<strong>HLE with Tools 上取得 47.20%</strong>，高于 Step 3.5 Flash 的 35.68%（纯文本），并超过 DeepSeek V4 和 Gemini 3.5 的 Flash 模型。它在<strong>BrowseComp 上达到 75.82%</strong>，接近 Claude Opus 4.7 和 GLM 5.1 等更大模型。<strong>在 DeepSearchQA 上，它的 F1 得分达到 92.82%</strong>，与总参数 1T、激活参数 32B 的 Kimi K2.6 相当。<strong>在 ResearchRubrics 上，它取得 71.68%</strong>，高于 GPT 5.5 的 61.50%，接近 Claude Opus 4.7 的 73.92%。这些结果表明，Step 3.7 Flash 将 Flash 级效率与强大的深度检索和研究能力相结合。</p>
+<div id="searchDemos">
+<div>
+<img alt="Search topology" decoding="async" height="1302" loading="lazy" src="assets/images/step37/law_1_s9.png" width="2556"/>
+<span>播放 ▶</span>
+<div>
+<span>法律 · 利益冲突</span>
+<span>NC LLP 的两位合伙人——根据 LSO 规则，该律所能否代理针对前客户的案件？</span>
+</div>
+<div>
+<div>
+<div></div>
+</div>
+<div>
+<span>开始</span>
+<span>阶段 10 / 10</span>
+<span>最终</span>
+</div>
+</div>
+</div>
+</div>
+<p>这些轨迹进一步体现了其搜索行为的广度与深度。在安大略省律师利益冲突案例中，它同样围绕领域专属概念扩展搜索，结合论文、课程资料、官方规则和案例分析中的证据，并识别出问题中的关键陷阱。</p>
+</div>
+</section><section class="page" id="code-meets-vision">
+<div>
+<h2>能够<span>看见的 Agent</span></h2>
+<p>我们将<strong>Step 3.7 Flash</strong>确立为支持视觉输入的 agent 基础模型，将感知与识别从参数容量转向利用视觉工具进行 test-time scaling。作为第一步，我们增强其调用 Visual Search 工具的能力，从而弥补<strong>Step 3.7 Flash</strong>模型规模有限所造成的参数知识不足。如下表所示，在视觉识别任务中，<strong>Step 3.7 Flash</strong>使用 Visual Search 达到了与规模为其五倍的模型相当的性能。</p>
+<h3>使用 Visual Search 进行视觉识别</h3>
+<div>
+<figure><img alt="原文英文表格 2" decoding="async" height="482" loading="lazy" src="assets/images/step37/table-2-original.png" width="1800"/></figure>
+</div>
+<ol>
+<li>* 表示自行测试的得分。</li>
+</ol>
+<p>对于更广泛的挑战性视觉任务，这些任务要求对高分辨率图像进行细粒度感知或具备视觉推理能力，例如 V*、HR-Bench 和 VisualProbe，我们赋予模型更丰富的动作空间，使其能够与图像交互，包括裁切、放大和缩小，以及绘制像素或边界框。这些工具以统一的代码接口实现，在该领域通常称为<em>Python 工具</em>。借助 Python，<strong>Step 3.7 Flash</strong>在这些基准上取得了极其出色的表现。</p>
+<h3>使用 Python 工具进行视觉感知</h3>
+<div>
+<figure><img alt="原文英文表格 3" decoding="async" height="582" loading="lazy" src="assets/images/step37/table-3-original.png" width="1800"/></figure>
+</div>
+<ol>
+<li>* 表示自行测试的得分。</li>
+<li>GLM 的结果与 GLM 官方人员核对一致，使用了裁切、搜索等工具。</li>
+</ol>
+<p>一个特别有趣的发现是，视觉工具与其他工具之间涌现出了组合泛化能力。在测试期间，<strong>Step 3.7 Flash</strong>无缝组合视觉与非视觉工具完成复杂任务，尽管训练中从未明确引导它以这种组合方式使用工具。</p>
+<h4><strong>使用 Python 工具进行视觉推理</strong></h4>
+<div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/mm-section-1-Python-Tool-case1-迷宫.mp4">观看原文演示视频</a></p>
+</div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/mm-section-2-Python-Tool-case2-大小圆.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+<h4><strong>视觉与非视觉工具的组合使用</strong></h4>
+<div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/Gallery1-菜单-final-1.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+<p>操作图形用户界面（GUI）是 agent 模型的另一项基础视觉能力——许多真实世界任务发生在聊天框和 CLI 之外，要求 agent 能看见、点击并验证。我们为<strong>Step 3.7 Flash</strong>扩展了 GUI 操作能力，尤其是手机操作技术栈，使其能够跨多个应用完成长程任务。在 Android Daily 基准上，<strong>Step 3.7 Flash</strong>相较于去年的<strong>Step-GUI</strong>，在稳定性、鲁棒性和长程任务完成方面取得大幅提升，并领先于其他规模更大的模型。</p>
+<h3>Android Daily 基准得分</h3>
+<div>
+<div>
+<div>
+<span>Gemini 3 Flash</span>
+<div><div></div></div>
+<span>63.21%<span>*</span></span>
+</div>
+<div>
+<span>Step 3.7 Flash</span>
+<div><div></div></div>
+<span>61.87%</span>
+</div>
+<div>
+<span>Kimi K2.6</span>
+<div><div></div></div>
+<span>53.36%<span>*</span></span>
+</div>
+<div>
+<span>GLM 5V Turbo</span>
+<div><div></div></div>
+<span>51.68%<span>*</span></span>
+</div>
+</div>
+</div>
+<ol>
+<li>* 表示自行测试的得分。</li>
+<li>Android Daily: <a href="https://arxiv.org/abs/2605.27761" rel="noopener" target="_blank">https://arxiv.org/abs/2605.27761</a></li>
+</ol>
+<p>我们在视觉工具中观察到的组合模式也出现在这里：在下面的案例中，模型编写前端代码后，自主转向 GUI 测试刚生成的页面——检查渲染输出、操作交互元素，并根据所见迭代自身代码。同样，这种代码与 GUI 的组合行为在训练期间从未被明确演示或奖励，却在测试时的使用中稳健地涌现。</p>
+<h4><strong>GUI 操作</strong></h4>
+<div>
+<div>
+<p><a href="https://static.stepfun.com/blog/step-3.7-flash/raw_case/gallery_case/mm-section-4-gui-1-tkj.mp4">观看原文演示视频</a></p>
+</div>
+</div>
+</div>
+</section><section class="page" id="benchmark-table">
+<div>
+<h2>基准</h2>
+<p>在基准表中，我们对当今表现最好的开源模型进行了详细的并列比较。在广泛的指标上，Step 3.7 Flash 始终表现出色。我们的评测聚焦于三个核心维度——推理、编程和 Agent 能力。</p>
+<div>
+<figure><img alt="原文英文表格 4" decoding="async" height="2146" loading="lazy" src="assets/images/step37/table-4-original.png" width="2240"/></figure>
+</div>
+<ol>
+<li>“—”表示得分未公开或未经测试。* 表示自行测试的得分。</li>
+<li>Step 3.7 Flash、Gemini 3.5 Flash、DeepSeek V4 Flash、DeepSeek V4 Pro 和 GLM 5.1 在 Terminal-Bench 2.1 上评测；DeepSeek V4 Flash 的指标来自我们的内部测试。Kimi-K2.6、GPT 5.5 和 Claude Opus 4.7 使用 Terminal-Bench 2.0 的官方报告结果。</li>
+<li>Android Daily: <a href="https://arxiv.org/abs/2605.27761" rel="noopener" target="_blank">https://arxiv.org/abs/2605.27761</a></li>
+</ol>
+</div>
+</section><section class="page" id="meet-stepfun">
+<div>
+<h2>了解 StepFun</h2>
+<ul>
+<li>Step 3.7 Flash 可通过我们的 API 平台（<a class="link-switcher-option" href="https://platform.stepfun.com/" rel="noopener" target="_blank">中文</a> / <a class="link-switcher-option" href="https://platform.stepfun.ai/" rel="noopener" target="_blank">英文</a>）使用；您也可以在网页端（<a class="link-switcher-option" href="https://www.stepfun.com/" rel="noopener" target="_blank">中文</a> / <a class="link-switcher-option" href="https://stepfun.ai/" rel="noopener" target="_blank">英文</a>）或应用中（<a class="link-switcher-option" href="https://apps.apple.com/cn/app/%E9%98%B6%E8%B7%83ai-%E9%98%B6%E8%B7%83%E6%98%9F%E8%BE%B0ai%E5%8A%A9%E6%89%8B/id6502382318" rel="noopener" target="_blank">iOS</a> / <a class="link-switcher-option" href="https://play.google.com/store/apps/details?id=cn.yuewen.ywapp&amp;hl=zh" rel="noopener" target="_blank">Android</a>）与它对话。</li>
+<li>加入我们的<strong><a class="link-switcher-option" href="https://discord.gg/RcMJhNVAQc" rel="noopener" target="_blank">Discord 社区</a></strong>，获取更新、支持和抢先体验。</li>
+</ul>
+</div>
+</section><section class="page" id="availability">
+<div>
+<h2>可用性、部署与生态</h2>
+<div>
+<div>
+<h3>可用性</h3>
+<p>Step 3.7 Flash 已在 StepFun 开放平台上线——<a href="https://platform.stepfun.ai/" rel="noopener" target="_blank">platform.stepfun.ai</a>（全球）和<a href="https://platform.stepfun.com/" rel="noopener" target="_blank">platform.stepfun.com</a>（中国）、OpenRouter 和 NVIDIA NIM。StepFun 也正在与 DeepInfra、Fireworks AI 和 Modal 合作，即将进一步扩展可用范围。</p>
+</div>
+<div>
+<h3>部署</h3>
+<p>Step 3.7 Flash 支持在云端、数据中心及本地环境中灵活部署。对于大规模生产和企业用例，Step 3.7 Flash 可部署在现代数据中心基础设施上。在本地与工作站场景中，它也能运行于高内存设备，例如 NVIDIA DGX Station、基于 AMD Ryzen AI Max+ 395 的系统，以及配备至少 128GB 统一内存的 Mac Studio / Macbook Pro。</p>
+</div>
+<div>
+<h3>生态</h3>
+<p>Step 3.7 Flash 已获得主流开源推理与模型开发基础设施的支持。在推理与服务方面，开发者可以使用 vLLM、SGLang、Hugging Face Transformers 和 llama.cpp。在模型开发与定制工作流方面，NVIDIA Nemo 生态已支持 StepFun 模型，包括 AutoModel、Megatron Core 和 Megatron Bridge。Step 3.7 Flash 也作为 NVIDIA NIM 推理微服务提供，支持本地、云端或混合部署。</p>
+</div>
+</div>
+</div>
+</section></main></body></html>
