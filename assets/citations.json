@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-14T06:59:21.948214+00:00",
+  "checkedAt": "2026-10-18T06:50:35.468840+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4019,
@@ -750,9 +750,9 @@
       }
     },
     "2101.00027": {
-      "citationCount": 3098,
+      "citationCount": 3121,
       "url": "https://www.semanticscholar.org/paper/db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
-      "checkedAt": "2026-10-11T13:12:38.850095+00:00",
+      "checkedAt": "2026-10-18T06:50:35.468840+00:00",
       "paperId": "db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
       "title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
       "externalIds": {
@@ -911,7 +911,7 @@
       }
     }
   },
-  "resumeFrom": "2101.00027",
-  "rateLimitedAt": "2026-10-16T06:37:37.034422+00:00",
-  "rateLimitedTitle": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling"
+  "resumeFrom": "2107.06499",
+  "rateLimitedAt": "2026-10-18T06:51:37.041146+00:00",
+  "rateLimitedTitle": "Deduplicating Training Data Makes Language Models Better"
 }
