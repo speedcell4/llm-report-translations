@@ -28,6 +28,35 @@ D_{\mathrm{KL}}\!\left(p_\theta(\cdot\mid s_t)\,\|\,\operatorname{sg}[q(\cdot\mi
 \mathcal L_{\mathrm{PG}}\simeq
 -\mathbb E\sum_t\operatorname{sg}[A_t]\log p_\theta(y_t\mid s_t).\]</div>
 <p>这里的 \(\simeq\) 表示更新代理形式，省略 PPO ratio、clip 和归一化；不是对完整训练程序的恒等改写。下文“核心式”按统一符号重写，“结构示意”只展示方法改动，不能直接当实现。</p>
+<p><strong>监督范围与 shape。</strong> 令 \(B\) 为 batch，\(T\) 为受监督的回答长度，\(V\) 为词表大小，\(k\) 为保留的候选数。下面是对齐回答位置后的逻辑 shape，不要求实现一次性物化整个张量；teacher 的额外 prompt 不计入 \(T\)。</p>
+<div class="table-wrap" role="region" tabindex="0" aria-label="方法与公式对照表，可横向滚动"><table>
+<thead>
+<tr>
+<th>形式</th>
+<th>参与监督的数据 shape</th>
+<th>实际比较什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>完整词表 KL</td>
+<td>学生、teacher 各 \([B,T,V]\)；沿 \(V\) 求和得 \([B,T]\)，再按 mask 聚合为标量</td>
+<td>每个位置的完整软概率分布</td>
+</tr>
+<tr>
+<td>Sampled-token</td>
+<td>token ID、各分支所选 log-probability、advantage 均为 \([B,T]\)</td>
+<td>只读取学生实际采样 token 的分数，不构造 teacher one-hot 标签</td>
+</tr>
+<tr>
+<td>Top-k</td>
+<td>索引与软概率各 \([B,T,k]\)；若合并尾部则为 \([B,T,k+1]\)</td>
+<td>保留候选的概率权重；不是把 \(k\) 个位置置 1 的 k-hot 标签</td>
+</tr>
+</tbody></table>
+</div><p>完整 reverse KL 在一个位置上为 \(\sum_{v=1}^{V}p_t(v)[\log p_t(v)-\log q_t(v)]\)。但 <strong>loss 只读取一个或 \(k\) 个分数，不等于只计算这些 logits</strong>。普通全词表 softmax 下，即使只要采样 token 的分数，也需要</p>
+<div class="formula">\[\log p(y_t\mid s_t)=z_{t,y_t}-\log\sum_{v=1}^{V}\exp z_{t,v}.\]</div>
+<p>因此应区分 <strong>LM head 的词表计算、loss 保留的监督维度、teacher 传输／缓存的数据量</strong>。分块、词表并行或融合算子可避免常驻完整 \([B,T,V]\)，仍需计算词表归一化；仅对 \(k\) 个 logits 重新 softmax，则变成截断后的分布，不能称为原完整 KL。sampled-token 的 \(-A_t\log p(y_t)\) 虽像加权交叉熵，\(A_t\) 可正可负，并非硬标签 SFT；softmax 归一化也会使其他词表 logits 收到 gradient。</p>
+<p>依据：<a href="https://arxiv.org/html/2601.18734v3#S4.SS3.SSS5">OPSD §4.3.5</a>、<a href="https://arxiv.org/html/2601.20802v1#A1.SS2">SDPO 原版附录 A.2</a>、<a href="https://arxiv.org/html/2606.06021v2">OPRD §2.3 与 §4.4</a>。shape 按原文运算归纳。</p>
 <p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="section-2"><h2>2 一张表看具体改了哪里</h2>
 <div class="table-wrap" role="region" tabindex="0" aria-label="方法与公式对照表，可横向滚动"><table>
 <thead>
@@ -144,7 +173,8 @@ D_{\mathrm{KL}}\!\left(p_\theta(\cdot\mid s_t)\,\|\,\operatorname{sg}[q(\cdot\mi
 <td>\(D(p_\theta,q_{\bar\theta}(\cdot\mid s_t,c))\)；使用 JSD 等稳定化选择，部分实验为 reverse KL</td>
 </tr>
 </tbody></table>
-</div><p>学生仍根据自己未获得特权信息时的策略采样。<strong>self 不等于无监督：额外信息必须有来源。</strong> SDPO 的贡献主要是反馈条件下的密集监督，不是固定某一种 KL。</p>
+</div><p><strong>论文实际监督范围：</strong> OPSD 默认是完整词表 forward KL，属于 \([B,T,V]\to[B,T]\)；sampled-token 只是另做的消融。SDFT 主实验使用完整解析 per-token KL。SDPO 原版附录 A.2 选的是<strong>学生 Top-k</strong>，并将剩余概率合成 tail：两侧都比较“同一组 \(k\) 个候选＋一个 tail”，有效分布为 \([B,T,k+1]\)，不是删掉尾部再重归一化；也不是学生与 teacher 各取互不对齐的一组 Top-k。来源：<a href="https://arxiv.org/html/2601.18734v3#S4.SS3.SSS5">OPSD §4.3.5</a>、<a href="https://arxiv.org/html/2601.19897v1">SDFT 附录 A.1</a>、<a href="https://arxiv.org/html/2601.20802v1#A1.SS2">SDPO 附录 A.2</a>。</p>
+<p>学生仍根据自己未获得特权信息时的策略采样。<strong>self 不等于无监督：额外信息必须有来源。</strong> SDPO 的贡献主要是反馈条件下的密集监督，不是固定某一种 KL。</p>
 <p>来源：<a href="https://arxiv.org/html/2601.18734v3">OPSD 式 1</a>、<a href="https://arxiv.org/html/2601.19897v1">SDFT 方法</a>、<a href="https://arxiv.org/html/2601.20802v1">SDPO 方法与超参数</a>。</p>
 <p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-b"><h3>B Multi-Teacher MOPD 换成按领域路由的 teacher</h3>
 <p><strong>核心式：</strong></p>
@@ -152,6 +182,10 @@ D_{\mathrm{KL}}\!\left(p_\theta(\cdot\mid s_t)\,\|\,\operatorname{sg}[q(\cdot\mi
 \mathcal L=\mathbb E_{x,y\sim p_{\mathrm{old}}}\frac1{|y|}\sum_t
 D_{\mathrm{KL}}(p_\theta(\cdot\mid s_t)\|q_{d(x)}(\cdot\mid s_t)).\]</div>
 <p>数学题找数学 teacher，代码题找代码 teacher。<strong>主要改变 teacher 的组织方式，不是逐 token 平均所有 teacher。</strong> 同源 SFT checkpoint 上独立训练领域 RL teacher，是其重要稳定性条件。</p>
+<p><strong>MOPD 有两种实现，不能只看上面的完整 KL 写法：</strong> policy-gradient 版每个位置保留一个 sampled-token 分数，shape 为 \([B,T]\)；另一版选 <strong>teacher Top-k（默认 \(k=64\)）</strong>，shape 为 \([B,T,k]\)，使用原分布概率与修正项：</p>
+<div class="formula">\[\ell_t^{\mathrm{TopK}}=\sum_{v\in\operatorname{TopK}(q_t,k)}
+\left[p_t(v)\log\frac{p_t(v)}{q_t(v)}-p_t(v)+q_t(v)\right].\]</div>
+<p>它既不是 SDPO 的 Top-k＋tail，也不是简单将两侧 Top-k 重新归一化后算 KL。候选索引和对应概率必须对齐。来源：<a href="https://arxiv.org/html/2606.30406v1">MOPD 式 3–5 与附录 A</a>。</p>
 <p>来源：<a href="https://arxiv.org/html/2606.30406v1">小米 Multi-Teacher MOPD，§3</a>。另有同名缩写的 <a href="https://arxiv.org/abs/2605.12652">Multi-Rollout MOPD</a>：它把成功、失败 peer 放进一个 teacher 的上下文，改变的是 A 中的 \(c\)，并非多 teacher 路由。</p>
 <p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-c"><h3>C ExOPD 沿 teacher 相对 reference 的方向继续走</h3>
 <p><strong>核心式，序列级目标：</strong> 记 reference 为 \(r(y\mid x)\)，最大化</p>
@@ -186,6 +220,7 @@ r_t=\lambda\tanh(e_t/\tau),\quad m_t=\mathbf1[|r_t|&gt;\delta],\]</div>
 <div class="formula">\[\Delta_t=\operatorname{sg}\!\left[\log\frac{q_t^+}{q_t^-}\right],\quad
 w_{i,t}=\exp(\operatorname{sign}(A_i)\Delta_t),\quad
 \widehat A_{i,t}=A_i\left[(1-\lambda)+\lambda\operatorname{clip}(w_{i,t},1-\epsilon_w,1+\epsilon_w)\right].\]</div>
+<p><strong>这里读取的是 sampled-token 分数：</strong> 每个正／负条件分支各提供 \([B,T]\)，多个负提示可暂存为 \([K,B,T]\)；\(K\) 是负提示个数，不是词表 Top-k。混合后得到 \([B,T]\) 的 \(e_t\)、\(\Delta_t\) 与 advantage，没有将 \(V\) 维 teacher 分布作为匹配目标。来源：<a href="https://arxiv.org/html/2606.11709v1">RLCSD §3.4</a>、<a href="https://arxiv.org/html/2605.19436v1">CEPO §3.3–3.4</a>。</p>
 <p>两者都把结果代入 PPO 类目标。<strong>RLCSD 是加法调节、clamp 与双路径；CEPO 是受限乘法权重。</strong> 都不是简单将 OPD loss 换成“正 KL 减负 KL”，也不是 InfoNCE；差分仅尝试减弱共有风格变化。</p>
 <p>来源：<a href="https://arxiv.org/html/2606.11709v1">RLCSD §3</a>、<a href="https://arxiv.org/html/2605.19436v1">CEPO 方法</a>。</p>
 <p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-e"><h3>E Prefix OPD 不生成也不监督完整尾部</h3>
@@ -210,7 +245,8 @@ w_{i,t}=\exp(\operatorname{sign}(A_i)\Delta_t),\quad
 \mathbb E\frac1{|\mathcal S|}\sum_{\ell\in\mathcal S}
 \frac{\sum_t m_t\,\|h^S_{\ell,t}-\operatorname{sg}[h^T_{\ell,t}]\|_2^2}{d\sum_t m_t}.\]</div>
 <p>\(m_t\) 排除 padding，\(d\) 为 hidden 维度；“normalized MSE”指按维度、位置和层平均，不是把向量变成单位长度。跨架构需要表示对齐。<strong>采样仍在学生轨迹上，替换的是监督空间。</strong> 去掉固定 rollout 下的输出 token 采样估计方差，不等于消除 rollout 随机性。</p>
-<p>来源：<a href="https://arxiv.org/html/2606.06021v2">OPRD §3</a>。</p>
+<p><strong>shape：</strong> 每层对应 \([B,T,d]\)，而不是 \([B,T,V]\)；回归后沿 \(d\)、有效位置和层聚合。只在 loss 路径绕过词表维度，<strong>不代表整个训练不计算 logits</strong>：论文 §4.4 明确说其现有实现的 teacher 仍计算完整 logits 后丢弃；生成 rollout 也仍需要预测 token。</p>
+<p>来源：<a href="https://arxiv.org/html/2606.06021v2">OPRD §3 与 §4.4</a>。</p>
 <p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-h"><h3>H ROPD 把 logits 换成语义 rubric 奖励</h3>
 <p><strong>核心流程与奖励式：</strong></p>
 <div class="formula">\[\mathcal C_x=\operatorname{Rubricator}(x,Y_T,Y_S),\qquad
