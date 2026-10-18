@@ -1,0 +1,8 @@
+.opd-report .page, .opd-report .document-nav { max-width: 1160px; }
+.opd-report table { min-width: 780px; }
+.opd-report .chapter-links { columns: 2; column-gap: 32px; }
+.opd-report .chapter-links li { break-inside: avoid; }
+.opd-report .section-return { text-align: right; font-size: 14px; }
+.opd-report .formula { max-width: 100%; margin: 18px 0; }
+@media (max-width: 700px) { .opd-report .chapter-links { columns: 1; } }
+@media print { .opd-report table { min-width: 0; } }

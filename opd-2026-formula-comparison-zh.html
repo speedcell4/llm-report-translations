@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026 年 OPD 进展与核心公式对照</title>
+<meta name="description" content="OPD、OPSD、ExOPD、RLCSD、BPM、OPRD 等方法的采样、teacher、监督信号与优化目标对照。">
+<link rel="stylesheet" href="assets/document.css?v=9037c79583a5">
+<link rel="stylesheet" href="assets/opd-comparison.css?v=5f633fea8282">
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<script defer src="assets/katex/katex.min.js"></script>
+<script defer src="assets/katex/auto-render.min.js"></script>
+<script defer src="assets/inline-math.js"></script>
+</head><body class="technical-note opd-report">
+<nav class="document-nav" aria-label="文档导航"><div class="nav-links"><a href="index.html#topic-knowledge-maps">专题知识地图</a><a href="#section-2">总览对照</a><a href="#contents">公式目录</a></div>
+<div class="document-title">2026 年 OPD 进展与核心公式对照</div><div class="document-meta">专题研究 · 整理日期：2026-10-18 · 统一符号与公式对照</div></nav>
+<main><section class="page" id="overview"><h1>2026 年 OPD 进展与核心公式对照</h1>
+<p>截至 2026 年 10 月 18 日。范围为 LLM 与 VLM 后训练。<strong>先看总览表，再按编号查公式：今年的变化主要落在采样分布、teacher 条件、监督接口和优化目标四处。</strong> 评分沿用前两轮筛选，是研究价值判断，不是引用量排名。</p>
+</section><section class="page" id="contents"><h2>目录</h2><ul class="chapter-links"><li><a href="#section-1">1 标准 OPD 是对照基线</a></li><li><a href="#section-2">2 一张表看具体改了哪里</a></li><li><a href="#section-3">3 核心公式对照</a></li><li><a href="#method-a">A 外部 teacher 换成获得额外信息的自己</a></li><li><a href="#method-b">B Multi-Teacher MOPD 换成按领域路由的 teacher</a></li><li><a href="#method-c">C ExOPD 沿 teacher 相对 reference 的方向继续走</a></li><li><a href="#method-d">D RLCSD 与 CEPO 用正负条件差分清理单侧信号</a></li><li><a href="#method-e">E Prefix OPD 不生成也不监督完整尾部</a></li><li><a href="#method-f">F BPM 先把 teacher 概率映射到学生词表</a></li><li><a href="#method-g">G OPRD 将输出空间监督移到 hidden-state 空间</a></li><li><a href="#method-h">H ROPD 把 logits 换成语义 rubric 奖励</a></li><li><a href="#method-i">I Decomposed OPD 显式增加视觉 grounding 目标</a></li><li><a href="#method-j">J STRIDE 动态停止并从较好前缀重启</a></li><li><a href="#method-k">K Lightning OPD 复用固定快照而非当前学生轨迹</a></li><li><a href="#method-l">L Entropy-Aware OPD 在 teacher 高熵位置补 forward KL</a></li><li><a href="#method-m">M OPSA 删除 teacher，用学生熵决定负 advantage</a></li><li><a href="#section-4">4 三篇分析工作改变的是判断标准</a></li><li><a href="#section-5">5 最容易混淆的四个差别</a></li></ul></section><section class="page" id="section-1"><h2>1 标准 OPD 是对照基线</h2>
+<p>问题为 \(x\)，学生采样的回答为 \(y\)，第 \(t\) 个前缀为 \(s_t=(x,y_{&lt;t})\)。记学生分布为 \(p_\theta\)，teacher 分布为 \(q\)，\(\operatorname{sg}\) 表示停止梯度。</p>
+<p>以一次采样后的局部更新为基线：</p>
+<div class="formula">\[y\sim p_{\mathrm{old}}(\cdot\mid x),\qquad
+\mathcal L_{\mathrm{OPD}}=
+\mathbb E_{x,y}\frac1{|y|}\sum_t
+D_{\mathrm{KL}}\!\left(p_\theta(\cdot\mid s_t)\,\|\,\operatorname{sg}[q(\cdot\mid s_t)]\right).\]</div>
+<p><strong>学生先写，teacher 在学生实际走到的前缀上给分布监督。</strong> on-policy 由“前缀来自谁”决定，不由 KL 方向决定。</p>
+<p>采用 sampled-token policy-gradient 更新时，常用信号为：</p>
+<div class="formula">\[A_t^{\mathrm{OPD}}=
+\log q(y_t\mid s_t)-\log p_{\mathrm{old}}(y_t\mid s_t),\qquad
+\mathcal L_{\mathrm{PG}}\simeq
+-\mathbb E\sum_t\operatorname{sg}[A_t]\log p_\theta(y_t\mid s_t).\]</div>
+<p>这里的 \(\simeq\) 表示更新代理形式，省略 PPO ratio、clip 和归一化；不是对完整训练程序的恒等改写。下文“核心式”按统一符号重写，“结构示意”只展示方法改动，不能直接当实现。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="section-2"><h2>2 一张表看具体改了哪里</h2>
+<div class="table-wrap" role="region" tabindex="0" aria-label="方法与公式对照表，可横向滚动"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>方法与评分</th>
+<th>标准 OPD → 新方法</th>
+<th>改动位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>OPSD <strong>9</strong>；SDFT <strong>8.5</strong>；SDPO <strong>9</strong></td>
+<td>外部强 teacher → 获得答案、示范或反馈的 self-teacher</td>
+<td>teacher 条件；部分方法也改散度</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Multi-Teacher MOPD <strong>8.5</strong></td>
+<td>一个 teacher → 按任务路由的领域 teacher</td>
+<td>teacher 选择</td>
+</tr>
+<tr>
+<td>C</td>
+<td>G-OPD / ExOPD <strong>8.5</strong></td>
+<td>固定 teacher 模仿 → 独立控制奖励与约束，允许外推</td>
+<td>优化目标</td>
+</tr>
+<tr>
+<td>D</td>
+<td>RLCSD <strong>8.5</strong>；CEPO <strong>7.5</strong></td>
+<td>正确提示的单侧信号 → 正确／错误提示的差分</td>
+<td>信号与 advantage</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Prefix OPD <strong>8.5</strong></td>
+<td>完整生成并监督 → 提前停止，只学习前缀</td>
+<td>rollout 长度</td>
+</tr>
+<tr>
+<td>F</td>
+<td>BPM <strong>8</strong></td>
+<td>同词表直接比较 → byte 对齐后的概率分布</td>
+<td>tokenizer 接口</td>
+</tr>
+<tr>
+<td>G</td>
+<td>OPRD <strong>8</strong></td>
+<td>匹配 logits → 匹配 hidden states</td>
+<td>监督空间</td>
+</tr>
+<tr>
+<td>H</td>
+<td>ROPD <strong>8</strong></td>
+<td>teacher logits → rubric 评分，再做策略优化</td>
+<td>黑盒监督接口</td>
+</tr>
+<tr>
+<td>I</td>
+<td>Decomposed OPD / VGS <strong>8</strong></td>
+<td>统一视觉语言模仿 → 显式加强视觉 grounding</td>
+<td>目标分解与加权</td>
+</tr>
+<tr>
+<td>J</td>
+<td>STRIDE <strong>8，暂定</strong></td>
+<td>从头完整 rollout → 动态停止、缓存前缀并重启</td>
+<td>多轮采样与复用</td>
+</tr>
+<tr>
+<td>K</td>
+<td>Lightning OPD <strong>8</strong></td>
+<td>当前学生在线 rollout → 固定学生快照与缓存 teacher 分数</td>
+<td>离线近似</td>
+</tr>
+<tr>
+<td>L</td>
+<td>Entropy-Aware OPD <strong>7.5</strong></td>
+<td>只有 reverse KL → 高熵位置额外加入 forward KL</td>
+<td>散度目标</td>
+</tr>
+<tr>
+<td>M</td>
+<td>OPSA <strong>8，暂定</strong></td>
+<td>teacher advantage → 学生自身熵决定的负 advantage</td>
+<td>去掉 teacher，属于边界方法</td>
+</tr>
+</tbody></table>
+</div><p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="section-3"><h2>3 核心公式对照</h2>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-a"><h3>A 外部 teacher 换成获得额外信息的自己</h3>
+<p><strong>改动：</strong> \(q(\cdot\mid s_t)\rightarrow q_{\bar\theta}(\cdot\mid s_t,c)\)；teacher 与学生来自同一模型，teacher 多看上下文 \(c\)。\(\bar\theta\) 可为停止梯度的当前参数或稳定快照，具体随方法设置变化。</p>
+<div class="table-wrap" role="region" tabindex="0" aria-label="方法与公式对照表，可横向滚动"><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>teacher 多看什么 \(c\)</th>
+<th>代表性局部目标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OPSD</td>
+<td>正确答案／已验证解法</td>
+<td>\(D_{\mathrm{KL}}(\operatorname{sg}[q_{\bar\theta}(\cdot\mid s_t,c)]\|p_\theta(\cdot\mid s_t))\)，forward KL</td>
+</tr>
+<tr>
+<td>SDFT</td>
+<td>专家示范</td>
+<td>\(D_{\mathrm{KL}}(p_\theta(\cdot\mid s_t)\|\operatorname{sg}[q_{\bar\theta}(\cdot\mid s_t,c)])\)，reverse KL</td>
+</tr>
+<tr>
+<td>SDPO</td>
+<td>测试报错、环境反馈；或同题成功尝试</td>
+<td>\(D(p_\theta,q_{\bar\theta}(\cdot\mid s_t,c))\)；使用 JSD 等稳定化选择，部分实验为 reverse KL</td>
+</tr>
+</tbody></table>
+</div><p>学生仍根据自己未获得特权信息时的策略采样。<strong>self 不等于无监督：额外信息必须有来源。</strong> SDPO 的贡献主要是反馈条件下的密集监督，不是固定某一种 KL。</p>
+<p>来源：<a href="https://arxiv.org/html/2601.18734v3">OPSD 式 1</a>、<a href="https://arxiv.org/html/2601.19897v1">SDFT 方法</a>、<a href="https://arxiv.org/html/2601.20802v1">SDPO 方法与超参数</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-b"><h3>B Multi-Teacher MOPD 换成按领域路由的 teacher</h3>
+<p><strong>核心式：</strong></p>
+<div class="formula">\[q(\cdot\mid s_t)\rightarrow q_{d(x)}(\cdot\mid s_t),\qquad
+\mathcal L=\mathbb E_{x,y\sim p_{\mathrm{old}}}\frac1{|y|}\sum_t
+D_{\mathrm{KL}}(p_\theta(\cdot\mid s_t)\|q_{d(x)}(\cdot\mid s_t)).\]</div>
+<p>数学题找数学 teacher，代码题找代码 teacher。<strong>主要改变 teacher 的组织方式，不是逐 token 平均所有 teacher。</strong> 同源 SFT checkpoint 上独立训练领域 RL teacher，是其重要稳定性条件。</p>
+<p>来源：<a href="https://arxiv.org/html/2606.30406v1">小米 Multi-Teacher MOPD，§3</a>。另有同名缩写的 <a href="https://arxiv.org/abs/2605.12652">Multi-Rollout MOPD</a>：它把成功、失败 peer 放进一个 teacher 的上下文，改变的是 A 中的 \(c\)，并非多 teacher 路由。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-c"><h3>C ExOPD 沿 teacher 相对 reference 的方向继续走</h3>
+<p><strong>核心式，序列级目标：</strong> 记 reference 为 \(r(y\mid x)\)，最大化</p>
+<div class="formula">\[\mathcal J_\lambda=
+\mathbb E_{x}\left[
+\mathbb E_{y\sim p_\theta}\lambda\log\frac{q(y\mid x)}{r(y\mid x)}
+-D_{\mathrm{KL}}(p_\theta(\cdot\mid x)\|r(\cdot\mid x))
+\right].\]</div>
+<p>在可自由表示分布、满足支持条件且可归一化的理想情形：</p>
+<div class="formula">\[p^*(y\mid x)=\frac{q(y\mid x)^\lambda r(y\mid x)^{1-\lambda}}{Z_\lambda(x)}.\]</div>
+<p>\(\lambda=1\) 恢复 teacher；\(0&lt;\lambda&lt;1\) 为插值；<strong>\(\lambda&gt;1\) 为外推</strong>。对应 sampled-token 核心信号可写为</p>
+<div class="formula">\[A_t^{\mathrm{Ex}}=
+\underbrace{\log q_t-\log p_{\mathrm{old},t}}_{\text{标准 OPD}}
++\underbrace{(\lambda-1)(\log q_t-\log r_t)}_{\text{新增外推项}},\]</div>
+<p>其中 \(q_t=q(y_t\mid s_t)\)，其余同理。<strong>超过 teacher 的基准分数是实验发现，不是公式保证。</strong> 外推过强也可能失稳。</p>
+<p>来源：<a href="https://arxiv.org/html/2602.12125v2">G-OPD 式 11–15</a>。配读 <a href="https://arxiv.org/html/2607.15161v1">OPD²</a>：使用 \(\Delta_t=\log q_{\mathrm{post}}(y_t\mid s_t)-\log q_{\mathrm{base}}(y_t\mid s_t)\)，突出 teacher 后训练前后的变化。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-d"><h3>D RLCSD 与 CEPO 用正负条件差分清理单侧信号</h3>
+<p>令 \(q_t^+=q(y_t\mid s_t,c^+)\)、\(q_t^-=q(y_t\mid s_t,c^-)\)，分别来自正确、错误提示。在同一 token 上：</p>
+<div class="formula">\[\underbrace{(\log q_t^+-\log p_t)}_{\text{单侧正提示}}
+-\underbrace{(\log q_t^--\log p_t)}_{\text{新增负提示对照}}
+=\log\frac{q_t^+}{q_t^-}.\]</div>
+<p><strong>RLCSD 的核心更新：</strong> 多个负提示先平均概率再取 log，随后做加法调节与保留符号的截断：</p>
+<div class="formula">\[e_t=\log q_t^+-\log\left(\frac1K\sum_{k=1}^K q_{t,k}^-\right),\quad
+r_t=\lambda\tanh(e_t/\tau),\quad m_t=\mathbf1[|r_t|&gt;\delta],\]</div>
+<div class="formula">\[\widetilde A_{i,t}=
+\begin{cases}
+\max(0,A_i+r_t),&amp;A_i\ge0,\\
+\min(0,A_i+r_t),&amp;A_i&lt;0.
+\end{cases}\]</div>
+<p>该调节用于 mask 选中的路径，再与普通 GRPO 路径独立归一化聚合；还要排除当前 rollout 自身作为提示。<strong>负分支是平均概率，不是平均 log-probability。</strong></p>
+<p><strong>CEPO 的核心更新：</strong> 使用正确／错误答案条件的差分，做乘法调节：</p>
+<div class="formula">\[\Delta_t=\operatorname{sg}\!\left[\log\frac{q_t^+}{q_t^-}\right],\quad
+w_{i,t}=\exp(\operatorname{sign}(A_i)\Delta_t),\quad
+\widehat A_{i,t}=A_i\left[(1-\lambda)+\lambda\operatorname{clip}(w_{i,t},1-\epsilon_w,1+\epsilon_w)\right].\]</div>
+<p>两者都把结果代入 PPO 类目标。<strong>RLCSD 是加法调节、clamp 与双路径；CEPO 是受限乘法权重。</strong> 都不是简单将 OPD loss 换成“正 KL 减负 KL”，也不是 InfoNCE；差分仅尝试减弱共有风格变化。</p>
+<p>来源：<a href="https://arxiv.org/html/2606.11709v1">RLCSD §3</a>、<a href="https://arxiv.org/html/2605.19436v1">CEPO 方法</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-e"><h3>E Prefix OPD 不生成也不监督完整尾部</h3>
+<p><strong>核心式：</strong></p>
+<div class="formula">\[\mathbb E\sum_{t=1}^{|y|}\ell_t
+\quad\longrightarrow\quad
+\mathbb E_{y_{1:m}\sim p_{\mathrm{old}}}\sum_{t=1}^{m}\ell_t,
+\qquad m\ll |y|.\]</div>
+<p>学生采样到 \(m\) 就停止，训练中可逐步增大 \(m\)。<strong>省掉的是尾部生成、teacher 打分和训练计算，不只是对完整回答截取 loss。</strong> 测试时仍可完整生成。</p>
+<p>来源：<a href="https://aclanthology.org/2026.findings-acl.1276.pdf">Prefix OPD 正式论文，§2–3</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-f"><h3>F BPM 先把 teacher 概率映射到学生词表</h3>
+<p><strong>核心式，展示已对齐边界且单 teacher-token 足以确定学生 token 的情形：</strong> 对 teacher token \(v\) 定义 byte-prefix 映射 \(\phi(v)\)，得到学生词表上的目标</p>
+<div class="formula">\[\widetilde q(u\mid s_t)=\sum_{v:\phi(v)=u}q(v\mid s_t),\qquad
+\widetilde q(\bot\mid s_t)=\sum_{v:\phi(v)=\bot}q(v\mid s_t).\]</div>
+<p>然后将原来的 \(D(p_\theta,q)\) 改为 \(D(p_\theta,\widetilde q)\)，按论文处理 residual 类别；默认散度为 JSD，并有停止行为的额外监督。<strong>改变对齐接口，散度仍可选择 forward KL、reverse KL 或 JSD。</strong> 跨多个 teacher token 的情形需要额外修正；代码空白位置需屏蔽。</p>
+<p>来源：<a href="https://arxiv.org/html/2607.22334v1">BPM §3</a>。不能直接拿不同词表上的概率数组计算 KL。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-g"><h3>G OPRD 将输出空间监督移到 hidden-state 空间</h3>
+<p><strong>核心对照，可直接对齐层和维度的情形：</strong></p>
+<div class="formula">\[D_{\mathrm{KL}}(p_\theta\|q)
+\quad\longrightarrow\quad
+\mathcal L_{\mathrm{rep}}=
+\mathbb E\frac1{|\mathcal S|}\sum_{\ell\in\mathcal S}
+\frac{\sum_t m_t\,\|h^S_{\ell,t}-\operatorname{sg}[h^T_{\ell,t}]\|_2^2}{d\sum_t m_t}.\]</div>
+<p>\(m_t\) 排除 padding，\(d\) 为 hidden 维度；“normalized MSE”指按维度、位置和层平均，不是把向量变成单位长度。跨架构需要表示对齐。<strong>采样仍在学生轨迹上，替换的是监督空间。</strong> 去掉固定 rollout 下的输出 token 采样估计方差，不等于消除 rollout 随机性。</p>
+<p>来源：<a href="https://arxiv.org/html/2606.06021v2">OPRD §3</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-h"><h3>H ROPD 把 logits 换成语义 rubric 奖励</h3>
+<p><strong>核心流程与奖励式：</strong></p>
+<div class="formula">\[\mathcal C_x=\operatorname{Rubricator}(x,Y_T,Y_S),\qquad
+R_i=\frac{\sum_k w_k\,\operatorname{Verifier}(x,y_i,c_k)}{\sum_k w_k+\epsilon}.\]</div>
+<p>再用组内标准化等方式从 \(R_i\) 构造策略 advantage。<strong>这里不再计算 \(D_{\mathrm{KL}}(p_\theta,q)\)；teacher 知识通过 rubric 和评分进入 on-policy RL。</strong> 可用黑盒 teacher，但依赖 rubric 与 verifier 质量。</p>
+<p>来源：<a href="https://arxiv.org/html/2605.07396v1">ROPD 式 1–4</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-i"><h3>I Decomposed OPD 显式增加视觉 grounding 目标</h3>
+<p><strong>核心式，省略上下文与归一化常数：</strong> 以 \(I\) 表示图像，构造视觉目标</p>
+<div class="formula">\[q_T^*(\cdot\mid I,s_t)\propto
+p_\theta(\cdot\mid s_t)
+\frac{q_T(\cdot\mid I,s_t)}{q_T(\cdot\mid s_t)},\qquad
+\ell_{\mathrm{Vis},t}=D_{\mathrm{KL}}(p_\theta(\cdot\mid I,s_t)\|q_T^*(\cdot\mid I,s_t)).\]</div>
+<p>对照最终目标结构：</p>
+<div class="formula">\[\mathcal L_{\mathrm{standard}}
+\quad\longrightarrow\quad
+\eta\left(\mathcal L_{\mathrm{standard}}+\gamma\mathcal L_{\mathrm{Vis}}+\lambda\mathcal L_{\mathrm{LP}}\right).\]</div>
+<p><strong>视觉项加强“看图带来的信息”，LP 项保护语言先验，\(\eta\) 调整更新尺度。</strong> 不能将两个概率比直接解释为已证实的因果视觉理解；额外无图 forward 也有计算成本。</p>
+<p>来源：<a href="https://arxiv.org/html/2606.00564v1">Decomposed OPD 式 10–18</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-j"><h3>J STRIDE 动态停止并从较好前缀重启</h3>
+<p><strong>结构示意，\(k\) 为交互轮次：</strong> 用每轮 teacher 平均 log-probability \(\bar\ell_k\) 判断何时停止，缓存前缀 \(b\) 后重新采样剩余部分：</p>
+<div class="formula">\[\sum_{j=k_0+1}^{k}\bar\ell_j&lt;\lambda\Rightarrow\mathrm{stop},\qquad
+y_{&gt;k_0}\sim p_{\mathrm{old}}(\cdot\mid x,b_{\le k_0}).\]</div>
+<p>主要 loss 保留 OPD 形式。<strong>改动在“从哪一轮开始、生成到哪一轮结束”。</strong> teacher 的认可度是质量代理；缓存前缀也改变了完整轨迹的采样分布。</p>
+<p>来源：<a href="https://arxiv.org/html/2609.14636v1">STRIDE 算法 1</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-k"><h3>K Lightning OPD 复用固定快照而非当前学生轨迹</h3>
+<p><strong>核心对照：</strong></p>
+<div class="formula">\[y\sim p_{\mathrm{old}}
+\quad\longrightarrow\quad
+y\sim p_{\mathrm{SFT}}\ \text{一次采集并缓存},\qquad
+A_t=\underbrace{\log q(y_t\mid s_t)}_{\text{预计算}}-\underbrace{\log p_\theta(y_t\mid s_t)}_{\text{训练时计算}}.\]</div>
+<p><strong>移除在线 rollout 和常驻 teacher，但固定了训练轨迹分布。</strong> 作者要求 SFT 数据 teacher 与打分 teacher 一致，并分析该条件下的离线近似；不能把条件内结果推广为任意 OPD 都可离线替代。</p>
+<p>来源：<a href="https://arxiv.org/html/2604.13010v1">Lightning OPD §3.2</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-l"><h3>L Entropy-Aware OPD 在 teacher 高熵位置补 forward KL</h3>
+<p><strong>核心式：</strong></p>
+<div class="formula">\[\ell_t^{\mathrm{EOPD}}=
+\ell_t^{\mathrm{OPD}}+
+\mathbf1[H(q_t)&gt;\tau]\,D_{\mathrm{KL}}(q_t\|p_{\theta,t}).\]</div>
+<p><strong>低熵位置保持原目标；高熵位置额外覆盖 teacher 的多种合理延续。</strong> 不是对所有位置整体换成 forward KL，也不等同于只增加 entropy bonus。</p>
+<p>来源：<a href="https://arxiv.org/html/2603.07079v1">Entropy-Aware OPD 式 9</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="method-m"><h3>M OPSA 删除 teacher，用学生熵决定负 advantage</h3>
+<p><strong>核心式：</strong> 每条 rollout 只更新学生 log-probability 最低的 20% 位置，记为 \(\mathcal T\)：</p>
+<div class="formula">\[A_t^{\mathrm{OPSA}}=-\frac12-\frac{H_t-H_{\min}}{2(H_{\max}-H_{\min})},\qquad
+\mathcal L=-\mathbb E\frac1{|\mathcal T|}\sum_{t\in\mathcal T}
+\operatorname{sg}[A_t^{\mathrm{OPSA}}]\log p_\theta(y_t\mid s_t).\]</div>
+<p>\(H_{\min},H_{\max}\) 在该回答的所选位置内计算；此式针对熵范围非零情形。<strong>信号始终为负，高熵位置负信号更强；不再需要 teacher 或正确答案。</strong> 因此 OPSA 是由 OPD 机制研究引出的无监督策略训练，不是严格意义上的蒸馏。</p>
+<p>来源：<a href="https://arxiv.org/html/2608.31046v2">Does OPD Really Distill? 式 5</a>。</p>
+<p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="section-4"><h2>4 三篇分析工作改变的是判断标准</h2>
+<p>这些工作没有一个应强行写成“新增 loss”的统一方法。</p>
+<div class="table-wrap" role="region" tabindex="0" aria-label="方法与公式对照表，可横向滚动"><table>
+<thead>
+<tr>
+<th>论文与评分</th>
+<th>改变了什么判断</th>
+<th>应怎样读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://arxiv.org/abs/2604.13016">Rethinking OPD</a> <strong>8</strong></td>
+<td>teacher 分数更高，不代表其在学生前缀上更可教</td>
+<td>检查思考模式兼容性与真正新增能力</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2607.05184">Rethinking OPSD for Thinking Models</a> <strong>8</strong></td>
+<td>获得完整答案的 self-teacher，可能压制学生的探索与纠错</td>
+<td>更短 rollout 或更小 KL，不自动意味着更强长预算推理</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2609.04172">One Training Example</a> <strong>7.5，暂定</strong></td>
+<td>很少的问题也能产生大量有效监督</td>
+<td>问题数少不等于 rollout、teacher 信息或优化步骤少</td>
+</tr>
+</tbody></table>
+</div><p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section><section class="page" id="section-5"><h2>5 最容易混淆的四个差别</h2>
+<div class="table-wrap" role="region" tabindex="0" aria-label="方法与公式对照表，可横向滚动"><table>
+<thead>
+<tr>
+<th>看起来相似</th>
+<th>实际区别</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>换 KL 方向与改 on-policy</td>
+<td>前者改散度；后者涉及前缀由谁生成，两者独立</td>
+</tr>
+<tr>
+<td>RLCSD 与 Multi-Rollout MOPD 都利用正负信息</td>
+<td>前者分别构造正负条件 teacher 再求差；后者把正反例放进一个 teacher 上下文</td>
+</tr>
+<tr>
+<td>Prefix OPD 与 Lightning OPD 都减少在线成本</td>
+<td>前者仍在线采当前学生的短前缀；后者复用固定快照的缓存轨迹</td>
+</tr>
+<tr>
+<td>BPM 与 ROPD 都放宽 teacher 限制</td>
+<td>前者需要 teacher 概率、解决 tokenizer 不同；后者用文本评价、无需 teacher logits</td>
+</tr>
+</tbody></table>
+</div><p class="section-return"><a href="#contents">返回目录</a> · <a href="#section-2">总览对照</a></p></section></main></body></html>
