@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大模型低精度知识地图</title><meta name="description" content="训练与推理中的 weight、activation、gradient、KV cache 精度、outlier、稳定性、Hopper/Blackwell 与开源工具实操。">
+<link rel="stylesheet" href="assets/document.css?v=9037c79583a5">
+<link rel="stylesheet" href="assets/low-precision.css?v=f685d57f8f1a"><link rel="stylesheet" href="assets/katex/katex.min.css">
+<script defer src="assets/katex/katex.min.js"></script>
+<script defer src="assets/katex/auto-render.min.js"></script>
+<script defer src="assets/inline-math.js"></script></head>
+<body class="technical-note lp-report"><nav class="document-nav" aria-label="文档导航">
+<div class="nav-links"><a href="index.html#topic-knowledge-maps">专题知识地图</a><a href="low-precision-quickstart-zh.html">Quickstart</a><a href="low-precision-map-zh.html#contents">完整目录</a></div>
+<div class="document-title">大模型低精度知识地图</div><div class="document-meta">专题研究 · 核查日期：2026-10-18 · 中国标准时间 · 各家方案优先复用仓库现有译文</div></nav>
+<main><section class="page" id="overview"><header><h1>大模型低精度知识地图</h1>
+<p>训练与推理中的 weight、activation、gradient、KV cache：格式、outlier、训练稳定性、各家配方与开源实操。</p></header>
+<p>本文是一份专题解释与工程参考，不是单篇论文的翻译。已有 tech report 直接复用本站中文译文，外部研究用于补充方法、硬件与工具。文中的“未披露”表示来源没有给出可确认配方；经验性建议与作者原文结论分别说明。</p>
+<p><a href="low-precision-quickstart-zh.html">单独阅读 Quickstart</a> · <a href="#quickstart">先看速览</a> · <a href="#lp-tools">直接上手工具</a> · <a href="#lp-hardware">H 卡与 B 卡差异</a></p></section><section class="page" id="quickstart">
+<h2>Quickstart：先建立坐标，再跑最小实验</h2>
+<p>低精度需要同时说明<strong>阶段、张量、格式、缩放粒度和实际计算路径</strong>。W4A16 表示权重与激活的位宽组合，不能据此断言内部直接执行 INT4 乘法；发布 FP8 checkpoint 也不能证明预训练采用 FP8。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>先记住的基本信息</th><th>展开阅读</th></tr></thead><tbody>
+<tr><td>weight</td><td>推理可从 W8A8 FP8 或 W4A16 起步；训练还要分清主权重、计算副本与优化器状态。</td><td><a href="#lp-train-weight">训练权重</a> · <a href="#lp-infer-weight">推理权重</a></td></tr>
+<tr><td>activation</td><td>计算输入、为反向保存的激活、residual state 是不同对象；outlier 常决定能压到多少位。</td><td><a href="#lp-train-activation">训练激活</a> · <a href="#lp-infer-activation">推理激活</a></td></tr>
+<tr><td>gradient</td><td>只有训练反向链路才有；Dgrad、Wgrad、累积、通信应分别指定精度。</td><td><a href="#lp-train-gradient">梯度精度</a> · <a href="#lp-stability">崩溃排查</a></td></tr>
+<tr><td>KV cache</td><td>推理长上下文的重要显存项；K/V 分布不同，压低 KV 位宽也不等于 attention 全程低精度。</td><td><a href="#lp-kv">KV 量化</a> · <a href="#lp-rl">RL rollout</a></td></tr>
+</tbody></table></div>
+<h3>1. 先确认你的 GPU 与目标</h3>
+<p><strong>普通 FP8 可以跨两代受支持硬件使用，但 Hopper 普通 FP8 与 Blackwell 原生 MXFP8/NVFP4 要分开比较。</strong>Blackwell 数据中心卡增加了微块缩放相关原生路径，框架、CUDA、算子与布局仍决定能否使用。普通 FP8、DeepSeek 风格 block FP8、MXFP8 是三种不同配方；换卡后的最佳选择与加速比需要重测。H20、GB10、RTX Blackwell 也不能套用 B200 的支持结论。先运行 <code>nvidia-smi</code>，并用 PyTorch 查询 <code>torch.cuda.get_device_capability()</code>。<a href="#lp-hardware">查看硬件差异、性能数据与支持边界</a>。</p>
+<h3>2. 选一条最短上手路线</h3>
+<ul>
+<li><strong>先跑通服务：</strong>使用 <a href="https://github.com/vllm-project/vllm">vLLM</a> 加载官方量化 checkpoint，先保持 KV 默认精度；确认结果后单独尝试 FP8 KV。<a href="#lp-tools">安装、服务与请求示例</a>。</li>
+<li><strong>自己量化模型：</strong>使用 <a href="https://github.com/vllm-project/llm-compressor">LLM Compressor</a> 生成 vLLM 可加载的压缩 checkpoint。动态 FP8 RTN 可不需要校准数据，AWQ/GPTQ、静态激活和 KV scale 通常需要对应校准。<a href="#lp-tool-quantize">量化脚本与产物检查</a>。</li>
+<li><strong>尝试训练：</strong>先做 BF16 基线，再用 <a href="https://github.com/NVIDIA/TransformerEngine">Transformer Engine</a> 替换受支持的 Linear；不要直接把整个模型转换成 <code>float8</code>。<a href="#lp-te-example">训练示例</a> · <a href="#lp-stability">验证与监控</a>。</li>
+<li><strong>消费卡或 CPU 本地运行：</strong>先看 llama.cpp/GGUF 或 weight-only；QLoRA 用于冻结量化底座后训练 adapter，与全参数 FP4 训练不同。<a href="#lp-tools">工具地图</a>。</li>
+</ul>
+<h3>3. 第一个可复现实验</h3>
+<p>以 Linux NVIDIA CUDA 环境及正文记录的 vLLM 参考版本为前提，在独立虚拟环境安装后，先启动官方 FP8 权重：</p>
+<pre><code class="language-bash">vllm serve Qwen/Qwen3-8B-FP8 \
+  --max-model-len 4096 \
+  --gpu-memory-utilization 0.85</code></pre>
+<p>这条命令只选择 checkpoint；它没有主动把 KV cache 改成 FP8。显存不足时先缩短上下文，具体硬件支持、依赖安装和 API 请求见<a href="#lp-tool-fp8-serve">完整实操</a>。示例经过文档/API核对，未在 GPU 上实跑，不代表任意卡与版本均可运行。</p>
+<p>固定模型、prompt、输入/输出长度和并发，分别比较 BF16 与 FP8，再只改变 KV dtype。记录质量、TTFT、TPOT、吞吐量、峰值显存和可承载 token 数；单独报告 prefill 与 decoding。<a href="#lp-benchmark">查看基准方法</a>。</p>
+<h3>按问题跳转</h3>
+<p><a href="#lp-dtypes">格式与 scale</a> · <a href="#lp-outliers">outlier 处理地图</a> · <a href="#lp-families">各家配方</a> · <a href="#family-deepseek">DeepSeek</a> · <a href="#family-qwen">Qwen</a> · <a href="#family-kimi">Kimi</a> · <a href="#family-mimo">MiMo</a> · <a href="#lp-selection">选型速查</a> · <a href="#lp-sources">资料与代码索引</a></p>
+</section>
+<section class="page" id="contents"><h2>目录与阅读路径</h2><ol><li><a href="#quickstart">Quickstart：先建立坐标，再跑最小实验</a></li><li><a href="#lp-foundations">1. 先建立坐标：低精度究竟降低了什么</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-stage-matrix">先看总表：阶段 × W / A / G / KV</a></li><li><a href="#lp-foundations-sub-2">1.1 三个收益，三种不同的瓶颈</a></li><li><a href="#lp-foundations-sub-3">1.2 训练比推理多了一条会积累误差的闭环</a></li></ul></details></li><li><a href="#lp-dtypes">2. dtype 地图：位数相同，数值能力也可能不同</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-dtypes-sub-1">2.1 指数解决“够不够大”，尾数解决“分得够不够细”</a></li><li><a href="#lp-dtypes-sub-2">2.2 INT、FP、NF4 的量尺不同</a></li><li><a href="#lp-dtypes-sub-3">2.3 MXFP8、MXFP4、NVFP4 都把“共享量尺”变成格式的一部分</a></li><li><a href="#lp-dtypes-sub-4">2.4 FP4 的数值例子：scale 再准确，也只有少数格点</a></li></ul></details></li><li><a href="#lp-train-weight">3. 训练中的 weight：计算副本、master 与优化器必须分开</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-train-weight-sub-1">3.1 一个 Linear 层实际要做三个 GEMM</a></li><li><a href="#lp-train-weight-sub-2">3.2 为什么 master weights 常常比计算权重高精度</a></li><li><a href="#lp-train-weight-sub-3">3.3 Adam 的 moments 为什么也是精度预算的重要部分</a></li><li><a href="#lp-train-weight-sub-4">3.4 低精度预训练、QAT、低比特微调不是同一项实验</a></li><li><a href="#lp-train-weight-sub-5">3.5 不要把“有 gradient”误认为“所有 weight 都在更新”</a></li></ul></details></li><li><a href="#lp-train-activation">4. 训练中的 activation：分组、scale 与保存方式</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-train-activation-sub-1">4.1 先统一 scale 的定义，避免公式看起来相反</a></li><li><a href="#lp-train-activation-sub-2">4.2 per-tensor、per-token、per-channel、per-group 分别隔离什么</a></li><li><a href="#lp-train-activation-sub-3">4.3 current scaling 与 delayed scaling：准确性和额外扫描的取舍</a></li><li><a href="#lp-train-activation-sub-4">4.4 为什么 GEMM 的 scale 沿归约轴变化会影响实现</a></li><li><a href="#lp-train-activation-sub-5">4.5 保存 activation 与计算 activation 需要分别决策</a></li></ul></details></li><li><a href="#lp-train-gradient">5. gradient：动态范围、累积误差与低精度 backward</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-train-gradient-sub-1">5.1 activation gradient 与 weight gradient 承担不同职责</a></li><li><a href="#lp-train-gradient-sub-2">5.2 loss scaling 保护的是数值范围，不是额外有效位</a></li><li><a href="#lp-train-gradient-sub-3">5.3 为什么反向格式有时用 E5M2，有时又全用 E4M3</a></li><li><a href="#lp-train-gradient-sub-4">5.4 梯度累积应按真正的 loss 分母算</a></li><li><a href="#lp-train-gradient-sub-5">5.5 stochastic rounding 为什么在 FP4 更重要</a></li><li><a href="#lp-train-gradient-sub-6">5.6 通信压缩还要问“接收端怎样加起来”</a></li></ul></details></li><li><a href="#lp-infer-weight">6. 推理中的 weight：先把模型装下，再决定怎样算得快</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-infer-weight-sub-1">如何建立一份可比较的精度配置</a></li><li><a href="#lp-infer-weight-sub-2">RTN：所有复杂方法都需要比较的基线</a></li><li><a href="#lp-infer-weight-sub-3">GPTQ：量化一个权重后，把误差分配给尚未量化的权重</a></li><li><a href="#lp-infer-weight-sub-4">AWQ：activation 感知不等于把 activation 也压到 4 bit</a></li><li><a href="#lp-infer-weight-sub-5">QuIP#、非均匀码本与更低位宽</a></li><li><a href="#lp-infer-weight-sub-6">Weight outlier 的处理路线与失败边界</a></li><li><a href="#lp-infer-weight-sub-7">把量化误差沿着线性层算一遍</a></li><li><a href="#lp-infer-weight-sub-8">MoE：总体压缩率与每个 token 的计算量要分别看</a></li></ul></details></li><li><a href="#lp-infer-activation">7. 推理中的 activation：outlier 决定能否真正使用低精度 GEMM</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-infer-activation-sub-1">分清三种 outlier</a></li><li><a href="#lp-infer-activation-sub-2">LLM.int8：把重要的大值保留在高精度旁路</a></li><li><a href="#lp-infer-activation-sub-3">SmoothQuant：等价迁移，不是删除 outlier</a></li><li><a href="#lp-infer-activation-sub-4">OmniQuant：让 clipping 与等价变换接受校准优化</a></li><li><a href="#lp-infer-activation-sub-5">QuaRot 与 SpinQuant：换坐标系，分散 outlier</a></li><li><a href="#lp-infer-activation-sub-6">静态、动态、分组 scale 如何选择</a></li><li><a href="#lp-infer-activation-sub-7">outlier、attention sink 与 residual sink 不是同义词</a></li><li><a href="#lp-infer-activation-sub-8">FP8 与 INT8：不是浮点必然比整数好</a></li></ul></details></li><li><a href="#lp-kv">8. KV cache：把“模型压缩”推进到长上下文状态压缩</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-kv-sub-1">为什么 key 与 value 需要不同量化轴</a></li><li><a href="#lp-kv-sub-2">KVQuant：RoPE 位置、码本与 outlier 分离</a></li><li><a href="#lp-kv-sub-3">FP8 KV：存储 dtype 与 attention dtype 分别设置</a></li><li><a href="#lp-kv-sub-4">FP4 cache、旋转与更新的系统路径</a></li><li><a href="#lp-kv-sub-5">补充方向：TurboQuant、旋转与内积误差</a></li><li><a href="#lp-kv-sub-6">KV 失败模式清单</a></li><li><a href="#lp-kv-sub-7">从缓存误差到 attention 输出误差</a></li></ul></details></li><li><a href="#lp-outliers">9. outlier 知识地图：先识别是哪一类，再选择处理方式</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-outliers-sub-1">9.1 “一个最大值很大”并不完整描述问题</a></li><li><a href="#lp-outliers-sub-2">9.2 缩小组、平滑、旋转、裁剪和旁路分别改变什么</a></li><li><a href="#lp-outliers-sub-3">9.3 长程 FP8：为什么 SwiGLU 会是单独一章</a></li><li><a href="#lp-outliers-sub-4">9.4 NVFP4 的 RHT 为什么放在 Wgrad 路径</a></li><li><a href="#lp-outliers-sub-5">9.5 attention logits 爆炸与低精度上溢如何区分</a></li></ul></details></li><li><a href="#lp-stability">10. 从训练崩溃到可验证 recipe：排查顺序与代码</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-stability-sub-1">10.1 先区分五种“崩溃”</a></li><li><a href="#lp-stability-sub-2">10.2 建立“最早异常”的证据链</a></li><li><a href="#lp-amp-example">10.3 可运行的 PyTorch AMP 最小示例</a></li><li><a href="#lp-te-example">10.4 Transformer Engine：选择 recipe，而不是直接把 tensor cast 成 FP8</a></li><li><a href="#lp-stability-sub-5">10.5 怎样判定低精度方案真正成功</a></li></ul></details></li><li><a href="#lp-families">11. 各家方案：沿着 W、A、G、KV 与优化器逐项拆开</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-families-sub-1">DeepSeek：从完整 FP8 训练到 FP4 专家与 FP4 KV</a></li><li><a href="#lp-families-sub-5">Qwen：原生 FP8、官方量化 checkpoint 与门控架构三条线</a></li><li><a href="#lp-families-sub-8">Kimi：从只压缩激活存储，到部署感知的 MXFP4 后训练</a></li><li><a href="#lp-families-sub-11">Xiaomi / MiMo：FP8 训练到 MXFP4 rollout 的数值闭环</a></li><li><a href="#lp-families-sub-14">MiniCPM / InfLLM：端侧低比特需要与校准、稀疏和投机采样一起设计</a></li><li><a href="#lp-families-sub-18">其他方案：选择性量化、罕见失效与端侧格式</a></li></ul></details></li><li><a href="#lp-rl">12. RL 的低精度：必须对齐参数、路径和采样分布</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-rl-sub-1">四层一致性：从权重到概率</a></li><li><a href="#lp-rl-sub-2">公开案例如何对应这四层</a></li><li><a href="#lp-rl-sub-3">精度不匹配如何进入 policy ratio 与 KL</a></li><li><a href="#lp-rl-sub-4">阶段转换：QAT、优化器状态与冻结策略</a></li><li><a href="#lp-rl-sub-5">投机采样：目标、草稿与验证需要分别标注精度</a></li><li><a href="#lp-rl-sub-6">一张可执行的 RL 精度记录表</a></li></ul></details></li><li><a href="#lp-hardware">13. 硬件边界：Hopper 与不同 Blackwell 必须逐层核验</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-hardware-sub-1">H100、H200 与 H20</a></li><li><a href="#lp-hardware-sub-2">B100、B200、B300、GB200、GB10</a></li><li><a href="#lp-hardware-sub-3">普通 FP8 block、MXFP8、MXFP4、NVFP4 的分界</a></li><li><a href="#lp-hardware-sub-4">TE 2.20.2 stable 与开发版支持矩阵分开看</a></li><li><a href="#lp-hopper-blackwell-performance">同叫 FP8，在 H 卡与 B 卡上为什么表现不同</a></li><li><a href="#lp-hardware-sub-6">累加：格式变小后仍要保护求和</a></li></ul></details></li><li><a href="#lp-tools">14. 工具地图与三条最小实践路径</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-tools-sub-1">谁负责量化，谁负责服务</a></li><li><a href="#lp-code-map">想读量化代码，从哪里开始</a></li><li><a href="#lp-tool-fp8-serve">流程一：直接加载官方 FP8 checkpoint</a></li><li><a href="#lp-tool-quantize">流程二：用 LLM Compressor 导出 FP8_DYNAMIC，再交给 vLLM</a></li><li><a href="#lp-tool-kv">流程三：校准 Q 与 KV，再部署联合 FP8 attention 路径</a></li><li><a href="#lp-tools-sub-6">其他路线怎样接入</a></li><li><a href="#lp-tools-sub-7">量化前后的发布产物应该保存什么</a></li></ul></details></li><li><a href="#lp-benchmark">15. 如何证明方案有效：质量、稳定性与速度一起测</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-benchmark-sub-1">建立不会混淆变量的对照</a></li><li><a href="#lp-benchmark-sub-2">质量不能只看一个平均分</a></li><li><a href="#lp-benchmark-sub-3">数值诊断：找到第一个失真的位置</a></li><li><a href="#lp-benchmark-sub-4">速度与显存的最小记录表</a></li></ul></details></li><li><a href="#lp-selection">16. 工程选型与复习地图</a><details><summary>展开本章小节</summary><ul><li><a href="#lp-selection-sub-1">从故障表现反查章节</a></li><li><a href="#lp-selection-sub-2">五组必须分清的概念</a></li></ul></details></li><li><a href="#lp-sources">资料、官方代码与本站译文索引</a></li></ol></section><section class="page" id="lp-foundations">
+<h2>1. 先建立坐标：低精度究竟降低了什么</h2>
+<p>低精度不是一个开关，而是在一条计算链上分别决定哪些信息可以少存、少搬、少算。看到“FP8 模型”，第一反应应是问：它是下载文件里的 weight 为 FP8，还是矩阵乘法的 weight 与 activation 都为 FP8？前向如此，反向也如此吗？乘法低精度之后，用什么累加？gradient 是按什么精度跨 micro-batch 累积、跨 GPU 归约？优化器更新的参数又保留多少位？如果没有回答这些问题，同一个标签可能对应完全不同的成本和误差。</p>
+<p>本文把 W 定义为 weight，把 A 定义为前向 activation，把 G 细分为 activation gradient 和 weight gradient，把 KV cache 单列为自回归生成的持久状态。它们不构成彼此独立的四个存储桶：K、V 本来也是 activation；训练中的 activation checkpoint 是为了反向传播保存的中间量，推理中的 KV cache 是为了避免重复计算历史 token。训练通常需要前者，生成通常需要后者。RL 的 rollout 同时属于训练系统的一部分和一次推理工作负载，因此也会用到 KV cache。</p>
+<h3 id="lp-stage-matrix">先看总表：阶段 × W / A / G / KV</h3>
+<p>下表列出常见可选组合，用来建立坐标，不代表每家公司采用同一配方。W/A/G 中“计算”指相应 GEMM 操作数；累加、输出与长期保存精度还要看后面的独立记录。FP4 QAT 尤其可能只模拟低比特权重，再用 FP8/BF16 计算。</p>
+<div class="table-wrap"><table><thead><tr><th>阶段/路线</th><th>W</th><th>A</th><th>G</th><th>KV / 状态</th><th>必须补充的精度</th></tr></thead><tbody>
+<tr><td>预训练 / SFT：FP16 或 BF16 基线</td><td>计算 FP16/BF16；参数可为 FP32 或低精度副本</td><td>主体 FP16/BF16，敏感算子更高精度</td><td>传播 FP16/BF16 等；参数梯度与累积依框架</td><td>通常没有生成式持久 KV；有反向激活与可能的循环状态</td><td>master、moments、loss scaling、归约与累加</td></tr>
+<tr><td>预训练：FP8 recipe</td><td>受选 GEMM 输入 FP8；保留高精度源或主权重</td><td>受选 GEMM 输入 FP8；保存格式单列</td><td>可为 E4M3/E5M2；也有 Wgrad 保留 BF16 的方案</td><td>训练状态独立配置</td><td>三类 GEMM、高精度例外、scale 与通信</td></tr>
+<tr><td>预训练：原生 FP4 recipe</td><td>受选 GEMM 使用 FP4 表示</td><td>受选路径使用 FP4 与细粒度 scale</td><td>受选反向路径 FP4，配合随机舍入等措施</td><td>不能据此推断状态也是 FP4</td><td>高精度更新、RHT、Fprop/Dgrad/Wgrad 支持</td></tr>
+<tr><td>中期 / SFT / RL：专家 FP4 QAT</td><td>专家 QDQ 到 MXFP4 等；主权重保持高精度</td><td>可为 MXFP8、FP8 或 BF16，依配方</td><td>由训练实现决定，不能从 W4 推成 G4</td><td>rollout 缓存另配；learner 保存反向激活</td><td>STE、实际算术、部署有效权重与更新状态衔接</td></tr>
+<tr><td>QLoRA 微调</td><td>底座 NF4 等冻结；adapter 高精度可训练</td><td>通常 BF16/FP16 计算</td><td>仍需传播 activation gradient；仅可训练参数有 weight gradient</td><td>训练通常不依赖生成式持久 KV</td><td>adapter/master、optimizer、反量化与合并导出</td></tr>
+<tr><td>RL rollout / 常规推理：W4A16</td><td>INT4、MXFP4、NF4 等压缩表示，需匹配 loader</td><td>FP16/BF16；实际 GEMM 可能先反量化</td><td>无常规反向 gradient</td><td>独立选择 BF16/FP16/FP8/FP4 等受支持格式</td><td>拆包、累加、attention backend</td></tr>
+<tr><td>RL rollout / 常规推理：W8A8</td><td>FP8 或 INT8</td><td>对应 FP8 或 INT8；静态或动态 scale</td><td>无常规反向 gradient</td><td>独立配置，默认不跟随 W/A 自动改变</td><td>prefill/decode、GEMM 与 KV/attention 精度</td></tr>
+<tr><td>RL rollout / 常规推理：W4A8 / W4A4</td><td>INT4 或 FP4</td><td>FP8/INT8 或 FP4，依硬件与模型</td><td>无常规反向 gradient</td><td>可另做压缩/共享/量化</td><td>混合指令或原生路径、敏感层、QAT/校准</td></tr>
+</tbody></table>
+</div><p class="note">常规推理一行同时覆盖 prefill 与 decoding，但二者的最佳 kernel、激活规模和带宽占比可能不同；RL rollout 是训练系统中的推理阶段。test-time training 等包含反向更新的流程需要重新归类，不能套用“推理无 G”。具体实证见<a href="#lp-families">各家方案</a>，工具实现见<a href="#lp-tools">上手章节</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>观察位置</th><th>应记录的内容</th><th>容易误读的说法</th></tr></thead><tbody>
+<tr><td>发布与加载</td><td>文件 dtype、量化编码、scale、zero-point、异常值旁路</td><td>文件是 FP8，所以训练一定是 FP8</td></tr>
+<tr><td>计算</td><td>每个 GEMM 的两路输入 dtype、累加规则、输出 dtype</td><td>输出是 BF16，所以没有进行低精度计算</td></tr>
+<tr><td>反向保存</td><td>保存哪些 A、以何种 dtype 保存、哪些选择重计算</td><td>前向 A 是 FP8，所以所有中间状态都是 FP8</td></tr>
+<tr><td>参数更新</td><td>G 累积、master weights、optimizer moments 与更新算术精度</td><td>FP8 训练等于用 FP8 更新权重</td></tr>
+<tr><td>分布式通信</td><td>all-gather、all-reduce、reduce-scatter、MoE dispatch/combine 各自的格式</td><td>传输格式就是接收端的累加格式</td></tr>
+<tr><td>服务运行</td><td>prefill/decoding 各自的 W/A/KV dtype、量化/反量化开销</td><td>某种 dtype 的峰值 FLOPs 高，所以所有并发都更快</td></tr>
+</tbody></table>
+</div><h3 id="lp-foundations-sub-2">1.1 三个收益，三种不同的瓶颈</h3>
+<p>第一是容量收益：同样多元素用更少字节存储，模型或更长上下文才能装进显存。第二是带宽收益：从 HBM 读取、在 GPU 之间传输的数据减少，才能缓解 memory-bound 或 communication-bound 路径。第三是算力收益：硬件原生执行低精度乘法，提高 compute-bound GEMM 的吞吐量。weight-only INT4 可能主要赚前两项，在计算前把 weight 转成 FP16/BF16；原生 FP8 GEMM 则有机会同时赚第三项。反量化、scale reduction、布局转换、转置副本会消耗一部分收益，因此必须看端到端的时间和峰值显存。</p>
+<p>以一个不含分片的理想化 AdamW 例子说明：每参数如果有 BF16 计算权重 2 字节、FP32 master 4 字节、FP32 gradient 4 字节、FP32 两个 moments 共 8 字节，合计是 18 字节。若 gradient 只存 BF16，则变成 16 字节。这只是分项算账，不是所有框架的固定占用；有的实现把 FP32 参数本身作为 master，不额外保存 BF16 常驻副本，有的在 optimizer step 时才临时物化参数。把 GEMM 的瞬时权重变成 FP8 并不自动把整个 18 字节变成 1 字节；ZeRO/FSDP 通过分片减少每卡份额，与低精度是另一个维度。</p>
+<h3 id="lp-foundations-sub-3">1.2 训练比推理多了一条会积累误差的闭环</h3>
+<p>推理中的量化误差主要影响这次输出；训练中的误差会改变 gradient，再改变下一步 weight，继而改变后续所有样本的计算分布。一个短测中很小的系统性偏差，可能在数十万次更新后改变收敛结果。随机、无偏、幅度可控的误差与固定方向的舍入偏差不能等同。因此，训练 recipe 往往让大 GEMM 使用低精度，把长时间累积的信息保留在更高精度中。早期混合精度训练就已经把低精度计算、副本权重和高精度更新分开设计。<a href="https://arxiv.org/abs/1710.03740">来源：Mixed Precision Training</a>。</p>
+<p class="note">后文的矩阵公式和小数例子用于解释数值机制，是本报告的教学推导；某家公司报告的成功经验只在其公开的模型、训练长度和硬件范围内成立。未公开的 dtype 不以“业内通常如此”补齐。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+
+<section class="page" id="lp-dtypes">
+<h2>2. dtype 地图：位数相同，数值能力也可能不同</h2>
+<h3 id="lp-dtypes-sub-1">2.1 指数解决“够不够大”，尾数解决“分得够不够细”</h3>
+<p>对规格化二进制浮点数，可以用 \(x=(-1)^s(1+f)2^e\) 理解：符号位决定正负，指数移动量尺，尾数决定同一个数量级里有多少刻度。指数更多，能跨越更宽数量级；尾数更多，相邻值更密。把所有值乘一个 scale，能把量尺移到合适的位置，却不会凭空增加尾数位。BF16 可能既没有上溢，也把两个接近的数舍入成同一个值；FP16 可能保留更多小数，却在遇到较大 activation 时变成 Inf。这是两个不同问题。</p>
+<div class="table-wrap"><table><thead><tr><th>格式</th><th>位布局</th><th>最大有限正值</th><th>最小正规 / 最小次正规正值</th><th>1 以上的相邻间距</th><th>常见位置</th></tr></thead><tbody>
+<tr><td>FP32</td><td>1+8+23</td><td>约 3.4028×10<sup>38</sup></td><td>2<sup>−126</sup> / 2<sup>−149</sup></td><td>2<sup>−23</sup></td><td>master、归约、参考计算</td></tr>
+<tr><td>BF16</td><td>1+8+7</td><td>约 3.3895×10<sup>38</sup></td><td>2<sup>−126</sup> / 2<sup>−133</sup></td><td>2<sup>−7</sup>，约 0.0078125</td><td>训练主体、activation、推理基线</td></tr>
+<tr><td>FP16</td><td>1+5+10</td><td>65504</td><td>2<sup>−14</sup> / 2<sup>−24</sup></td><td>2<sup>−10</sup>，约 0.00097656</td><td>AMP、推理、部分通信</td></tr>
+<tr><td>FP8 E4M3FN</td><td>1+4+3</td><td>448</td><td>2<sup>−6</sup> / 2<sup>−9</sup></td><td>2<sup>−3</sup>，0.125</td><td>scale 后的 W/A/G</td></tr>
+<tr><td>FP8 E5M2</td><td>1+5+2</td><td>57344</td><td>2<sup>−14</sup> / 2<sup>−16</sup></td><td>2<sup>−2</sup>，0.25</td><td>需要更宽范围的反向张量</td></tr>
+<tr><td>FP4 E2M1</td><td>1+2+1</td><td>6</td><td>1 / 0.5</td><td>0.5</td><td>配合细粒度 scale 的 FP4 W/A/G</td></tr>
+</tbody></table>
+</div><p>表格指常见二进制编码本身，不含外部 scale；次正规值是否在特定内核中保留，还要看硬件和算子。E4M3FN 的有限数设计不能与 E4M3FNUZ 等变体混用，后者的指数偏置与零/特殊值规则不同。FP8 的两个主要编码分别偏向精细刻度和宽范围；E4M3 不保留 Inf 的做法也是它能把最大有限值扩到 448 的原因之一。<a href="https://arxiv.org/abs/2209.05433">来源：FP8 Formats for Deep Learning</a>。</p>
+<p>用这些数值做两个推导：在 1 附近，BF16 的刻度约为 0.0078，向 1 加 0.001 后再舍入，结果可能仍为 1；这不是 gradient 为零，而是参数更新被吞掉。在 FP16 中，\(10^{-8}\) 小于最小次正规正值的一半，转换时可直接变零。把 loss 放大能够保护后者，却解决不了前者；前者需要高精度 master、补偿机制或适当的随机舍入。</p>
+<h3 id="lp-dtypes-sub-2">2.2 INT、FP、NF4 的量尺不同</h3>
+<p>对称 INT8 可以写成 \(q=\operatorname{clip}(\operatorname{round}(x/s),-127,127)\)，恢复值为 \(\hat{x}=sq\)。在同一组内，相邻恢复值的间距固定是 \(s\)。浮点量化则把 \(x/s\) 舍入到一个浮点集合上，随着数值变大，刻度也随数量级增大。INT 格式善于把有限区间均匀切分；FP 格式适合跨多个数量级的分布。两者都可能受 outlier 影响，差别是误差怎样分布。非对称 INT 还会引入 zero-point，用有限编码更好地覆盖偏移分布，但增加内核处理项。</p>
+<p>NF4 则是一个针对特定分布设计的 4 位非均匀码本，不能看到“4 bit”就把它等同于 FP4 E2M1。相同位宽下，码本、scale 粒度、是否训练时考虑量化、是否有硬件直接乘法支持，决定了完全不同的行为。低比特存储格式与硬件运算格式可以不相同：解码一个码本再做 BF16 GEMM，在系统上是成立的，但不代表获得原生 FP4 Tensor Core 吞吐。</p>
+<h3 id="lp-dtypes-sub-3">2.3 MXFP8、MXFP4、NVFP4 都把“共享量尺”变成格式的一部分</h3>
+<div class="table-wrap"><table><thead><tr><th>方案</th><th>元素编码</th><th>典型分组与 scale</th><th>应如何理解</th></tr></thead><tbody>
+<tr><td>普通 scaled FP8</td><td>E4M3 / E5M2</td><td>可为 tensor、channel 或 block；scale 常用 FP32</td><td>“FP8”本身没有强制统一的分组方案</td></tr>
+<tr><td>MXFP8</td><td>常用 E4M3</td><td>32 元素共享 E8M0 scale</td><td>scale 是 2 的幂；每组单独安排数量级</td></tr>
+<tr><td>MXFP4</td><td>E2M1</td><td>32 元素共享 E8M0 scale</td><td>组内只有非常少的刻度，不能只靠范围宽来保证精度</td></tr>
+<tr><td>NVFP4</td><td>E2M1</td><td>常见 16 元素共享 E4M3 scale，另有 tensor 级 FP32 scale</td><td>小块与更精细的 scale 共同减少误差；训练 weight 可采用二维块</td></tr>
+</tbody></table>
+</div><p>以 \(\hat{x}_i=s_gq_i\) 表示一个 block，scale 可以理解成该组额外共享的指数与幅度信息。MXFP8 的 E8M0 只表示 2 的幂，硬件处理方便；代价是不能像一般浮点 scale 一样连续贴合组最大值。MXFP8 还存在转置后的分组问题：沿另一条归约轴分组后，scale 不再能简单跟着元素转置，因此框架可能从原始高精度张量分别产生两个方向的量化副本。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/mxfp8/mxfp8.html">来源：Transformer Engine MXFP8 文档</a>。</p>
+<p>NVFP4 可写成 \(\hat{x}_i=s_{\mathrm{global}}s_{\mathrm{block}}q_i\)。元素只有 4 bit，并不代表含 scale 的实际存储严格为 4 bit/元素。若一维 block 为 16、每块 scale 为 8 bit，仅块 scale 就增加 0.5 bit/元素，变成至少 4.5 bit/元素，另计全局 scale、对齐和副本。类似地，32 元素共享 8 位 scale 的 MXFP8 是至少 8.25 bit/元素，MXFP4 是至少 4.25 bit/元素。这些是格式算账，不包含内核临时缓冲区。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/nvfp4/nvfp4.html">来源：Transformer Engine NVFP4 文档</a>。</p>
+<p>TF32 则需要放在不同坐标里：它通常指 Tensor Core 的乘法输入精度模式，输入/输出张量仍可保留 FP32 存储；不能按“19 位”直接计算显存节省。矩阵乘法的 reduced-precision reduction、TF32 开关以及完整 FP32 累加也不是同一个开关。排查 BF16/FP16 与 FP32 的差异时，应记录这些模式，避免参考路径本身也悄悄换了一种乘法。<a href="https://docs.pytorch.org/docs/2.14/notes/numerical_accuracy.html">来源：PyTorch 数值精度说明</a>。</p>
+<h3 id="lp-dtypes-sub-4">2.4 FP4 的数值例子：scale 再准确，也只有少数格点</h3>
+<p>E2M1 非负有限值的集合可以列成 0、0.5、1、1.5、2、3、4、6，负值按符号对称。设一个 block 的最大值是 12，选择恢复 scale 为 2，则可表示的非负恢复值是 0、1、2、3、4、6、8、12。现在 7 通常会舍到 6 或 8，5 会舍到 4 或 6，0.2 会舍到 0。即使最大值完全没有 clipping，主体值也可能产生明显误差。这正是不能只用“有没有覆盖 amax”判断 FP4 质量的原因；原始数据落在哪些格点之间，与最终函数对这些位置的敏感性同样重要。</p>
+<p>再看共享 scale 的约束。假设两个 block 的最大值分别是 12 和 0.12，若给两组分别选 2 和 0.02，可以让相同编码集合分别覆盖两种数量级；若它们共用 2，小组里的 0.12 附近元素就可能全部消失。NVFP4 的 block scale 自己又要量化为 E4M3，因此目标 0.02 未必能精确表示；tensor 级 global scale 的作用之一，是把这些 block scale 放进适合它们的表示范围。两级缩放把范围分配问题拆开了，仍然没有消除元素编码和 scale 编码各自的舍入误差。以上是格式机制推导，不是某个真实模型的误差测量。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+
+<section class="page" id="lp-train-weight">
+<h2>3. 训练中的 weight：计算副本、master 与优化器必须分开</h2>
+<h3 id="lp-train-weight-sub-1">3.1 一个 Linear 层实际要做三个 GEMM</h3>
+<p>设输入 \(X\in\mathbb{R}^{M\times K}\)，weight \(W\in\mathbb{R}^{N\times K}\)，输出 \(Y=XW^\top\)，上游 activation gradient 为 \(G=\partial L/\partial Y\in\mathbb{R}^{M\times N}\)。忽略 bias 后，三个核心乘法如下。这里的 \(M\) 可以是 batch 与序列长度展平后的 token 数，也可以是某个 MoE 专家实际接收的 token 数。</p>
+<div class="table-wrap"><table><thead><tr><th>阶段</th><th>数学式</th><th>归约轴</th><th>误差去向</th></tr></thead><tbody>
+<tr><td>Fprop</td><td>\(Y=XW^\top\)</td><td>输入通道 \(K\)</td><td>进入本层与后续层的 activation</td></tr>
+<tr><td>Dgrad</td><td>\(dX=GW\)</td><td>输出通道 \(N\)</td><td>进入更浅层，继续链式传播</td></tr>
+<tr><td>Wgrad</td><td>\(dW=G^\top X\)</td><td>token 数 \(M\)</td><td>进入参数更新与 optimizer 历史</td></tr>
+</tbody></table>
+</div><p>这张表解释了为什么“前向无明显误差”不足以证明一个 recipe 可以训练：Wgrad 的归约长度跟 token 数有关，Dgrad 的误差会穿过许多层，量化分组轴也随矩阵用途变化。把 weight 沿前向所需轴压缩好以后，反向若需要另一种分组，要么多保存一份，要么从高精度源重新量化。仅把量化结果做转置，可能会保留原来的分组误差，无法等价于“先转置，再按目标轴量化”。</p>
+<h3 id="lp-train-weight-sub-2">3.2 为什么 master weights 常常比计算权重高精度</h3>
+<p>SGD 的最简单更新为 \(w_{t+1}=w_t-\eta g_t\)。若 \(\eta g_t\) 远小于当前 \(w_t\) 附近的量化间距，那么每次单独舍入都会让更新消失。例如 BF16 weight 为 1，每步理论上增加 0.001；若每步都在 BF16 参数上直接加并舍入，多次操作可能永远停在 1。若在 FP32 master 上累积，四步后的真实值约 1.004，再生成 BF16 副本时就可能跨过下一个舍入边界。计算副本可以连续数步相同，master 内部仍然在学习。</p>
+<p>master 不一定是额外的完整常驻副本。在常见 PyTorch autocast 路径里，模型参数可以一直是 FP32，只在算子入口选择 BF16/FP16 计算；这个 FP32 参数本身承担高精度更新职责。有的分布式训练框架把低精度模型参数与分片的 FP32 master 分开保存。必须读实际 optimizer 与混合精度策略，不能看到 <code>autocast(dtype=torch.bfloat16)</code> 就断言参数、gradient、Adam moments 都是 BF16。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/introduction/introduction.html">来源：Transformer Engine 低精度训练基础</a>。</p>
+<h3 id="lp-train-weight-sub-3">3.3 Adam 的 moments 为什么也是精度预算的重要部分</h3>
+<p>Adam 用一阶矩 \(m_t=\beta_1m_{t-1}+(1-\beta_1)g_t\) 和二阶矩 \(v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2\) 形成更新方向，典型更新含 \(\hat m_t/(\sqrt{\hat v_t}+\epsilon)\)。一阶矩有符号，二阶矩非负，分布和敏感性不同。二阶矩对很小 gradient 先平方，数量级会进一步下降；若把 \(v_t\) 粗糙舍入成零，分母可能被 \(\epsilon\) 主导，改变实际步长。若 \(\epsilon\) 本身又在某个低精度算术中下溢，风险会叠加。因此“moments 用低精度保存”与“所有 optimizer 算术都低精度完成”必须区别。</p>
+<p>一种合理的实现可以是：低比特保存 moments，需要更新时解码到高精度寄存器、计算更新、重新量化保存。它节省长期状态的容量与读写，但并不要求在最小 dtype 上执行除法与开平方。block-wise optimizer quantization 的价值正是按块适应状态分布；其成功不能直接推出把所有 optimizer 张量强制 cast 成 INT8 也会成功。<a href="https://arxiv.org/abs/2110.02861">来源：8-bit Optimizers via Block-wise Quantization</a>。</p>
+<p>本仓库 DeepSeek-V3 已有一个具体的“混合得很细”的例子：Linear 的三类 GEMM 接受 FP8 输入，而 master weights 与用于 batch 累积的 weight gradient 保留 FP32，AdamW 两个 moments 保存为 BF16。更完整的公司级配方见后文对照；这里只用它说明，算力、存储与更新的精度可以独立选取。<a href="deepseek-v3-zh.html#page-15">仓库译文：第 15 页</a>、<a href="deepseek-v3-zh.html#page-18">第 18 页</a>。</p>
+<h3 id="lp-train-weight-sub-4">3.4 低精度预训练、QAT、低比特微调不是同一项实验</h3>
+<p>原生低精度预训练关注从训练早期到训练末期，大部分计算是否能保持目标数值行为。QAT 在训练时让模型感受到量化误差，可能采用假量化：先量化再恢复成高精度张量来模拟部署误差，底层计算仍未必是目标低精度硬件内核。低比特 adapter 微调还可以冻结压缩后的基础模型，仅更新少量高精度参数；这时基础 weight 没有全量 optimizer 状态，但要继续反传 activation gradient 才能训练前面的 adapter。三种路径的显存、数值挑战和速度不能混为一谈。</p>
+<p>对于量化后再恢复的 weight，\(\hat W=Q(W)\)，真实的离散舍入函数几乎处处导数为零。训练系统常用代理 gradient 或自定义 backward 让优化继续进行，但代理规则也是 recipe 的组成部分。训练时模拟的 clipping、scale 与部署时实际编码若不同，会产生“QAT 指标很好、导出后掉点”的落差。因此验证对象应包含导出的最终文件与实际执行内核，而不只看训练过程中浮点图的 loss。</p>
+<h3 id="lp-train-weight-sub-5">3.5 不要把“有 gradient”误认为“所有 weight 都在更新”</h3>
+<p>冻结基础 weight 的 adapter 微调中，Dgrad 仍可能存在，因为信号需要流向更浅位置的可训练模块；基础 weight 的 Wgrad 和 optimizer state 却可以不分配。全量微调则需要这些状态。由此可见，同样是使用 4 位基础模型，adapter 方案的显存节省不能外推到全量 FP4 训练。反过来，支持低精度 Wgrad 的预训练系统，也不一定提供方便的低比特 checkpoint 导出与服务部署。比较方案时必须列出可训练参数集合，而不只写模型总参数量。</p>
+<p>参数统计也要排除另一个误会：MoE 的“每 token 激活参数少”减少当次计算，却不代表未被该 token 选中的所有专家都无需 optimizer 状态。不同专家会在不同 token 和不同 batch 中更新，完整训练系统仍要保存或分片它们的训练状态。对大型 MoE，压缩 moments、分片 master、降低 all-to-all 流量可能比继续压缩单次 GEMM 的少量缓冲区更影响每卡容量；具体主导项应按实际参数量与激活缓存量计算。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+
+<section class="page" id="lp-train-activation">
+<h2>4. 训练中的 activation：分组、scale 与保存方式</h2>
+<h3 id="lp-train-activation-sub-1">4.1 先统一 scale 的定义，避免公式看起来相反</h3>
+<p>本文统一令 \(s\) 为反量化 scale，即 \(q=Q(x/s)\)，恢复为 \(\hat x=sq\)。若一组最大绝对值为 \(a\)，编码最大有限值为 \(q_{\max}\)，最简单的 max-based 规则是 \(s=a/q_{\max}\)。一些实现把它的倒数命名为 scale，即先乘 \(q_{\max}/a\)，同时把本文的 \(s\) 叫 scale inverse。看到公式相反时先核对方向，不要误判为算法不同。全零组还需要明确约定非零 scale，避免除零；实际内核通常会处理这个边界。</p>
+<p>以对称 INT8 的教学例子：一组数为 0.05、0.10、0.15、12.7，按最大值选 \(s=0.1\)，三个普通值只能映射到很粗的整数格点附近；其中 0.05 落在两个编码的中点，结果还取决于 tie-breaking。如果把最后一个 outlier 单独成组，前三个数按 0.15 选 scale，普通值的刻度就从 0.1 缩小到约 0.00118。关键不是把 12.7 从模型里抹掉，而是不让它独占整组的量尺。对 FP8，刻度不均匀，但“一个极端值迫使整组共用较大量尺”的机制仍然存在。</p>
+<h3 id="lp-train-activation-sub-2">4.2 per-tensor、per-token、per-channel、per-group 分别隔离什么</h3>
+<div class="table-wrap"><table><thead><tr><th>粒度</th><th>适合隔离的差异</th><th>代价或盲区</th></tr></thead><tbody>
+<tr><td>per-tensor</td><td>整张量整体放大或缩小</td><td>一个 token 或 channel 的极值影响所有元素</td></tr>
+<tr><td>per-token / per-row</td><td>不同 token 的幅度差异</td><td>同一 token 内的异常 channel 仍会牵连其他 channel</td></tr>
+<tr><td>per-channel / per-column</td><td>固定 channel 的尺度差异</td><td>随 token 变化的异常模式较难统一处理</td></tr>
+<tr><td>沿归约轴的小 group</td><td>局部 channel 组合或局部 token 组合</td><td>scale 更多，需要内核支持与额外 reduction</td></tr>
+<tr><td>二维 block</td><td>二维局部结构，便于复用与转置</td><td>可能把多个幅度悬殊的 token 绑在同一个 scale 上</td></tr>
+</tbody></table>
+</div><p>粒度越细，往往越容易保护普通值，但并非无限细就最优。每元素一个 FP32 scale 几乎可以还原任意值，代价却比原始张量更大，也失去硬件吞吐的意义。实际设计是在误差、scale 字节数、layout、kernel 融合和矩阵乘法吞吐之间折中；同样的数学格式，硬件原生 block scaling 与自行插入许多小 kernel 的性能可能差很多。</p>
+<p>本仓库 DeepSeek-V3 把 activation 按每 token、每 128 个 channel 的 1×128 tile 缩放，weight 则按 128×128 block 缩放。这里不应只记“block size 都是 128”，而要记两者分组的轴不同。报告还给出 Dgrad 的粗分组导致发散的反例，说明量化粒度需要跟随张量语义。<a href="deepseek-v3-zh.html#page-16">仓库译文：第 16 页</a>、<a href="deepseek-v3-zh.html#page-47">第 47–48 页</a>。</p>
+<h3 id="lp-train-activation-sub-3">4.3 current scaling 与 delayed scaling：准确性和额外扫描的取舍</h3>
+<p>current scaling 先测当前张量或当前 block 的 \(a_{\max}\)，再选 scale，因此能立即响应本步突发 outlier。代价是 reduction、读写和同步；若未融合，可能先生成高精度输出、扫描极值、再量化，导致额外 HBM 往返。delayed scaling 根据此前若干次的极值历史预测本次 scale，当前计算顺便记录新极值，为下一步做准备。它更容易和高吞吐 kernel 结合，但分布突然变化时预测会过小或过大。Transformer Engine 当前提供两类方案和 block recipe，选择不能只看名字中的位宽。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/examples/fp8_primer.html">来源：Transformer Engine FP8/FP4 使用指南</a>。</p>
+<p>举一个变化场景：过去十步最大值在 2 附近，本步出现 20；若本步仍用按 2 选的 scale，20 会饱和。加 margin 能预留范围，但同时让普通值使用更少有效刻度；长时间保留历史最大值能保护偶发大值，却也可能在异常消失后继续牺牲分辨率。scale 的更新窗口、是否取历史 max、power-of-two 约束、margin 和分布式同步，都是可改变结果的超参数。记录 amax 的同时还应记录饱和比例与近零比例，因为“最大值被覆盖”不代表主体分布得到良好表示。</p>
+<h3 id="lp-train-activation-sub-4">4.4 为什么 GEMM 的 scale 沿归约轴变化会影响实现</h3>
+<p>若两个矩阵各只有一个 scale，\(X\approx s_XQ_X\)、\(W\approx s_WQ_W\)，就有 \(Y\approx s_Xs_W(Q_XQ_W^\top)\)，可先完成低精度乘法，再统一恢复尺度。若沿 \(K\) 切成多个 group，公式变为 \(Y\approx\sum_g s_{X,g}s_{W,g}(Q_{X,g}Q_{W,g}^\top)\)。不同部分和必须按自己的 scale 恢复再相加，不能把所有整数或浮点编码的部分和直接合在一起，最后只乘一个 scale。硬件 microscaling 的重要性正是让这种局部 scale 更接近乘加执行路径。</p>
+<h3 id="lp-train-activation-sub-5">4.5 保存 activation 与计算 activation 需要分别决策</h3>
+<p>前向计算结束后，backward 不一定需要保存全部输出，但往往要保留 Linear 输入、非线性输入或归一化统计量。保存为 FP8 可以减少显存；保存后再恢复不会消除量化误差。另一种选择是 checkpointing：只保留部分高精度边界，反向时重算内部 activation，用算力换容量。还可以两者结合，不过重算时的随机数、dropout、scale 历史必须与框架的 checkpoint 机制兼容，否则重算不再是原来的前向。仅用“activation 是 FP8”无法判断这里具体省了多少。</p>
+<p>一些 activation 同时被多个 backward 分支使用：对 Linear 足够的精度，未必对 attention backward 也足够。本仓库 DeepSeek-V3 特别为 attention 后 Linear 的输入缓存使用定制 E5M6，并对部分 SwiGLU 输入采用低精度缓存、反向重算输出。该细节说明缓存格式可以是训练系统内部格式，不等同于公开的模型权重格式。<a href="deepseek-v3-zh.html#page-18">仓库译文：第 18 页</a>。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+
+<section class="page" id="lp-train-gradient">
+<h2>5. gradient：动态范围、累积误差与低精度 backward</h2>
+<h3 id="lp-train-gradient-sub-1">5.1 activation gradient 与 weight gradient 承担不同职责</h3>
+<p>activation gradient 是沿层传播的误差信号，形状通常类似 activation；weight gradient 是汇集许多 token 对某个参数的贡献，形状类似 weight。二者的分布、归约轴和生命周期都不同。activation gradient 中，某几个 token 可能异常大；weight gradient 中，许多正负贡献可能相互抵消。对前者，粗粒度 scale 容易抹掉普通 token 的信号；对后者，高精度累加有助于保留小贡献与抵消后的结果。把两个都记作 G8，会隐藏核心风险。</p>
+<p>再区分三种“累积”：GEMM 内部把许多乘积相加；多个 micro-batch 把 weight gradient 相加；多个 DP rank 把 gradient 归约。第一种可能发生在 Tensor Core 或寄存器，第二种发生在参数对应的 gradient buffer，第三种还涉及网络传输与 collective 算术。三者中任何一个低精度都可能引入误差。使用 FP32 gradient buffer 不能修复前面的乘积输入已经量化成零；使用 FP32 GEMM 输出也不能证明整个内部 reduction 都具有完整 FP32 精度。</p>
+<h3 id="lp-train-gradient-sub-2">5.2 loss scaling 保护的是数值范围，不是额外有效位</h3>
+<p>把 loss 变成 \(L'=SL\)，按链式法则得到 \(g'=Sg\)。若 backward 中的小 gradient 原本会低于 FP16 可表示范围，适当的 \(S\) 能让它存活，optimizer step 前再计算 \(g=g'/S\)。例如原本 \(g=10^{-8}\)，取 \(S=1024\)，scaled gradient 约为 \(1.024\times10^{-5}\)，更有机会在 FP16 中保留。这个过程不能拯救缩放前就发生的前向上溢，也不能为同一个张量里相差过大的值无限扩展范围。</p>
+<p>动态 loss scaler 会在检测到非有限 gradient 时减少 scale 并跳过更新，连续一段安全步骤后再尝试增加。必须在 clipping 前 unscale，否则等于把 clipping 阈值也乘错；也不应每个 micro-batch 都更新 scale，否则同一个累积 buffer 中混入不同缩放倍数，最后无法用一个除法还原。FP16 的经典处理流程是这一机制，而 BF16 因指数范围宽，通常无需相同的 gradient scaling；但 BF16 仍然有尾数舍入与训练发散问题。<a href="https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html">来源：NVIDIA 混合精度训练指南</a>。</p>
+<p>FP8 则通常需要每张量乃至每组独立 scale：一个全局 loss scale 只能整体移动所有反向信号，不能同时适配层间差异、token 差异与前向 weight/activation 的差异。把 FP16 AMP 的 scaler 原封不动搬到 FP8，不会自动得到完整 FP8 recipe。</p>
+<h3 id="lp-train-gradient-sub-3">5.3 为什么反向格式有时用 E5M2，有时又全用 E4M3</h3>
+<p>E5M2 牺牲一位尾数换更宽指数范围，适合范围难预测的 gradient；E4M3 有更多局部刻度，却更依赖 scale 的精细适配。这不是“谁更先进”的线性替代关系。若只按整张量缩放，极宽动态范围可能逼迫使用 E5M2；若把幅度差异较大的值拆到不同小组，可以重新把位预算投入尾数。对某个 recipe 成功的全 E4M3，不应把它单独摘出来使用，丢掉其细粒度 scaling、累加策略与高精度例外。</p>
+<h3 id="lp-train-gradient-sub-4">5.4 梯度累积应按真正的 loss 分母算</h3>
+<p>设一个有效 batch 由 \(n\) 个等大小 micro-batch 组成，每个 micro-batch 的 loss 都是相同数量样本的平均值，那么可在 backward 前把每个 loss 除以 \(n\)，再累积 gradient。如果每个 micro-batch 的有效 token 数不同，例如动态长度、padding 或不同数量的 masked token，这种简单平均可能改变训练目标。此时应按有效 token 数构造总分子与总分母，并考虑 DP rank 的归约方式。错误的归一化可能表现为“换精度之后才爆炸”，实际原因却是为了省显存改变了 batch 结构。</p>
+<p>gradient clipping 也应看完整有效 batch 的 unscaled gradient norm，而不是每个 micro-batch 先裁一次再相加：后者是不同的优化算法。分布式分片参数时，norm 还要跨对应分片聚合，不能只对本卡小片参数使用普通 norm 就声称获得了全模型阈值。低精度调试需要把这些训练语义固定，否则数值比较没有可解释性。<a href="https://docs.pytorch.org/docs/2.14/notes/amp_examples.html">来源：PyTorch AMP examples</a>。</p>
+<h3 id="lp-train-gradient-sub-5">5.5 stochastic rounding 为什么在 FP4 更重要</h3>
+<p>若实数 \(x\) 位于两个可表示数 \(a&lt;x&lt;b\) 之间，最近舍入总是向较近的一端；对小更新，可能连续许多步都舍到同一点。随机舍入令 \(P(\hat x=b)=(x-a)/(b-a)\)，其余概率舍到 \(a\)，于是理想条件下 \(\mathbb{E}[\hat x]=x\)。这不能让单次舍入更准，但可避免固定方向的量化偏差。以 FP4 在 1 与 1.5 之间表示 1.1 为例，可用 20% 概率取 1.5、80% 取 1，期望仍为 1.1；每次取 1 的最近舍入则总少 0.1。</p>
+<p>无偏不等于无噪声：上例有相当明显的单次方差，训练能否容忍要靠规模与收敛验证。随机舍入也不能救回先被 clipping 掉的 outlier；真实系统还涉及有限随机数、scale 误差和相关性。因此它通常与细粒度 scaling、敏感层高精度以及分布变换一起使用。NVFP4 训练方法把 stochastic rounding 用于低精度 gradient，是这组联合措施之一。<a href="https://arxiv.org/html/2509.25149v1">来源：Pretraining Large Language Models with NVFP4</a>。</p>
+<h3 id="lp-train-gradient-sub-6">5.6 通信压缩还要问“接收端怎样加起来”</h3>
+<p>将一份张量压成 FP8 发给另一张卡，与把许多张卡的 FP8 gradient 直接相加，是不同问题。点对点或 all-gather 主要搬运编码和各自 scale，接收端可以解码后使用；all-reduce 则需要把多份数值放到同一量纲里做求和。如果每个 rank 各自量化后直接按编码相加，scale 不同就没有数值意义。即使统一 scale，也可能因不同 rank 的极值差异牺牲精度。因而需要检查 collective 是否原生支持该格式、scale 如何同步、归约在哪种 dtype 完成，以及是否采用额外误差补偿。</p>
+<p>同样，MoE dispatch 只是把 token 送到专家，combine 则要把多个专家的输出按路由权重合并；两者对数值精度和动态范围的要求可以不同。把 dispatch 压缩成功，不说明 combine 也能用同样精度安全累加。容量、通信和算子三处都写“FP8”仍不足以复现实验，必须画出 scale 与量化边界在哪里产生、在哪里恢复、在哪里求和。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+
+<section id="lp-infer-weight" class="page">
+<h2>6. 推理中的 weight：先把模型装下，再决定怎样算得快</h2>
+<p>推理时没有常规反向传播所需的 gradient 与 optimizer state，最先面对的是权重、运行时 activation、KV cache 和 kernel 工作区。Weight-only 方案主要压缩第一项；它不自动缩小所有 activation，也不自动改变 KV cache。W4A16 通常表示权重以约 4 bit 的量化表示保存，输入 activation 保持 FP16/BF16。实际 kernel 可以在读入过程中拆包、反量化并送入较高精度运算；因此不能仅凭 checkpoint 写着 INT4，就认定 Tensor Core 做的是 INT4×INT4。Marlin 是这类存储与计算协同设计的重要实例。<a href="https://arxiv.org/abs/2408.11743">来源：Marlin</a></p>
+<h3 id="lp-infer-weight-sub-1">如何建立一份可比较的精度配置</h3>
+<p>对每个模型，应把“原始权重、磁盘压缩格式、设备权重布局、activation 量化方式、GEMM 乘数、累加、输出、KV cache”分别记录。假如只知道“4 bit”，还缺少 group size、scale 的 dtype、zero-point、对称性、被排除层以及打包格式。两份同为 W4A16 的模型，可能使用不同校准方法，也可能根本不能由同一个 loader 读取；量化算法名称、checkpoint 格式和执行 kernel 是三个不同层面。vLLM 把多个量化后端分开列出，正说明这些区别会影响部署。<a href="https://docs.vllm.ai/en/stable/features/quantization/index.html">来源：vLLM 量化后端</a></p>
+<div class="table-wrap"><table><thead><tr><th>标记</th><th>最核心的信息</th><th>尚不能由标记推断的信息</th></tr></thead><tbody>
+<tr><td>W4A16</td><td>低 bit 权重；较高精度 activation</td><td>是否使用 FP16 或 BF16，拆包成本，是否有特殊混合精度 GEMM</td></tr>
+<tr><td>W8A8 INT8</td><td>权重与 activation 均进入整数量化流程</td><td>per-token/per-channel、zero-point、scale 融合方式和累加实现</td></tr>
+<tr><td>W8A8 FP8</td><td>低精度浮点乘数</td><td>E4M3/E5M2、scale 粒度、是否使用原生 FP8 指令</td></tr>
+<tr><td>W4A4 NVFP4</td><td>E2M1 数据与指定的分层缩放约定</td><td>哪些层例外、GPU 架构和 kernel 是否原生支持</td></tr>
+<tr><td>KV FP8</td><td>cache 存储格式降低</td><td>Q 与 attention GEMM 是否也量化，scale 如何产生</td></tr>
+</tbody></table>
+</div><p>显存估算也应从格式而不是名称开始。若一组 G 个权重各 b bit，另保存一个 s bit 的 scale 与一个 z bit 的 zero-point，则忽略对齐后的平均成本为 \(b+(s+z)/G\) bit/weight。group 越小，局部动态范围越容易表示，但元数据、索引与访存负担上升。敏感层保持 BF16、embedding 与输出层未量化，以及运行时重排或临时副本，都会使整个模型的平均 bit 数高于主体权重的名义位宽。这是预算公式；不能直接当成某个实现的实际峰值显存。</p>
+<h3 id="lp-infer-weight-sub-2">RTN：所有复杂方法都需要比较的基线</h3>
+<p>Round-to-nearest 的基本步骤是选定范围、计算 scale、将权重映射到最近可表示数。它不根据下一层输出误差补偿，因此容易把“权重逐元素误差小”误当成“模型误差小”。在一层线性运算中，真正关心的是 \(XW\) 与 \(X\widehat W\) 的差；输入分布使某些方向比另一些方向重要。RTN 的价值在于建立低成本、可复现的下限：先确认仅改变格式会造成多大质量变化，再判断 GPTQ、AWQ 或旋转带来的额外复杂度是否值得。GPTQ 的问题定义正是把校准输入下的层输出重建作为目标。<a href="https://arxiv.org/abs/2210.17323">来源：GPTQ</a></p>
+<h3 id="lp-infer-weight-sub-3">GPTQ：量化一个权重后，把误差分配给尚未量化的权重</h3>
+<p>GPTQ 借助校准 activation 的近似二阶信息判断误差代价，在逐步量化时更新其余权重以补偿已经引入的误差。这里的“二阶”围绕层重建问题，不表示对整个模型执行一次完整 Hessian 求逆。分块处理让代价可控；实现中的 act-order 按 activation 重要性安排量化顺序，true-sequential 则更严格地模拟前面已量化算子给后面算子带来的输入变化。<a href="https://github.com/IST-DASLab/gptq">来源：GPTQ 官方实现</a></p>
+<p>它适合已有可用 FP16/BF16 模型、愿意准备代表性校准集、希望把主体权重压到 3–4 bit 的场景。风险集中在校准覆盖不足、层间误差累积和极低位宽：代码、数学、多语言或长上下文数据若与校准集差别很大，局部重建最优不保证任务最优。实际选型应比较同一个模型、同一格式与同一 group size 下的 RTN/GPTQ，随后再比较不同格式；否则算法提升和格式差异会混在一起。</p>
+<h3 id="lp-infer-weight-sub-4">AWQ：activation 感知不等于把 activation 也压到 4 bit</h3>
+<p>AWQ 通过 activation 统计识别重要的权重通道，并用等价缩放减少这些通道的量化损伤。重要性不是简单按权重绝对值排序；某个权重方向遇到大的 activation 时，对输出更敏感。实现把保护机制编码为缩放与量化参数，避免为少数重要权重建立昂贵的不规则高精度旁路。AWQ 的典型部署仍是 weight-only，名称中的 activation-aware 描述的是校准依据。<a href="https://arxiv.org/abs/2306.00978">来源：AWQ</a></p>
+<p>应区分“重要通道”与“outlier 通道”：前者由输出误差敏感度定义，后者通常由分布尾部定义，两者可能重合，但不是同义词。AWQ 与 SmoothQuant 都利用线性运算的等价缩放，然而 AWQ 的主要目标是保护低 bit 权重；SmoothQuant 的主要目标是使 activation 更容易进入 W8A8。把二者归为“都把 activation 变小”会丢失优化目标。选择 AWQ 时还要检查导出格式与运行时是否匹配，不能把任意以 AWQ 命名的目录强制交给某个 kernel。</p>
+<h3 id="lp-infer-weight-sub-5">QuIP#、非均匀码本与更低位宽</h3>
+<p>QuIP# 把随机 Hadamard 变换带来的 incoherence 与 E8 lattice 向量码本结合，使原来高度不均匀的权重方向更适合统一压缩，并可用微调恢复质量。它不是“把 INT4 改成另一个整数范围”这么简单，而是改变表示空间与多个数共同编码的方式。向量码本可能改善单位 bit 的重建质量，同时引入查表、编码、布局与专用 kernel 的要求。<a href="https://arxiv.org/abs/2402.04396">来源：QuIP#</a></p>
+<p>对于 2–3 bit，应把研究质量与部署成本一起评价：码本和 scale 也占内存；高精度例外可能破坏连续访存；恢复训练也需要数据与算力。如果目标是单卡装下更大模型，极低位宽可能值得；如果模型本来已经能装下，而服务瓶颈在长上下文 attention，更激进的权重压缩可能并不改善延迟。这是由瓶颈推导出的工程判断，必须用实际 workload 验证。</p>
+<h3 id="lp-infer-weight-sub-6">Weight outlier 的处理路线与失败边界</h3>
+<div class="table-wrap"><table><thead><tr><th>路线</th><th>做法</th><th>代价和边界</th></tr></thead><tbody>
+<tr><td>更细粒度缩放</td><td>per-channel、per-group、block</td><td>更多 scale；布局与 kernel 需匹配</td></tr>
+<tr><td>clipping</td><td>牺牲尾部误差以缩小主体步长</td><td>错误裁掉敏感权重会直接伤害输出</td></tr>
+<tr><td>等价缩放</td><td>重新分配权重与 activation 的动态范围</td><td>某一边改善可能使另一边更难量化</td></tr>
+<tr><td>误差补偿</td><td>根据校准输入重建层输出</td><td>校准分布外的效果需另测</td></tr>
+<tr><td>旋转与码本</td><td>分散集中能量，调整表示空间</td><td>融合限制、在线开销、专用格式</td></tr>
+<tr><td>敏感层例外</td><td>部分层或专家保留更高精度</td><td>平均位宽上升；“全模型 4 bit”不再准确</td></tr>
+</tbody></table>
+</div><p>排查质量退化时，先恢复少量敏感层、扩大 group 的精度预算或换代表性校准数据，再尝试更复杂的全模型补偿。应保存量化前后的逐层输出误差，但不能只依据误差最大层决定最终精度：绝对误差大的层可能只是输出尺度大，需要结合相对误差、信噪比和任务消融。上述表格是对各方法的机制归纳，具体阈值应由目标模型决定。</p>
+<h3 id="lp-infer-weight-sub-7">把量化误差沿着线性层算一遍</h3>
+<p>设量化后的权重与输入为 \(\widehat W=W+E_W\)、\(\widehat X=X+E_X\)，则输出误差是 \(\widehat X\widehat W-XW=XE_W+E_XW+E_XE_W\)。这说明只测 weight 的逐元素 MSE 不够：同样的权重误差遇到不同输入方向，会产生不同输出误差；同时量化 W 与 A 时，还出现二者共同作用的误差项。因此 AWQ 使用 activation 信息、GPTQ 使用校准输入重建输出，都是在处理“量化误差被模型放大多少”的问题。</p>
+<p>对于对称均匀量化，若范围为 \([-a,a]\)，步长大致随 \(a/(2^{b-1}-1)\) 增大。把一个极端值纳入 a 会让所有普通数值承担更大的步长；裁剪则把部分误差集中到尾部。两种选择都不是无损操作。判断 clipping 是否合理，要比较经过该层后误差如何变化，而不是仅看分布图变得更好看。偏移量、非对称量化与非均匀码本会改变具体公式，但“表示预算如何分配”的矛盾仍在。</p>
+<p>量化参数的轴也必须画清。在线性层权重矩阵按输出通道还是输入通道分组，会改变 scale 与 GEMM 归约的关系。模型文件可能以转置形式存储权重；代码中 axis=0 未必就是论文图里的输入通道。正确核查方法是同时写出张量 shape、实际 stride、分组轴与 scale shape，并用一小块数据验证量化再反量化结果。只从变量名推断通道含义，很容易得到能加载但数值错误的模型。</p>
+<h3 id="lp-infer-weight-sub-8">MoE：总体压缩率与每个 token 的计算量要分别看</h3>
+<p>MoE 的专家权重可以占据绝大多数参数，因此只量化专家往往就能显著压缩磁盘与显存；但每个 token 只激活部分专家，单 token FLOPs 并不按总参数量计算。router、共享专家、attention 和输出层的精度例外也有不同作用。Repo 已翻译的 gpt-oss 报告明确说后训练期间将 MoE 权重量化为 MXFP4，不能把这句话展开为所有模块、activation 与 KV 都采用 MXFP4。<a href="gpt-oss-zh.html#page-4">仓库来源：gpt-oss 量化部分</a></p>
+<p>Grouped GEMM 中一个专家每轮拿到多少 token，直接影响低精度算术能否摊薄量化开销。总 batch 相同，但路由分布不同，专家的局部 shape 也不同。校准应覆盖稀少专家；压测应记录路由与并行方式；kernel 选择需要对 MoE 单独确认。不能用 dense Linear 的单层 benchmark 替代 MoE 服务结果，也不能因为非活跃专家不计算就忽略它们占用的常驻显存。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section id="lp-infer-activation" class="page">
+<h2>7. 推理中的 activation：outlier 决定能否真正使用低精度 GEMM</h2>
+<p>Weight 的分布在部署前已经固定，activation 却随 token、位置、样本、模式与层改变。一个大 activation 会扩大整个量化组的范围，使普通数值的有效分辨率下降。即使整数格式不溢出，只要大部分数被挤到相同几个量化格，仍会严重损失信息。FP8 有指数位，能缓解范围问题，却不会消除有效位数有限、scale 估计不准和某些方向特别敏感的问题。LLM.int8 的观察说明，少数系统性大特征会对大模型量化产生不成比例的影响。<a href="https://arxiv.org/abs/2208.07339">来源：LLM.int8</a></p>
+<h3 id="lp-infer-activation-sub-1">分清三种 outlier</h3>
+<p>一种是稳定地出现在特定 channel 的结构性大值，一种是某些 token 才出现的样本性大值，另一种是少数 token 的少数通道中出现极大数值的 massive activation；这些描述轴并不互斥。per-channel 统计能处理第一种的尺度差异，per-token 统计对第二种更直接，而第三种可能使包含这些极值的量化组受到影响。实际模型还可能在 gated MLP 的中间 activation、attention 投影、残差流中形成不同分布。完整报告中的厂商配方必须注明作用对象，不能把“控制 residual stream”与“控制 GEMM 输入”写成同一个步骤。</p>
+<h3 id="lp-infer-activation-sub-2">LLM.int8：把重要的大值保留在高精度旁路</h3>
+<p>其思路是把异常特征维度从主体 INT8 运算分离，在较高精度矩阵乘中计算，再与主体结果相加。这样保留关键特征，而普通部分仍享受低精度表示。代价是检测、拆分、额外 GEMM 与结果融合；因此“显存减半”不等于“端到端速度翻倍”。当 outlier 比例或输入形状不利时，旁路开销会抵消收益。对 threshold 的调整必须同时观察质量与延迟。<a href="https://huggingface.co/docs/transformers/main/quantization/bitsandbytes">来源：Transformers bitsandbytes 文档</a></p>
+<h3 id="lp-infer-activation-sub-3">SmoothQuant：等价迁移，不是删除 outlier</h3>
+<p>对于 \(Y=XW\)，可取一个对角缩放矩阵 \(S\)，使 \(Y=(XS^{-1})(SW)\)。全精度下结果相同；量化时把 activation 的难点部分迁移到相对容易处理的 weight。缩放不能无限增大，否则 weight 的量化误差会恶化，因而需要平衡系数和校准统计。离线融合到相邻线性层或归一化参数可以减少在线成本，但前提是图结构确实允许。<a href="https://arxiv.org/abs/2211.10438">来源：SmoothQuant</a></p>
+<p>这一技巧最重要的边界是：代数等价只保证量化前的函数不变，不保证量化后的误差不变；单一路径可融合的变换，在共享输入、多分支或特殊 attention 结构中也不一定能直接照搬。对 MoE，还要考虑不同专家收到的 token 分布：只有极少校准 token 激活的专家，其范围统计可能不可靠。因此应记录每个专家的覆盖率，避免只报告全模型平均误差。</p>
+<h3 id="lp-infer-activation-sub-4">OmniQuant：让 clipping 与等价变换接受校准优化</h3>
+<p>OmniQuant 把 weight clipping 和等价变换参数设为可学习量，通过 block 级重建误差进行校准。它把人工选范围的一部分工作交给优化过程，同时保持 PTQ 路线；它不是从头训练低精度基础模型。所谓 learnable 并不意味着应让所有原始权重无约束更新。需要分别记录参与优化的参数、校准样本、训练步数与被导出的推理参数。<a href="https://arxiv.org/abs/2308.13137">来源：OmniQuant</a></p>
+<h3 id="lp-infer-activation-sub-5">QuaRot 与 SpinQuant：换坐标系，分散 outlier</h3>
+<p>正交旋转能够在保持内积等关系的同时，把能量集中在少数维度的向量分散到更多维度。QuaRot 利用 transformer 中可保持计算等价的变换，并结合快速 Hadamard 旋转覆盖权重、activation 与 KV；SpinQuant 进一步学习旋转以降低量化误差。二者共同说明，量化困难不仅取决于数值位宽，还取决于用什么坐标系表示张量。<a href="https://arxiv.org/abs/2404.00456">来源：QuaRot</a>；<a href="https://arxiv.org/abs/2405.16406">SpinQuant</a></p>
+<p>旋转不是可以随意插入任何位置的无害操作。非线性函数通常不与任意旋转交换；RMSNorm、残差、head 划分、RoPE 和 gated MLP 等结构对可融合变换有约束。某些旋转能预先并入权重，另一些需要在线执行；前者主要增加导出复杂度，后者还增加每次推理成本。论文中的“4 bit end-to-end”应按论文列出的矩阵乘与张量理解，不能扩张成 softmax、归一化、残差累加和全部临时结果都以 4 bit 完成。</p>
+<h3 id="lp-infer-activation-sub-6">静态、动态、分组 scale 如何选择</h3>
+<div class="table-wrap"><table><thead><tr><th>策略</th><th>优势</th><th>主要风险</th></tr></thead><tbody>
+<tr><td>静态 per-tensor activation</td><td>运行时计算 scale 少，容易固定图</td><td>校准外极值、不同任务和长上下文分布变化</td></tr>
+<tr><td>动态 per-token</td><td>适应每个 token 的整体尺度</td><td>仍受单 token 内的 channel outlier 影响；增加归约与量化</td></tr>
+<tr><td>动态分组或 block</td><td>隔离局部大值，缩小动态范围</td><td>scale 数量、对齐、转置与专用 GEMM 支持</td></tr>
+<tr><td>混合精度例外</td><td>把预算给最敏感算子</td><td>kernel 切换、数据转换和模型格式复杂化</td></tr>
+</tbody></table>
+</div><p>FP8_DYNAMIC 在 LLM Compressor 的文档示例中把静态 per-channel weight 与动态 per-token activation 配合；FP8_BLOCK 则使用块级权重与分组 activation。这里的 dynamic 指运行时从当前输入计算量化参数，不表示运行时重新训练权重。官方列出的方案会随着版本变化，应以导出的 quantization_config 和实际 kernel 为准。<a href="https://github.com/vllm-project/llm-compressor/blob/main/docs/guides/compression_schemes.md">来源：LLM Compressor compression schemes</a></p>
+<p>当出现长输出重复、数学推理突然变差或工具调用格式损坏时，不应只检查是否有 NaN。量化可以在所有数值仍有限的情况下改变 logit 的相对次序，进而改变早期 token，随后导致整条自回归路径分叉。定位时可以用相同前缀做 teacher-forced logits 比较，避免两条已经不同的生成文本被当成同一个输入实验；再用完整生成验证任务结果。若怀疑某类数据触发 outlier，可按代码、数学、多语言、工具调用、长上下文分桶统计。</p>
+<h3 id="lp-infer-activation-sub-7">outlier、attention sink 与 residual sink 不是同义词</h3>
+<p>量化视角下，outlier 描述超出主体分布的大数；attention sink 描述某些 token 持续吸收 attention；residual sink 则与残差流特定维度的大激活有关。它们可能关联，却分别涉及数值分布、注意力分配与表示结构。特别是 attention 分数大，不代表最终对输出贡献大；归一化和后续 value 投影还会改变效果。仓库的相关译文强调 outlier 与归一化共同承担重缩放功能，直接裁掉可能损害模型。<a href="attention-residual-sinks-zh.html">仓库来源：attention 与 residual sinks</a></p>
+<p>因此低精度有两类路线：部署时在既有函数附近进行缩放、旋转与量化；训练时改变归一化、门控或架构，让模型学会避免过度依赖极大值。后一类往往需要重新训练或恢复训练，不能把改过结构的质量提升归因于一个纯 PTQ 算法。对已有 checkpoint，先使用可保持全精度函数等价的变换更容易做可控比较；但等价变换在低精度下仍需评估误差。</p>
+<h3 id="lp-infer-activation-sub-8">FP8 与 INT8：不是浮点必然比整数好</h3>
+<p>INT8 在固定范围内提供均匀格点，若动态范围已由 scale 和分组处理好，主体数值可能得到较高绝对分辨率。FP8 提供随指数变化的相对分辨率，覆盖范围更灵活，但相同量级的有效尾数位较少。应该同时考虑数据分布、scale 粒度、校准方法和 kernel。比较一个精细 per-channel INT8 与粗 per-tensor FP8，得到的结果不能直接解释为两种标量格式的胜负。</p>
+<p>E4M3 与 E5M2 也应按对象选择。更大的指数范围可以降低溢出风险，较少尾数又会增加舍入误差；选 E5M2 并不等于更安全地保留全部信息。推理常见的 FP8 weight/activation 路径多采用 E4M3，但某条 KV 或训练反向路径可能不同。报告应写出具体 format，而不是把所有 8 bit 浮点都压缩成同一个 FP8 标签。所有关于“无需校准”的描述也要附上限定：通常是当前 recipe 的权重 RTN 与动态 activation，不涵盖任意模型与所有算子。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section id="lp-kv" class="page">
+<h2>8. KV cache：把“模型压缩”推进到长上下文状态压缩</h2>
+<p>标准自回归 attention 为每一层、每个历史 token 保存 key 与 value，避免每生成一个新 token 都重新计算前缀。忽略分页、对齐、共享与特殊架构时，cache 大小约为 \(2BLTH_{kv}d_hb\) 字节：B 为请求数，L 为层数，T 为缓存长度，\(H_{kv}\) 为 KV head 数，\(d_h\) 为 head 维度，b 为每个缓存元素的字节数。GQA/MQA 改变 KV head 数，MLA 改变缓存表示；这些是架构压缩，与把同一个 cache 从 BF16 变成 FP8 是不同维度，收益不能重复计算。</p>
+<h3 id="lp-kv-sub-1">为什么 key 与 value 需要不同量化轴</h3>
+<p>Key 参与 \(QK^T\) 决定 attention 分数，Value 参与加权求和。二者的分布、异常维度结构、误差传播路径不同。KIVI 观察到 key 更适合 per-channel，value 更适合 per-token，提出不需微调的非对称 2 bit KV 量化，并保留一段较高精度 residual cache 以适应流式写入。不要把论文的 per-channel K 改写为“整个运行时永远能按一个固定 channel scale 即时写入”；分组聚合与尾部处理也是算法的一部分。<a href="https://arxiv.org/abs/2402.02750">来源：KIVI</a></p>
+<p>从误差传播看，Key 的扰动先经过分数与 softmax，可能把注意力移到另一个 token；Value 的扰动则在既定 attention 权重下影响输出。不能据此普遍断定“K 总比 V 敏感”或固定使用 K8V4：实际敏感性与模型、层、head、上下文和任务相关。合理的实验矩阵应至少把只量化 K、只量化 V、同时量化三种情况分开，再测长上下文检索与完整生成。</p>
+<h3 id="lp-kv-sub-2">KVQuant：RoPE 位置、码本与 outlier 分离</h3>
+<p>KVQuant 将 per-channel Key、pre-RoPE Key 量化、敏感度加权非均匀码本与逐向量 dense-and-sparse 处理结合。Pre-RoPE 的作用是利用旋转前更有利的分布结构；它需要相应存储与 attention 执行路径配合，不是把常规 post-RoPE cache 的 dtype 字符串改掉即可。把少量 outlier 另存也要算索引和合并代价。<a href="https://arxiv.org/abs/2401.18079">来源：KVQuant</a></p>
+<p>更一般地，cache 量化应交代四件事：何时量化、沿哪个轴成组、何时重新计算 scale、读出后在哪里恢复。Prefill 可以一次处理一段连续 token，decoding 通常逐 token 追加；原本为批量压缩设计的组，如果每生成一个 token 都重压历史数据，可能把节省的带宽换成额外工作。分页 cache 还会引入 block 边界和请求共享关系，算法中的 group 与系统中的 page 不一定相同。</p>
+<h3 id="lp-kv-sub-3">FP8 KV：存储 dtype 与 attention dtype 分别设置</h3>
+<p>vLLM v0.31.0 的 KV 文档区分 per-tensor 与 per-attention-head scale，后者要求指定 attention 后端和 llm-compressor 校准路径。它也明确指出，当采用支持的 Flash Attention 3 FP8 路径时，Q 会一并量化，QK 与 ScoreV 可在 FP8 域计算。其他组合可能是 FP8 存储、读取时反量化；因此“KV FP8”本身无法证明整个 attention 采用 FP8。<a href="https://github.com/vllm-project/vllm/blob/v0.31.0/docs/features/quantization/quantized_kvcache.md">来源：vLLM v0.31.0 KV cache</a></p>
+<p>对同一个 FP8 cache，默认 scale=1 与使用真实数据校准 scale 是不同数值方案。E4M3 的范围不是无限的；若尺度与输入不匹配，仍会饱和或损失大量有效精度。vLLM v0.31.0 已移除旧的 <code>--calculate-kv-scales</code> 路径，不应照旧博客使用启动时随机 token 估计；当前主流程采用离线数据集校准并加载 scale。校准数据集、scale 粒度与实际 attention 后端都应进入实验记录。</p>
+<h3 id="lp-kv-sub-4">FP4 cache、旋转与更新的系统路径</h3>
+<p>SGLang 的官方源码文档把 FP8 scale 的 checkpoint/JSON 路径与 FP4 分块动态 scale 区分，并提供 prefill cache 反量化 dtype 的选择。这说明“支持 FP4 cache”仍是一组格式、attention 后端和阶段策略的组合，不能用一条通用命令覆盖所有 GPU。新方案若采用旋转或向量量化，还需要记录 Q 的对应变换、K/V 编码是否一致以及在线开销。<a href="https://github.com/sgl-project/sglang/blob/main/docs/docs/advanced_features/quantized_kv_cache.mdx">来源：SGLang quantized KV cache</a></p>
+<p>KV 的优先级取决于 workload。短 prompt、短输出、低并发时，权重可能仍占主要内存；长上下文或高并发时，cache 可以成为容量与带宽瓶颈。量化释放的空间可以用于更大 batch，进而提高总吞吐，但这不保证单请求 TPOT 下降。服务引擎还可能预分配固定比例显存作为 cache pool，所以 nvidia-smi 显示的进程显存不下降，并不意味着 cache 量化没有生效；应看可分配 block、可容纳 token 数和实际请求容量。</p>
+<h3 id="lp-kv-sub-5">补充方向：TurboQuant、旋转与内积误差</h3>
+<p>TurboQuant 把随机旋转、主体量化与残差内积修正结合，目标不仅是逐元素重建，还包括让压缩后向量保留有用的内积关系。它与 KIVI 的分轴整数分组、KVQuant 的 pre-RoPE/稀疏 outlier 处理属于不同设计路线。这里的“3–4 bit”描述编码预算，不表示硬件原生执行同位宽 attention。<a href="https://arxiv.org/abs/2504.19874">来源：TurboQuant 方法论文</a>。</p>
+<p>Google 的作者介绍展示了特定模型和长上下文任务的压缩结果；这些结果不能解读为任意模型、任意任务都严格无损。部署还要核对额外范数/残差元数据、旋转、解码和实际 attention 路径。vLLM 项目自己的研究也将此类低位存储与硬件 FP8 attention 的计算路径分开比较。<a href="https://research.google/blog/turboquant-redefining-ai-efficiency-with-extreme-compression/">作者介绍</a> · <a href="https://vllm-project.github.io/2026/05/11/turboquant.html">vLLM 项目实验分析</a>。</p>
+<p>vLLM v0.31.0 已有 <a href="https://github.com/vllm-project/vllm/tree/v0.31.0/vllm/model_executor/layers/quantization/turboquant">TurboQuant 量化代码目录</a>，但代码存在不等于每个模型、GPU 和 attention 后端都支持。把该目录作为研究入口，实际服务先用本文已列清配置的 FP8 路线建立基线。</p>
+<h3 id="lp-kv-sub-6">KV 失败模式清单</h3>
+<ul>
+<li>校准范围不足：短文本良好，长文本出现检索失败；按层/head 检查饱和率与 scale。</li>
+<li>缓存位置错误：pre-RoPE 与 post-RoPE 的量化假设不一致；核对存储语义与 attention kernel。</li>
+<li>首尾 token 特别敏感：仅测平均误差掩盖 attention sink 或关键检索位置的变化；按位置测试。</li>
+<li>错误地把分页、淘汰、压缩叠加为相同比例收益：淘汰减少保留 token，量化减少每个 token 字节数；质量风险不同。</li>
+<li>量化 kernel 快，服务反而慢：检查写入转换、scale 归约、布局变换、反量化和小 batch 调度开销。</li>
+<li>多模态或混合 attention 架构只有部分层采用所设 cache dtype：检查实际层类型与启动日志，不能只看全局参数。</li>
+</ul>
+<h3 id="lp-kv-sub-7">从缓存误差到 attention 输出误差</h3>
+<p>对于单个 query，写作 \(p=\mathrm{softmax}(qK^T/\sqrt{d})\)、\(o=pV\)。只量化 V 时，固定 p 下误差为 \(pE_V\)；量化 K 时，分数改变导致 p 变化，再通过 V 影响输出。若关键位置的两个分数很接近，小扰动就可能改变相对排序；若分数差距很大，同样扰动可能几乎不影响分布。因此 cache 的全局 MSE 与任务损失不一定线性相关，校准需要关注敏感方向与位置。</p>
+<p>RoPE 是特定位置相关的旋转，它保持相应向量范数，却会改变坐标轴上的元素分布。对依赖 per-channel outlier 结构的方案，这种轴变化很重要；对另一些近似旋转不变的表示，影响可能不同。不能因为旋转保持范数就认为量化误差也不变，量化格点通常并不具有连续旋转不变性。这也解释了为什么 pre-RoPE 量化与 post-RoPE 量化属于需要单独实现和验证的设计选择。</p>
+<p>Cache 还存在生命周期问题：prefill 写入的历史状态可能在后续数千步被重复读取，而某些 activation 只用于一次矩阵乘。前者的压缩误差持续参与生成，评估必须覆盖完整生成长度。另一方面，自回归分叉又意味着不能简单把每步误差相加得到最终任务损失；需要局部固定输入诊断与完整 rollout 两套证据。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section class="page" id="lp-outliers">
+<h2>9. outlier 知识地图：先识别是哪一类，再选择处理方式</h2>
+<h3 id="lp-outliers-sub-1">9.1 “一个最大值很大”并不完整描述问题</h3>
+<p>outlier 至少要看五个维度：出现在 W、A、G、K/V 的哪一种；集中于固定 channel 还是少量 token；是偶发还是长期存在；出现在 attention 还是 FFN/SwiGLU；是本身的绝对值巨大，还是相对同组普通值巨大。一个 100 并不必然危险：如果同组全是 50–100，量化很容易；一个 1 也可能危险：如果其余值全在 \(10^{-6}\) 附近，它会严重占用共同量尺。真正相关的是组内动态范围和误差落在模型敏感方向上的程度。</p>
+<div class="table-wrap"><table><thead><tr><th>分布现象</th><th>典型风险</th><th>优先考虑</th><th>不能顺手推出的结论</th></tr></thead><tbody>
+<tr><td>固定少量 channel 幅度大</td><td>tensor scale 被极少通道主导</td><td>channel 平滑、重参数化、旋转、分组、旁路</td><td>所有 token 共用一套静态校准永远足够</td></tr>
+<tr><td>少量 token 的 gradient 大</td><td>二维块把普通 token 信号压小</td><td>per-token/group scaling，保护 Dgrad</td><td>weight 上有效的 block 布局也适合 G</td></tr>
+<tr><td>突发 amax 增大</td><td>delayed scale 预测失效、饱和</td><td>current scaling、margin、监控异常率</td><td>永远加大 scale 就没有代价</td></tr>
+<tr><td>训练后期逐渐长尾</td><td>短程实验稳定，长程突然发散</td><td>检查非线性与weight相关性、长程回归</td><td>随机输入下的误差就是训练末期误差</td></tr>
+<tr><td>QK logits 爆炸</td><td>attention 过度集中、softmax/backward 异常</td><td>QK-Norm、QK-Clip、适当算术精度与优化配置</td><td>所有 attention 集中都应该通过 clipping 消除</td></tr>
+</tbody></table>
+</div><h3 id="lp-outliers-sub-2">9.2 缩小组、平滑、旋转、裁剪和旁路分别改变什么</h3>
+<p><strong>缩小组</strong>只改变哪些数共享 scale，尽量保持原函数。它适合把 outlier 的影响局限在少量元素内。代价是更多 scale 与内核约束。<strong>平滑或等价重参数化</strong>把一部分范围从一个张量搬到另一个张量，例如对角矩阵 \(D\) 满足 \(XW^\top=(XD^{-1})(WD)^\top\)。这在精确算术中保持 Linear 结果，却可能让 A 更好量化、W 更难量化，因而需要联合选取尺度。把 outlier“迁移”不等于把困难消灭。</p>
+<p><strong>旋转</strong>使用正交变换重新分配能量，例如 \(XW^\top=(XR)(WR)^\top\)，其中 \(RR^\top=I\)。如果一个向量的能量集中在单一坐标，旋转后可分散到许多坐标，从而降低某些组的峰均比。必须同时变换相配的两个操作数，或把变换吸收进模型参数；随意单独旋转 activation 会改变函数。对于非线性，通常不能把旋转无条件跨过去：\(\operatorname{SwiGLU}(xR)\) 一般不等于 \(\operatorname{SwiGLU}(x)R\)。</p>
+<p><strong>裁剪</strong>明确把超阈值值截断，例如 \(x'=\operatorname{clip}(x,-c,c)\)。它能把 scale 从极端值手中拿回来，改善大量普通值的分辨率，但会改变尾部信息。阈值应依据目标函数或实验，不应只为降低 MSE 随意截掉承载关键信息的通道。<strong>高精度旁路</strong>则让少量异常通道、层或元素保留高精度，主体低精度；代价是额外索引、访存、分支或 GEMM。异常集过大时，旁路开销可能吞掉收益。</p>
+<p>这些方法可以叠加，但并非可自由拼装的积木。平滑改变 W/A 的分布以后，原来的校准统计会失效；旋转改变了组内结构以后，原来的 group size 选择可能需要重测；裁剪可能改变 backward 的代理规则。建议先给每个变换写清楚它在精确算术中是否等价、在哪一步引入近似，再用端到端质量验证。</p>
+<h3 id="lp-outliers-sub-3">9.3 长程 FP8：为什么 SwiGLU 会是单独一章</h3>
+<p>SwiGLU 的一个标量形式是 \(z=(x^\top w_1)\operatorname{SiLU}(x^\top w_2)\)。当两个投影在同一输入方向上一起变大，且 gate 落在正值区间时，输出可能近似两个大值的乘积，形成比单个线性层更长的尾部。跟踪输入 amax 不足以判断乘积输出的分布；还应跟踪两个分支及其相关性。某些异常值在训练很久以后才逐步出现，因此只跑几百步并不能排除这一问题。</p>
+<p>Intel 的长程 FP8 研究明确讨论 SwiGLU outlier amplification，并提出 Smooth-SwiGLU，同时研究 FP8 optimizer moments。它的意义是提供一种“训练动态改变分布，进而击穿低精度假设”的证据；具体改法应作为该论文的联合方案理解，不能把任意版本 SwiGLU 替换都称为等价或稳定。<a href="https://arxiv.org/html/2409.12517v1">来源：Scaling FP8 training to trillion-token LLMs</a>。</p>
+<h3 id="lp-outliers-sub-4">9.4 NVFP4 的 RHT 为什么放在 Wgrad 路径</h3>
+<p>Wgrad 为 \(G^\top X\)，沿 token 轴做正交变换 \(H\) 时，\((HG)^\top(HX)=G^\top H^\top HX=G^\top X\)。因此可以同时变换 G 和 X，在精确算术中保持结果，同时让二者更适合量化。这与直接在整个模型的前向 residual stream 随处插旋转不同：它针对一对乘法操作数及其共同归约轴，不需要假装变换可以穿过任意非线性。实际量化之后等式只近似成立，评估的是新的量化误差是否更有利。</p>
+<p>Transformer Engine 的 NVFP4 recipe 对 Wgrad 使用 16×16 Hadamard 变换，并结合 gradient stochastic rounding；weight 采用二维块缩放以改善转置一致性。这些措施应作为 recipe 的组成部分一起检查，不能把输入 cast 到 E2M1 就称为复现。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/nvfp4/nvfp4.html">来源：Transformer Engine NVFP4 文档</a>。</p>
+<h3 id="lp-outliers-sub-5">9.5 attention logits 爆炸与低精度上溢如何区分</h3>
+<p>attention 分数包含 \(QK^\top/\sqrt{d}\)。如果 Q、K 的范数持续增长，logits 可在 FP32 中仍是有限值，却已让 softmax 接近 one-hot，改变优化行为；这属于真实训练动态。另一种情况是同样的 Q/K 在低精度乘法或 reduction 中先上溢，FP32 参考仍正常；这属于数值实现问题。二者可以同时出现。把 softmax 输入减去最大值只能防止 exp 的直接溢出，不能阻止上游 QK 先变成 Inf，也不能逆转 logits 过度尖锐造成的信息损失。</p>
+<p>本仓库 Kimi K2 的 MuonClip / QK-Clip 应放到“优化器与 attention 稳定性”分支，而不是简单标成一个 FP8 量化技巧。QK-Norm、调整初始化、控制 Q/K 投影增长可以作用于模型动态；升精度、细粒度 scale 作用于数值表示。它们修复的环节不同，工程上先定位最早异常，再决定措施。<a href="kimi-k2-zh.html">仓库译文：Kimi K2 技术报告</a>。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+
+<section class="page" id="lp-stability">
+<h2>10. 从训练崩溃到可验证 recipe：排查顺序与代码</h2>
+<h3 id="lp-stability-sub-1">10.1 先区分五种“崩溃”</h3>
+<p>出现 NaN/Inf 是最显眼的一种，但还有 loss spike 后能恢复、loss 永远有限却持续落后基线、训练正常而导出模型掉点、RL 中 rollout 与训练 log-prob 不一致。它们不能共用一个处理按钮。只有前一类包含明确非有限数；第二类可能是数据或优化器动态；第三类可能是量化噪声持续累积；第四类可能是导出/校准不一致；第五类还可能来自 kernel、dtype 或 MoE 路由差异。回退所有精度能帮助定位，却不自动解释根因。</p>
+<div class="table-wrap"><table><thead><tr><th>症状</th><th>先验证什么</th><th>最小对照实验</th><th>常见误处理</th></tr></thead><tbody>
+<tr><td>第一个 step 就有 Inf</td><td>数据、mask、loss 分母、初始化、首个异常算子</td><td>同 batch，关闭低精度，对照前向各层</td><td>先减学习率；前向已坏时还没有更新</td></tr>
+<tr><td>scaled gradient 非有限</td><td>未缩放参考是否正常、scale 是否过大</td><td>减少 loss scale，保留前向精度</td><td>用更大 loss scale“补精度”</td></tr>
+<tr><td>G 很小或大量为零</td><td>是否下溢、饱和、mask 或真实稀疏</td><td>比较 cast 前后零比例与高精度 G</td><td>看到零就一律增大学习率</td></tr>
+<tr><td>后期才 spike</td><td>amax、SwiGLU 长尾、QK 范数、scale 历史、数据阶段变化</td><td>从同一 checkpoint 重放异常前后 batch</td><td>只拿初始化的随机张量做精度测试</td></tr>
+<tr><td>loss 有限但长期变差</td><td>Wgrad/Dgrad 误差、master 更新、moments、敏感层</td><td>一次只恢复一种 GEMM 或状态的精度</td><td>以“没有 NaN”宣告成功</td></tr>
+<tr><td>多卡才坏</td><td>scale 同步、归约 dtype、分片 norm、collective 数据顺序</td><td>先缩小到可重放的两卡与固定输入</td><td>把网络通信错误归因于格式位宽</td></tr>
+</tbody></table>
+</div><h3 id="lp-stability-sub-2">10.2 建立“最早异常”的证据链</h3>
+<p>保存异常前 checkpoint 和对应 batch，连同 optimizer、scaler、随机数、scale 历史及数据位置；只保存模型参数可能无法复现。逐层检查输入、量化前、量化后恢复、GEMM 输出和 backward 的统计。建议记录 amax、RMS、关键分位数、非有限比例、饱和比例、零比例以及相对误差。相对误差在参考值接近零时会被放大，应同时看绝对误差和归一化均方误差；仅看 max relative error 容易被一个接近零的元素误导。</p>
+<p>再把一次计算的误差拆开：先用高精度原始输入做参考；接着把输入量化并恢复，但仍用高精度 GEMM，得到“输入表示损失”；最后运行真正低精度 kernel，观察新增的“乘加与实现损失”。若第二步已经劣化，优先查分组、scale 与 outlier；若第二步好而第三步差，优先查内部累积、kernel、布局和硬件模式。这个拆分比不断更换全局 dtype 更能解释问题。</p>
+<p>参数更新也应单独量化监控。可以跟踪每层 update-to-weight norm，即更新幅度与 weight 幅度之比；再记录 master 更新后，有多少计算副本元素实际发生了编码变化。若 master 在移动而计算副本长期完全不变，可能是更新小于量化格点；若单步更新骤然变大，则查 gradient、二阶矩分母、学习率或异常数据。如果一切都有限却慢慢落后，比较 optimizer 的高精度参考更新，往往比只比较 activation 更有帮助。上述比值是诊断信号，不存在适用于所有层与所有架构的统一安全阈值。</p>
+<p>调试时的参考计算还应避免无意改变求和顺序。浮点加法不满足结合律，改变 batch 切分、GEMM tiling、融合顺序或 collective 拓扑都可能产生微小差异；不宜要求所有 dtype 与所有设备逐 bit 一致。合理的比较是在固定配置下判断差异的规模、方向、持续性以及对质量的影响，同时用足够高精度的局部参考确认最早的误差来源。可复现配置与容差说明，比一个没有上下文的“误差为零”更有价值。</p>
+<p>当需要局部回退时，可按成本与证据保护 embedding、输出头、norm 统计、softmax、MoE router、attention 或最后若干层。不能把一份 recipe 的“末几层保留高精度”升格成所有模型固定保留四层的定律；敏感层位置随架构与训练配置变化。NVFP4 的官方方法与当前使用指南都把高精度例外当作 recipe 的必要组成，而不是假定全模型所有算子都能降到 4 位。<a href="https://arxiv.org/html/2509.25149v1">来源：NVFP4 预训练论文</a>。</p>
+<h3 id="lp-amp-example">10.3 可运行的 PyTorch AMP 最小示例</h3>
+<p>下面使用当前 <code>torch.amp</code> API，按本次检索到的 PyTorch 2.14 文档核对；较旧版本可能仍使用旧命名空间，需要按安装版本检查，本文未验证跨版本兼容。模型参数保持 FP32，autocast 控制算子计算 dtype。它用等大小 micro-batch 演示累积顺序：固定 scale 完成累积，再 unscale、clip、step、update。把 <code>amp_dtype</code> 改成 BF16 时关闭 scaler；这不表示所有 BF16 模型都必然稳定。此代码为教学示例，未在本机 GPU 实跑，也没有验证任何模型的收敛与吞吐。<a href="https://docs.pytorch.org/docs/2.14/amp.html">来源：PyTorch AMP API</a>。</p>
+<pre><code class="language-python">import torch
+from torch import nn
+
+torch.manual_seed(7)
+assert torch.cuda.is_available()
+device = "cuda"
+amp_dtype = torch.float16  # 可改为 torch.bfloat16
+if amp_dtype == torch.bfloat16:
+    assert torch.cuda.is_bf16_supported()
+
+# FP32 参数承担高精度参数更新；不把整个模型 .half()。
+model = nn.Sequential(nn.Linear(256, 512), nn.GELU(), nn.Linear(512, 32))
+model = model.to(device=device, dtype=torch.float32)
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+scaler = torch.amp.GradScaler("cuda", enabled=(amp_dtype == torch.float16))
+micro_batches = 4
+
+for step in range(10):
+    optimizer.zero_grad(set_to_none=True)
+    for _ in range(micro_batches):
+        x = torch.randn(16, 256, device=device)
+        target = torch.randn(16, 32, device=device)
+        with torch.autocast(device_type="cuda", dtype=amp_dtype):
+            prediction = model(x)
+            # 明确在 FP32 中计算这个示例的平方误差。
+            loss = (prediction.float() - target).square().mean()
+            loss = loss / micro_batches
+        scaler.scale(loss).backward()
+
+    scaler.unscale_(optimizer)
+    # FP16 非有限检查由 scaler.step 处理；不要先手工 step。
+    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+    scaler.step(optimizer)
+    scaler.update()
+</code></pre>
+<p>上述顺序有几个可验证的含义。FP16 发生溢出时，<code>scaler.step</code> 会依据其检测结果跳过 optimizer 更新；不能绕过它额外调用 <code>optimizer.step()</code>。每次有效更新只调用一次 <code>unscale_</code>，而且在所有累积完成后调用。若换成真实 token loss，要按有效 token 归一化；若使用 FSDP/ZeRO，要改成框架支持的全局 norm 与 scaler 协同方式。这段单卡代码不是分布式训练模板。<a href="https://docs.pytorch.org/docs/2.14/notes/amp_examples.html">来源：PyTorch AMP examples</a>。</p>
+<h3 id="lp-te-example">10.4 Transformer Engine：选择 recipe，而不是直接把 tensor cast 成 FP8</h3>
+<p>下面演示同一 Linear 如何由 recipe 控制低精度计算，参数与 AdamW 状态保持 FP32，从而把计算精度实验与参数更新精度实验分开。API 按本文核对到的 Transformer Engine 2.20.2 文档编写；安装环境需要与 GPU、CUDA、PyTorch、TE 构建相容。普通 FP8、MXFP8 与 NVFP4 的设备支持不同，不能在不支持的卡上只改字符串。代码未 GPU 实跑，不承诺示例之外的形状、kernel 路径或性能。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/examples/fp8_primer.html">来源：Transformer Engine 官方示例</a>。</p>
+<pre><code class="language-python">import torch
+import transformer_engine.pytorch as te
+from transformer_engine.common.recipe import (
+    DelayedScaling, Format, MXFP8BlockScaling, NVFP4BlockScaling,
+)
+
+assert torch.cuda.is_available()
+assert torch.cuda.is_bf16_supported()
+torch.manual_seed(7)
+
+recipe = DelayedScaling(
+    fp8_format=Format.HYBRID,
+    amax_history_len=16,
+    amax_compute_algo="max",
+)
+# Blackwell 对应支持设备上，可分别测试以下 recipe：
+# recipe = MXFP8BlockScaling(fp8_format=Format.E4M3)
+# recipe = NVFP4BlockScaling()
+
+layer = te.Linear(1024, 1024, params_dtype=torch.float32, device="cuda")
+optimizer = torch.optim.AdamW(layer.parameters(), lr=1e-3)
+
+for step in range(10):
+    optimizer.zero_grad(set_to_none=True)
+    x = torch.randn(32, 1024, device="cuda", dtype=torch.bfloat16)
+    target = torch.randn(32, 1024, device="cuda", dtype=torch.float32)
+    with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+        with te.autocast(enabled=True, recipe=recipe):
+            y = layer(x)
+            loss = (y.float() - target).square().mean()
+    # backward 放在 TE autocast 外面，精度仍由前向 recipe 决定。
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(layer.parameters(), 1.0, error_if_nonfinite=True)
+    optimizer.step()
+</code></pre>
+<p><code>Format.HYBRID</code> 对应前向 E4M3 与反向 E5M2 的传统 FP8 组合。这里仅更换 Linear 并启用 recipe，未实现一整套 LLM 的敏感层保护、checkpointing、scale 分布式通信、optimizer 压缩或 KV cache。真正实验应从已稳定的 BF16 训练配置出发，一次改变一个维度，核对初始 loss、同 batch 的 Fprop/Dgrad/Wgrad、短程曲线和长程结果，再谈速度。</p>
+<h3 id="lp-stability-sub-5">10.5 怎样判定低精度方案真正成功</h3>
+<p>第一层是数值可解释：无异常饱和、没有意外丢失大量有效 gradient、master 和 optimizer 更新正常。第二层是收敛：固定 token 预算、数据顺序和学习率计划，对比 BF16 基线，观察多个时间点与训练末期；训练 loss 接近还需看任务质量，尤其是长上下文、代码、数学和长程推理。第三层是系统收益：相同 batch、相同模型、相同硬件下，测量端到端 tokens/s、峰值显存、通信占比以及量化相关 kernel 时间。若容量收益使 batch 可以变大，应把“相同 batch 的速度”和“可用最大 batch 的吞吐”分别报告。</p>
+<p>最后还要验证恢复与部署：从 checkpoint 恢复后 scale 历史是否正确、随机舍入是否按预期工作、导出后的 weight 编码是否与部署内核一致、RL 的 rollout 与训练是否采用相容的数值路径。一个只在训练第一百步通过的 FP8 GEMM 单测，无法替代这些验证；相反，一个完整报告也不需要假装每个张量都降到同样精度，保留少数高精度位置往往是总体最合理的预算分配。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section id="lp-families" class="page">
+<h2>11. 各家方案：沿着 W、A、G、KV 与优化器逐项拆开</h2>
+<p>同一个“FP8 模型”标签，可能指计算使用 FP8、checkpoint 使用 FP8、反向传播保存的激活压缩为 FP8，或者只指部署阶段的某几层。下面以已有译文作为阅读入口，以原始报告与官方实现作为事实依据。表中“未披露”表示所引材料不足以确认该项；它既不等于采用 BF16，也不等于没有使用相关优化。W 指权重，A 指激活，G 指 gradient；优化器与主权重另列，因为它们决定小更新是否能长期积累。</p>
+<p>阅读时应先定位阶段，再定位张量和操作。训练中的 Linear 有前向、输入 gradient 和参数 gradient 三种矩阵乘；其中一种用 FP8，不能推出另两种相同。推理又分 prefill 与 decoding，低比特权重主要减少参数搬运，低比特 KV 主要减少上下文状态的容量和访问，两者可能在不同负载下成为主要收益来源。</p>
+
+<section id="family-deepseek">
+<h3 id="lp-families-sub-1">DeepSeek：从完整 FP8 训练到 FP4 专家与 FP4 KV</h3>
+<h4 id="lp-families-sub-2">DeepSeek-V3：将低精度放到计算、存储、通信三条路径</h4>
+<p>V3 的代表性不在于“用了 FP8”四个字，而在于它明确展示了一个可训练的混合精度系统：矩阵输入、累加、主权重、gradient 累积、优化器状态和敏感算子各有不同精度。主干计算的吞吐量收益，并不要求把所有状态都降到同样位宽。阅读入口为<a href="deepseek-v3-zh.html">已有中文译文</a>，证据见<a href="https://arxiv.org/abs/2412.19437v2">V3 原始报告 §3.3 与附录 B</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>阶段与公开配置</th><th>为什么这样划分</th></tr></thead><tbody>
+<tr><td>W：计算副本</td><td>Linear 的 Fprop、Dgrad、Wgrad 使用 FP8 GEMM；量化权重按 128×128 分块。</td><td>使大矩阵乘利用 FP8 吞吐量；不把计算副本误认为优化器的主权重。</td></tr>
+<tr><td>A：计算与保存</td><td>一般激活按每个 token 的 128 个通道量化；采用 E4M3。部分反向所需激活保存为 FP8，attention 后 Linear 的敏感输入使用定制 E5M6。</td><td>小组 scale 减少少数大值对其余通道的影响；保存格式根据反向用途选择。</td></tr>
+<tr><td>G：乘法与累积</td><td>Dgrad、Wgrad 的矩阵乘使用 FP8 输入；用于 batch 累积的权重 gradient 保持 FP32。</td><td>“FP8 Wgrad”不代表最终 gradient 累积缓冲区也是 FP8。</td></tr>
+<tr><td>主权重与 optimizer</td><td>主权重 FP32，AdamW 一阶、二阶矩 BF16。</td><td>保留小参数更新的可积累性，同时压缩数量可观的优化器状态。</td></tr>
+<tr><td>高精度例外</td><td>embedding、输出头、MoE gate、归一化与 attention 保留原始较高精度。</td><td>对误差敏感或计算成本不占主导的操作，降精度的收益不足以抵消风险。</td></tr>
+<tr><td>KV cache</td><td>此处讨论的 FP8 训练配置不能单独确定部署 KV 的完整格式。</td><td>MLA 的结构压缩与 cache dtype 是两件事。</td></tr>
+</tbody></table>
+</div><p>V3 的 scale 在线依据当前张量小组的最大绝对值计算，避免直接依赖历史 amax 预测当前范围。与一整张矩阵共用一个 scale 相比，细粒度分组缩小了需要共同兼容的数值范围。这里是在表示层面适应 outlier，不要求先将模型中的 outlier 全部删除。</p>
+<p>累加精度是另一条独立防线。Tensor Core 能接受 FP8 输入，并不保证长内积具有理想 FP32 累加的数值表现。V3 将部分累加结果周期性转移到 CUDA Core 的 FP32 寄存器，再结合分组 scale 完成累加。由此要区分三个问题：乘数量化误差、硬件内部部分和的误差，以及最终输出 dtype。只检查输出张量写成 FP32，会漏掉中间部分和已经丢失的信息。</p>
+<p>反向传播还带来布局问题：适合前向的逐 token 小块，在转置后未必仍适合 Dgrad。V3 没有用一个省事的二维大块覆盖所有激活；其消融显示，对 activation gradient 使用 128×128 块级量化可能在训练很久以后发散。这里的教训是 gradient outlier 可以在 token 之间极不均匀，不能仅凭权重量化表现良好就复用相同粒度。时间较短的小规模对照，也可能漏掉缓慢累积的偏差。</p>
+<p>通信同样选择性降精度：MoE dispatch 及对应反向路径可以使用低精度，而 combine 保留 BF16。其原则是沿数据流判断误差如何被后续求和、分支与路由放大。链路带宽下降只是结果；真正需要核查的是发送前在哪个轴上量化、scale 如何传递，以及接收后采用什么精度合并。</p>
+<h4 id="lp-families-sub-3">DeepSeek-V4：FP4 QAT 与训练稳定性分层处理</h4>
+<p>V4 将部署的主要参数内存进一步压到 MXFP4，同时保留训练所需的高精度状态。它还把低精度用在索引器，而主 KV 采用另一套混合格式。出处为<a href="deepseek-v4-zh.html">已有 V4 译文</a>与<a href="https://arxiv.org/abs/2606.19348v1">V4 原始报告</a>；不能把三个位置的 FP4、FP8 合并成一个笼统的“全模型 4bit”。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>公开方案</th><th>保留条件与边界</th></tr></thead><tbody>
+<tr><td>W</td><td>后训练对 MoE 专家权重进行 MXFP4 QAT；训练侧由 FP32 主权重量化到 FP4，再转换到 FP8，复用 FP8 计算框架。</td><td>FP4→FP8 的无损承载依赖分组 scale 的范围条件，不能对任意张量无条件断言无损。</td></tr>
+<tr><td>A</td><td>CSA 索引器 QK 路径采用 FP4；索引分数另从 FP32 降为 BF16。</td><td>索引器分数用于选候选 KV，与主 attention 输出计算不是同一操作。</td></tr>
+<tr><td>G</td><td>QAT 通过 STE 传回 FP32 主权重；部分跨 DP 的 MoE gradient 用随机舍入压为 BF16通信，然后 FP32 求和。</td><td>传输格式与归约累加格式分离；不能把它写成“所有 gradient BF16”。</td></tr>
+<tr><td>KV</td><td>主 KV 的 RoPE 维度 BF16，其余维度 FP8。</td><td>按子空间保精度，且与 CSA/HCA 的结构压缩叠加。</td></tr>
+<tr><td>optimizer</td><td>FP32 主权重已明确；Muon 的 Newton–Schulz 运算可采用 BF16 矩阵乘。</td><td>这不足以补全所有 optimizer state 的逐项 dtype。</td></tr>
+</tbody></table>
+</div><p>V4 的 QAT 前向使用量化后的有效权重，反向通过直通估计器更新主权重。这样既让网络适应低比特扰动，又保留优化器所需的连续参数空间。部署与 RL rollout 则直接使用原生 FP4 权重，取得真实的存储与带宽收益。QAT 中的模拟路径、实际推理内核和主权重应分别记录。</p>
+<p>面对训练不稳定，V4 同时处理路由与数值范围：Anticipatory Routing 试图打断路由与 outlier 的反馈；SwiGLU 对线性分支采用 [−10,10] 限幅、门控分支上界设为 10。报告指出这些方法经验有效，但机制尚未完全解释。不能将这一具体架构里的成功扩大为“任何模型裁剪到 10 都不损伤质量”。合理的迁移方法是先观察发生尖峰的层、专家、通道与路由变化，再做受控对照。</p>
+<p>BF16 gradient 通信的设计则针对累加误差：先交换局部 gradient，再由接收方用 FP32 求和。若只把标准树式或环式归约的数据类型改成 BF16，低精度中间和可能反复舍入，数值行为并不等价。这里说明通信压缩必须与集合通信算法一起设计。</p>
+<h4 id="lp-families-sub-4">DeepSeek-V4.1-Flash：KV 4bit 不等于 attention 4bit</h4>
+<p>V4.1 将重点转向主 KV cache 的持久化和 HBM 占用。其关键是区分“为矩阵乘选择格式”和“为缓存选择格式”：前者受 Tensor Core 原生支持约束，后者只需能高效反量化给计算内核。阅读<a href="deepseek-v41-flash-zh.html">已有译文</a>与<a href="https://arxiv.org/abs/2609.19969v1">V4.1 原始报告 §2.4.4</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>位置</th><th>格式与 scale</th><th>训练／推理处理</th></tr></thead><tbody>
+<tr><td>主 KV cache</td><td>E2M1 数值，每 16 通道一个 E4M3 scale；沿用 NVFP4 的局部设计，但省略第二级全局 scale。</td><td>后训练 QAT；缓存反量化后计算。RoPE 与非 RoPE 分量采用同一缓存格式。</td></tr>
+<tr><td>量化位置</td><td>RoPE 之后量化。</td><td>将精度与 decoding 成本共同纳入选择，而非只比较离线误差。</td></tr>
+<tr><td>SWA KV</td><td>保持 FP8。</td><td>局部窗口分支对量化更敏感，未强行与全局 KV 统一。</td></tr>
+<tr><td>索引器</td><td>MXFP4 路径与主 KV 的带 E4M3 scale 格式分别处理。</td><td>前者服务于候选选择计算，后者主要节省存储。</td></tr>
+<tr><td>结构优化</td><td>CSA2 的跨层 KV 和索引复用。</td><td>减少缓存元素数，再减少每个元素位数；不能把整体压缩比例都归功于 dtype。</td></tr>
+</tbody></table>
+</div><p>省略全局 scale 有明确的范围论证：归一化后的潜在 KV 及 RoPE 保范数性质给出幅值约束，所选局部格式有足够动态范围。它是针对这类张量的判断，不能直接用于未经归一化的残差或 SwiGLU 中间激活。报告还明确给出更敏感的 SWA KV 例外，说明“同为 KV”仍可能需要按路径设计精度。</p>
+<p>评估 KV 方案需要拆出四项：结构改变少存了多少元素，低比特少用了多少字节，scale 与布局增加多少元数据，反量化及跨层复用影响多少延迟。长上下文下的总显存下降，不等于相同比例的 attention 算力下降；实际吞吐量还取决于读取模式、batch、命中率和内核实现。</p>
+</section>
+
+<section id="family-qwen">
+<h3 id="lp-families-sub-5">Qwen：原生 FP8、官方量化 checkpoint 与门控架构三条线</h3>
+<p>Qwen 材料需要按版本与证据类型拆开。训练博客能说明训练策略，模型卡与 config 能说明发布权重的量化配置，架构论文则能说明 residual state 为什么适合低精度；这三类证据相互补充，却不能互相替代。阅读入口为<a href="qwen35-37-technical-updates.html">Qwen3.5—3.7 技术更新核查</a>及<a href="qwen38-next-zh.html">Qwen3.8-Next 译文</a>。官方配置应以对应 checkpoint 的固定 revision 为准，入口见<a href="https://huggingface.co/Qwen">Qwen 官方模型组织</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>可确认的方案</th><th>不能据此推出的结论</th></tr></thead><tbody>
+<tr><td>W</td><td>仓库核查的 3.6 官方 FP8 checkpoint 配置为 E4M3、128×128 weight block；存在模块排除列表。</td><td>不能推出该系列所有版本、所有模块、所有训练阶段均如此。</td></tr>
+<tr><td>A</td><td>对应 FP8 config 声明 dynamic activation；3.8-Next 支持 FP8 residual state 存储。</td><td>不能把 residual storage 等同于全体 GEMM activation 或 recurrent state 都 FP8。</td></tr>
+<tr><td>G</td><td>所列 config 不定义完整反向精度。</td><td>未披露不能补写为 FP8 Dgrad／Wgrad，也不能从权重 dtype 反推。</td></tr>
+<tr><td>KV</td><td>QSA、GDN 等减少全局 attention 或状态开销。</td><td>结构压缩、固定大小状态和 KV dtype 是不同维度。</td></tr>
+<tr><td>optimizer</td><td>架构报告讨论 Muon、Newton–Schulz 与稳定性。</td><td>优化器名称不直接给出所有 moments、主权重与归约缓冲区格式。</td></tr>
+</tbody></table>
+</div><p>官方 FP8 模型排除视觉层、norm、路由或共享门、部分线性 attention 与 MTP 模块，揭示的是一种选择性策略。排除列表还需要与推理引擎的模块匹配规则结合阅读：名称前缀、子模块递归匹配及 fused module 可能影响最终转换范围。仅抄写 config 的 quant_method，容易将一个混合精度发布物错误描述为全 FP8。</p>
+<h4 id="lp-families-sub-6">Qwen3.8-Next：先控制写入范围，再压缩残差状态</h4>
+<p>3.8-Next 的公开设计使用 GR、gated attention 与 GDN 门控约束写入 residual stream 的内容，使 residual state 的分布更适合 FP8 存储，并融合读写及归一化以减少数据搬运。其证据是<a href="https://arxiv.org/abs/2608.30320v1">Qwen3.8-Next 架构报告</a>。这里“门控→范围更可控→低精度存储”的因果设计，比简单改变一个 dtype 更值得复用。</p>
+<p>残差分支变宽后，额外状态会增加 decoding 的内存流量。FP8 存储降低每次遍历状态的字节数；融合内核则减少遍历次数。两者解决不同部分的成本，因此应同时记录：单个元素位宽、分支数量、每块读写次数和 scale 开销。否则，“字节减半”可能被误读成整个模型 decoding 延迟减半。</p>
+<p>在稳定性分析中，报告比较不同学习率和门控设置下的 activation 极值、gradient 范数与 loss spike。值得学习的是观察方式：中位数 gradient 较大不必然意味着更不稳定，极少数尖峰及其时间相关性可能更关键。仅比较平均 loss 或平均梯度范数，可能看不到导致低精度崩溃的尾部分布。</p>
+<h4 id="lp-families-sub-7">与 gated attention、residual sink 研究连接</h4>
+<p><a href="gated-attention-zh.html">gated attention 译文</a>与<a href="attention-residual-sinks-zh.html">attention / residual sink 统一视角译文</a>为理解 Qwen 的架构路线提供机制背景，原始材料为<a href="https://arxiv.org/abs/2505.06708">gated attention 论文</a>及<a href="https://arxiv.org/abs/2601.22966">outlier 驱动重缩放研究</a>。这些工作提醒我们：某些 outlier 与归一化共同提供调节信号幅度的功能。直接消除 outlier，可能同时消除了模型依赖的重缩放机制。</p>
+<p>因此要区分两个目标：让现有张量更容易表示，以及改变网络使其不再需要极端激活。前者可用细粒度 scale、平滑、旋转与混合精度；后者需要架构与训练对照。门控为网络提供显式调节通道，可能降低其制造巨大坐标值的需求。这个解释在所研究设置中有实证支持，但不应写成所有模型的唯一 outlier 成因。</p>
+</section>
+
+<section id="family-kimi">
+<h3 id="lp-families-sub-8">Kimi：从只压缩激活存储，到部署感知的 MXFP4 后训练</h3>
+<h4 id="lp-families-sub-9">K2 / K2.5：FP8 存储与 FP8 计算必须分清</h4>
+<p>K2 是最适合纠正“看到 FP8 就认为 FP8 训练”的反例。它将不敏感激活压为 FP8 保存，并没有因此在主干计算中使用 FP8。阅读<a href="kimi-k2-zh.html">K2 译文</a>、<a href="kimi-k25-zh.html">K2.5 译文</a>与<a href="https://arxiv.org/abs/2507.20534v2">K2 原始报告</a>、<a href="https://arxiv.org/abs/2602.02276v2">K2.5 原始报告</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>K2 / K2.5 已披露事实</th><th>作用</th></tr></thead><tbody>
+<tr><td>W</td><td>K2 的这项 FP8 优化没有宣称把权重 GEMM 全部改为 FP8。</td><td>避免把 activation storage 方案误归为低精度权重训练。</td></tr>
+<tr><td>A</td><td>K2 将 MoE up projection 与 SwiGLU 输入按 1×128 小块保存为 FP8 E4M3，scale 为 FP32；K2.5 同样压缩不敏感激活，并结合选择性重计算和 CPU 卸载。</td><td>减少为反向传播保留的显存，而不要求所有算子低精度执行。</td></tr>
+<tr><td>G、KV、optimizer</td><td>这些存储段落不足以确定三者完整 dtype。</td><td>保持未知项，防止将同系列的后续方案倒填到早期模型。</td></tr>
+</tbody></table>
+</div><p>保存激活本质上是在时间轴上压缩信息：前向产生张量，经过若干层或流水线阶段后，反向再读回。重计算用额外 FLOPs 换存储，卸载用主机容量与传输换 HBM，量化用数值误差换字节数。它们可以组合，也应分别评估；一次显存下降不能全部归因于 FP8。</p>
+<p>判断是否“不敏感”不能只看前向输出误差。相同输入可能服务于多个反向算子，其中某条路径对微小误差更敏感。正确的对照是从保存张量出发追踪所有消费者，核查反向 gradient、长期收敛与最终质量。K2 的保守选择说明，存储压缩可作为在计算全面降精度之前的独立工程步骤。</p>
+<h4 id="lp-families-sub-10">K3：MXFP4 权重、MXFP8 激活与 SiTU-GLU</h4>
+<p>K3 转向完整的部署感知后训练：主导参数内存的专家采用 MXFP4，相关激活采用 MXFP8，SFT 与 RL 均参与 QAT，rollout 使用同一量化方案。阅读<a href="kimi-k3-zh.html">已有 K3 译文</a>与<a href="https://arxiv.org/abs/2607.24653v2">K3 原始报告 §4.1.4</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>K3 公开方案</th><th>边界</th></tr></thead><tbody>
+<tr><td>W</td><td>MoE 专家权重 MXFP4；attention projection、latent MoE projection、shared expert、router 保持更高精度。</td><td>“专家量化”需要读具体组件列表，不能默认所有包含 expert 的分支均相同。</td></tr>
+<tr><td>A</td><td>量化专家计算采用 MXFP8；训练保存的大量激活还采用分块 FP8 与卸载组合。</td><td>训练 attention 输出另保持 FP32，纠正有偏舍入误差；计算激活、算子输出与保存激活属于不同路径。</td></tr>
+<tr><td>G</td><td>RL 使用策略模型的 FP32 gradient 缓冲区，并在真实反向之前复用它暂存非策略模型前向参数；完整逐算子 gradient 计算 dtype 仍未补齐。</td><td>缓冲区 FP32 不等于所有反向乘数 FP32；也不能由 MXFP8 activation 推导 MXFP8 gradient。</td></tr>
+<tr><td>KV / recurrent state</td><td>KDA 与 NoPE-MLA 混合架构，另有循环状态管理与前缀缓存。</td><td>不能将 A 的 MXFP8 声明自动套到全部 KV 或循环状态。</td></tr>
+<tr><td>optimizer</td><td>后训练 QAT 与高精度组件已明确，状态逐项格式需单独证据。</td><td>不补写未公开的主权重、moments 或累积格式。</td></tr>
+</tbody></table>
+</div><p>K3 的数值稳定性与结构设计一起考虑。SwiGLU 的两个乘法分支都可能产生大值，乘积进一步放大；SiTU-GLU 在两个分支使用平滑 tanh 上限，保留门控的局部特性，同时限制远端增长。升维投影前的 RMSNorm 控制输入分布。它与硬裁剪的区别在于函数形式及 gradient 行为，而不能简单理解为换了一个裁剪阈值。</p>
+<p>低精度系统还需关注循环状态。KDA 的块内计算用累积保留因子的倒数重缩放 key；保留因子连续相乘趋近零时，其倒数可增长到有限精度无法表示。对数衰减下界针对这一重缩放溢出问题，也关系到高效块内计算。其误差传播与普通一次性 Linear 不同：小的系数偏差可能在长序列上反复作用。评估这类模型时，应同时覆盖长序列、状态复用、前缀命中和跨轮对话，而不能只测试单轮短输入。</p>
+<p>K3 与 K2 的演进说明，家族名不是 dtype 规格。K2 的 FP8 主要解决保存激活，K3 的 MXFP4/MXFP8 明确进入后训练与部署计算。写知识地图时，应把不同阶段列成独立记录，而非画一条“该公司使用 FP8”的粗线。</p>
+</section>
+
+<section id="family-mimo">
+<h3 id="lp-families-sub-11">Xiaomi / MiMo：FP8 训练到 MXFP4 rollout 的数值闭环</h3>
+<h4 id="lp-families-sub-12">MiMo-V2-Flash：明确列出高精度例外</h4>
+<p>MiMo-V2-Flash 采用 FP8 混合精度，但 attention 输出投影、embedding 与输出头保留 BF16，router 参数保持 FP32；RL 的训练和推理引擎均采用 FP8。阅读<a href="mimo-v2-flash-zh.html">已有译文</a>及<a href="https://arxiv.org/abs/2601.02780v2">原始报告</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>V2-Flash 公开信息</th><th>解读</th></tr></thead><tbody>
+<tr><td>W / A</td><td>类似 V3 的 FP8 混合精度框架；明确列出 BF16 的 attention 输出投影、embedding、head。</td><td>“类似”不足以照搬 V3 所有小块、scale、转置与存储细节。</td></tr>
+<tr><td>router</td><td>参数 FP32。</td><td>路由造成离散专家选择，局部微小扰动可能改变实际计算路径。</td></tr>
+<tr><td>G</td><td>完整逐算子 gradient 格式在上述摘要信息中未逐项披露。</td><td>不要将 FP8 框架名称当作完整 G 规格。</td></tr>
+<tr><td>KV / optimizer</td><td>需分别查询具体 cache 和训练实现，不能从 FP8 总述确定。</td><td>混合 attention 的存储收益与 dtype 收益分开归因。</td></tr>
+</tbody></table>
+</div><p>这一方案的价值在于把“敏感位置”具体落到模块，而非抽象地说“关键层保高精度”。对读者而言，更可迁移的问题是：该模块是否含不连续选择，是否汇聚大量分支，是否直接影响输出概率，是否在低精度中多次累积；这些性质比模块名称本身更能解释保精度的理由。</p>
+<h4 id="lp-families-sub-13">MiMo-V2.6：量化参数对齐还不够，还要对齐路由与概率</h4>
+<p>V2.6 在中期训练引入 MXFP4 QAT；RL rollout 专家采用 MXFP4。训练每次更新后对专家执行 QDQ，遵循 rollout 使用的 Humming GEMM 内核数值约束。它同时回放专家索引，并对齐采样候选集的概率归一化。阅读<a href="mimo-v26-zh.html">已有译文</a>与<a href="https://arxiv.org/abs/2610.11959v1">V2.6 原始报告</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>V2.6 已披露策略</th><th>主要解决的问题</th></tr></thead><tbody>
+<tr><td>W</td><td>中期训练 MXFP4 QAT；每次参数更新后专家 QDQ 与 rollout 数值约束一致。</td><td>训练有效权重与生成轨迹时的有效权重保持一致。</td></tr>
+<tr><td>A</td><td>草稿计算使用 FP8；专家激活等全部细节应按具体内核另核。</td><td>不能从专家 W 的 MXFP4 推出统一的 A 格式。</td></tr>
+<tr><td>G</td><td>报告给出 gradient clipping 等优化设置，但不等于公开所有 G dtype。</td><td>区分稳定性超参数与低精度格式。</td></tr>
+<tr><td>主权重 / optimizer</td><td>RL 初始化继承 SFT 的 FP32 主权重和 Muown 行状态。</td><td>避免量化适配之外再引入优化器状态重置扰动。</td></tr>
+<tr><td>router</td><td>RL 冻结 router，并使用 rollout routing replay。</td><td>分别控制负载漂移与跨引擎离散路径不一致。</td></tr>
+<tr><td>KV</td><td>Context Cache 管理 KV、路由记录、采样候选集合与视觉输入；空闲状态卸载。</td><td>状态管理不等于明确披露 KV 数值格式。</td></tr>
+</tbody></table>
+</div><p>从 SFT 切到 RL 时，同时改变数据分布、目标函数、量化方案和优化器状态，会让故障原因难以辨认。V2.6 继承 FP32 主权重及部分状态的做法，体现了阶段转换的连续性：模型不仅有一份 checkpoint 权重，也有训练动态所依赖的历史状态。只保留低比特发布权重重新开始，不能视为完全等价的训练恢复。</p>
+<p>路由回放也不能被简化为“低精度修补”。即使训练和推理使用相同参数，kernel、归约顺序及并行方式仍可能让接近边界的专家分数交换顺序。冻结 router 使参数不再更新，却不保证两引擎的计算误差相同。记录并回放离散选择，是在执行路径层面对齐；QDQ 则是在有效参数层面对齐，两者互补。</p>
+</section>
+
+<section id="family-minicpm">
+<h3 id="lp-families-sub-14">MiniCPM / InfLLM：端侧低比特需要与校准、稀疏和投机采样一起设计</h3>
+<p>该系列应放在同一阅读分组，但不能把所有技术都归入量化。InfLLM 与 InfLLM v2 的上下文选择／稀疏 attention 主要减少需要处理的内容；MiniCPM4 还单独讨论 FP8 训练、三值 QAT、权重校准和量化后的投机采样。阅读<a href="minicpm4-zh.html">MiniCPM4 译文</a>、<a href="infllm-zh.html">InfLLM 译文</a>与<a href="https://arxiv.org/abs/2506.07900v2">MiniCPM4 原始报告</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>对象／场景</th><th>公开配置</th><th>要点</th></tr></thead><tbody>
+<tr><td>训练 W / A</td><td>在线分块 FP8；W 为 128×128，A 在文中采用 128×1 布局记法；FP32 累加。</td><td>矩阵存储方向不同会改变“行／列”写法，应根据实际语义轴比较。</td></tr>
+<tr><td>训练 G</td><td>前向和输入 gradient 计算用 FP8；参数 gradient 采用 BF16。</td><td>明确展示 Dgrad 与 Wgrad 可以选择不同精度。</td></tr>
+<tr><td>三值 QAT</td><td>BitCPM4 对 W 三值量化，不量化 A；从高精度 checkpoint 初始化。</td><td>按端侧真实瓶颈选择，不追求形式上的 W/A 全低比特。</td></tr>
+<tr><td>推理 W</td><td>P-GPTQ 与平滑组合的逐组 INT4 权重；可结合旋转等预处理。</td><td>权重校准统计受到前缀 outlier 干扰。</td></tr>
+<tr><td>KV / optimizer</td><td>前缀 KV 保留用于隔离初始 token 行为；不能由此推出一般 KV 全部采用某种量化格式。</td><td>被保存的前缀状态与整个上下文的缓存 dtype 分开描述。</td></tr>
+</tbody></table>
+</div><h4 id="lp-families-sub-15">PrefixQuant 与 P-GPTQ：前缀 outlier 会污染校准</h4>
+<p>初始 token 的激活分布可能明显偏离稳定位置。即使只量化权重，GPTQ 使用的输入二阶统计也会被极大激活主导，造成校准目标偏向少量特殊位置。P-GPTQ 在计算 Hessian 近似时排除这些初始位置，PrefixQuant 则通过预置前缀状态隔离推理激活 outlier。两者处理的环节不同：一个改变校准统计，一个改变推理时进入普通路径的激活分布。</p>
+<p>这里应避免“删掉 outlier 即可”的误解。被排除的是校准统计中的特定位置，并不意味着在正常生成时删去用户 token；预置前缀也不是随意修改语义提示。复现需要核对固定前缀、位置编码、被缓存状态的精度以及目标模型的具体实现。换模型后初始位置数量与稳定区间未必保持不变。</p>
+<h4 id="lp-families-sub-16">三值权重为何不同时量化激活</h4>
+<p>端侧的 W 与 A 不一定具有相同瓶颈。低 batch decoding 中，加载大权重往往占据重要成本；激活量化若需要额外扫描、scale 和转格式，未必得到硬件支持的更快算子。MiniCPM4 选择对三值模型的权重做 QAT，而不为追求更小的数字标签额外量化激活。这是按实际执行成本设计方案的例子。</p>
+<p>从 FP8 阶段转入三值 QAT，学习率重新 warmup 在其试验中很关键。阶段切换引入新的有效函数与量化误差，不能假定继承原学习率就能平稳适配。但这一观察也不构成固定配方：需核查模型规模、QAT token 预算、学习率曲线及性能目标，不能把小模型探索中的数值直接照搬到大模型。</p>
+<h4 id="lp-families-sub-17">量化之后，投机采样需要重新找工作点</h4>
+<p>权重压缩让目标模型 decoding 更便宜后，草稿提出更多 token 的相对成本与验证收益会变化。原先适合高精度目标模型的草稿长度、树宽或候选数量，未必仍然最佳。此外，草稿模型量化的误差可能降低接受率；平均接受长度相近，也不自动意味着端到端吞吐量相近，因为草稿、验证和调度的耗时都在变化。</p>
+<p>因此比较端侧组合方案时，需要至少报告：目标 W/A 格式、草稿 W/A 格式、平均接受长度、每步草稿耗时、验证耗时和端到端速度。将“4bit + speculative decoding”的各项单独加速倍数直接相乘，通常缺乏依据。结构稀疏与缓存管理也必须在同一负载下计量，避免重复计算收益。</p>
+</section>
+
+<section id="family-others">
+<h3 id="lp-families-sub-18">其他方案：选择性量化、罕见失效与端侧格式</h3>
+<h4 id="lp-families-sub-19">OpenAI gpt-oss：优先量化参数内存的主体</h4>
+<p><a href="gpt-oss-zh.html">gpt-oss 译文</a>及<a href="https://arxiv.org/abs/2508.10925">原始模型报告</a>说明，后训练将 MoE 权重量化为 MXFP4，含 scale 的有效开销约为每参数 4.25 bit。这里的 4.25 比“4bit 模型”更接近实际容量计算；权重布局、scale、未量化模块及运行时状态仍要另计。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>可以确认</th><th>不能补全</th></tr></thead><tbody><tr><td>W</td><td>MoE 权重 MXFP4，后训练适配。</td><td>其他所有层是否相同。</td></tr><tr><td>A / G / KV / optimizer</td><td>需查对应实现和训练披露。</td><td>不能由 MXFP4 checkpoint 反推出激活 FP4、gradient FP4 或 KV FP4。</td></tr></tbody></table>
+</div><p>该案例体现一种实用排序：先找主要容量来源，再决定低精度投放位置。MoE 的总参数量大，并不表示每个 token 读取全部参数；因此权重压缩的容量价值、单 token 带宽价值和实际算力价值，应分开判断。是否能装进某张卡，还受上下文长度、并发数和运行时开销影响。</p>
+<h4 id="lp-families-sub-20">Meta Llama 3：基准持平仍可能出现罕见损坏回答</h4>
+<p><a href="llama3-zh.html">Llama 3 译文</a>与<a href="https://arxiv.org/abs/2407.21783v3">原始报告 §6.2</a>展示 FP8 推理对 FFN 的 W/A 进行量化，保留 attention 以及首尾 Transformer 层；使用逐行动态 scale，并限制动态 scale 的上界。报告特别讨论了标准基准不能充分暴露的罕见生成异常。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>推理方案</th><th>工程教训</th></tr></thead><tbody><tr><td>W / A</td><td>FFN 主要矩阵量化为 FP8，逐行动态 scale；首尾层与 attention 保持较高精度。</td><td>收益和误差集中在哪些模块必须明确。</td></tr><tr><td>极端输入</td><td>动态 scale 上界设为 1200。</td><td>单个大值可放大 scale，使普通值大量下溢；“覆盖最大值”未必最优。</td></tr><tr><td>G / optimizer</td><td>本例是推理方案，不涉及推理时参数更新。</td><td>不要用推理结论证明低精度训练可行。</td></tr><tr><td>KV</td><td>不能由 FFN FP8 方案推断 cache 格式。</td><td>独立核查长上下文缓存。</td></tr></tbody></table>
+</div><p>这里最重要的评估启示是检查分布尾部。少量选择题基准的平均准确率相近，不意味着所有输入都安全通过量化路径。应观察大规模生成中坏回答率、奖励分布、logit 或概率漂移，并专门覆盖日期、数字、罕见 token 和异常长输入等压力条件。对于偶发故障，均值容易掩盖真正影响可用性的尾部事件。</p>
+<h4 id="lp-families-sub-21">Google Gemma：QAT 为目标推理格式服务</h4>
+<p><a href="gemma3-zh.html">Gemma 3 译文</a>和<a href="https://arxiv.org/abs/2503.19786v1">Gemma 3 原始报告</a>讨论少量步骤的 QAT，并以原始模型概率作为目标，面向逐通道 INT4、分块 INT4 等表示。该流程说明量化适配可以带有蒸馏性质：教师提供较平滑的输出目标，帮助低比特学生恢复行为。</p>
+<p><a href="gemma4-zh.html">Gemma 4 译文</a>及<a href="https://arxiv.org/abs/2607.02770v2">Gemma 4 原始报告</a>进一步涉及移动端混合 INT2/INT4 权重配 INT8 激活、Q4_0、图像编码器 W8A8、音频编码器按层簇混合位宽，并通过块内标量缩放帮助 FP16 推理稳定。这说明“端侧模型”也不必只有一种统一位宽。</p>
+<p>多模态编码器与语言模型应分开评估。图像输入的动态范围、音频长度和预处理误差，可能与文本残差不同；同一个 W8A8 标签下，静态／动态 activation scale、逐通道／逐块粒度和校准数据仍决定质量。磁盘体积减少、峰值内存减少与延迟减少，也必须分别测量。</p>
+<h4 id="lp-families-sub-22">NVIDIA Nemotron-H：E4M3 W/A、E5M2 G 与 current scaling</h4>
+<p><a href="nemotron-h-zh.html">Nemotron-H 译文</a>与其<a href="https://arxiv.org/abs/2504.03624v4">原始报告</a>提供了与 V3 不同的 FP8 配方：用 E4M3 表示权重和激活，用 E5M2 表示 gradient；每个张量根据当前最大绝对值计算一个 scale。更多指数位给 gradient 更大的范围，代价是较少尾数位；这与 V3 通过细粒度 scale 为所有相关张量争取 E4M3 精度的设计不同。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>公开配置与例外</th></tr></thead><tbody>
+<tr><td>W / A</td><td>线性层前向与反向参与 FP8，W/A 为 E4M3；逐张量 current scaling；最前和最后四个线性/GEMM 位置保留 BF16。报告概述与细节对“GEMM／层”的表述粒度有差异，不能扩写为前后四个完整 transformer block。</td></tr>
+<tr><td>G</td><td>gradient 张量 E5M2；不能据此将 optimizer gradient 累积缓冲区也写成 E5M2。</td></tr>
+<tr><td>KV / optimizer</td><td>此处 FP8 配方没有补齐完整缓存与状态格式；Mamba 状态另行核查。</td></tr>
+</tbody></table>
+</div><p>其缩放保留最大值，小到无法表示的元素则下溢为零。报告观察到 FP8 loss 与 BF16 有小幅差距，但下游质量并不严格按 loss 排序；训练后期的小 gradient 被置零，是作者对差距变化的一个解释，而非已经证明的唯一机制。值得纳入实验设计的是长 token 训练和足够模型规模：短期、小模型上表现正常，不保证尾部误差与后期微小更新仍然正常。</p>
+<h4 id="lp-families-sub-23">Nemotron 3 Super：NVFP4 已进入预训练，但并非所有状态都 4bit</h4>
+<p><a href="nemotron-super-zh.html">Nemotron 3 Super 译文</a>及其<a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf">官方报告</a>明确介绍大规模 NVFP4 预训练。必须把预训练配方与发布 FP8、NVFP4 checkpoint 的后量化配方分开：同一模型在训练和服务时的分组轴、敏感层例外与 scale 选择可以不同。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>预训练</th><th>部署与例外</th></tr></thead><tbody>
+<tr><td>W</td><td>NVFP4，二维块缩放以保持前反向量化权重一致；线性层 fprop/dgrad/wgrad 采用对应 GEMM，明确排除的层保高精度。</td><td>PTQ 可离线搜索最小化 W MSE 的 scale；敏感算子提升至 FP8 或 BF16。</td></tr>
+<tr><td>A / G</td><td>沿 GEMM 归约轴一维微块量化；wgrad 输入采用随机 Hadamard 变换，G 采用随机舍入。</td><td>A 的 scale 使用便于在线计算的最大值方法；W 可做昂贵离线搜索，A 不照搬。</td></tr>
+<tr><td>格式</td><td>E2M1 数据、16 元素微块、E4M3 局部 scale、第二级 FP32 全局 scale。</td><td>不能与仅有 E8M0 scale 的 MXFP4 或省略全局 scale 的变体混称。</td></tr>
+<tr><td>KV / SSM state</td><td>预训练 GEMM 格式不定义所有循环状态。</td><td>FP8 部署 checkpoint 的 KV 为 FP8；Mamba 状态另研究 FP16、分块 INT16 与随机舍入。</td></tr>
+</tbody></table>
+</div><p>报告没有回避下溢：低范数通道与较高幅值通道共用二维权重块时，Dgrad 中的细小信息可能消失，并传到前一层 Wgrad；前向下溢也可能使后续 Wgrad 置零。将部分训练模型切回较高精度，可帮助分辨哪些零来自表示能力，而不是目标函数恰好产生精确零。其试验还显示提高到 MXFP8 能改善 loss 轨迹，却未必改善下游准确率，因而“loss 更接近 BF16”与“最终模型更好”应分别验证。</p>
+<p>Mamba 状态的案例尤其重要：即使 W/A 保持 BF16，仅把循环缓存转为 FP16，也可能改变回答冗长程度。报告用沿状态维度的分块 INT16 加 FP32 scale，或 FP16 随机舍入，缓解递归量化误差。这里不是标准 KV：普通 KV 的某个历史值被读取，循环状态却反复更新，过去的误差参与未来状态。随机舍入在期望上减轻系统性偏差，不保证每条轨迹误差为零；应观察长序列行为与尾部质量。</p>
+<h4 id="lp-families-sub-24">Step 5 Preview：FP32 hidden state 与 RMSNorm 参数解决两类不同问题</h4>
+<p><a href="step5-preview-zh.html">Step 5 Preview 译文</a>对应<a href="https://platform.stepfun.ai/blog/inside-step-5-preview">官方技术文章</a>。其窄而深架构中，混合 FP8 训练仍配 FP32 hidden state 及相应 gradient。它揭示“GEMM 更低精度、跨层状态更高精度”可以同时成立；不能用一个统一 activation dtype 描述整条网络。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>公开方案</th><th>解决的问题</th></tr></thead><tbody>
+<tr><td>W / A</td><td>混合 FP8；跨层 hidden state FP32。</td><td>深层隐藏状态中巨大激活可能爆炸，保留跨层数值空间。</td></tr>
+<tr><td>G</td><td>hidden state 对应 gradient FP32。</td><td>不代表所有 Linear 的乘数或所有参数 gradient 均 FP32。</td></tr>
+<tr><td>RMSNorm gamma</td><td>零中心形式中 gamma 用 FP32。</td><td>避免 gamma 接近 −1 时 BF16 离散步长使有效系数 1+gamma 在零与邻近值间跳变。</td></tr>
+<tr><td>KV / 发布存储</td><td>FP8 KV QAT；部署组合包含 MXFP4 权重存储。</td><td>整体容量收益同时来自 EP、CPU 卸载及缓存优化，不能全部归给 KV FP8。</td></tr>
+<tr><td>optimizer</td><td>文章未逐项公开完整状态 dtype。</td><td>FP32 gamma 不等于所有 optimizer state FP32。</td></tr>
+</tbody></table>
+</div><p>零中心 RMSNorm 的问题比“BF16 不够精确”更具体：有效缩放是 1+gamma。某些巨大激活通道对应的有效缩放很小，所以 gamma 靠近 −1；BF16 无法平滑表达其细微变化，通道可能完全关闭后又因扰动打开。将 gamma 本身改用 FP32，改善的是参数抵消附近的分辨率；hidden state FP32 则改善跨层激活与 gradient，两个措施不可互换。</p>
+<p>RL 中，Step 5 在 staleness=0 条件下实现 trainer 与 rollout 的逐比特对齐，包含 SWA、MTP、Top-k 与归约；其优化还使结果不随 TP 大小改变。这比“相同 dtype”强得多，但条件必须保留：异步权重陈旧、随机采样状态或不同输入并不会因此自动消失。文章报告的低于 10% 开销属于其系统，不是所有部署都能得到的通用成本。</p>
+<h4 id="lp-families-sub-25">Ling / Ring 2.6：专家 FP8，attention/shared expert BF16，head FP32</h4>
+<p><a href="ling-ring-2.6-zh.html">Ling / Ring 2.6 译文</a>及<a href="https://arxiv.org/abs/2606.15079v1">原始报告</a>明确采用模块感知的混合精度，而非统一替换全部 Linear。它还强调续训应加载 FP32 optimizer 主权重，因为从 FP8 发布权重反量化出的 BF16 副本已经无法恢复丢掉的信息。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>公开配置</th></tr></thead><tbody>
+<tr><td>W / A</td><td>Routed Experts Linear 使用 Blockwise FP8；Attention Linear 与 Shared Experts Linear 保持 BF16；LM Head 在训练和推理两端以 FP32 计算。</td></tr>
+<tr><td>G</td><td>上述模块配置不等于公开全部 backward 与累积格式。</td></tr>
+<tr><td>主权重</td><td>RL 初始化使用 FP32 optimizer 主权重，保留较多可继续优化的信息。</td></tr>
+<tr><td>KV / optimizer state</td><td>完整格式另核；FP32 主权重不能代替 moments 或其他状态的逐项披露。</td></tr>
+</tbody></table>
+</div><p>其思路是把容量占比大的路由专家量化，同时在控制输出分布的 head 和数值敏感 attention 保精度。为了减小开销，再融合 RMSNorm、SwiGLU 与量化，并用 Split-K 改善小 batch GEMM 的并行度。硬件利用率不足时，低位宽并不自动更快；量化后的 kernel 仍要有足够并行任务和合理访存。</p>
+<h4 id="lp-families-sub-26">Intern-S2-Preview：混合模型中的 recurrent state 也需明确保精度</h4>
+<p><a href="intern-s2-preview-zh.html">Intern-S2-Preview 译文</a>与<a href="https://arxiv.org/abs/2608.13505v1">原始报告</a>将专家 Linear 配为 FP8、其他层 BF16；apply_rope、RMSNorm、MoE router、Gated DeltaNet 循环状态及 LM head 采用 FP32，并使用 R3 回放 rollout 专家选择。</p>
+<div class="table-wrap"><table><thead><tr><th>W / A</th><th>G</th><th>KV / 循环状态</th><th>optimizer</th></tr></thead><tbody><tr><td>专家 FP8，其余一般 BF16，敏感操作 FP32。</td><td>材料未逐项给出所有 gradient 与累积格式。</td><td>明确 Gated DeltaNet 循环状态 FP32；不能以此确定所有 attention KV 格式。</td><td>未补齐状态逐项 dtype。</td></tr></tbody></table>
+</div><p>这个案例使“第四类状态”更完整：传统讨论 W/A/G/KV 时，混合模型还需要单列 recurrent state。它既不是训练时仅保存一次的 A，也不是可逐 token 独立读取的 KV。即使用户关注的总框架仍保留四大类，实际规格表也不能遗漏循环状态与其更新算术。</p>
+<h4 id="lp-families-sub-27">GLM-5：INT4 QAT 与 Ascend W4A8 是不同阶段的配方</h4>
+<p><a href="glm5-zh.html">GLM-5 译文</a>及<a href="https://arxiv.org/abs/2602.15763v2">原始报告</a>在 SFT 阶段引入 INT4 QAT，并使用训练与离线权重量化都适用的内核，使相应量化行为逐位一致。报告另外介绍 FP8 rollout 和面向 Ascend Atlas 的 W4A8 部署，不能把这些拼成一个未披露的“统一 INT4 训练、INT8 activation”流程。</p>
+<div class="table-wrap"><table><thead><tr><th>场景</th><th>已披露格式</th><th>机制</th></tr></thead><tbody>
+<tr><td>SFT</td><td>INT4 QAT；G、optimizer 的完整 dtype 未逐项披露。</td><td>训练中适应低比特权重，匹配离线转换行为。</td></tr>
+<tr><td>RL rollout</td><td>FP8，并结合 MTP。</td><td>降低长轨迹尾延迟。</td></tr>
+<tr><td>Ascend 部署 W / A</td><td>标准 attention 与 MLP W8A8，MoE expert W4A8；msModelSlim 导出。</td><td>QuaRot 抑制 outlier，Flex_AWQ_SSZ 校准 scale。</td></tr>
+<tr><td>KV</td><td>上述 W4A8 声明未给出完整 KV 格式。</td><td>不要由 A8 反推 KV8。</td></tr>
+</tbody></table>
+</div><p>同一量化算法能否落地，取决于目标硬件的原生指令、布局与融合约束。Ascend 的 INT4 expert / INT8 activation 路线与 NVIDIA 的 FP4、FP8 路线，可以追求相似容量目标，但不能交换 checkpoint 后就假设成本相同。跨硬件比较应报告实际数值格式与 kernel，而不是只比较 W4A8 这样的缩写。</p>
+<h4 id="lp-families-sub-28">Apple Foundation Models：2bit QAT、ASTC 与 8bit KV</h4>
+<p><a href="apple-foundation-models-2025-zh.html">Apple 2025 译文</a>及<a href="https://arxiv.org/abs/2507.13575v3">原始报告</a>将端侧与服务器分开设计：端侧权重 2bit QAT；服务器采用 ASTC；两者 embedding 4bit、KV 8bit，并用低秩适配器恢复压缩质量。KV 的“8bit”在此不能擅自扩写为特定 FP8 格式。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>端侧</th><th>服务器</th></tr></thead><tbody>
+<tr><td>W</td><td>2bit QAT，STE 与可学习范围因子；embedding 4bit 联合训练。</td><td>训练后 ASTC，每 36 个权重用 128bit 主压缩块，另存块最小值；embedding 4bit PTQ。</td></tr>
+<tr><td>A / G / optimizer</td><td colspan="2">该压缩章节未公开可据以填全的逐算子格式；不能将 W2 写成 A2/G2。</td></tr>
+<tr><td>KV</td><td colspan="2">8bit；具体编码和 scale 不从位数擅自补全。</td></tr>
+</tbody></table>
+</div><p>2bit QAT 的稳定措施包括合理初始化范围、gradient 缩放、权重 EMA、平衡的四级集合以及零权重衰减。平衡集合围绕零对称，却未必包含精确零；它与三值、稀疏权重不是同一概念。Apple 用面向分布中心的初始化降低 outlier 对范围的支配，随后让范围继续学习，说明 QAT 的可训练对象也应记录。</p>
+<p>ASTC 的名义 3.56bit 来自 128/36；每块额外保存 FP16 最小值时，简单数据加最小值成本已是 144/36=4bit/weight，尚未计其他元数据及适配器。不能把主压缩块的名义位数当整个服务器模型的真实平均位数。其性能来源还包含 Apple GPU 固定功能解码硬件，不能直接外推到缺少该硬件的 GPU。适配器恢复、重要奇异分量保留与主体压缩也应分别统计。</p>
+<h4 id="lp-families-sub-29">Microsoft MAI-Thinking-1：延迟缩放 FP8 预训练，RL 主动退回 BF16</h4>
+<p><a href="mai-thinking1.html">MAI-Thinking-1 译文</a>与<a href="https://microsoft.ai/pdf/mai-thinking-1.pdf">官方报告</a>区分预训练和 RL：预训练默认权重／激活 BF16，前向 GEMM E4M3、Dgrad E5M2、Wgrad BF16、gradient 累积 FP32；FP8 scale 使用 1024 步 amax 历史。RL 则在 learner 与 rollout 两侧均采用 BF16，以缩小数值差异。</p>
+<div class="table-wrap"><table><thead><tr><th>W / A</th><th>G</th><th>scale 与恢复</th><th>KV / optimizer</th></tr></thead><tbody><tr><td>默认 BF16，前向 GEMM 输入转换到 E4M3。</td><td>Dgrad E5M2，Wgrad BF16，累积 FP32；高精度流入低精度时随机舍入。</td><td>1024 步历史延迟缩放；checkpoint 保存 FP8 scale 历史及随机状态。</td><td>不能从上述 GEMM 配方推导所有缓存或 optimizer state 格式。</td></tr></tbody></table>
+</div><p>MAI 的路径提供一个必要反例：有些系统选择让 RL 保 BF16，而非追求最低位宽。理由是跨引擎微小 logprob 差异会在长 rollout 及重要性校正中影响稳定性。即使使用 BF16，仍配路由与 top-p mask 回放；精度提高与执行语义对齐是两个独立手段。</p>
+<p>延迟 scale 的历史也是训练状态。如果恢复 checkpoint 时只加载权重和 optimizer，却丢失 amax 历史，接下来一段时间的量化行为可能改变。current scaling 与 delayed scaling 的差别不只是一个计算开销选项，还决定重启、异常 batch 与分布突变时系统如何响应。完整可复现记录应包含 scale 配方及其恢复规则。</p>
+<h4 id="lp-families-sub-30">LongCat、Nemotron Nano 与 Mistral：补充对照</h4>
+<div class="table-wrap"><table><thead><tr><th>材料</th><th>已明确披露的低精度设计</th><th>知识地图中的位置</th></tr></thead><tbody>
+<tr><td><a href="longcat-flash-zh.html">LongCat-Flash</a></td><td>部署使用 activation [1,128]、weight [128,128] 的细粒度 FP8，并结合巨大 activation 识别与逐层绝对/相对误差选择混合精度。训练侧用辅助约束抑制巨大激活，并将 FP32 gradient 加法融合进 GEMM epilogue，避免中间 BF16 写回误差。</td><td>相同量化格式还需逐层校准；Wgrad 的计算、累加与写回格式需要分别看。报告还用 ULP 检查不同加速卡的 BF16 算子数值差异，说明换卡也要验证。</td></tr>
+<tr><td><a href="nemotron-nano2-zh.html">Nemotron Nano 2</a></td><td>沿用全 E4M3 与 W 128×128/A 1×128；不同于 V3，模型计算权重直接以 E4M3 保存，使参数 all-gather 可用 FP8；master 及所有 optimizer states 为 FP32，首尾四个线性层 BF16。</td><td>同属 FP8 训练，优化器与通信状态可明显不同。这里的“四个线性层”不能扩写为四个完整 Transformer block。</td></tr>
+<tr><td><a href="nemotron-nano3-zh.html">Nemotron 3 Nano</a></td><td>报告把后训练模型从 BF16 经 PTQ 转为 FP8。</td><td>FP8 发布/推理与 FP8 预训练分开记录；不能把 Super 的 NVFP4 预训练配方套给 Nano。</td></tr>
+<tr><td><a href="mistral-small-4-zh.html">Mistral Small 4</a></td><td>官方发布 NVFP4 checkpoint。</td><td>这是可选择的部署权重格式证据；不足以补全 W/A/G 的预训练配方。</td></tr>
+</tbody></table>
+</div><p><a href="step35-flash-zh.html">Step 3.5 Flash</a>还把 Muon 的低精度极分解因子迭代、死亡专家和局部激活爆增作为不同监控对象；这与 Step 5 的深网络数值修复形成连续案例。<a href="step3-zh.html">Step3</a>的部分容量估算则明确假设非 attention 参数 INT8、KV 等组件 FP16/BF16，应保留“估算假设”身份，不把图中的容量直接当成全模型实测量化配方。</p>
+<h4 id="lp-families-sub-31">把比较落到同一个阶段</h4>
+<p>这些案例覆盖预训练 NVFP4、FP8 存储、后训练 QAT、INT4/INT8 端侧部署，以及主动保留 FP32 的跨层状态。比较时先对齐训练、SFT、RL、rollout、prefill、decoding，再对齐张量和硬件。未披露的格子保留未知；论文给出的高精度例外与恢复规则，往往比一个总的 dtype 标签更能解释方案为何能长期运行。</p>
+</section>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+
+<section id="lp-rl" class="page">
+<h2>12. RL 的低精度：必须对齐参数、路径和采样分布</h2>
+<p>RL 将低精度问题从“固定模型的近似计算”扩展为“数据由当前模型自己产生，再用这些数据更新自己”。生成轨迹的引擎与计算 loss 的训练引擎通常不同，还可能使用不同并行、kernel、cache 和采样实现。误差不仅改变输出，还会改变后续训练数据及估计的概率比。因此，RL 方案必须同时记录 rollout、trainer、reference 与 teacher 的有效数值路径。</p>
+<h3 id="lp-rl-sub-1">四层一致性：从权重到概率</h3>
+<div class="table-wrap"><table><thead><tr><th>层次</th><th>要核查的量</th><th>典型偏差</th><th>对应措施</th></tr></thead><tbody>
+<tr><td>参数一致性</td><td>更新后的主权重、QDQ 后权重、发布给 rollout 的版本。</td><td>trainer 评估高精度 W，rollout 使用低比特 W，或者量化规则不同。</td><td>QAT、与部署内核一致的 QDQ、明确权重版本。</td></tr>
+<tr><td>运算一致性</td><td>A 格式、scale、accumulator、舍入、融合与归约顺序。</td><td>相同名义 dtype 产生不同有效函数。</td><td>核查内核约束与逐算子误差，避免仅比较标签。</td></tr>
+<tr><td>路径一致性</td><td>MoE 专家索引、离散 top-k、缓存复用。</td><td>微小 score 差异翻转专家选择，后续计算不再是小扰动。</td><td>Rollout Routing Replay 等路径记录与回放。</td></tr>
+<tr><td>概率一致性</td><td>温度、top-k / top-p 候选集、归一化分母、token mask。</td><td>轨迹来自受限候选分布，训练却按完整词表概率解释。</td><td>记录候选集合并使用相同定义重算概率。</td></tr>
+</tbody></table>
+</div><p>前三层对齐后仍可能出现第四层差异。top-k 或 top-p 采样把部分词表排除，再重新归一化；完整词表 softmax 的 log-probability 与采样器实际分布不是同一个数。是否采用该概率作为某个 RL 目标，必须与算法定义保持一致；不能一方面收集受限分布轨迹，一方面没有说明就用另一种分母解释其概率。</p>
+<p>反过来，概率定义一致也不代表有效模型一致。若 MoE 选择翻转，trainer 给同一 token 计算的隐藏状态来自另一组专家；如果 rollout 的低比特参数没有被 trainer 模拟，loss 面向的函数与行为模型仍有偏差。定位问题时，应由参数版本开始，逐层排除，避免将所有异常统称为“FP8 不稳定”。</p>
+<h3 id="lp-rl-sub-2">公开案例如何对应这四层</h3>
+<p>Kimi K3 明确将 SFT 与 RL 纳入同一 MXFP4/MXFP8 QAT，并让 rollout 与训练共享量化方案，见<a href="https://arxiv.org/abs/2607.24653v2">K3 原始报告</a>。这建立的是部署感知的训练目标；它并不自动宣称所有 kernel 逐位相同，也不能据此补全未公开的 gradient 与 optimizer dtype。</p>
+<p>DeepSeek-V4 的训练侧可通过 FP4→FP8 承载模拟量化后的专家，rollout 使用原生 FP4；两者旨在表示同一量化后的有效权重，见<a href="https://arxiv.org/abs/2606.19348v1">V4 原始报告</a>。核查重点是反量化条件、scale 布局和反向使用的权重，而不是要求训练和推理必须调用同一个 kernel。</p>
+<p>MiMo-V2.6 将这件事展开到参数 QDQ、路由回放和候选集归一化，见<a href="https://arxiv.org/abs/2610.11959v1">V2.6 原始报告 §4.6</a>。它说明有效权重相同只是必要的一层；离散选择与采样器语义仍需显式控制。MiMo-V2-Flash 的训练／推理均使用 FP8，也应结合这套分层方法解读，而不是把相同 dtype 当作一致性的充分证明。</p>
+<h3 id="lp-rl-sub-3">精度不匹配如何进入 policy ratio 与 KL</h3>
+<p>许多 RL 目标依赖当前策略与行为策略的概率比。将 log-probability 的差记为 \(\Delta\)，概率比涉及 \(\exp(\Delta)\)；因此看似较小的系统性 log-probability 偏差，可能经指数与长轨迹累积放大。这个关系解释了为何 rollout 与 trainer 的数值差异值得单独监测，但不能据此断言任意 FP8 误差一定导致训练崩溃：具体影响还取决于偏差分布、clip、mask、importance weighting 和任务奖励。</p>
+<p>KL 也需要明确比较的是哪两个有效模型。如果 reference 是高精度版本，而 policy rollout 是量化版本，观察到的 KL 可能同时包含策略学习和表示改变。教师蒸馏同理：应明确 teacher 的量化状态与推理路径。对照实验应尽量让变量单独变化，避免把量化引入的基线漂移误判成策略更新过大。</p>
+<p>检查时不仅看全 batch 平均值，还应查看 token 级 log-probability 差的分位数、极值、与专家翻转的相关性，以及长回答后半段是否漂移更大。少数异常 token 若恰好落在 reward 或终止行为关键位置，可能对任务造成远大于平均数所显示的影响。</p>
+<h3 id="lp-rl-sub-4">阶段转换：QAT、优化器状态与冻结策略</h3>
+<p>从 SFT 进入 RL，可以同时发生精度变化、学习目标变化与数据分布变化。一个稳妥的实验设计是先在固定 checkpoint 上测量量化造成的漂移，再启用更新，随后扩展到真实 rollout。这样能区分纯推理近似误差、反向数值误差和策略优化本身的问题。是否重置 optimizer、重新 warmup 或冻结 router，应作为明确实验变量记录。</p>
+<p>MiMo-V2.6 继承 SFT 的 FP32 主权重与 Muown 行状态，并冻结 router；MiniCPM4 的三值 QAT 研究则强调阶段转换重新 warmup 的作用。它们的共同点是认真处理转换，不是提供同一个通用超参数配方。低精度训练状态不能仅由发布 checkpoint 的体积推断，也不能假定恢复一份低比特权重就能恢复原来的优化轨迹。</p>
+<h3 id="lp-rl-sub-5">投机采样：目标、草稿与验证需要分别标注精度</h3>
+<p>RL rollout 为减少成本常用 speculative decoding。精度表至少应有三行：目标模型、草稿模型、验证路径。草稿低精度可能改变建议分布与接受率；目标模型低精度改变的是实际被优化的行为策略。接受长度只是中间指标，最终还需测量完整轨迹的生成耗时与训练吞吐量。</p>
+<p>MiMo-V2.6 的 FP8 草稿属于独立优化，不能用它给目标专家或 KV 填写 dtype。MiniCPM4 关于量化后草稿长度的观察也提醒，目标模型更快之后，原来的 speculative 工作点可能失去优势。RL 中还要确保收集的是最终验证后的 token 及其正确概率，不能把草稿提议的概率直接当成目标策略概率。</p>
+<h3 id="lp-rl-sub-6">一张可执行的 RL 精度记录表</h3>
+<div class="table-wrap"><table><thead><tr><th>记录项</th><th>至少写清什么</th></tr></thead><tbody>
+<tr><td>有效权重</td><td>主权重 dtype、每次更新后的 QDQ、权重发布版本、rollout 的量化格式与 scale。</td></tr>
+<tr><td>运算路径</td><td>trainer 与 rollout 的 A、accumulator、敏感算子例外，MoE 是否回放。</td></tr>
+<tr><td>概率语义</td><td>temperature、候选集、归一化、mask、终止 token 与行为概率保存方式。</td></tr>
+<tr><td>reference / teacher</td><td>是否量化、是否 QAT、是否与 policy 采用同一数值路径。</td></tr>
+<tr><td>优化状态</td><td>主权重、gradient 累积、moments 或矩阵状态的格式与阶段继承规则。</td></tr>
+<tr><td>验证</td><td>固定权重 log-probability 对照、路由翻转率、长轨迹尾部分布、训练稳定性与端到端吞吐量。</td></tr>
+</tbody></table>
+</div><p>这份记录能将故障归到具体接口：有效参数是否相同，计算是否足够接近，离散路径是否一致，采样概率是否按同一语义解释。只有这些条件清楚之后，“FP8 rollout 比 BF16 更快”“MXFP4 RL 保持质量”才成为可以比较、可以复现的结论。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section id="lp-hardware" class="page">
+<h2>13. 硬件边界：Hopper 与不同 Blackwell 必须逐层核验</h2>
+<p>“支持一个 dtype”至少有五层含义：框架能建立张量、文件能保存、loader 能读取、某个算子能执行、目标 shape 下有快速原生 kernel。前四层即使成立，也不能证明获得了该格式宣传的吞吐。可靠记录应包含 GPU 型号与 compute capability、驱动、CUDA、PyTorch、运行时版本、实际选中的 GEMM 与 attention 后端。格式、指令和软件支持的集合随版本改变，不能靠 GPU 家族名称替代核查。</p>
+<h3 id="lp-hardware-sub-1">H100、H200 与 H20</h3>
+<p>H100 与 H200 同属 Hopper，核心区别不能概括为“H200 支持更低 bit”。NVIDIA 的 HGX 参考架构给出的 SXM 配置分别为 H100 80GB HBM3、H200 141GB HBM3e，并列出不同显存带宽；这主要改变可容纳模型、cache 与请求的空间，以及内存瓶颈。PCIe、SXM、NVL 等产品形态还需继续区分。H20 不能拿 H100 的计算规格代替；本报告未取得足够明确的当前 H20 官方规格来给出一组数值，故不填推测性表格。部署时应对实际 H20 机器做 kernel 与 workload 核验。<a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory-h100-h200-b200/latest/components.html">来源：NVIDIA HGX components</a></p>
+<p>Hopper 有原生 FP8 运算能力，但没有因此变成原生 NVFP4/MXFP8 Tensor Core 平台。它可以通过软件把细粒度 scale 应用于普通 FP8 GEMM，也可以用混合精度 kernel 读取低 bit 权重；这些与 Blackwell 的原生 microscaling 路径不同。“FP8 block scaling 可以在 Hopper 上执行”与“MXFP8 在 Hopper 上原生加速”不能互换。<a href="https://docs.nvidia.com/cuda/hopper-tuning-guide/">来源：CUDA Hopper tuning guide</a>；<a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/mxfp8/mxfp8.html">TE 2.20.2 MXFP8</a></p>
+<h3 id="lp-hardware-sub-2">B100、B200、B300、GB200、GB10</h3>
+<div class="table-wrap"><table><thead><tr><th>名称</th><th>应如何理解</th><th>不能直接推断什么</th></tr></thead><tbody>
+<tr><td>B100</td><td>数据中心 Blackwell 产品名称；必须核实具体系统交付与软件目标</td><td>不能套用 B200/B300 的全部规格和所有 kernel</td></tr>
+<tr><td>B200 / GB200</td><td>B200 是 GPU，GB200 是 Grace Blackwell 系统级组合名称；官方 CC 表列 GB200/B200 为 10.0</td><td>整机总内存、NVLink、CPU 内存不等于单 GPU 可用显存</td></tr>
+<tr><td>B300 / GB300</td><td>Blackwell Ultra 数据中心路线，CC 为 10.3</td><td>10.0 的二进制、特定整数指令或 kernel 必定原样适用</td></tr>
+<tr><td>RTX Blackwell</td><td>工作站/消费级路线，典型 CC 12.0</td><td>名称同为 Blackwell 即完整支持数据中心训练 recipe</td></tr>
+<tr><td>GB10 / DGX Spark</td><td>官方当前 CC 表列 GB10 为 12.1；统一内存桌面系统</td><td>不能把 GB200 的 10.0、HBM 与集群带宽特征搬过来</td></tr>
+</tbody></table>
+</div><p>上述 CC 以 2026 年 10 月 18 日查阅的 NVIDIA 官方表为准。B100 的具体 CC/部署规格在本报告不额外推断；较老文章对 GB10 的数字也不应覆盖当前官方条目。采购与部署决策需要精确到产品和服务器配置，格式兼容性则继续精确到框架版本与 kernel。<a href="https://developer.nvidia.com/cuda/gpus">来源：NVIDIA CUDA GPU compute capability</a>；<a href="https://docs.nvidia.com/cuda/blackwell-tuning-guide/">Blackwell tuning guide</a></p>
+<h3 id="lp-hardware-sub-3">普通 FP8 block、MXFP8、MXFP4、NVFP4 的分界</h3>
+<p>普通细粒度 FP8 可给一个 tile 或一段 activation 保存 FP32 scale，缩放的应用方式由软件和指令路径决定。MXFP8 则把 32 个元素与一个 E8M0 的 power-of-two scale 配对。NVFP4 使用 E2M1 数据、每 16 个元素的 E4M3 scale，并叠加 tensor 级 FP32 scale。MXFP4 与 NVFP4 虽然都使用 4 bit 浮点数，也不能当作一个格式读取：scale 类型、组大小和布局都不同。<a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">来源：NVIDIA NVFP4 inference</a></p>
+<p>以元数据估算，单层 1D NVFP4 表示中的主体是 4 bit，另有每 16 元素一个 8 bit scale，即约 4.5 bit/element，再加 tensor scale 与对齐；不是恰好 4 bit。真实权重 recipe 可能使用 2D scaling，平均成本应重新按实际 block 布局计算。把 4 bit payload 与整份 checkpoint 的平均位宽分别报告，才不会把压缩率夸大。</p>
+<h3 id="lp-hardware-sub-4">TE 2.20.2 stable 与开发版支持矩阵分开看</h3>
+<p>本报告查阅到的 NVIDIA 文档 stable 页面标题为 Transformer Engine 2.20.2：其 MXFP8 页面明确列支持设备 SM 10.0、10.3；NVFP4 页面列 training 为 SM 10.0/10.3，inference 为 SM 10.0+。这是一份特定库与 recipe 的支持说明，不等于任何模型文件只要在对应 GPU 就自动获得最佳推理路径。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/nvfp4/nvfp4.html">来源：TE 2.20.2 NVFP4</a></p>
+<p>另外查阅到的 nvidia.github.io 支持矩阵标注 <strong>2.21.0.dev0</strong>，它明确写出 MXFP8 暂限 10.x、12.x 的 NVFP4 为部分支持，并列出 block scaling 的 CUDA 依赖。这里仅将其作为开发状态提示，不能倒写成 2.20.2 stable 已保证相同能力。需要 RTX/GB10 训练时，应查目标 stable release notes 和运行检查；不能仅引用开发版表格宣布完整支持。<a href="https://nvidia.github.io/TransformerEngine/support_matrix.html">来源：TE 2.21.0.dev0 支持矩阵</a></p>
+<h3 id="lp-hopper-blackwell-performance">同叫 FP8，在 H 卡与 B 卡上为什么表现不同</h3>
+<p>差别不只在 Tensor Core 峰值：scale 计算、两个方向的量化副本、布局重排与 GEMM shape 都会改变总成本。TE 的 block FP8 路径在 Hopper 上有原生支持；在 Blackwell 上，该库的兼容路径会通过 MXFP8 模拟。这里特指 TE 实现，不能扩写成所有推理框架的通则。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/examples/gemm_profiling/gemm_profiling.html">来源：TE GEMM profiling tutorial</a></p>
+<p>下面摘录 TE 2.20.2 速览页的一组近似比值：5B 配置，hidden=4096、intermediate=16384、24 层。比值均相对<strong>同一设备自己的 BF16 GEMM 基线</strong>，包含动态量化工作，不能拿来直接比较 H200 与 B300 的绝对速度，也不是完整训练或服务吞吐量。</p>
+<div class="table-wrap"><table><thead><tr><th>recipe</th><th>H200 NVL</th><th>B300</th><th>解释</th></tr></thead><tbody>
+<tr><td>FP8 delayed</td><td>约 1.69×</td><td>约 1.61×</td><td>历史 scale 降低当前量化开销</td></tr>
+<tr><td>FP8 current</td><td>约 1.57×</td><td>约 1.41×</td><td>当前统计的成本需计算在内</td></tr>
+<tr><td>FP8 block / MXFP8</td><td>block 约 1.41×</td><td>MXFP8 约 1.44×</td><td>两列不是相同 recipe；更细粒度不保证最快</td></tr>
+<tr><td>NVFP4</td><td>此原生配方不适用</td><td>约 2.03×</td><td>B300 预量化纯 GEMM 约 3.55×，量化开销缩小实际收益</td></tr>
+</tbody></table>
+</div><p>这组条件下，B300 的普通 delayed FP8 仍快于 MXFP8。它证明需要对照真实 shape 测量，而不是证明某个 recipe 永远更快；收敛与量化质量仍须另测。<a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/speedups.html">来源：TE GEMM Speedups Across Precisions</a>。</p>
+<p>端到端收益还受未加速部分限制。用教学算例说明：假设原运行时间 70% 是可加速 GEMM，GEMM 提速 2 倍、其余不变，总加速仅为 \(1/(0.3+0.7/2)\approx1.54\)。如果新增量化开销，总收益还会下降；如果压缩让 batch 增大，则是另一组实验。实际比较应分别报告同 batch、同质量条件下的速度，以及各自最大可用 batch 的吞吐量。</p>
+<h3 id="lp-hardware-sub-6">累加：格式变小后仍要保护求和</h3>
+<p>乘数 dtype、累加寄存器 dtype 和实际累加精度是三个问题。PTX 对具体 MMA/WGMMA 变体规定了操作数与结果类型；某个 API 返回 BF16 结果，不代表中间求和也是 BF16，而返回 FP32 也不应被解释为所有内部步骤都等同于逐项 IEEE FP32 运算。训练报告中的定期高精度提升等技巧，正是针对长归约链中的误差问题。分析推理 kernel 时应检查指令、分段累加与 epilogue，不用一个“FP32 accumulation”词组概括所有实现。<a href="https://docs.nvidia.com/cuda/archive/12.0.0/pdf/ptx_isa_8.0.pdf">来源：PTX ISA 8.0</a></p>
+<p>量化性能的最终判据是完整路径：原生低精度矩阵乘省下的时间，是否大于 scale 归约、cast、transpose、swizzle、拆包、反量化与同步增加的时间。大 prefill 与小 decoding GEMM 的结论可能不同；Dense Linear 与 MoE grouped GEMM 的结论也可能不同。矩阵 shape、路由 token 数和 batch 需要与精度方案一起决定。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section id="lp-tools" class="page">
+<h2>14. 工具地图与三条最小实践路径</h2>
+<p>以下代码是按官方接口整理的最小流程，<strong>本次没有 CUDA GPU 实跑，不能视为已验证性能或完整环境锁定</strong>。核对日期为 2026 年 10 月 18 日。实操参考固定 vLLM 0.31.0 与 LLM Compressor 0.14.0 的官方源码；量化与推理使用两个环境，通过导出的模型目录衔接。vLLM 官方固定版本文档明确建议分开环境，避免依赖冲突。驱动、Python、CUDA wheel 与 PyTorch 的完整组合仍须按实际 GPU 选择并保存安装锁。<a href="https://github.com/vllm-project/vllm/blob/v0.31.0/docs/features/quantization/llm_compressor/fp8.md">来源：vLLM v0.31.0 FP8</a></p>
+<h3 id="lp-tools-sub-1">谁负责量化，谁负责服务</h3>
+<div class="table-wrap"><table><thead><tr><th>工具</th><th>主要职责</th><th>适合放在流程哪里</th></tr></thead><tbody>
+<tr><td>LLM Compressor</td><td>校准、PTQ、GPTQ/AWQ 等算法与 recipe；导出模型</td><td>离线优化；不是在线请求调度引擎</td></tr>
+<tr><td><a href="https://github.com/ModelCloud/GPTQModel">GPTQModel</a></td><td>GPTQ 等权重量化、校准、导出及对应执行后端集成</td><td>需要 GPTQ 路线时的工具入口；检查格式、group 与部署兼容性</td></tr>
+<tr><td><a href="https://github.com/intel/auto-round">AutoRound</a></td><td>低位舍入/裁剪优化与多种导出格式</td><td>比较 RTN/GPTQ/AWQ 之外的校准优化；导出目标必须与运行时匹配</td></tr>
+<tr><td>compressed-tensors</td><td>描述并保存压缩 tensor、scale、布局及量化配置</td><td>连接导出端与 loader 的格式与库；不是“另一种 AWQ 算法”</td></tr>
+<tr><td>vLLM</td><td>加载 checkpoint、选择执行 kernel、管理 KV、调度与 API 服务</td><td>部署与压测；其在线量化只覆盖支持的有限方案</td></tr>
+<tr><td>NVIDIA ModelOpt</td><td>量化/校准/QAT 等模型优化与部署导出</td><td>NVIDIA FP8/NVFP4 等路线；核对具体导出与运行时配套</td></tr>
+<tr><td>Transformer Engine</td><td>低精度算子、autocast、recipe、训练与部分推理集成</td><td>开发模型和训练框架；不是通用 checkpoint 压缩服务</td></tr>
+<tr><td>torchao</td><td>PyTorch 原生 tensor 表示、量化与编译路径</td><td>PyTorch 模型开发、训练/推理和端侧集成</td></tr>
+<tr><td>bitsandbytes + Transformers</td><td>易用的 8/4 bit 加载与低 bit Linear</td><td>本地实验与 PEFT；不能把 NF4 存储当成原生 FP4 GEMM</td></tr>
+<tr><td>PEFT / QLoRA</td><td>冻结量化底座，训练低秩 adapter</td><td>低显存微调；不是整个基础模型以 4 bit 更新</td></tr>
+<tr><td>SGLang</td><td>服务、请求调度、cache 与多种执行后端</td><td>与 vLLM 同属部署层，具体格式/模型支持逐项核验</td></tr>
+<tr><td>llama.cpp / GGUF</td><td>跨 CPU/GPU 后端的本地推理、量化格式与工具</td><td>端侧和混合卸载；Q4_K_M 等名称不等于 NVFP4</td></tr>
+<tr><td><a href="https://github.com/deepseek-ai/DeepGEMM">DeepGEMM</a></td><td>低精度 GEMM 与相关 GPU kernel</td><td>研究细粒度 FP8/FP4 的执行路径；它不代替完整校准和 checkpoint 导出流程</td></tr>
+</tbody></table>
+</div><p>LLM Compressor 与 compressed-tensors 的关系可在官方项目说明中核对；ModelOpt 的 HF PTQ 示例同时列出不同 NVFP4 层选择，说明混合精度常是正式部署策略。torchao 的 dtype 说明也区分底层存储类型与派生 microscaling 格式。工具名称只能定位职责，不能替代量化配置。<a href="https://github.com/vllm-project/llm-compressor">来源：LLM Compressor</a>；<a href="https://github.com/NVIDIA/Model-Optimizer/blob/main/examples/hf_ptq/README.md">ModelOpt HF PTQ</a>；<a href="https://docs.pytorch.org/ao/stable/contributing/quantization_overview.html">torchao</a></p>
+<p>QLoRA 中 NF4 是权重存储表示，通常在计算时转换到 BF16/FP16；基础量化权重被冻结，gradient 经过相关计算传向可训练 adapter。double quantization 压缩的是量化常数，paged optimizer 处理内存峰值，它们都不是“把所有 gradient 变为 4 bit”。adapter 合并之后若重新量化，会再次引入误差，需要重新评估。<a href="https://github.com/huggingface/blog/blob/main/4bit-transformers-bitsandbytes.md?plain=1">来源：Hugging Face QLoRA 说明</a></p>
+<h3 id="lp-code-map">想读量化代码，从哪里开始</h3>
+<div class="table-wrap"><table><thead><tr><th>想弄清的问题</th><th>固定版本代码入口</th><th>阅读重点</th></tr></thead><tbody>
+<tr><td>如何设置 recipe 并生成 checkpoint</td><td><a href="https://github.com/vllm-project/llm-compressor/tree/0.14.0/examples/quantization_w8a8_fp8">LLM Compressor FP8 examples</a> · <a href="https://github.com/vllm-project/llm-compressor/tree/0.14.0/src/llmcompressor/modifiers/quantization">量化 modifiers</a></td><td>oneshot、targets、ignore、scheme、校准与导出</td></tr>
+<tr><td>FP8 checkpoint 加载后如何执行</td><td><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/fp8.py">vLLM fp8.py</a> · <a href="https://github.com/vllm-project/vllm/tree/v0.31.0/vllm/model_executor/layers/quantization/utils">量化 utils</a></td><td>weight/activation scale、block 配置、设备检查、Linear 与 MoE 分派</td></tr>
+<tr><td>压缩格式怎样衔接运行时</td><td><a href="https://github.com/vllm-project/compressed-tensors">compressed-tensors</a> · <a href="https://github.com/vllm-project/vllm/tree/v0.31.0/vllm/model_executor/layers/quantization/compressed_tensors">vLLM compressed-tensors 后端</a></td><td>config_groups、量化参数、packed tensors 与 scheme 选择</td></tr>
+<tr><td>MXFP4 与 NVIDIA 导出格式怎样读入</td><td><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/mxfp4.py">mxfp4.py</a> · <a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/modelopt.py">modelopt.py</a></td><td>低位存储、原生与混合计算路径、敏感层配置</td></tr>
+<tr><td>KV 的 dtype 和 scale 由谁处理</td><td><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/kv_cache.py">kv_cache.py</a> · <a href="https://github.com/vllm-project/vllm/blob/v0.31.0/docs/features/quantization/quantized_kvcache.md">KV 文档与校准示例</a></td><td>Q/K/V scale 的加载与语义；再追踪实际 attention backend</td></tr>
+</tbody></table>
+</div><p>建议顺序是先运行官方 example、检查导出 config，再读 Python dispatch，最后追踪被选中的 CUDA/Triton/CUTLASS kernel。仅阅读 fp8.py 的类名无法确认某次服务是否走到了预期原生指令；把启动日志、设备型号和实际 profiler 结果一起保留。</p>
+<p>其他工具的直接入口：<a href="https://github.com/NVIDIA/Model-Optimizer">ModelOpt</a>、<a href="https://github.com/NVIDIA/TransformerEngine">Transformer Engine</a>、<a href="https://github.com/pytorch/ao">torchao</a>、<a href="https://github.com/bitsandbytes-foundation/bitsandbytes">bitsandbytes</a>、<a href="https://github.com/huggingface/peft">PEFT</a>、<a href="https://github.com/sgl-project/sglang">SGLang</a>、<a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>。这些链接用于按目标选择工具，不代表它们共享相同量化格式或参数。</p>
+<h3 id="lp-tool-fp8-serve">流程一：直接加载官方 FP8 checkpoint</h3>
+<p>优先用现成官方模型确认硬件和运行时，不在第一个实验里同时做量化算法、模型移植和性能调优。下面使用 Qwen 官方 FP8 目录；它的 fine-grained FP8 block 配置与自行生成的 FP8_DYNAMIC 并不相同。GPU 建议从已支持的 Hopper 路径开始，完整显存需求还包括 cache 与工作区。模型卡明确提供 vLLM 加载方式。<a href="https://huggingface.co/Qwen/Qwen3-8B-FP8">来源：Qwen3-8B-FP8 官方模型卡</a></p>
+<pre><code class="language-bash"># Linux NVIDIA 环境；先确认本机驱动与 vLLM wheel 的 CUDA 兼容性
+python3 -m venv .venv-vllm
+.venv-vllm/bin/python -m pip install 'vllm==0.31.0'
+.venv-vllm/bin/python -m pip freeze &gt; vllm-environment.txt
+.venv-vllm/bin/vllm serve Qwen/Qwen3-8B-FP8 \
+  --host 127.0.0.1 --port 8000 \
+  --max-model-len 8192 --gpu-memory-utilization 0.85
+</code></pre>
+<pre><code class="language-bash">curl http://127.0.0.1:8000/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"Qwen/Qwen3-8B-FP8","messages":[{"role":"user","content":"解释 BF16 与 FP8 的区别。"}],"max_tokens":256,"temperature":0.7,"chat_template_kwargs":{"enable_thinking":false}}'
+</code></pre>
+<p>保持自动读取 quantization_config，不额外强加另一个量化后端；启动日志应记录实际 Linear 与 MoE 后端。v0.31.0 文档明确说，Linear 后端与 MoE 后端是分开的配置；显式指定不兼容后端可能报错。正常返回一段文字只证明最小功能，不能证明量化质量，也不能证明没有 fallback。质量回归时还应加载同系列 BF16 模型，用一致模板与任务设置比较。</p>
+<h3 id="lp-tool-quantize">流程二：用 LLM Compressor 导出 FP8_DYNAMIC，再交给 vLLM</h3>
+<p>为减少依赖耦合，另建量化环境。下面的算法与导出 API 对照 LLM Compressor 0.14.0 的固定 tag 示例；选择 Qwen3-0.6B 作为较小的接口演示对象，不把小模型的精度结果外推到大模型。此流程是免数据 RTN weight 加动态 activation，不代表 AWQ/GPTQ/静态 activation 也不需要校准集。<a href="https://github.com/vllm-project/llm-compressor/blob/0.14.0/examples/quantization_w8a8_fp8/llama3_example.py">来源：LLM Compressor 0.14.0 示例</a></p>
+<pre><code class="language-bash">python3 -m venv .venv-compressor
+.venv-compressor/bin/python -m pip install 'llmcompressor==0.14.0'
+.venv-compressor/bin/python -m pip freeze &gt; compressor-environment.txt
+</code></pre>
+<pre><code class="language-python"># 保存为 quantize_fp8.py，再用 .venv-compressor/bin/python 执行
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from llmcompressor import oneshot
+from llmcompressor.modifiers.quantization import QuantizationModifier
+
+model_id = "Qwen/Qwen3-0.6B"
+output_dir = "./Qwen3-0.6B-FP8-Dynamic"
+model = AutoModelForCausalLM.from_pretrained(model_id)
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+recipe = QuantizationModifier(
+    targets="Linear", scheme="FP8_DYNAMIC", ignore=["lm_head"]
+)
+oneshot(model=model, recipe=recipe)
+model.save_pretrained(output_dir)
+tokenizer.save_pretrained(output_dir)
+</code></pre>
+<pre><code class="language-bash">.venv-vllm/bin/vllm serve ./Qwen3-0.6B-FP8-Dynamic \
+  --host 127.0.0.1 --port 8001 --max-model-len 4096
+</code></pre>
+<p>检查导出目录中 config.json 的 quantization_config、safetensors 与 tokenizer/chat template，而不是仅看文件名。量化之后不要不加区分地调用转换脚本把整个模型 cast 到 BF16，否则可能丢掉压缩表示或 scale。若要改做 W4A16 AWQ，应改用该版本正式 AWQ recipe 和真实校准样本，记录 group size、样本 token 数与忽略层；不能只把字符串 FP8_DYNAMIC 换成 AWQ 就认为完成算法迁移。</p>
+<h3 id="lp-tool-kv">流程三：校准 Q 与 KV，再部署联合 FP8 attention 路径</h3>
+<p>本例继续使用已有的 LLM Compressor 0.14.0 量化环境与 vLLM 0.31.0 推理环境。按 vLLM 固定版本官方示例同时校准 Q 与 KV，<strong>不是只改变 cache 存储的纯 KV 消融</strong>。示例使用 Llama-3.1-8B-Instruct，下载前需要在 Hugging Face 获得模型访问权限，并在本机完成账号认证；不要把 token 写入脚本。512 条、每条最多 2048 token 只是官方起点，正式实验应覆盖目标业务分布。<a href="https://github.com/vllm-project/vllm/blob/v0.31.0/docs/features/quantization/quantized_kvcache.md">来源：vLLM v0.31.0 Q/KV 校准示例</a></p>
+<pre><code class="language-python"># 保存为 calibrate_attention.py，以 .venv-compressor/bin/python 执行
+from datasets import load_dataset
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from llmcompressor import oneshot
+from llmcompressor.modifiers.quantization import QuantizationModifier
+from compressed_tensors.quantization import QuantizationArgs, QuantizationScheme
+
+model_id = "meta-llama/Llama-3.1-8B-Instruct"
+output_dir = "./Llama-3.1-8B-Instruct-QKV-FP8"
+samples, max_seq_len = 512, 2048
+model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype="auto")
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+ds = load_dataset("HuggingFaceH4/ultrachat_200k", split=f"train_sft[:{samples}]")
+ds = ds.shuffle(seed=42)
+
+def tokenize(example):
+    text = tokenizer.apply_chat_template(example["messages"], tokenize=False)
+    return tokenizer(text, padding=False, max_length=max_seq_len,
+                     truncation=True, add_special_tokens=False)
+
+ds = ds.map(tokenize, remove_columns=ds.column_names)
+fp8_args = QuantizationArgs(num_bits=8, type="float", strategy="tensor")
+recipe = QuantizationModifier(
+    config_groups={
+        "attention": QuantizationScheme(
+            targets=["LlamaAttention"], input_activations=fp8_args,
+        )
+    },
+    kv_cache_scheme=fp8_args,
+)
+oneshot(model=model, dataset=ds, recipe=recipe,
+        max_seq_length=max_seq_len, num_calibration_samples=samples)
+model.save_pretrained(output_dir, save_compressed=True)
+tokenizer.save_pretrained(output_dir)
+</code></pre>
+<p>这里没有配置 Linear 权重量化；主要学习并保存 attention 的 Q/K/V scale。<code>targets=["LlamaAttention"]</code> 是对应模型类名，不应原样用于其他架构。需要 per-head 时，可按官方支持把 strategy 改为 <code>attn_head</code>，同时检查 Flash Attention 后端；本例选择 per-tensor 以减少额外条件。v0.31.0 已移除 <code>--calculate-kv-scales</code>，校准由上述离线步骤完成。</p>
+<pre><code class="language-bash"># A：先启动；就绪后执行下一段压测，再停止服务
+.venv-vllm/bin/vllm serve ./Llama-3.1-8B-Instruct-QKV-FP8 \
+  --host 127.0.0.1 --port 8000 --served-model-name lp-kv-test \
+  --dtype bfloat16 --kv-cache-dtype auto \
+  --max-model-len 8192 --gpu-memory-utilization 0.85
+
+# B：停止 A 后启动；使用同一份校准后的 checkpoint
+.venv-vllm/bin/vllm serve ./Llama-3.1-8B-Instruct-QKV-FP8 \
+  --host 127.0.0.1 --port 8000 --served-model-name lp-kv-test \
+  --dtype bfloat16 --kv-cache-dtype fp8 \
+  --max-model-len 8192 --gpu-memory-utilization 0.85
+</code></pre>
+<p>A/B 只显式改变运行时 cache 参数，固定 checkpoint 中已有的 Q 配置，但这不保证实际 Q dtype、QK/ScoreV 精度和 attention kernel 不变。<code>auto</code> 也应通过日志确认实际 cache dtype；如果 checkpoint 配置或后端选择使 A 同样进入 FP8，就不是 BF16 cache 对照。需要 BF16 参考时显式指定 <code>--kv-cache-dtype bfloat16</code> 并确认该组合受支持。若较高精度 cache 与已校准 Q 的组合不受支持，应报告该组合不可比较，并另用原始 BF16 模型作为完整系统基线，不能静默换模型后宣称只测 KV。</p>
+<p>每次服务就绪后在另一终端运行同一压测。A 使用 auto-kv.json，B 将结果名改为 fp8-kv.json。随机输入只测服务与负载路径，不测真实语言质量；同一模型原始 BF16 与联合 FP8 路径还需要真实任务集比较。本次未在 GPU 执行以下流程。</p>
+<pre><code class="language-bash">.venv-vllm/bin/vllm bench serve \
+  --backend vllm --base-url http://127.0.0.1:8000 \
+  --model lp-kv-test --tokenizer ./Llama-3.1-8B-Instruct-QKV-FP8 \
+  --dataset-name random --random-input-len 4096 --random-output-len 256 \
+  --num-prompts 100 --request-rate inf --max-concurrency 8 \
+  --save-result --result-dir ./bench-results \
+  --result-filename auto-kv.json
+</code></pre>
+<p>压测参数已按 v0.31.0 CLI 核对。结果连同环境、启动日志、cache dtype、实际 attention 后端与失败数保存；若 FP8 KV 激活了 Q 量化或不同 kernel，应把结果标为联合路径收益，不能把全部差异归因于 cache 字节数。<a href="https://docs.vllm.ai/en/v0.31.0/cli/bench/serve/">来源：vLLM v0.31.0 bench serve</a></p>
+<h3 id="lp-tools-sub-6">其他路线怎样接入</h3>
+<p>需要 NVIDIA NVFP4 时，使用 ModelOpt 的对应模型 recipe 并检查部署导出格式；它提供 MLP-only、experts-only 等选项，敏感 attention 保持较高精度是有意设计。SGLang 应读取其自身的量化与 KV 支持表，不能直接复制 vLLM 参数名称。llama.cpp 则使用 GGUF 与 llama-quantize 等工具，imatrix 与逐 tensor 类型也是其自己的体系。三者都应保留原始高精度 checkpoint，避免反复从已量化权重再量化。<a href="https://github.com/ggml-org/llama.cpp/blob/master/tools/quantize/quantize.cpp">来源：llama.cpp quantize 源码</a></p>
+<h3 id="lp-tools-sub-7">量化前后的发布产物应该保存什么</h3>
+<p>一次可复核的量化至少保存：原模型 revision、量化工具与依赖版本、完整 recipe、校准数据标识与采样方式、随机种子、被跳过层、scale 和权重格式、质量评估结果以及实际部署后端。只上传压缩权重而没有 tokenizer 或 chat template，可能使调用方采用不同输入协议；只保存一个模型名，又可能在上游更新后无法重现。</p>
+<p>导出端的 API 成功不代表推理端已经正确消费了每个 scale。应抽样核对张量 shape、scale 数量、忽略层和加载日志，然后进行固定 prompt 的 logits 或生成检查。若 loader 自动重排权重，记录重排是否只改变布局，是否额外创建了常驻高精度副本。多卡时分别检查每个 rank 的 shard 和 scale；单卡成功不能替代 tensor-parallel 路径验证。</p>
+<p>部署前还要区分 cold start 与稳态。在线量化或首次编译会增加启动时间，并可能需要暂时加载原始权重；稳态峰值显存足够，不代表加载阶段也足够。服务重启频繁时，导出一次可直接加载的压缩模型可能更有意义；长时间运行时，则更应关注每请求成本。这些成本属于完整系统收益的一部分，应与 token/s 同时报告。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section id="lp-benchmark" class="page">
+<h2>15. 如何证明方案有效：质量、稳定性与速度一起测</h2>
+<h3 id="lp-benchmark-sub-1">建立不会混淆变量的对照</h3>
+<p>先固定模型 revision、tokenizer、chat template、上下文设置、sampling、输出预算、硬件数量与并行配置。逐项比较 BF16 基线、只压权重、权重加 activation、再压 KV。若一次改变了模型、精度、推理引擎和 GPU，就只能报告系统组合的效果，不能得出某个量化算法快多少。实际业务可以最终选择整套更好的组合，但归因实验与部署选型应分开。</p>
+<div class="table-wrap"><table><thead><tr><th>实验</th><th>固定内容</th><th>主要回答的问题</th></tr></thead><tbody>
+<tr><td>W-only 消融</td><td>模型、A、KV、上下文</td><td>权重压缩本身损失多少质量、节省多少内存</td></tr>
+<tr><td>A 消融</td><td>W 格式与 KV</td><td>低精度 GEMM 是否值得量化与 cast 成本</td></tr>
+<tr><td>K/V 独立消融</td><td>权重与输入任务</td><td>误差主要来自 K、V 还是组合</td></tr>
+<tr><td>服务容量测试</td><td>延迟目标与请求分布</td><td>低精度能否在 SLA 下接更多请求</td></tr>
+<tr><td>长上下文压力测试</td><td>长度、检索位置、输出预算</td><td>scale 与 cache 在目标长度是否稳定</td></tr>
+</tbody></table>
+</div><h3 id="lp-benchmark-sub-2">质量不能只看一个平均分</h3>
+<p>至少分别记录困惑度或 teacher-forced logit 变化、知识问答、数学/代码、长上下文检索、多轮工具调用，以及实际业务任务。对于长 CoT，应同时记录正确率、输出长度分布、重复与截断；量化可能改变模型采用的推理路径。低平均损失不保证少见关键行为不退化，少量示例“看起来正常”也不构成准确率评估。对样本数较少的任务报告不确定性，避免把波动当作稳定提升。</p>
+<p>检索任务应改变证据位置、干扰信息密度与多跳要求；只有单一 NIAH 任务通过，不能证明长文总结、跨段关联和完整生成没有退化。对代码与 JSON 输出，编译、单元测试和 schema 校验比人工看文字更明确。对工具调用，还要区分选对工具、参数合法与完成任务；量化引入的细微 logit 扰动可能首先表现为格式或边界错误。</p>
+<h3 id="lp-benchmark-sub-3">数值诊断：找到第一个失真的位置</h3>
+<p>收集 amax、饱和比例、被量化为零的比例、scale 分布、层输出相对误差和信噪比。先用同一个高精度前缀输入比较每层，再逐步允许前面层使用量化输出，区分局部误差与累计误差。遇到异常先确认权重/scale 是否按正确轴加载、tensor parallel 切分是否一致、RoPE 是否在预期位置执行，以及 dtype 是否被不适当转换。没有 NaN 不等于没有数值问题。</p>
+<p>如果只是推理质量退化，不应称为“训练崩溃”；如果正在 QAT 或量化恢复训练，则需要额外记录 loss、gradient norm、更新幅度、optimizer 状态与 checkpoint 恢复过程。把推理 repetition、训练 loss spike、浮点 overflow 与通信错误分开，才能选择正确修复：换校准、恢复高精度、调整 clipping、修改 scale 或修复 kernel 的作用对象各不相同。</p>
+<h3 id="lp-benchmark-sub-4">速度与显存的最小记录表</h3>
+<ul>
+<li>硬件：精确 SKU、GPU 数量、compute capability、互连、功耗策略。</li>
+<li>软件：驱动、CUDA、PyTorch、vLLM/SGLang 等版本或 commit、量化导出版本。</li>
+<li>实际配置：W/A/K/V 格式、scale 粒度、敏感层例外、Linear/MoE/attention kernel。</li>
+<li>请求：输入/输出长度分布、并发、到达率、warmup、prefix cache 命中率与失败数。</li>
+<li>延迟：TTFT、TPOT/ITL、端到端延迟，至少区分典型值与尾延迟。</li>
+<li>吞吐：输入和输出 token/s 分开，说明是否混合计算；SLA 下的有效请求吞吐。</li>
+<li>内存：权重常驻、cache 容量、工作区、峰值和预分配；不能只看磁盘模型大小。</li>
+<li>质量：相同基线下的任务分数、输出长度与失败类型，保存可复核的样本。</li>
+</ul>
+<p>Prefill-heavy 与 decode-heavy 至少各选一组：长输入短输出主要检验 prompt 处理与 attention；短输入长输出更突出反复读取权重与 cache；长输入长输出测试容量和持续状态误差；高并发则检查批处理与排队。不能把单请求 tokens/s 与大 batch 总吞吐直接相除，宣称普遍加速。vLLM 官方对 FP8 KV 的讨论也按 prefill/decode workload 分开考察。<a href="https://vllm.ai/blog/2026-04-22-fp8-kvcache">来源：vLLM FP8 KV 与 attention 实测方法</a></p>
+<p>最后做一次可逆的决策：若 W4A16 质量和速度都满足要求，就不必因位宽更小而增加恢复训练；若 FP8 能稳健满足吞吐，就先把 KV 与调度的瓶颈测清楚；若只有 NVFP4 才能满足容量，再把混合精度例外、校准或 QAT 的成本纳入选择。低精度的目标是用可接受的误差换取目标系统的收益，位宽本身只是控制变量。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section class="page" id="lp-selection">
+<h2>16. 工程选型与复习地图</h2>
+<p>选型从瓶颈出发：放不下权重、放不下上下文、矩阵乘太慢、通信太慢，是四个不同问题。以下是实验起点，不是对所有模型成立的最优方案；具体 kernel 与版本限制见<a href="#lp-hardware">硬件章节</a>。</p>
+<div class="table-wrap"><table><thead><tr><th>目标</th><th>可尝试的起点</th><th>必须一起检查</th></tr></thead><tbody>
+<tr><td>Hopper 上提高大 batch 吞吐量</td><td>受支持模型的 W8A8 FP8；先保留 KV 默认精度</td><td>实际 GEMM 后端、scale 开销、attention 与通信占比、质量回归</td></tr>
+<tr><td>权重显存不足或低 batch decoding</td><td>W4A16 / 官方压缩专家权重</td><td>反量化开销、kernel 对形状的支持、MoE 路由和 padding</td></tr>
+<tr><td>Blackwell 数据中心卡探索更低位宽</td><td>在 BF16/普通 FP8 基线后比较 MXFP8、NVFP4 等受支持配方</td><td>训练/推理支持差异、Fprop/Dgrad/Wgrad 布局、敏感层、端到端收益</td></tr>
+<tr><td>长上下文或高并发 KV 显存不足</td><td>先试 FP8 KV，再评估更低位宽或架构级压缩</td><td>K/V scale、RoPE 位置、attention backend、长上下文质量、总缓存容量</td></tr>
+<tr><td>小显存微调</td><td>PEFT + bitsandbytes QLoRA，冻结底座、训练 adapter</td><td>训练的是哪些参数、计算 dtype、optimizer、合并后重新量化与评估</td></tr>
+<tr><td>全参数低精度训练</td><td>BF16 基线 → 受控启用 FP8 Linear → 长程对照</td><td>主权重、梯度累积、优化器状态、量化监控、恢复能力</td></tr>
+<tr><td>RL 训练</td><td>先固定 learner / rollout 的 checkpoint、量化规则与路由语义</td><td>log-prob 差异、专家选择、kernel 数值、权重更新后的 QDQ</td></tr>
+</tbody></table></div>
+<h3 id="lp-selection-sub-1">从故障表现反查章节</h3>
+<div class="table-wrap"><table><thead><tr><th>表现</th><th>优先排查</th><th>跳转</th></tr></thead><tbody>
+<tr><td>短跑正常，长程 loss 突然发散</td><td>activation/gradient outlier 随训练演化、scale 历史失配、饱和率与异常层</td><td><a href="#lp-stability">稳定性</a> · <a href="#lp-outliers">outlier</a></td></tr>
+<tr><td>量化后显存省了，服务反而变慢</td><td>反量化与重排、fallback、batch/形状、KV 与通信瓶颈</td><td><a href="#lp-hardware">硬件</a> · <a href="#lp-benchmark">性能验证</a></td></tr>
+<tr><td>普通基准正常，长输出或检索退化</td><td>罕见 outlier、KV scale、长程状态误差、生成分布变化</td><td><a href="#lp-kv">KV</a> · <a href="#family-others">Llama 等案例</a></td></tr>
+<tr><td>服务成功加载，第一次 forward 才失败</td><td>模型支持、量化配置、GEMM/attention kernel 的设备与布局支持</td><td><a href="#lp-tools">工具与代码</a></td></tr>
+<tr><td>RL rollout 与 learner log-prob 不一致</td><td>采样配置、权重版本、dtype/scale/QDQ、路由与 kernel</td><td><a href="#lp-rl">RL 一致性</a></td></tr>
+</tbody></table></div>
+<h3 id="lp-selection-sub-2">五组必须分清的概念</h3>
+<ul><li><strong>PTQ / QAT / QLoRA：</strong>训练后压缩、在训练中模拟或执行部署量化、冻结量化底座后训练低秩 adapter。</li>
+<li><strong>FP8 / block FP8 / MXFP8：</strong>元素位宽相同并不意味着 scale 格式、分组或硬件指令相同。</li>
+<li><strong>activation gradient / weight gradient：</strong>Dgrad 与 Wgrad 的输出，分布和后续累积要求不同。</li>
+<li><strong>KV compression / KV quantization：</strong>改变缓存结构或数量，与减少每元素位宽可组合，但收益不能简单相加。</li>
+<li><strong>能加载 / 能原生计算 / 能加速 / 质量合格：</strong>四个独立验证结果，任何一个都不能代替其余三个。</li></ul>
+<p class="note">本文以仓库已翻译报告为各家方案依据，补充资料以官方文档、代码和方法论文为主。模型未公开的精度项目保留“未披露”；硬件与工具信息核查日为 2026-10-18。没有执行 GPU 推理、量化、训练或性能测试，正文中的收益数字仅在明确给出来源和条件时引用。</p>
+<p class="section-return"><a href="#quickstart">Quickstart</a> · <a href="#contents">目录</a></p></section>
+<section class="page" id="lp-sources"><h2>资料、官方代码与本站译文索引</h2><p>正文的来源链接放在对应结论附近；以下去重索引用于继续阅读。工具与性能行为随版本变化，以固定版本代码、实际日志和本机测试为准。</p><h3>仓库现有译文</h3><ul class="source-list"><li><a href="deepseek-v3-zh.html">DeepSeek-V3 技术报告</a></li><li><a href="gpt-oss-zh.html">gpt-oss-120b 与 gpt-oss-20b 模型卡</a></li><li><a href="attention-residual-sinks-zh.html">Attention Sinks 与 Residual Sinks 的统一视角：Outlier 驱动的重缩放对 Transformer 训练至关重要</a></li><li><a href="kimi-k2-zh.html">Kimi K2：开放的 Agent 智能</a></li><li><a href="deepseek-v4-zh.html">DeepSeek-V4：迈向高效的百万 Token 上下文智能</a></li><li><a href="deepseek-v41-flash-zh.html">DeepSeek-V4.1-Flash：探索 KV cache 压缩的极限</a></li><li><a href="qwen35-37-technical-updates.html">Qwen3.5–3.7 技术演进与源码核查</a></li><li><a href="qwen38-next-zh.html">Qwen3.8-Next 架构设计：评估、效率与训练稳定性</a></li><li><a href="gated-attention-zh.html">LLM 的 Gated Attention：非线性、稀疏性与无 Attention Sink</a></li><li><a href="kimi-k25-zh.html">Kimi K2.5：视觉 Agent 智能</a></li><li><a href="kimi-k3-zh.html">Kimi K3：开放的前沿智能</a></li><li><a href="mimo-v2-flash-zh.html">MiMo-V2-Flash 技术报告</a></li><li><a href="mimo-v26-zh.html">MiMo-V2.6：扩展强化学习，迈向自我改进</a></li><li><a href="minicpm4-zh.html">MiniCPM4：端侧设备上的超高效 LLM</a></li><li><a href="infllm-zh.html">InfLLM：通过高效上下文记忆实现 LLM 的免训练长上下文外推</a></li><li><a href="llama3-zh.html">Llama 3 模型家族</a></li><li><a href="gemma3-zh.html">Gemma 3 技术报告</a></li><li><a href="gemma4-zh.html">Gemma 4 技术报告</a></li><li><a href="nemotron-h-zh.html">Nemotron-H：准确、高效的 Mamba-Transformer 混合模型家族</a></li><li><a href="nemotron-super-zh.html">Nemotron 3 Super：用于 Agent 推理的开放、高效的 MoE Mamba-Transformer 模型</a></li><li><a href="step5-preview-zh.html">走进 Step 5 Preview：面向 agent 工作的架构与训练</a></li><li><a href="ling-ring-2.6-zh.html">Ling and Ring 2.6 技术报告</a></li><li><a href="intern-s2-preview-zh.html">Intern-S2-Preview：科学 Agent 基础模型</a></li><li><a href="glm5-zh.html">GLM-5：从 Vibe Coding 到 Agent 工程</a></li><li><a href="apple-foundation-models-2025-zh.html">Apple Intelligence 基础语言模型</a></li><li><a href="mai-thinking1.html">MAI-Thinking-1：构建持续爬坡的机器</a></li><li><a href="longcat-flash-zh.html">LongCat-Flash 技术报告</a></li><li><a href="nemotron-nano2-zh.html">NVIDIA Nemotron Nano 2：准确、高效的 Mamba-Transformer 混合推理模型</a></li><li><a href="nemotron-nano3-zh.html">Nemotron 3 Nano：用于 Agent 推理的开放、高效的专家混合式 Mamba-Transformer 混合模型</a></li><li><a href="mistral-small-4-zh.html">Mistral Small 4 119B A6B</a></li><li><a href="step35-flash-zh.html">Step 3.5 Flash：以 11B 激活参数实现开放的前沿级智能</a></li><li><a href="step3-zh.html">Step3：高性价比的多模态智能</a></li></ul><h3>方法论文、官方文档与代码</h3><ul class="source-list"><li><a href="https://github.com/vllm-project/vllm">vLLM</a></li><li><a href="https://github.com/vllm-project/llm-compressor">LLM Compressor</a></li><li><a href="https://github.com/NVIDIA/TransformerEngine">Transformer Engine</a></li><li><a href="https://arxiv.org/abs/1710.03740">来源：Mixed Precision Training</a></li><li><a href="https://arxiv.org/abs/2209.05433">来源：FP8 Formats for Deep Learning</a></li><li><a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/mxfp8/mxfp8.html">来源：Transformer Engine MXFP8 文档</a></li><li><a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/nvfp4/nvfp4.html">来源：Transformer Engine NVFP4 文档</a></li><li><a href="https://docs.pytorch.org/docs/2.14/notes/numerical_accuracy.html">来源：PyTorch 数值精度说明</a></li><li><a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/introduction/introduction.html">来源：Transformer Engine 低精度训练基础</a></li><li><a href="https://arxiv.org/abs/2110.02861">来源：8-bit Optimizers via Block-wise Quantization</a></li><li><a href="https://docs.nvidia.com/deeplearning/transformer-engine/examples/fp8_primer.html">来源：Transformer Engine FP8/FP4 使用指南</a></li><li><a href="https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html">来源：NVIDIA 混合精度训练指南</a></li><li><a href="https://docs.pytorch.org/docs/2.14/notes/amp_examples.html">来源：PyTorch AMP examples</a></li><li><a href="https://arxiv.org/html/2509.25149v1">来源：Pretraining Large Language Models with NVFP4</a></li><li><a href="https://arxiv.org/abs/2408.11743">来源：Marlin</a></li><li><a href="https://docs.vllm.ai/en/stable/features/quantization/index.html">来源：vLLM 量化后端</a></li><li><a href="https://arxiv.org/abs/2210.17323">来源：GPTQ</a></li><li><a href="https://github.com/IST-DASLab/gptq">来源：GPTQ 官方实现</a></li><li><a href="https://arxiv.org/abs/2306.00978">来源：AWQ</a></li><li><a href="https://arxiv.org/abs/2402.04396">来源：QuIP#</a></li><li><a href="https://arxiv.org/abs/2208.07339">来源：LLM.int8</a></li><li><a href="https://huggingface.co/docs/transformers/main/quantization/bitsandbytes">来源：Transformers bitsandbytes 文档</a></li><li><a href="https://arxiv.org/abs/2211.10438">来源：SmoothQuant</a></li><li><a href="https://arxiv.org/abs/2308.13137">来源：OmniQuant</a></li><li><a href="https://arxiv.org/abs/2404.00456">来源：QuaRot</a></li><li><a href="https://arxiv.org/abs/2405.16406">SpinQuant</a></li><li><a href="https://github.com/vllm-project/llm-compressor/blob/main/docs/guides/compression_schemes.md">来源：LLM Compressor compression schemes</a></li><li><a href="https://arxiv.org/abs/2402.02750">来源：KIVI</a></li><li><a href="https://arxiv.org/abs/2401.18079">来源：KVQuant</a></li><li><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/docs/features/quantization/quantized_kvcache.md">来源：vLLM v0.31.0 KV cache</a></li><li><a href="https://github.com/sgl-project/sglang/blob/main/docs/docs/advanced_features/quantized_kv_cache.mdx">来源：SGLang quantized KV cache</a></li><li><a href="https://arxiv.org/abs/2504.19874">来源：TurboQuant 方法论文</a></li><li><a href="https://research.google/blog/turboquant-redefining-ai-efficiency-with-extreme-compression/">作者介绍</a></li><li><a href="https://vllm-project.github.io/2026/05/11/turboquant.html">vLLM 项目实验分析</a></li><li><a href="https://github.com/vllm-project/vllm/tree/v0.31.0/vllm/model_executor/layers/quantization/turboquant">TurboQuant 量化代码目录</a></li><li><a href="https://arxiv.org/html/2409.12517v1">来源：Scaling FP8 training to trillion-token LLMs</a></li><li><a href="https://docs.pytorch.org/docs/2.14/amp.html">来源：PyTorch AMP API</a></li><li><a href="https://arxiv.org/abs/2412.19437v2">V3 原始报告 §3.3 与附录 B</a></li><li><a href="https://arxiv.org/abs/2606.19348v1">V4 原始报告</a></li><li><a href="https://arxiv.org/abs/2609.19969v1">V4.1 原始报告 §2.4.4</a></li><li><a href="https://huggingface.co/Qwen">Qwen 官方模型组织</a></li><li><a href="https://arxiv.org/abs/2608.30320v1">Qwen3.8-Next 架构报告</a></li><li><a href="https://arxiv.org/abs/2505.06708">gated attention 论文</a></li><li><a href="https://arxiv.org/abs/2601.22966">outlier 驱动重缩放研究</a></li><li><a href="https://arxiv.org/abs/2507.20534v2">K2 原始报告</a></li><li><a href="https://arxiv.org/abs/2602.02276v2">K2.5 原始报告</a></li><li><a href="https://arxiv.org/abs/2607.24653v2">K3 原始报告 §4.1.4</a></li><li><a href="https://arxiv.org/abs/2601.02780v2">原始报告</a></li><li><a href="https://arxiv.org/abs/2610.11959v1">V2.6 原始报告</a></li><li><a href="https://arxiv.org/abs/2506.07900v2">MiniCPM4 原始报告</a></li><li><a href="https://arxiv.org/abs/2508.10925">原始模型报告</a></li><li><a href="https://arxiv.org/abs/2407.21783v3">原始报告 §6.2</a></li><li><a href="https://arxiv.org/abs/2503.19786v1">Gemma 3 原始报告</a></li><li><a href="https://arxiv.org/abs/2607.02770v2">Gemma 4 原始报告</a></li><li><a href="https://arxiv.org/abs/2504.03624v4">原始报告</a></li><li><a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf">官方报告</a></li><li><a href="https://platform.stepfun.ai/blog/inside-step-5-preview">官方技术文章</a></li><li><a href="https://arxiv.org/abs/2606.15079v1">原始报告</a></li><li><a href="https://arxiv.org/abs/2608.13505v1">原始报告</a></li><li><a href="https://arxiv.org/abs/2602.15763v2">原始报告</a></li><li><a href="https://arxiv.org/abs/2507.13575v3">原始报告</a></li><li><a href="https://microsoft.ai/pdf/mai-thinking-1.pdf">官方报告</a></li><li><a href="https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory-h100-h200-b200/latest/components.html">来源：NVIDIA HGX components</a></li><li><a href="https://docs.nvidia.com/cuda/hopper-tuning-guide/">来源：CUDA Hopper tuning guide</a></li><li><a href="https://developer.nvidia.com/cuda/gpus">来源：NVIDIA CUDA GPU compute capability</a></li><li><a href="https://docs.nvidia.com/cuda/blackwell-tuning-guide/">Blackwell tuning guide</a></li><li><a href="https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low-precision-inference/">来源：NVIDIA NVFP4 inference</a></li><li><a href="https://nvidia.github.io/TransformerEngine/support_matrix.html">来源：TE 2.21.0.dev0 支持矩阵</a></li><li><a href="https://docs.nvidia.com/deeplearning/transformer-engine/examples/gemm_profiling/gemm_profiling.html">来源：TE GEMM profiling tutorial</a></li><li><a href="https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/speedups.html">来源：TE GEMM Speedups Across Precisions</a></li><li><a href="https://docs.nvidia.com/cuda/archive/12.0.0/pdf/ptx_isa_8.0.pdf">来源：PTX ISA 8.0</a></li><li><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/docs/features/quantization/llm_compressor/fp8.md">来源：vLLM v0.31.0 FP8</a></li><li><a href="https://github.com/ModelCloud/GPTQModel">GPTQModel</a></li><li><a href="https://github.com/intel/auto-round">AutoRound</a></li><li><a href="https://github.com/deepseek-ai/DeepGEMM">DeepGEMM</a></li><li><a href="https://github.com/NVIDIA/Model-Optimizer/blob/main/examples/hf_ptq/README.md">ModelOpt HF PTQ</a></li><li><a href="https://docs.pytorch.org/ao/stable/contributing/quantization_overview.html">torchao</a></li><li><a href="https://github.com/huggingface/blog/blob/main/4bit-transformers-bitsandbytes.md?plain=1">来源：Hugging Face QLoRA 说明</a></li><li><a href="https://github.com/vllm-project/llm-compressor/tree/0.14.0/examples/quantization_w8a8_fp8">LLM Compressor FP8 examples</a></li><li><a href="https://github.com/vllm-project/llm-compressor/tree/0.14.0/src/llmcompressor/modifiers/quantization">量化 modifiers</a></li><li><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/fp8.py">vLLM fp8.py</a></li><li><a href="https://github.com/vllm-project/vllm/tree/v0.31.0/vllm/model_executor/layers/quantization/utils">量化 utils</a></li><li><a href="https://github.com/vllm-project/compressed-tensors">compressed-tensors</a></li><li><a href="https://github.com/vllm-project/vllm/tree/v0.31.0/vllm/model_executor/layers/quantization/compressed_tensors">vLLM compressed-tensors 后端</a></li><li><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/mxfp4.py">mxfp4.py</a></li><li><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/modelopt.py">modelopt.py</a></li><li><a href="https://github.com/vllm-project/vllm/blob/v0.31.0/vllm/model_executor/layers/quantization/kv_cache.py">kv_cache.py</a></li><li><a href="https://github.com/NVIDIA/Model-Optimizer">ModelOpt</a></li><li><a href="https://github.com/pytorch/ao">torchao</a></li><li><a href="https://github.com/bitsandbytes-foundation/bitsandbytes">bitsandbytes</a></li><li><a href="https://github.com/huggingface/peft">PEFT</a></li><li><a href="https://github.com/sgl-project/sglang">SGLang</a></li><li><a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a></li><li><a href="https://huggingface.co/Qwen/Qwen3-8B-FP8">来源：Qwen3-8B-FP8 官方模型卡</a></li><li><a href="https://github.com/vllm-project/llm-compressor/blob/0.14.0/examples/quantization_w8a8_fp8/llama3_example.py">来源：LLM Compressor 0.14.0 示例</a></li><li><a href="https://docs.vllm.ai/en/v0.31.0/cli/bench/serve/">来源：vLLM v0.31.0 bench serve</a></li><li><a href="https://github.com/ggml-org/llama.cpp/blob/master/tools/quantize/quantize.cpp">来源：llama.cpp quantize 源码</a></li><li><a href="https://vllm.ai/blog/2026-04-22-fp8-kvcache">来源：vLLM FP8 KV 与 attention 实测方法</a></li></ul><p><a href="#quickstart">返回 Quickstart</a> · <a href="#contents">返回目录</a></p></section></main></body></html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>低精度 Quickstart</title><meta name="description" content="训练与推理中的 weight、activation、gradient、KV cache 精度、outlier、稳定性、Hopper/Blackwell 与开源工具实操。">
+<link rel="stylesheet" href="assets/document.css?v=9037c79583a5">
+<link rel="stylesheet" href="assets/low-precision.css?v=f685d57f8f1a"></head>
+<body class="technical-note lp-report"><nav class="document-nav" aria-label="文档导航">
+<div class="nav-links"><a href="index.html#topic-knowledge-maps">专题知识地图</a><a href="low-precision-quickstart-zh.html">Quickstart</a><a href="low-precision-map-zh.html#contents">完整目录</a></div>
+<div class="document-title">低精度 Quickstart</div><div class="document-meta">专题研究 · 核查日期：2026-10-18 · 中国标准时间 · 各家方案优先复用仓库现有译文</div></nav>
+<main><section class="page"><h1>低精度 Quickstart</h1><p>保留入门所需信息，细节通过链接进入完整报告。</p></section><section class="page" id="quickstart">
+<h2>Quickstart：先建立坐标，再跑最小实验</h2>
+<p>低精度需要同时说明<strong>阶段、张量、格式、缩放粒度和实际计算路径</strong>。W4A16 表示权重与激活的位宽组合，不能据此断言内部直接执行 INT4 乘法；发布 FP8 checkpoint 也不能证明预训练采用 FP8。</p>
+<div class="table-wrap"><table><thead><tr><th>对象</th><th>先记住的基本信息</th><th>展开阅读</th></tr></thead><tbody>
+<tr><td>weight</td><td>推理可从 W8A8 FP8 或 W4A16 起步；训练还要分清主权重、计算副本与优化器状态。</td><td><a href="low-precision-map-zh.html#lp-train-weight">训练权重</a> · <a href="low-precision-map-zh.html#lp-infer-weight">推理权重</a></td></tr>
+<tr><td>activation</td><td>计算输入、为反向保存的激活、residual state 是不同对象；outlier 常决定能压到多少位。</td><td><a href="low-precision-map-zh.html#lp-train-activation">训练激活</a> · <a href="low-precision-map-zh.html#lp-infer-activation">推理激活</a></td></tr>
+<tr><td>gradient</td><td>只有训练反向链路才有；Dgrad、Wgrad、累积、通信应分别指定精度。</td><td><a href="low-precision-map-zh.html#lp-train-gradient">梯度精度</a> · <a href="low-precision-map-zh.html#lp-stability">崩溃排查</a></td></tr>
+<tr><td>KV cache</td><td>推理长上下文的重要显存项；K/V 分布不同，压低 KV 位宽也不等于 attention 全程低精度。</td><td><a href="low-precision-map-zh.html#lp-kv">KV 量化</a> · <a href="low-precision-map-zh.html#lp-rl">RL rollout</a></td></tr>
+</tbody></table></div>
+<h3>1. 先确认你的 GPU 与目标</h3>
+<p><strong>普通 FP8 可以跨两代受支持硬件使用，但 Hopper 普通 FP8 与 Blackwell 原生 MXFP8/NVFP4 要分开比较。</strong>Blackwell 数据中心卡增加了微块缩放相关原生路径，框架、CUDA、算子与布局仍决定能否使用。普通 FP8、DeepSeek 风格 block FP8、MXFP8 是三种不同配方；换卡后的最佳选择与加速比需要重测。H20、GB10、RTX Blackwell 也不能套用 B200 的支持结论。先运行 <code>nvidia-smi</code>，并用 PyTorch 查询 <code>torch.cuda.get_device_capability()</code>。<a href="low-precision-map-zh.html#lp-hardware">查看硬件差异、性能数据与支持边界</a>。</p>
+<h3>2. 选一条最短上手路线</h3>
+<ul>
+<li><strong>先跑通服务：</strong>使用 <a href="https://github.com/vllm-project/vllm">vLLM</a> 加载官方量化 checkpoint，先保持 KV 默认精度；确认结果后单独尝试 FP8 KV。<a href="low-precision-map-zh.html#lp-tools">安装、服务与请求示例</a>。</li>
+<li><strong>自己量化模型：</strong>使用 <a href="https://github.com/vllm-project/llm-compressor">LLM Compressor</a> 生成 vLLM 可加载的压缩 checkpoint。动态 FP8 RTN 可不需要校准数据，AWQ/GPTQ、静态激活和 KV scale 通常需要对应校准。<a href="low-precision-map-zh.html#lp-tool-quantize">量化脚本与产物检查</a>。</li>
+<li><strong>尝试训练：</strong>先做 BF16 基线，再用 <a href="https://github.com/NVIDIA/TransformerEngine">Transformer Engine</a> 替换受支持的 Linear；不要直接把整个模型转换成 <code>float8</code>。<a href="low-precision-map-zh.html#lp-te-example">训练示例</a> · <a href="low-precision-map-zh.html#lp-stability">验证与监控</a>。</li>
+<li><strong>消费卡或 CPU 本地运行：</strong>先看 llama.cpp/GGUF 或 weight-only；QLoRA 用于冻结量化底座后训练 adapter，与全参数 FP4 训练不同。<a href="low-precision-map-zh.html#lp-tools">工具地图</a>。</li>
+</ul>
+<h3>3. 第一个可复现实验</h3>
+<p>以 Linux NVIDIA CUDA 环境及正文记录的 vLLM 参考版本为前提，在独立虚拟环境安装后，先启动官方 FP8 权重：</p>
+<pre><code class="language-bash">vllm serve Qwen/Qwen3-8B-FP8 \
+  --max-model-len 4096 \
+  --gpu-memory-utilization 0.85</code></pre>
+<p>这条命令只选择 checkpoint；它没有主动把 KV cache 改成 FP8。显存不足时先缩短上下文，具体硬件支持、依赖安装和 API 请求见<a href="low-precision-map-zh.html#lp-tool-fp8-serve">完整实操</a>。示例经过文档/API核对，未在 GPU 上实跑，不代表任意卡与版本均可运行。</p>
+<p>固定模型、prompt、输入/输出长度和并发，分别比较 BF16 与 FP8，再只改变 KV dtype。记录质量、TTFT、TPOT、吞吐量、峰值显存和可承载 token 数；单独报告 prefill 与 decoding。<a href="low-precision-map-zh.html#lp-benchmark">查看基准方法</a>。</p>
+<h3>按问题跳转</h3>
+<p><a href="low-precision-map-zh.html#lp-dtypes">格式与 scale</a> · <a href="low-precision-map-zh.html#lp-outliers">outlier 处理地图</a> · <a href="low-precision-map-zh.html#lp-families">各家配方</a> · <a href="low-precision-map-zh.html#family-deepseek">DeepSeek</a> · <a href="low-precision-map-zh.html#family-qwen">Qwen</a> · <a href="low-precision-map-zh.html#family-kimi">Kimi</a> · <a href="low-precision-map-zh.html#family-mimo">MiMo</a> · <a href="low-precision-map-zh.html#lp-selection">选型速查</a> · <a href="low-precision-map-zh.html#lp-sources">资料与代码索引</a></p>
+</section>
+</main></body></html>

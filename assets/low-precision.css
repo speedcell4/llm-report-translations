@@ -1,0 +1,15 @@
+/* Layout additions for the low-precision knowledge map. */
+.lp-report .page, .lp-report .document-nav { max-width: 1160px; }
+.lp-report p { text-align: left; }
+.lp-report pre { white-space: pre; overflow-wrap: normal; }
+.lp-report pre code { font-size: 14px; }
+.lp-report table { min-width: 780px; }
+.lp-report td code, .lp-report th code { white-space: normal; }
+.lp-report .chapter-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.lp-report .chapter-links a { display: inline-block; }
+.lp-report .source-list { padding-left: 24px; }
+.lp-report .section-return { text-align: right; font-size: 14px; }
+.lp-report #quickstart table { min-width: 0; }
+.lp-report #quickstart th:first-child, .lp-report #quickstart td:first-child { white-space: nowrap; }
+.lp-report #quickstart th:last-child, .lp-report #quickstart td:last-child { min-width: 100px; width: 100px; }
+@media print { .lp-report table { min-width: 0; } }
