@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hy4 preview 官方模型卡 · 中文全文</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"><link rel="stylesheet" href="assets/image-fit.css"></head><body class="translation"><nav class="document-nav" aria-label="文档与章节导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="hunyuan-hy3-zh.html">Hy3 模型卡</a></div><div class="document-title">Hy4 preview 官方模型卡 · 中文全文</div><div class="document-meta">腾讯混元团队 · 首次发布：2026-08-28 · 核对日期：2026-10-18<br>原文：<a href="https://github.com/Tencent-Hunyuan/Hy4-preview/blob/509799be8cc7bfeb63353e7322b2daddf7f73a28/README.md">固定英文版本</a> · <a href="https://github.com/Tencent-Hunyuan/Hy4-preview/blob/509799be8cc7bfeb63353e7322b2daddf7f73a28/README_CN.md">官方中文版</a> · <a href="https://huggingface.co/tencent/Hy4-preview">Hugging Face 模型卡</a><br>版本：509799be8cc7 · 依英文逐节核对、参考官方中文整理；代码、参数和原图保留。本文为模型卡，不是 arXiv 技术报告。<br>Copyright © 2026 Tencent · <a href="assets/licenses/hy4-preview-LICENSE.txt">Apache License 2.0</a> · 本页为中文翻译与阅读排版版本。</div><div class="page-links">章节：<a href="#模型介绍">模型介绍</a> <a href="#新一代旗舰模型">新一代旗舰模型</a> <a href="#为生产力而生">为生产力而生</a> <a href="#基准附录">基准附录</a> <a href="#已知局限">已知局限</a> <a href="#新闻">新闻</a> <a href="#模型链接">模型链接</a> <a href="#快速开始">快速开始</a> <a href="#推理和部署">推理和部署</a> <a href="#模型微调">模型微调</a> <a href="#量化工具">量化工具</a> <a href="#许可证">许可证</a> <a href="#联系我们">联系我们</a> <a href="#official-blogs">官方博客</a></div></nav><main class="document-content"><section class="page"><header class="paper-header"><h1>Hy4 preview</h1><p class="authors">腾讯混元团队</p><p><a href="https://aistudio.tencent.com/">官方网站</a> · <a href="https://github.com/Tencent-Hunyuan/Hy4-preview">GitHub</a> · <a href="https://huggingface.co/tencent/Hy4-preview">Hugging Face</a> · <a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy4-preview">ModelScope</a> · <a href="https://cnb.cool/ai-models/tencent/Hy4-preview">CNB</a> · <a href="https://ai.gitcode.com/tencent_hunyuan/Hy4-preview">GitCode</a></p></header></section><section class="page"><h2 id="模型介绍">模型介绍</h2>
+<p><strong>Hy4 preview</strong> 是由腾讯混元团队研发的新一代混合专家（MoE）旗舰模型。模型总参数量 770B，每个 token 激活 49B，主干共包含78层，第一层采用标准 FFN，其余 77 层均为 MoE 结构，每层包含 256 个路由专家与 1 个共享专家，每个 token 激活 top-8 路由专家及共享专家。主干之外原生内置 1 层 MTP（总参数量 10B，激活 0.7B）以支持speculative decoding。</p>
+<p>在架构层面，受到 DeepSeek 和 GLM 的启发，attention侧采用 Gated <a href="https://arxiv.org/abs/2512.02556">DeepSeek Sparse Attention</a>（Gated DSA），并引入 <a href="https://arxiv.org/abs/2603.12201">IndexCache</a> 跨层复用稀疏索引，残差侧采用 <a href="https://zhuanlan.zhihu.com/p/2010852389670908320">iHC (identity Hyper-Connections)</a> 扩展层间信息通路。</p>
+<h3 id="模型规格">模型规格</h3>
+<blockquote>
+<p>下表仅列出主干网络参数，不含MTP层</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>架构</td>
+<td>混合专家（MoE）</td>
+</tr>
+<tr>
+<td>总参数</td>
+<td>770B</td>
+</tr>
+<tr>
+<td>激活参数量</td>
+<td>49B</td>
+</tr>
+<tr>
+<td>层数</td>
+<td>78</td>
+</tr>
+<tr>
+<td>隐藏层维度</td>
+<td>6144</td>
+</tr>
+<tr>
+<td>attention类型</td>
+<td>Gated DSA</td>
+</tr>
+<tr>
+<td>attention头数</td>
+<td>64</td>
+</tr>
+<tr>
+<td>Query 压缩维度</td>
+<td>2048</td>
+</tr>
+<tr>
+<td>Key-Value 压缩维度</td>
+<td>512</td>
+</tr>
+<tr>
+<td>Indexer 头数 / 头维度</td>
+<td>32 / 128</td>
+</tr>
+<tr>
+<td>Indexer top-k</td>
+<td>2048</td>
+</tr>
+<tr>
+<td>residual stream 数</td>
+<td>4</td>
+</tr>
+<tr>
+<td>路由专家数</td>
+<td>256</td>
+</tr>
+<tr>
+<td>共享专家数</td>
+<td>1</td>
+</tr>
+<tr>
+<td>单 token 激活路由专家数</td>
+<td>8</td>
+</tr>
+<tr>
+<td>MoE中间层维度</td>
+<td>2048</td>
+</tr>
+<tr>
+<td>FFN中间层维度</td>
+<td>18432</td>
+</tr>
+<tr>
+<td>上下文长度</td>
+<td>1M</td>
+</tr>
+<tr>
+<td>词表大小</td>
+<td>120832</td>
+</tr>
+</tbody></table></div>
+</section><section class="page"><h2 id="新一代旗舰模型">新一代旗舰模型</h2>
+<p>我们从三个方面扩展了 Hy4 preview：模型规模、上下文长度和训练数据。更强的预训练与规模显著扩大的后训练相互叠加，使模型能力再次跨越一个台阶——这是我们测得的历代模型间最大提升幅度，也足以让 Hy4 preview 跻身开源前沿。</p>
+<figure><img src="assets/images/hunyuan/hy4-preview-benchmark.jpg" alt="Hy4 preview 原始性能对比图" width="24288" height="13548" loading="lazy" decoding="async" class="fit-page"></figure>
+
+</section><section class="page"><h2 id="为生产力而生">为生产力而生</h2>
+<p>我们与腾讯内部的软件工程师、游戏开发者、金融分析师和安全专家等顶尖专家合作，围绕他们实际交付的工作构建训练数据。由此，模型在这些团队每天处理的任务上取得了实质性进步：</p>
+<p><strong>软件工程</strong>：更擅长理解、规划、调试与验证长程开发任务，并进一步提升前端工作的视觉审美与交互质量。</p>
+<p><strong>办公与分析</strong>：从分散在多个文件中的杂乱上下文中提取信息，转化为可分享的文档、电子表格和演示文稿，并以更高精度处理数据分析、方程和金融模型。</p>
+<p><strong>游戏开发</strong>：将单条提示转化为可玩的原型，并熟练使用游戏引擎，使开发者能够通过多轮交互持续完善复杂项目。</p>
+<p><strong>科学研究</strong>：在困难科研问题上具备更强的理解、推理与求解能力，在 AI 研究、分子动力学、凝聚态物理和纯数学等领域取得扎实进展。</p>
+<p>我们也持续与 CodeBuddy、WorkBuddy 等腾讯产品共同设计 Hy4 preview，让模型能力的提升体现在用户实际完成的工作中。为验证这一点，我们开展了并排盲测：163 位内部专家对 203 个工程任务的模型输出进行评分。Hy4 preview 略优于 GLM 5.3（平均分 2.99 对 2.92，胜 46.8% / 平 12.8% / 负 40.4%）和 Kimi K3（平均分 2.99 对 2.94，胜 51.2% / 平 7.9% / 负 40.9%）。</p>
+</section><section class="page"><h2 id="基准附录">基准附录</h2>
+<figure><img src="assets/images/hunyuan/hy4-preview-benchmark-appendix.jpg" alt="Hy4 preview 原始基准附录表" width="4960" height="10840" loading="lazy" decoding="async" class="fit-page" width="100%"></figure>
+
+</section><section class="page"><h2 id="已知局限">已知局限</h2>
+<p>这是 Hy4 的早期版本。预训练与后训练仍有很大的提升空间，此次发布也存在一些已知问题，包括在复杂任务上花费过长时间推理，以及倾向于过度验证自身工作。我们会继续快速迭代。与 Hy3 preview 一样，我们希望尽早发布并了解实际使用中出现的问题——这正是 Hy3 得以大幅改进的原因，也是我们完善 Hy4 的方式。我们还将继续与腾讯产品和内部专家紧密合作，推动模型智能的边界，同时让这种能力更加充裕、价格更易负担。</p>
+</section><section class="page"><h2 id="新闻">新闻</h2>
+<ul>
+<li>🔥 我们在 <a href="https://huggingface.co/tencent/Hy4-preview">Hugging Face</a>、<a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy4-preview">ModelScope</a>、<a href="https://ai.gitcode.com/tencent_hunyuan/Hy4-preview">GitCode</a> 和 <a href="https://cnb.cool/ai-models/tencent/Hy4-preview">CNB</a> 开源了 <strong>Hy4 preview</strong> 和 <strong>Hy4 preview-FP8</strong> 模型权重。</li>
+</ul>
+</section><section class="page"><h2 id="模型链接">模型链接</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>模型名</th>
+<th>简介</th>
+<th>Hugging Face</th>
+<th>ModelScope</th>
+<th>GitCode</th>
+<th>CNB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hy4 preview</td>
+<td>Instruct 模型</td>
+<td>🤗 <a href="https://huggingface.co/tencent/Hy4-preview">Model</a></td>
+<td><a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy4-preview">Model</a></td>
+<td><a href="https://ai.gitcode.com/tencent_hunyuan/Hy4-preview">Model</a></td>
+<td><a href="https://cnb.cool/ai-models/tencent/Hy4-preview">Model</a></td>
+</tr>
+<tr>
+<td>Hy4 preview-FP8</td>
+<td>FP8 量化 Instruct 模型</td>
+<td>🤗 <a href="https://huggingface.co/tencent/Hy4-preview-FP8">Model</a></td>
+<td><a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy4-preview-FP8">Model</a></td>
+<td><a href="https://ai.gitcode.com/tencent_hunyuan/Hy4-preview-FP8">Model</a></td>
+<td><a href="https://cnb.cool/ai-models/tencent/Hy4-preview-FP8">Model</a></td>
+</tr>
+</tbody></table></div>
+</section><section class="page"><h2 id="快速开始">快速开始</h2>
+<p>建议先通过 <a href="#vllm">vLLM</a> 或 <a href="#sglang">SGLang</a> 部署服务，然后通过 OpenAI 兼容 API 调用：</p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(base_url="http://127.0.0.1:8000/v1", api_key="EMPTY")
+
+response = client.chat.completions.create(
+    model="hy4-preview",
+    messages=[
+        {"role": "user", "content": "Hello! Can you briefly introduce yourself?"},
+    ],
+    temperature=0.9,
+    top_p=1.0,
+)
+print(response.choices[0].message.content)
+</code></pre>
+<blockquote>
+<p><strong>推荐参数</strong>：<code>temperature=0.9</code>，<code>top_p=1.0</code>。</p>
+<p><strong>推理模式</strong>：默认为 <code>"high"</code>（深度chain-of-thought），适合数学、编程、推理等复杂任务；日常对话如需直接回复，可传入 <code>extra_body={"chat_template_kwargs": {"reasoning_effort": "no_think"}}</code>。</p>
+</blockquote>
+<p>具体部署方式请参考下方<a href="#%E6%8E%A8%E7%90%86%E5%92%8C%E9%83%A8%E7%BD%B2">推理和部署</a>章节。</p>
+</section><section class="page"><h2 id="推理和部署">推理和部署</h2>
+<p>对于生产环境部署，我们建议使用 <a href="https://github.com/vllm-project/vllm">vLLM</a> 或 <a href="https://docs.sglang.io/">SGLang</a>。请参考部署方案：</p>
+<ul>
+<li><a href="https://recipes.vllm.ai/tencent/Hy4-preview">Hy4-Preview vLLM Recipe</a></li>
+<li><a href="https://lmsysorg.mintlify.app/cookbook/autoregressive/Tencent/Hy4-Preview">Hy4-Preview SGLang Cookbook</a></li>
+</ul>
+<h3 id="vllm">vLLM</h3>
+<p>使用官方预构建镜像 <code>vllm/vllm-openai:hy4-preview</code>：</p>
+<pre><code class="language-bash">docker run --gpus all \
+  -p 8000:8000 \
+  --ipc=host \
+  -v ~/.cache/huggingface:/root/.cache/huggingface \
+  vllm/vllm-openai:hy4-preview tencent/Hy4-preview-FP8 \
+    --tensor-parallel-size 8 \
+    --speculative-config '{"num_speculative_tokens":3,"method":"mtp"}' \
+    --attention-backend FLASHMLA_SPARSE \
+    --tool-call-parser hy_v4 \
+    --reasoning-parser hy_v4 \
+    --enable-auto-tool-choice \
+    --port 8000 \
+    --served-model-name hy4-preview
+</code></pre>
+<h3 id="sglang">SGLang</h3>
+<p>使用官方预构建镜像 <code>lmsysorg/sglang:hy4-preview</code>（多架构，支持 x86 和 Arm）：</p>
+<pre><code class="language-bash">docker pull lmsysorg/sglang:hy4-preview
+
+docker run --gpus all --ipc=host -p 8000:8000 lmsysorg/sglang:hy4-preview \
+  python3 -m sglang.launch_server \
+    --model tencent/Hy4-preview-FP8 \
+    --tp-size 8 \
+    --reasoning-parser auto \
+    --tool-call-parser auto \
+    --speculative-algorithm NEXTN \
+    --speculative-num-steps 3 \
+    --speculative-eagle-topk 1 \
+    --speculative-num-draft-tokens 4 \
+    --port 8000 \
+    --served-model-name hy4-preview
+</code></pre>
+</section><section class="page"><h2 id="模型微调">模型微调</h2>
+<p>Hy4 preview 提供了完整的模型微调流程，详细的微调文档请参考：<a href="https://github.com/Tencent-Hunyuan/Hy4-preview/blob/509799be8cc7bfeb63353e7322b2daddf7f73a28/finetune/README.md">模型微调指南</a></p>
+</section><section class="page"><h2 id="量化工具">量化工具</h2>
+<p>我们提供了 <a href="https://github.com/tencent/AngelSlim">AngelSlim</a>——一套更易用、全面、高效的大模型压缩工具包。AngelSlim 为大规模多模态模型提供完整的压缩工具，涵盖常用量化算法、低比特量化和投机采样。</p>
+</section><section class="page"><h2 id="许可证">许可证</h2>
+<p>Hy4 preview 基于 <strong>Apache 2.0 许可证</strong> 发布。详情请参阅 <a href="https://github.com/Tencent-Hunyuan/Hy4-preview/blob/509799be8cc7bfeb63353e7322b2daddf7f73a28/LICENSE">LICENSE</a>。</p>
+</section><section class="page"><h2 id="联系我们">联系我们</h2>
+<p>如有问题或建议，欢迎通过邮件联系我们的研发和产品团队：</p>
+<p>📧 <strong><a href="mailto:hunyuan_opensource@tencent.com">hunyuan_opensource@tencent.com</a></strong></p>
+<hr>
+<p>
+  <i>Hy4 preview 由腾讯混元团队研发。</i>
+</p>
+</section><section class="page" id="official-blogs"><h2>补充阅读：官方博客与发布文章</h2><p class="muted">以下为编辑整理的简要导读和原文入口，与上方模型卡全文分开列示。文章中的限时活动、价格及服务信息以其发布时点为准。</p><h3><a href="https://www.tencent.com/zh-cn/tencent-releases-and-open-sources-tencent-hy4-preview/">腾讯发布并开源 Hy4 preview</a></h3><p class="muted">腾讯官方发布文章 · 2026-08-28</p><p>官方发布文章介绍了 Hy4 preview 的 770B / A49B 参数规模、1M 上下文，以及在编程、办公与科学研究等生产力场景中的应用和产品接入。文章已有官方中文版。</p></section></main></body></html>

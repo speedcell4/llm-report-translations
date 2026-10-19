@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hy3 官方模型卡 · 中文全文</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"><link rel="stylesheet" href="assets/image-fit.css"></head><body class="translation"><nav class="document-nav" aria-label="文档与章节导航"><div class="nav-links"><a href="index.html">全部文档</a><a href="hunyuan-hy4-preview-zh.html">Hy4 preview 模型卡</a></div><div class="document-title">Hy3 官方模型卡 · 中文全文</div><div class="document-meta">腾讯混元团队 · 首次发布：2026-07-06 · 核对日期：2026-10-18<br>原文：<a href="https://github.com/Tencent-Hunyuan/Hy3/blob/b20268970234437e73665fdce202e574eda598f5/README.md">固定英文版本</a> · <a href="https://github.com/Tencent-Hunyuan/Hy3/blob/b20268970234437e73665fdce202e574eda598f5/README_CN.md">官方中文版</a> · <a href="https://huggingface.co/tencent/Hy3">Hugging Face 模型卡</a><br>版本：b20268970234 · 依英文逐节核对、参考官方中文整理；代码、参数和原图保留。本文为模型卡，不是 arXiv 技术报告。<br>Copyright © 2026 Tencent · <a href="assets/licenses/hy3-LICENSE.txt">Apache License 2.0</a> · 本页为中文翻译与阅读排版版本。</div><div class="page-links">章节：<a href="#模型介绍">模型介绍</a> <a href="#更强大的-agent-能力">更强大的 agent 能力</a> <a href="#更可靠的产品体验">更可靠的产品体验</a> <a href="#基准附录">基准附录</a> <a href="#新闻">新闻</a> <a href="#模型链接">模型链接</a> <a href="#快速开始">快速开始</a> <a href="#推理和部署">推理和部署</a> <a href="#模型微调">模型微调</a> <a href="#强化学习训练">强化学习训练</a> <a href="#量化工具">量化工具</a> <a href="#许可证">许可证</a> <a href="#联系我们">联系我们</a> <a href="#official-blogs">官方博客</a></div></nav><main class="document-content"><section class="page"><header class="paper-header"><h1>Hy3</h1><p class="authors">腾讯混元团队</p><p><a href="https://aistudio.tencent.com/">官方网站</a> · <a href="https://github.com/Tencent-Hunyuan/Hy3">GitHub</a> · <a href="https://huggingface.co/tencent/Hy3">Hugging Face</a> · <a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy3">ModelScope</a> · <a href="https://cnb.cool/ai-models/tencent/Hy3">CNB</a> · <a href="https://ai.gitcode.com/tencent_hunyuan/Hy3">GitCode</a></p></header></section><section class="page"><h2 id="模型介绍">模型介绍</h2>
+<p><strong>Hy3</strong> 是由腾讯混元团队研发的混合专家（MoE）模型，总参数量为 295B，激活参数量为 21B，MTP 层参数量为 3.8B。4 月底推出 Hy3 Preview 后，我们收集了 50 多个产品的反馈，并使用更高质量的数据扩大后训练规模。今天，我们推出 Hy3；它优于同等规模的模型，并可比肩参数量为其 2–5 倍的旗舰开源模型。它在各类产品与生产力任务中的实用性也得到显著提升。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>架构</td>
+<td>混合专家（MoE）</td>
+</tr>
+<tr>
+<td>总参数量</td>
+<td>295B</td>
+</tr>
+<tr>
+<td>激活参数量</td>
+<td>21B</td>
+</tr>
+<tr>
+<td>MTP层参数量</td>
+<td>3.8B</td>
+</tr>
+<tr>
+<td>层数（不含MTP层）</td>
+<td>80</td>
+</tr>
+<tr>
+<td>MTP层数</td>
+<td>1</td>
+</tr>
+<tr>
+<td>attention头</td>
+<td>64（GQA，8 个 KV 头，head dim 128）</td>
+</tr>
+<tr>
+<td>隐藏层维度</td>
+<td>4096</td>
+</tr>
+<tr>
+<td>中间层维度</td>
+<td>13312</td>
+</tr>
+<tr>
+<td>上下文长度</td>
+<td>256K</td>
+</tr>
+<tr>
+<td>词表大小</td>
+<td>120832</td>
+</tr>
+<tr>
+<td>专家数量</td>
+<td>192 个专家，top-8 激活</td>
+</tr>
+<tr>
+<td>支持精度</td>
+<td>BF16</td>
+</tr>
+</tbody></table></div>
+</section><section class="page"><h2 id="更强大的-agent-能力">更强大的 agent 能力</h2>
+<p>在 Hy3 Preview 的基础上，我们进一步提升后训练数据的质量与多样性，同时扩大 RL 训练规模。Hy3 在推理、agent 和长上下文任务上取得扎实进步，能够与规模大得多的旗舰模型竞争。</p>
+<figure><img src="assets/images/hunyuan/hy3-benchmark.png" alt="Hy3 原始性能对比图" width="3500" height="2500" loading="lazy" decoding="async" class="fit-page"></figure>
+
+<p>在编程、办公、金融建模、前端设计与游戏开发等生产力场景中，Hy3 取得显著进步，如今可以成为可靠且具成本效益的模型选择。</p>
+<p>我们认为，公开基准分数无法反映全部情况。因此，我们组织了 270 位专家，使用他们实际工作中的任务开展盲测。Hy3 的得分为 2.67/4，优于 GLM-5.1 的 2.51/4；其优势在前端开发、数据与存储、CI/CD 任务中最为明显。</p>
+</section><section class="page"><h2 id="更可靠的产品体验">更可靠的产品体验</h2>
+<p>基准无法完整衡量模型的实用性。根据广泛的产品反馈，我们识别并修复了以下问题，获得了产品团队持续的积极反馈。</p>
+<p><strong>工具调用与输出格式的稳定性</strong>：我们修复了多项基础可靠性问题，使模型在各种工具配置与输出约束下达到生产级标准。工具调用的错误恢复能力与整体效率得到提升。Hy3 还能够泛化到不同的 agent 执行框架。在 SWE-Bench Verified 上，CodeBuddy、Cline、KiloCode 等执行框架之间的准确率波动保持在 4% 以内。</p>
+<p><strong>知识与抗幻觉能力</strong>：遵循“有依据时回答，缺少证据时明确说明，不混淆来源或编造数据”的目标，我们实施了细粒度的数据清洗与训练约束。在基于真实场景的内部评测中，Hy3 的幻觉率从 12.5% 降至 5.4%，常识错误率从 25.4% 降至 12.7%。这些变化显著减少了事实混淆、编造与逻辑矛盾。</p>
+<p><strong>复杂上下文保持与多轮意图跟踪</strong>：通过联合优化 SFT 与 RL，Hy3 改善了指代消解、省略还原和多轮约束继承等实际使用中的痛点。在内部多轮综合测试中，问题率从 17.4% 降至 7.9%。Hy3 在 MRCR 等长对话评测上也取得明显进步。其输出更为简洁，同时确保复杂意图在长程交互中不会衰减或偏移。</p>
+</section><section class="page"><h2 id="基准附录">基准附录</h2>
+<figure><img src="assets/images/hunyuan/hy3-benchmark-appendix.png" alt="Hy3 原始基准附录表" width="4602" height="6438" loading="lazy" decoding="async" class="fit-page" width="100%"></figure>
+
+</section><section class="page"><h2 id="新闻">新闻</h2>
+<ul>
+<li>🔥 我们在 <a href="https://huggingface.co/tencent/Hy3">Hugging Face</a>、<a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy3">ModelScope</a>、<a href="https://ai.gitcode.com/tencent_hunyuan/Hy3">GitCode</a> 和 <a href="https://cnb.cool/ai-models/tencent/Hy3">CNB</a> 开源了 <strong>Hy3</strong> 和 <strong>Hy3-FP8</strong> 模型权重。</li>
+</ul>
+</section><section class="page"><h2 id="模型链接">模型链接</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>模型名</th>
+<th>简介</th>
+<th>Hugging Face</th>
+<th>ModelScope</th>
+<th>GitCode</th>
+<th>CNB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hy3</td>
+<td>Instruct 模型</td>
+<td>🤗 <a href="https://huggingface.co/tencent/Hy3">Model</a></td>
+<td><a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy3">Model</a></td>
+<td><a href="https://ai.gitcode.com/tencent_hunyuan/Hy3">Model</a></td>
+<td><a href="https://cnb.cool/ai-models/tencent/Hy3">Model</a></td>
+</tr>
+<tr>
+<td>Hy3-FP8</td>
+<td>FP8 量化 Instruct 模型</td>
+<td>🤗 <a href="https://huggingface.co/tencent/Hy3-FP8">Model</a></td>
+<td><a href="https://modelscope.cn/models/Tencent-Hunyuan/Hy3-FP8">Model</a></td>
+<td><a href="https://ai.gitcode.com/tencent_hunyuan/Hy3-FP8">Model</a></td>
+<td><a href="https://cnb.cool/ai-models/tencent/Hy3-FP8">Model</a></td>
+</tr>
+</tbody></table></div>
+</section><section class="page"><h2 id="快速开始">快速开始</h2>
+<p>建议先通过 <a href="#vllm">vLLM</a> 或 <a href="#sglang">SGLang</a> 部署服务，然后通过 OpenAI 兼容 API 调用：</p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(base_url="http://127.0.0.1:8000/v1", api_key="EMPTY")
+
+response = client.chat.completions.create(
+    model="hy3",
+    messages=[
+        {"role": "user", "content": "Hello! Can you briefly introduce yourself?"},
+    ],
+    temperature=0.9,
+    top_p=1.0,
+    # reasoning_effort: "no_think" (default, direct response), "low", "high" (deep chain-of-thought)
+    extra_body={"chat_template_kwargs": {"reasoning_effort": "no_think"}},
+)
+print(response.choices[0].message.content)
+</code></pre>
+<blockquote>
+<p><strong>推荐参数</strong>：<code>temperature=0.9</code>，<code>top_p=1.0</code>。</p>
+<p><strong>推理模式</strong>：复杂任务（数学、编程、推理）建议设置 <code>reasoning_effort="high"</code>，日常对话可使用默认的 <code>"no_think"</code> 直接回复。</p>
+</blockquote>
+<p>具体部署方式请参考下方<a href="#%E6%8E%A8%E7%90%86%E5%92%8C%E9%83%A8%E7%BD%B2">推理和部署</a>章节。</p>
+</section><section class="page"><h2 id="推理和部署">推理和部署</h2>
+<p>Hy3 总参数量为 295B，当使用 8 张 GPU 时，建议使用 H20-3e 或其他有更大显存的卡型。</p>
+<p>对于生产环境部署，我们建议使用 vLLM 或 SGLang，这两个框架都为 Hy3 提供了专门的配置方案：</p>
+<ul>
+<li><p><a href="https://github.com/vllm-project/vllm">vLLM</a> - 请查阅 <a href="https://recipes.vllm.ai/tencent/Hy3">vLLM recipes</a></p>
+</li>
+<li><p><a href="https://docs.sglang.io/">SGLang</a> - 请查阅 <a href="https://lmsysorg.mintlify.app/cookbook/autoregressive/Tencent/Hy3">SGLang cookbook</a></p>
+</li>
+</ul>
+<h3 id="vllm">vLLM</h3>
+<p>从源码构建 vLLM：</p>
+<pre><code class="language-bash">uv venv --python 3.12 --seed --managed-python
+source .venv/bin/activate
+git clone https://github.com/vllm-project/vllm.git
+cd vllm
+uv pip install --editable . --torch-backend=auto
+</code></pre>
+<p>启动 vLLM 服务，开启 MTP：</p>
+<pre><code class="language-bash"># Switch to trtllm backend to work-around mnnvl workspace size issue.
+export VLLM_FLASHINFER_ALLREDUCE_BACKEND=trtllm
+vllm serve tencent/Hy3 \
+  --tensor-parallel-size 8 \
+  --speculative-config.method mtp \
+  --speculative-config.num_speculative_tokens 2 \
+  --tool-call-parser hy_v3 \
+  --reasoning-parser hy_v3 \
+  --enable-auto-tool-choice \
+  --port 8000 \
+  --served-model-name hy3
+</code></pre>
+<h3 id="sglang">SGLang</h3>
+<p>从源码构建 SGLang：</p>
+<pre><code class="language-bash">git clone https://github.com/sgl-project/sglang
+cd sglang
+pip3 install pip --upgrade
+pip3 install "transformers&gt;=5.6.0"
+pip3 install -e "python"
+</code></pre>
+<p>启动 SGLang 服务，开启 MTP：</p>
+<pre><code class="language-bash">python3 -m sglang.launch_server \
+  --model tencent/Hy3 \
+  --tp-size 8 \
+  --tool-call-parser hunyuan \
+  --reasoning-parser hunyuan \
+  --speculative-num-steps 2 \
+  --speculative-eagle-topk 1 \
+  --speculative-num-draft-tokens 3 \
+  --speculative-algorithm EAGLE \
+  --port 8000 \
+  --served-model-name hy3
+</code></pre>
+</section><section class="page"><h2 id="模型微调">模型微调</h2>
+<p>Hy3 提供完整的模型微调流水线。详细文档请参阅：<a href="https://github.com/Tencent-Hunyuan/Hy3/blob/b20268970234437e73665fdce202e574eda598f5/finetune/README.md">模型微调指南</a></p>
+</section><section class="page"><h2 id="强化学习训练">强化学习训练</h2>
+<p>Hy3 支持基于 <a href="https://github.com/volcengine/verl">verl</a> 的 GRPO 强化学习训练，训练侧使用 Megatron-LM（通过 NVIDIA Megatron-Bridge 完成模型转换），rollout 侧使用 vLLM。详细文档请参考：<a href="https://github.com/Tencent-Hunyuan/Hy3/blob/b20268970234437e73665fdce202e574eda598f5/rl/README.md">强化学习训练指南</a></p>
+</section><section class="page"><h2 id="量化工具">量化工具</h2>
+<p>我们提供了 <a href="https://github.com/tencent/AngelSlim">AngelSlim</a>——一套更易用、全面、高效的大模型压缩工具包。AngelSlim 为大规模多模态模型提供完整的压缩工具，涵盖常用量化算法、低比特量化和投机采样。</p>
+</section><section class="page"><h2 id="许可证">许可证</h2>
+<p>Hy3 基于 <strong>Apache 2.0 许可证</strong> 发布。详情请参阅 <a href="https://github.com/Tencent-Hunyuan/Hy3/blob/b20268970234437e73665fdce202e574eda598f5/LICENSE">LICENSE</a>。</p>
+</section><section class="page"><h2 id="联系我们">联系我们</h2>
+<p>如希望向我们的研发与产品团队留言，欢迎联系我们。您也可以通过以下邮箱联系：</p>
+<p>📧 <strong><a href="mailto:hunyuan_opensource@tencent.com">hunyuan_opensource@tencent.com</a></strong></p>
+<hr>
+<p>
+  <i>Hy3 由腾讯混元团队研发。</i>
+</p>
+</section><section class="page" id="official-blogs"><h2>补充阅读：官方博客与发布文章</h2><p class="muted">以下为编辑整理的简要导读和原文入口，与上方模型卡全文分开列示。文章中的限时活动、价格及服务信息以其发布时点为准。</p><h3><a href="https://www.tencent.com/index.php/en-us/articles/2202320.html">腾讯发布 Hy3 preview：增强 agent 能力与真实场景实用性</a></h3><p class="muted">腾讯官方发布文章 · 2026-04-24</p><p>发布文章介绍了 295B / A21B、256K 上下文的 Hy3 preview，以及重建预训练和强化学习基础设施、重视真实任务评测与推理成本的研发方向。</p><h3><a href="https://www.tencent.com/zh-hk/tencent-hunyuan-officially-releases-hy3-advancing-agent-capabilities-and-deeper-product-integration/">腾讯混元正式发布 Hy3：增强 agent 能力并深化产品集成</a></h3><p class="muted">腾讯官方发布文章 · 2026-07-06</p><p>正式版发布文章补充了产品反馈闭环：从基础设施重建、preview 发布，到根据产品使用反馈继续改进模型；并介绍其在办公、代码与操作系统助手中的应用。</p></section></main></body></html>
