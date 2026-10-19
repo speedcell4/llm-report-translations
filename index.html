@@ -18,7 +18,7 @@
 <a href="tech-report-reading-list.html">
           精读清单
         </a>
-<a href="#topic-knowledge-maps">专题知识地图</a></div>
+<a href="#series-mtp-speculative">MTP / speculative decoding</a><a href="#topic-knowledge-maps">专题知识地图</a></div>
 </nav>
 <main class="page">
 <header>
@@ -27,7 +27,7 @@
         </h1>
 <p>现有 <span id="report-stats">报告译文（统计中）</span>与 5 篇官方模型卡、4 篇官方技术博客或文章、1 篇技术核查汇总；精读清单单列；另设独立的专题知识地图章节。图片位于 assets/images/；离线阅读请下载 HTML 与 assets 目录，并保持相对路径。</p>
 <p class="muted">
-          整理日期：2026-10-18。系列按研究阅读重要程度排列：DeepSeek、Qwen、Kimi 优先，Xiaomi / MiMo 固定紧接 Kimi，其次训练基线与互补方向，数据专题集中归类（含结构化数据建模）；这是编辑判断，不是能力排名。类内按原文首次提交日期从早到晚排列；汇总材料按核查日期排序。页码覆盖依据本地 PDF 与 HTML，不表示本次重新精读。
+          整理日期：2026-10-19。系列按研究阅读重要程度排列：DeepSeek、Qwen、Kimi 优先，Xiaomi / MiMo 固定紧接 Kimi，其次训练基线与互补方向，数据专题集中归类（含结构化数据建模）；这是编辑判断，不是能力排名。类内按原文首次提交日期从早到晚排列；汇总材料按核查日期排序。页码覆盖依据本地 PDF 与 HTML，不表示本次重新精读。
         </p>
 </header>
 <p class="muted" id="version-check-status" role="status">arXiv 版本检查：读取中（每日自动检查）</p>
@@ -293,6 +293,31 @@
 </section>
 <section id="series-zgcm"><h2>ZGCM 系列</h2><ul>
 <li data-date="2026-09-11"><a href="zgcm-1-zh.html">ZGCM-1：用于数学与 Agent 搜索的完全开放、高效基础模型</a><small><span class="citation-count" data-arxiv="2609.13356">引用量：待查询</span> · 首次提交：2026-09-11 · 译文版本：arXiv:2609.13356v2（2026-09-20） · 页码覆盖 48/48 页</small></li></ul></section>
+<section id="series-mtp-speculative"><h2>MTP / speculative decoding 专题</h2><p>另见 <a href="deepseek-v3-zh.html">DeepSeek-V3 技术报告</a>（53 页，保留于 DeepSeek 系列）。</p>
+<h3>综述与基础算法</h3><ul>
+<li data-date="2022-11-30"><a href="mtp-speculative-decoding-zh.html">通过 Speculative Decoding 实现 Transformer 快速推理</a><small><span class="citation-count" data-arxiv="2211.17192">引用量：待查询</span> · 首次提交：2022-11-30 · 译文版本：ICML 2023 正式会议版 · 关联论文：arXiv:2211.17192 · 页码覆盖 13/13 页</small></li>
+<li data-date="2023-02-02"><a href="mtp-speculative-sampling-zh.html">通过 Speculative Sampling 加速大语言模型 decoding</a><small><span class="citation-count" data-arxiv="2302.01318">引用量：待查询</span> · 首次提交：2023-02-02 · 译文版本：arXiv:2302.01318v1（2023-02-02） · 页码覆盖 11/11 页</small></li>
+<li data-date="2024-01-15"><a href="mtp-survey-xia-zh.html">释放大语言模型推理效率：Speculative Decoding 全面综述</a><small><span class="citation-count" data-arxiv="2401.07851">引用量：待查询</span> · 首次提交：2024-01-15 · 译文版本：arXiv:2401.07851v3（2024-06-04） · 页码覆盖 17/17 页</small></li>
+<li data-date="2025-02-27"><a href="mtp-survey-hu-zh.html">Speculative Decoding 及其拓展：技术深度综述</a><small><span class="citation-count" data-arxiv="2502.19732">引用量：待查询</span> · 首次提交：2025-02-27 · 译文版本：arXiv:2502.19732v4（2025-10-08） · 页码覆盖 10/10 页</small></li>
+</ul>
+<h3>MTP 训练与多头草稿</h3><ul>
+<li data-date="2024-01-19"><a href="mtp-medusa-zh.html">Medusa：使用多个 decoding 头的简洁 LLM 推理加速框架</a><small><span class="citation-count" data-arxiv="2401.10774">引用量：待查询</span> · 首次提交：2024-01-19 · 译文版本：arXiv:2401.10774v3（2024-06-14） · 页码覆盖 27/27 页</small></li>
+<li data-date="2024-04-30"><a href="mtp-mtp-zh.html">通过多 token 预测构建更好、更快的大语言模型</a><small><span class="citation-count" data-arxiv="2404.19737">引用量：待查询</span> · 首次提交：2024-04-30 · 译文版本：arXiv:2404.19737v1（2024-04-30） · 页码覆盖 29/29 页</small></li>
+<li data-date="2025-08-26"><a href="mtp-top-zh.html">预测未来 token 的顺序可以改善语言建模</a><small><span class="citation-count" data-arxiv="2508.19228">引用量：待查询</span> · 首次提交：2025-08-26 · 译文版本：ICML 2026 正式会议版（169012–169029） · 关联论文：arXiv:2508.19228 · 页码覆盖 18/18 页</small></li>
+<li data-date="2026-10-01"><a href="mtp-post-training-mtp-zh.html">匹配分布，而非计算量：后训练 Multi-Token Prediction 头</a><small><span class="citation-count" data-arxiv="2610.00888">引用量：待查询</span> · 首次提交：2026-10-01 · 译文版本：arXiv:2610.00888v1（2026-10-01） · 页码覆盖 12/12 页</small></li>
+</ul>
+<h3>EAGLE 系列</h3><ul>
+<li data-date="2024-01-26"><a href="mtp-eagle-zh.html">EAGLE：Speculative Sampling 需要重新思考特征不确定性</a><small><span class="citation-count" data-arxiv="2401.15077">引用量：待查询</span> · 首次提交：2024-01-26 · 译文版本：arXiv:2401.15077v3（2025-03-04） · 页码覆盖 13/13 页</small></li>
+<li data-date="2024-06-24"><a href="mtp-eagle2-zh.html">EAGLE-2：通过动态草稿树加速语言模型推理</a><small><span class="citation-count" data-arxiv="2406.16858">引用量：待查询</span> · 首次提交：2024-06-24 · 译文版本：EMNLP 2024 正式会议版（7421–7432） · 关联论文：arXiv:2406.16858 · 页码覆盖 12/12 页</small></li>
+<li data-date="2025-03-03"><a href="mtp-eagle3-zh.html">EAGLE-3：通过训练时测试扩展大语言模型推理加速</a><small><span class="citation-count" data-arxiv="2503.01840">引用量：待查询</span> · 首次提交：2025-03-03 · 译文版本：NeurIPS 2025 正式会议版 · 关联论文：arXiv:2503.01840 · 页码覆盖 20/20 页</small></li>
+</ul>
+<h3>树验证、并行草稿与系统评估</h3><ul>
+<li data-date="2023-05-16"><a href="mtp-specinfer-zh.html">SpecInfer：通过树状 speculative inference 与验证加速大语言模型服务</a><small><span class="citation-count" data-arxiv="2305.09781">引用量：待查询</span> · 首次提交：2023-05-16 · 译文版本：arXiv:2305.09781v4（2024-04-01） · 页码覆盖 18/18 页</small></li>
+<li data-date="2025-12-31"><a href="mtp-performance-zh.html">Speculative Decoding：性能提升还是假象？</a><small><span class="citation-count" data-arxiv="2601.11580">引用量：待查询</span> · 首次提交：2025-12-31 · 译文版本：arXiv:2601.11580v2（2026-03-18） · 页码覆盖 22/22 页</small></li>
+<li data-date="2026-02-05"><a href="mtp-dflash-zh.html">DFlash：用于极速 speculative decoding 的块扩散</a><small><span class="citation-count" data-arxiv="2602.06036">引用量：待查询</span> · 首次提交：2026-02-05 · 译文版本：arXiv:2602.06036v2（2026-05-28），ICML 2026 定稿 · 页码覆盖 13/13 页</small></li>
+<li data-date="2026-09-21"><a href="mtp-hspec-zh.html">H-Spec：无需草稿器侧 KV cache 的并行 speculative decoding</a><small><span class="citation-count" data-arxiv="2609.24197">引用量：待查询</span> · 首次提交：2026-09-21 · 译文版本：arXiv:2609.24197v1（2026-09-21） · 页码覆盖 22/22 页</small></li>
+</ul>
+</section>
 <section id="series-data"><h2>数据专题：训练语料、清洗去重、合成数据与混合配比</h2><ul>
 <li data-date="2020-12-31"><a href="pile-zh.html">The Pile：用于语言建模的 800GB 多样化文本数据集</a><small><span class="citation-count" data-arxiv="2101.00027">引用量：待查询</span> · 首次提交：2020-12-31 · 译文版本：arXiv:2101.00027v1（2020-12-31） · 页码覆盖 39/39 页</small></li><li data-date="2021-07-14"><a href="deduplicating-training-data-zh.html">训练数据去重使语言模型更好</a><small><span class="citation-count" data-arxiv="2107.06499">引用量：待查询</span> · 首次提交：2021-07-14 · 译文版本：ACL 2022（8424–8445） · 关联论文：arXiv:2107.06499v1 · 页码覆盖 22/22 页</small></li><li data-date="2022-12-20"><a href="self-instruct-zh.html">SELF-INSTRUCT：利用自行生成的指令对齐语言模型</a><small><span class="citation-count" data-arxiv="2212.10560">引用量：待查询</span> · 首次提交：2022-12-20 · 译文版本：ACL 2023 正式会议版本（2023-07-09—14），原文页码 13484–13508 · 关联论文：arXiv:2212.10560v1 · 页码覆盖 25/25 页</small></li><li data-date="2023-05-17"><a href="doremi-zh.html">DoReMi：优化数据混合，加速语言模型预训练</a><small><span class="citation-count" data-arxiv="2305.10429">引用量：待查询</span> · 首次提交：2023-05-17 · 译文版本：arXiv:2305.10429v4（2023-11-21） · 页码覆盖 27/27 页</small></li><li data-date="2023-06-20"><a href="textbooks-are-all-you-need-zh.html">Textbooks Are All You Need：只需教材</a><small><span class="citation-count" data-arxiv="2306.11644">引用量：待查询</span> · 首次提交：2023-06-20 · 译文版本：arXiv:2306.11644v2（2023-10-02） · 页码覆盖 26/26 页</small></li><li data-date="2024-01-31"><a href="dolma-zh.html">Dolma：用于语言模型预训练研究的三万亿 token 开放语料库</a><small><span class="citation-count" data-arxiv="2402.00159">引用量：待查询</span> · 首次提交：2024-01-31 · 译文版本：arXiv:2402.00159v2（2024-06-06） · 页码覆盖 64/64 页</small></li><li data-date="2024-06-17">
 <a href="dclm-zh.html">
