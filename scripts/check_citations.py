@@ -71,7 +71,8 @@ def merge_reports(ids, records, previous, checked_at):
 
 
 def main():
-    ids = sorted(set(re.findall(r'arXiv:(\d{4}\.\d{4,5})v\d+', (ROOT / 'index.html').read_text())))
+    directories = '\n'.join(p.read_text() for p in [ROOT / 'index.html', ROOT / 'topics.html'] if p.exists())
+    ids = sorted(set(re.findall(r'arXiv:(\d{4}\.\d{4,5})v\d+', directories)))
     if not ids:
         raise ValueError('No paper IDs found')
     target = ROOT / 'assets/citations.json'

@@ -87,7 +87,8 @@ class CitationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'assets').mkdir()
-            (root / 'index.html').write_text('arXiv:2401.00001v1 arXiv:2401.00002v1')
+            (root / 'index.html').write_text('arXiv:2401.00001v1')
+            (root / 'topics.html').write_text('arXiv:2401.00002v1')
             target = root / 'assets/citations.json'
             target.write_text(json.dumps({'checkedAt': 'old', 'reports': {'2401.00002': {'citationCount': 7, 'title': 'Second'}}}))
             first = {'paperId': 'a' * 40, 'title': 'First', 'citationCount': 20,

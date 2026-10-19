@@ -1,3 +1,8 @@
+const movedTopics = new Set(['#series-mtp-speculative', '#series-data', '#topic-knowledge-maps']);
+if (!location.pathname.endsWith('/topics.html') && movedTopics.has(location.hash)) {
+  location.replace('topics.html' + location.hash);
+}
+
 document.querySelectorAll('section[id^="series-"] > ul').forEach((list) => {
   const entries = Array.from(list.children);
   entries.sort((a, b) => a.dataset.date.localeCompare(b.dataset.date));
@@ -9,7 +14,7 @@ const reportPages = Array.from(document.querySelectorAll('section[id^="series-"]
   .filter(Boolean);
 const totalPages = reportPages.reduce((total, match) => total + Number(match[1]), 0);
 document.getElementById('report-stats').textContent =
-  `${reportPages.length} 篇报告译文（${totalPages.toLocaleString('en-US')} 页）`;
+  `${reportPages.length} ${document.getElementById('report-stats').dataset.label || '篇报告译文'}（${totalPages.toLocaleString('en-US')} 页）`;
 
 async function checkReportVersions() {
   const status = document.getElementById('version-check-status');

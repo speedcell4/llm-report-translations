@@ -23,7 +23,8 @@ def parse_versions(xml):
 
 
 if __name__ == '__main__':
-    ids = sorted(set(re.findall(r'arXiv:(\d{4}\.\d{4,5})v\d+', (ROOT / 'index.html').read_text())))
+    directories = '\n'.join(p.read_text() for p in [ROOT / 'index.html', ROOT / 'topics.html'] if p.exists())
+    ids = sorted(set(re.findall(r'arXiv:(\d{4}\.\d{4,5})v\d+', directories)))
     query = urllib.parse.urlencode({'id_list': ','.join(ids), 'max_results': len(ids)})
     with urllib.request.urlopen('https://export.arxiv.org/api/query?' + query, timeout=60) as response:
         versions = parse_versions(response.read())
