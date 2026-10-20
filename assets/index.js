@@ -3,13 +3,13 @@ if (!location.pathname.endsWith('/topics.html') && movedTopics.has(location.hash
   location.replace('topics.html' + location.hash);
 }
 
-document.querySelectorAll('section[id^="series-"] > ul').forEach((list) => {
+document.querySelectorAll('section[id] > ul').forEach((list) => {
   const entries = Array.from(list.children);
   entries.sort((a, b) => a.dataset.date.localeCompare(b.dataset.date));
   list.append(...entries);
 });
 
-const reportPages = Array.from(document.querySelectorAll('section[id^="series-"] > ul > li small'))
+const reportPages = Array.from(document.querySelectorAll('section[id] > ul > li small'))
   .map((entry) => entry.textContent.match(/页码覆盖\s+(\d+)\/\d+\s*页/))
   .filter(Boolean);
 const totalPages = reportPages.reduce((total, match) => total + Number(match[1]), 0);
@@ -26,7 +26,7 @@ async function checkReportVersions() {
     if (!data.reports || !Number.isFinite(checkedAt.getTime())) throw new Error('Invalid version data');
     let updates = 0;
     let unknown = 0;
-    document.querySelectorAll('section[id^="series-"] > ul > li small').forEach((entry) => {
+    document.querySelectorAll('section[id] > ul > li small').forEach((entry) => {
       const citation = entry.querySelector('.citation-count');
       const text = citation ? entry.textContent.slice(citation.textContent.length + 3) : entry.textContent;
       const match = text.match(/译文版本：arXiv:(\d{4}\.\d{4,5})v(\d+)（\d{4}-\d{2}-\d{2}）/);
