@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-18T06:50:35.468840+00:00",
+  "checkedAt": "2026-10-20T06:56:37.458096+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4019,
@@ -801,9 +801,9 @@
       }
     },
     "2107.06499": {
-      "citationCount": 1012,
+      "citationCount": 1019,
       "url": "https://www.semanticscholar.org/paper/4566c0d22ebf3c31180066ab23b6c445aeec78d5",
-      "checkedAt": "2026-10-11T13:21:02.879613+00:00",
+      "checkedAt": "2026-10-20T06:56:37.458096+00:00",
       "paperId": "4566c0d22ebf3c31180066ab23b6c445aeec78d5",
       "title": "Deduplicating Training Data Makes Language Models Better",
       "externalIds": {
@@ -911,7 +911,7 @@
       }
     }
   },
-  "resumeFrom": "2107.06499",
-  "rateLimitedAt": "2026-10-18T06:51:37.041146+00:00",
-  "rateLimitedTitle": "Deduplicating Training Data Makes Language Models Better"
+  "resumeFrom": "2203.15556",
+  "rateLimitedAt": "2026-10-20T06:57:38.931876+00:00",
+  "rateLimitedTitle": "2203.15556"
 }
