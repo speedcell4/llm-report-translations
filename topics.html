@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>大模型专题知识</title><link href="assets/document.css?v=9037c79583a5" rel="stylesheet"><script defer src="assets/index.js?v=scaling-laws-20261020"></script></head>
 <body class="directory"><nav aria-label="文档导航" class="document-nav"><div class="nav-links"><a href="index.html">LLM 技术报告</a><a href="topics.html" aria-current="page">专题知识</a><a href="#topic-scaling-laws">Scaling laws</a><a href="#series-mtp-speculative">MTP / speculative decoding</a><a href="#topic-sparse-attention">稀疏 attention</a><a href="#series-data">训练数据</a><a href="#topic-agent-memory">Agent 记忆</a><a href="#topic-knowledge-maps">知识地图与指南</a></div></nav>
-<main class="page"><header><h1>大模型专题知识</h1><p>Scaling laws、MTP / speculative decoding、稀疏 attention、训练数据等论文译文，以及低精度、OPD 与 agent 记忆的知识地图和上手指南。</p><p>现有 <span id="report-stats" data-label="篇论文译文">论文译文（统计中）</span>，另有 4 篇专题整理与指南。模型技术报告请见 <a href="index.html">LLM 技术报告</a>。</p><p class="muted">整理日期：2026-10-20。各专题内按原文首次提交日期排列；图表保留原文。离线阅读请一并保留 assets 目录。</p></header>
+<main class="page"><header><h1>大模型专题知识</h1><p>Scaling laws、MTP / speculative decoding、稀疏 attention、训练数据等论文译文与博客综述，以及低精度、OPD 与 agent 记忆的知识地图和上手指南。</p><p>现有 <span id="report-stats" data-label="篇论文译文">论文译文（统计中）</span>，另有 4 篇专题整理与指南和 1 篇外部博客综述。模型技术报告请见 <a href="index.html">LLM 技术报告</a>。</p><p class="muted">整理日期：2026-10-20。各专题内按原文首次提交日期排列；图表保留原文。离线阅读请一并保留 assets 目录。</p></header>
 <p class="muted" id="version-check-status" role="status">arXiv 版本检查：读取中（每日自动检查）</p><p class="muted" id="citation-check-status" role="status">Semantic Scholar 引用量：读取缓存中（每天自动更新）</p>
 <section id="topic-scaling-laws"><h2>Scaling laws：模型、数据与计算预算</h2><ul>
 <li data-date="2020-01-23"><a href="scaling-kaplan-zh.html">神经语言模型的 scaling laws</a><small><span class="citation-count" data-arxiv="2001.08361">引用量：待查询</span> · 首次提交：2020-01-23 · 译文版本：arXiv:2001.08361v1（2020-01-23） · 页码覆盖 30/30 页</small></li>
@@ -13,6 +13,7 @@
 <li data-date="2024-06-12"><a href="scaling-reconciling-zh.html">调和 Kaplan 与 Chinchilla 的 scaling laws</a><small><span class="citation-count" data-arxiv="2406.12907">引用量：待查询</span> · 首次提交：2024-06-12 · 译文版本：arXiv:2406.12907v3（2024-11-21） · 页码覆盖 17/17 页</small></li>
 <li data-date="2024-06-27"><a href="scaling-resolving-zh.html">化解语言模型计算最优 scaling 的分歧</a><small><span class="citation-count" data-arxiv="2406.19146">引用量：待查询</span> · 首次提交：2024-06-27 · 译文版本：arXiv:2406.19146v4（2025-01-19） · 页码覆盖 30/30 页</small></li>
 <li data-date="2026-05-02"><a href="scaling-prescriptive-zh.html">面向数据受限训练的指导性 scaling laws</a><small><span class="citation-count" data-arxiv="2605.01640">引用量：待查询</span> · 首次提交：2026-05-02 · 译文版本：arXiv:2605.01640v1（2026-05-02） · 页码覆盖 24/24 页</small></li>
+<li id="scaling-laws-carefully" data-date="2026-06-24"><a href="https://lilianweng.github.io/posts/2026-06-24-scaling-laws/">谨慎看待 Scaling laws（Scaling Laws, Carefully）</a><small>博客综述 · Lilian Weng · 发布：2026-06-24 · 英文原文</small><p>从 Kaplan 与 Chinchilla 的计算预算分配，延伸到数据受限训练，并讨论参数统计口径、拟合精度和实验设置对外推结论的影响。</p></li>
 </ul></section>
 <section id="series-mtp-speculative"><h2>MTP / speculative decoding 专题</h2><p>另见 <a href="deepseek-v3-zh.html">DeepSeek-V3 技术报告</a>（53 页，保留于 DeepSeek 系列）。</p>
 <h3>综述与基础算法</h3><ul>
