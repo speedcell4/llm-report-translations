@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent 记忆专题：Mem0、MemGPT / Letta、Zep 与 A-MEM</title>
+<meta name="description" content="解释 agent 记忆解决的系统层次，对照 Mem0、MemGPT / Letta、Zep / Graphiti、A-MEM 与 RAG、长上下文及 KV cache，并提供原论文阅读路线。">
+<link rel="stylesheet" href="assets/document.css?v=9037c79583a5"></head>
+<body class="technical-note"><nav class="document-nav" aria-label="文档导航"><div class="nav-links"><a href="topics.html#topic-agent-memory">Agent 记忆专题</a><a href="topics.html">全部专题</a><a href="index.html">LLM 技术报告</a><a href="#reading">原论文与阅读路线</a></div><div class="document-title">Agent 记忆：问题分层与方案地图</div><div class="document-meta">专题导读 · 整理日期：2026-10-20 · 北京时间</div></nav>
+<main><section class="page" id="overview">
+<header><h1>Agent 记忆专题：Mem0 等方案到底在解决哪一层问题？</h1><p>从跨会话状态、记忆读写与上下文装配，理解 Mem0、MemGPT / Letta、Zep / Graphiti 与 A-MEM。</p></header>
+<p><strong>核心问题是：让同一个 agent 在多次交互中保留有用经历，并在需要时把合适的信息带回模型当前可见的上下文。</strong>这包括记住用户偏好和项目决定、处理事实变化、恢复过去的经历，以及控制每轮需要读取的历史量。Mem0 这一类方案主要工作在模型外部的应用与 agent 系统层。<a href="https://arxiv.org/abs/2504.19413">Mem0 论文</a>、<a href="https://arxiv.org/abs/2310.08560">MemGPT 论文</a>。</p>
+<p class="note">阅读坐标：基础模型提供语言与推理能力；记忆系统负责保存、组织和供给过去的信息；上下文管理决定这一次究竟让模型看到什么。它们可以组合使用。下文的分层与例子是基于一手资料的编辑整理；论文机制、当前产品行为与示意例子分别标明。</p>
+<p class="muted">整理日期：2026-10-20（北京时间）。本文为专题导读，包含原论文与官方文档入口；不是这些论文的全文译文，也未复现实验。官方文档是滚动页面，实际使用应以所安装版本为准。</p>
+<nav class="contents" aria-label="专题目录"><a href="#layers">问题分层</a><a href="#lifecycle">记忆生命周期</a><a href="#systems">方案对照</a><a href="#example">同一个例子</a><a href="#boundaries">RAG 与长上下文</a><a href="#evaluation">怎样评估</a><a href="#reading">论文与阅读路线</a></nav>
+</section>
+
+<section class="page" id="layers"><h2>1. 先分清“记忆”存在哪里</h2>
+<p>“Memory”在不同论文里指的对象并不相同。下表按信息放在哪里、如何进入计算来划分，帮助定位问题；这些层次并不互斥。</p>
+<div class="table-wrap" role="region" tabindex="0" aria-label="记忆层次对照表，可横向滚动"><table><thead><tr><th scope="col">层次</th><th scope="col">保存什么、怎样使用</th><th scope="col">解决的问题与边界</th></tr></thead><tbody>
+<tr><th scope="row">模型参数</th><td>训练获得的知识与行为模式，通过前向计算发挥作用。</td><td>提供通用能力。用户新说了一件事，并不等于基础模型权重已经更新。</td></tr>
+<tr><th scope="row">模型内部的神经记忆</th><td>例如 Titans 的可学习记忆模块，在模型内部压缩和利用历史。</td><td>属于架构与学习机制研究，和外部数据库保存用户事实属于不同切入点。</td></tr>
+<tr><th scope="row">KV cache</th><td>保存历史 token 在 attention 中计算出的 K、V 张量。</td><td>复用计算，减少自回归生成时的重复工作；本身不负责判断哪项用户事实应保存、失效或被纠正。</td></tr>
+<tr><th scope="row">当前上下文</th><td>本轮模型输入中的指令、消息、工具结果及取回的资料。</td><td>决定模型此刻可直接利用的信息；上下文窗口更大，意味着一次能放入更多 token。</td></tr>
+<tr><th scope="row">外部长期记忆</th><td>保存事实、事件、笔记、关系或经验，再通过检索、工具调用等方式取回。</td><td>Mem0、MemGPT、Zep、A-MEM 的主要讨论范围：跨会话保存、组织、更新与取用经历。</td></tr>
+<tr><th scope="row">执行状态持久化</th><td>保存任务进度、消息、工具调用或工作流状态。</td><td>解决中断后如何继续执行。保存了完整执行记录，还需要额外机制决定哪些历史对当前问题有用。</td></tr>
+</tbody></table></div>
+<p>参数记忆与外部检索的区分可见 <a href="https://arxiv.org/abs/2005.11401">RAG 原论文</a>；模型内部记忆见 <a href="https://arxiv.org/abs/2501.00663">Titans</a>；KV cache 的计算用途见 <a href="https://huggingface.co/docs/transformers/en/cache_explanation">Transformers 官方说明</a>；agent 状态与记忆的关系见 <a href="https://docs.letta.com/v1-sdk/concepts/stateful-agents">Letta V1 状态模型</a>。</p>
+<p><strong>判断属于哪一层，可以直接问：新增一条用户事实时，系统是在改模型参数、保存计算张量，还是写一条外部记录并在之后取回？</strong>对这里的几个外部记忆系统，主体是第三种；记忆管理本身仍会调用 LLM、embedding 模型或检索器。</p>
+</section>
+
+<section class="page" id="lifecycle"><h2>2. 它们在管理怎样的生命周期？</h2>
+<pre aria-label="记忆读写流程示意">交互、工具结果、业务事件
+        ↓ 选择与提取
+可复用的事实 / 经历 / 决策 / 笔记
+        ↓ 组织、去重、关联、版本或有效时间
+外部记忆存储
+        ↓ 根据当前问题检索、过滤与排序
+本轮上下文 + 当前请求
+        ↓ 模型回答或行动
+新的交互，再进入记忆写入流程</pre>
+<p>这是综合几种方案得到的示意流程，具体步骤和顺序因实现而异。Mem0 的官方接入流程是交互后调用 <code>add</code>，下一轮请求前调用 <code>search</code>，由应用决定把哪些结果放进 prompt。<a href="https://docs.mem0.ai/core-concepts/how-it-works">官方流程</a>。</p>
+<ol>
+<li><strong>写入选择：</strong>区分值得长期保存的偏好、目标和决定，与临时要求、假设或随口一提。保存全部聊天原文能保留证据，但不能替代这一步。</li>
+<li><strong>组织和维护：</strong>把新事实和已有事实关联起来，区分补充、纠错与随时间发生的变化；不同系统可能采用覆盖、追加或保留失效历史。</li>
+<li><strong>读取选择：</strong>按用户、agent 或项目范围过滤，再依据语义、关键词、时间或关系找相关信息。</li>
+<li><strong>上下文装配：</strong>从候选结果里选择足够且可靠的内容，在本轮 token 预算内供模型使用。已经持久化，不代表这一次已经被模型看到。</li>
+</ol>
+<p>以语义事实、原始事件或经验步骤组织记忆，是理解数据用途的另一种坐标：例如“用户偏好中文”是事实；“某次会话用户改了要求”是事件；“这个仓库怎样运行测试”是可复用经验。它们不必使用不同数据库，也不能仅凭产品宣传中的“长期记忆”判断其覆盖范围。时间关系与来源追溯的具体实现可见 <a href="https://github.com/getzep/graphiti">Graphiti</a>。</p>
+</section>
+
+<section class="page" id="systems"><h2>3. 四条代表路线：重点分别在哪里？</h2>
+<div class="table-wrap" role="region" tabindex="0" aria-label="代表记忆方案对照表，可横向滚动"><table><thead><tr><th scope="col">方案</th><th scope="col">主要切入点</th><th scope="col">读论文时重点看什么</th></tr></thead><tbody>
+<tr><th scope="row">Mem0</th><td>从交互中提取可复用事实，作为应用可调用的记忆层。</td><td>提取、整合、检索的开销；论文方法与新旧 SDK 行为的区别。</td></tr>
+<tr><th scope="row">MemGPT / Letta</th><td>管理 agent 的可见上下文和外部存储，使经历跨会话保留。</td><td>哪些信息常驻、哪些按需取回，谁决定读写；论文与当前产品的演进。</td></tr>
+<tr><th scope="row">Zep / Graphiti</th><td>把持续变化的事实组织为带时间与来源的关系图。</td><td>实体识别、关系失效、历史查询和图检索。</td></tr>
+<tr><th scope="row">A-MEM</th><td>让记忆形成相互关联、可继续演化的笔记网络。</td><td>新记忆怎样关联旧记忆，旧笔记如何随新经历演化。</td></tr>
+</tbody></table></div>
+<h3 id="mem0">Mem0：应用可调用的事实记忆层</h3>
+<p>2025 年论文提出从会话中提取信息，再与已有记忆整合、检索；其基础方案包含 <code>ADD / UPDATE / DELETE / NOOP</code> 决策，另研究了图结构扩展 Mem0ᵍ。这里关注的是从不断增长的历史里保留可复用信息，以及回答质量和检索成本之间的取舍。<a href="https://arxiv.org/abs/2504.19413">论文</a>。</p>
+<p class="note"><strong>版本区别：</strong>本次读取的官方 OSS v2 → v3 迁移文档已经改为单次 LLM 调用的 ADD-only 自动提取；显式纠错或移除使用 <code>update</code>、<code>delete</code>。该版本还把外部 graph store 集成移出 OSS，图记忆由 Platform 提供。不能把论文的自动更新流程、历史 OSS 功能和当前产品混写成同一套行为。<a href="https://docs.mem0.ai/migration/oss-v2-to-v3">迁移文档</a>。</p>
+<h3 id="memgpt">MemGPT / Letta：agent 怎样管理自己可见的历史？</h3>
+<p>MemGPT 把有限的上下文类比为快速内存，把外部存储类比为更大的慢速存储，通过工具和控制流在层次之间移动信息。在多会话聊天和文档分析中，关键问题是哪些内容留在上下文里、什么时候检索或写入外部记忆。这个“虚拟上下文”是系统管理办法，并不改变基础模型单次输入的窗口上限。<a href="https://arxiv.org/abs/2310.08560">MemGPT 论文</a>。</p>
+<p>Letta 延续了有状态 agent 的方向，但当前产品不能直接等同于 2023 年论文或旧版 API。V1 文档使用 memory blocks、消息和 archival memory 等概念；当前 Agent SDK 文档转向 Markdown 记忆文件与 MemFS：<code>system/</code> 下的文件进入每轮 system prompt，其他文件按需读取，并描述后台整理记忆的 dreaming 机制。<a href="https://docs.letta.com/v1-sdk/concepts/stateful-agents">V1 文档</a>、<a href="https://docs.letta.com/agent-sdk/memory">当前 Memory 文档</a>。</p>
+<h3 id="zep">Zep / Graphiti：事实什么时候成立，关系怎样变化？</h3>
+<p>Zep 论文的核心是时序知识图谱：从会话和业务数据中组织实体、事实与关系，保留来源，并区分事实在现实中的有效时间和被系统记录的时间。它尤其对应“某人过去和现在分别属于哪个项目”这类变化关系，而不只是找一段文字相近的历史。<a href="https://arxiv.org/abs/2501.13956">Zep 论文</a>。</p>
+<p>Graphiti 是开源图构建与查询框架；Zep 是相关的托管上下文基础设施，二者部署和服务能力不能直接画等号。Graphiti 官方说明强调增量更新、事实有效区间、原始 episode 来源与混合检索。图结构能表达这些关系，实际是否识别正确，仍取决于实体消歧、事实提取及检索结果。<a href="https://github.com/getzep/graphiti">官方仓库</a>。</p>
+<h3 id="amem">A-MEM：让笔记之间形成可演化的关联</h3>
+<p>A-MEM 从 Zettelkasten 笔记组织获得启发，为记忆生成关键词、标签和上下文描述，建立与已有记忆的链接，并在新记忆到来时演化相关旧记忆。它研究的是记忆结构怎样随经历发展，而不是要求开发者事先规定全部关联。这里的 agentic memory 是记忆系统的组织方式，不表示基础模型权重持续更新。<a href="https://arxiv.org/abs/2502.12110">论文</a>、<a href="https://github.com/agiresearch/A-mem">作者代码</a>。</p>
+</section>
+
+<section class="page" id="example"><h2>4. 用同一个变化场景理解差别</h2>
+<p>下面是虚构的教学例子，用于说明各路线关注的问题，<strong>不是实际运行结果，也不保证任一默认配置都能答对</strong>。</p>
+<ol><li>3 月，用户说：“项目 Atlas 用 MySQL；给我的说明尽量用中文。”</li><li>4 月，用户说：“Atlas 从今天起改用 PostgreSQL，上个月的文档还是旧方案。”</li><li>新会话提问：“Atlas 现在用什么数据库？为什么旧文档写 MySQL？”</li></ol>
+<div class="table-wrap" role="region" tabindex="0" aria-label="相同场景下的关注点，可横向滚动"><table><thead><tr><th scope="col">观察角度</th><th scope="col">需要处理的事</th></tr></thead><tbody>
+<tr><th scope="row">直接回放历史</th><td>把相关消息和日期放入当前上下文，让模型自行比较；前提是历史完整、放得下且模型正确利用。</td></tr>
+<tr><th scope="row">Mem0 路线</th><td>提取项目数据库与语言偏好，并在提问时取回。对于 ADD-only 版本，不能假设新事实会自动覆盖旧事实；应用需按版本设计纠错、过滤及冲突处理。</td></tr>
+<tr><th scope="row">MemGPT / Letta 路线</th><td>保留常用偏好或项目概况，把具体历史按需取回；重点是记忆读写和当前上下文之间的配合。</td></tr>
+<tr><th scope="row">Zep / Graphiti 路线</th><td>表达 Atlas 与数据库的关系及其有效时间，保留旧关系与原始证据，以支持“当时”和“现在”的区分。</td></tr>
+<tr><th scope="row">A-MEM 路线</th><td>把迁移决定与旧项目笔记建立关联、演化相关描述，帮助检索到相互关联的经历。</td></tr>
+</tbody></table></div>
+<p>这个问题至少有四个可分开检查的要求：<strong>保存过事实、取回了正确记录、分清新旧有效性、回答时正确使用证据。</strong>任何一环失败，用户都会感到“它忘了”。增加数据库容量只能覆盖其中一部分。</p>
+</section>
+
+<section class="page" id="boundaries"><h2>5. 与 RAG、长上下文、KV cache 是什么关系？</h2>
+<h3>与 RAG：有重叠，区别主要在维护目标</h3>
+<p>RAG 原论文已经把参数记忆和外部非参数记忆组合起来。“记忆层”也经常检索外部记录，再交给生成模型，因此可以看成具有写入与维护机制的检索增强系统。把对话转成 chunk 并建立向量索引，也是一种记忆基线。<a href="https://arxiv.org/abs/2005.11401">RAG 原论文</a>。</p>
+<p>这里的编辑判断是：相对常见的文档问答，agent 记忆更关心交互不断产生的新信息、同一对象的历史变化，以及哪些信息应继续保留。<strong>不能据此说 RAG 只能检索静态文档，或天然不能处理更新和时间。</strong>如果已有 RAG 具备这些能力，它与记忆系统的功能会有很大交集；应比较实际读写流程。</p>
+<h3>与长上下文：扩大一次能读多少，与决定长期怎么管可以同时做</h3>
+<p>更大的窗口允许直接放入更多历史；外部记忆希望从历史中选出当前有用的部分。全部回放能保留细节，提取和摘要能减少输入，却可能丢失未来才有用的证据。两者的取舍需要实验：历史很短时，直接保留消息可能已经够用；跨会话信息持续积累时，再评估外部记忆是否值得其额外读写成本。MemGPT 与 Mem0 分别研究了上下文管理及记忆提取路线，但不构成所有场景下记忆层都优于长上下文的证明。<a href="https://arxiv.org/abs/2310.08560">MemGPT</a>、<a href="https://arxiv.org/abs/2504.19413">Mem0</a>。</p>
+<h3>与 KV cache：复用计算和选择知识是不同的职责</h3>
+<p>KV cache 可以被持久化或复用，不能简单理解为“只活一轮”。它保存的是和模型、token 序列及位置相关的计算状态，职责是避免重复计算。用户偏好该不该写入、旧事实何时失效、检索范围属于谁，并不由 KV cache 本身决定。外部记忆取回的文字进入 prompt 后，其计算也可以受益于缓存。<a href="https://huggingface.co/docs/transformers/en/cache_explanation">KV cache 原理</a>、<a href="https://huggingface.co/docs/transformers/en/kv_cache">官方缓存策略</a>。</p>
+<h3>与模型内部记忆：研究对象要看具体实现</h3>
+<p>Titans 等工作在模型内部引入学习历史的神经记忆模块；Mem0 等方案主要把记录存于外部，再通过上下文供基础模型使用。看到“long-term memory”时，应先核对读写发生在哪里，再比较其能力和代价。<a href="https://arxiv.org/abs/2501.00663">Titans 论文</a>。</p>
+</section>
+
+<section class="page" id="evaluation"><h2>6. 怎样判断它确实记住了？</h2>
+<p><a href="https://arxiv.org/abs/2402.17753">LoCoMo</a>研究长期、多会话对话中的记忆表现；<a href="https://arxiv.org/abs/2410.10813">LongMemEval</a>把信息提取、跨会话推理、时间推理、知识更新和无法回答时的拒答分开评估。它们比“能从一段历史找到一句话”更接近这里的困难，但聊天记忆得分仍不等于长任务执行能力。</p>
+<p>Mem0 与 Zep 的论文、产品页报告了各自实验中的质量和成本收益。不同底座模型、历史切分、检索预算和评分方式可能改变结果，<strong>不把不同页面上的百分比拼成产品排名</strong>。这里保留原文入口，不转述为独立复现结论。</p>
+<p>对于自己的应用，可以做一个小型对照：同一批带时间的交互、相同模型和问题，分别测试“近期消息”“完整历史”“历史 chunk 检索”“记忆系统”。这是本文建议的验证办法，不是已完成的实验。</p>
+<ul><li><strong>答对了什么：</strong>事实、更新、时间顺序、跨会话关联分别计分；问历史中没说过的事，检查是否编造记忆。</li><li><strong>错在哪里：</strong>分别保留写入结果、检索候选、实际 prompt 和最终回答，区分没存、没找到、拿错版本与没用对。</li><li><strong>花了多少：</strong>同时记录写入及整理成本、检索延迟、生成 token、总成本；异步写入还要检查下一次读取时是否已可见。</li><li><strong>范围是否正确：</strong>加入不同用户、项目的相似事实，以及显式纠错和删除场景。检索分数高，不表示记录属于当前任务或仍然有效。</li></ul>
+<p>如果只是短会话，先保留历史即可；若主要缺少文档知识，先验证文档检索；若故障是跨会话遗忘、偏好不一致或项目事实不断变化，再针对这些失败点评估记忆层。这是按问题选择最小方案的建议，而非对产品能力的排名。</p>
+</section>
+
+<section class="page" id="reading"><h2>7. 论文目录与阅读路线</h2>
+<p><strong>建议阅读顺序：</strong>先用 MemGPT 建立“上下文与外部存储”的坐标，再读 Mem0 的事实提取，接着看 Zep 的时序关系和 A-MEM 的记忆演化；最后回到 LoCoMo、LongMemEval，检查这些设计到底如何被评估。下表按首次提交日期排列，日期使用 arXiv 标示的原始日期。</p>
+<div class="table-wrap" role="region" tabindex="0" aria-label="Agent 记忆原论文目录，可横向滚动"><table><thead><tr><th scope="col">首次提交</th><th scope="col">原文</th><th scope="col">带着什么问题读</th></tr></thead><tbody>
+<tr><td>2023-10-12</td><td><a href="https://arxiv.org/abs/2310.08560">MemGPT: Towards LLMs as Operating Systems</a><br>arXiv:2310.08560</td><td>有限上下文怎样配合外部存储与 agent 控制流？</td></tr>
+<tr><td>2024-02-27</td><td><a href="https://arxiv.org/abs/2402.17753">Evaluating Very Long-Term Conversational Memory of LLM Agents</a><br>arXiv:2402.17753 · LoCoMo</td><td>长时间、多会话对话的记忆怎样评估？</td></tr>
+<tr><td>2024-10-14</td><td><a href="https://arxiv.org/abs/2410.10813">LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory</a><br>arXiv:2410.10813</td><td>事实更新、时间推理与拒答能否分别测量？</td></tr>
+<tr><td>2025-01-20</td><td><a href="https://arxiv.org/abs/2501.13956">Zep: A Temporal Knowledge Graph Architecture for Agent Memory</a><br>arXiv:2501.13956</td><td>动态事实怎样形成带时间的图？</td></tr>
+<tr><td>2025-02-17</td><td><a href="https://arxiv.org/abs/2502.12110">A-MEM: Agentic Memory for LLM Agents</a><br>arXiv:2502.12110</td><td>笔记如何关联、演化，而不只是独立存储？</td></tr>
+<tr><td>2025-04-28</td><td><a href="https://arxiv.org/abs/2504.19413">Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory</a><br>arXiv:2504.19413</td><td>提取什么、如何整合，以及省下的读取成本是否值得？</td></tr>
+</tbody></table></div>
+<p>边界补充：<a href="https://arxiv.org/abs/2005.11401">RAG 原论文</a>（2020-05-22）用于理解参数与非参数记忆；<a href="https://arxiv.org/abs/2501.00663">Titans</a>（2024-12-31）用于对照模型内部的神经记忆。这里选取代表性路线，不声称穷尽所有 memory 研究。</p>
+<h3>落地前再核对官方文档</h3>
+<ul class="source-list"><li>Mem0：<a href="https://github.com/mem0ai/mem0">官方仓库</a>、<a href="https://docs.mem0.ai/core-concepts/how-it-works">当前读写流程</a>、<a href="https://docs.mem0.ai/migration/oss-v2-to-v3">OSS v2 → v3 迁移差异</a>。</li><li>Letta：<a href="https://docs.letta.com/v1-sdk/concepts/stateful-agents">V1 状态模型</a>、<a href="https://docs.letta.com/agent-sdk/memory">当前 Agent SDK 的 Memory / MemFS</a>。旧版概念和接口不直接套用于当前 SDK。</li><li>Zep / Graphiti：<a href="https://github.com/getzep/graphiti">Graphiti 官方仓库</a>。开源框架与托管服务的部署责任分别核对。</li><li>A-MEM：<a href="https://github.com/agiresearch/A-mem">论文作者仓库</a>。用代码与论文共同核对记忆形成和演化流程。</li></ul>
+<p><a href="#overview">返回专题开头</a> · <a href="topics.html#topic-agent-memory">返回 Agent 记忆专题索引</a></p>
+<footer>专题解释依据所列原论文与官方资料；示意例子和验证建议为编辑整理。产品行为以对应版本文档与实际运行结果为准。</footer>
+</section>
+</main></body></html>

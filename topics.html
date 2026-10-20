@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>大模型专题知识</title><link href="assets/document.css?v=9037c79583a5" rel="stylesheet"><script defer src="assets/index.js?v=topic-directory-1"></script></head>
-<body class="directory"><nav aria-label="文档导航" class="document-nav"><div class="nav-links"><a href="index.html">LLM 技术报告</a><a href="topics.html" aria-current="page">专题知识</a><a href="#series-mtp-speculative">MTP / speculative decoding</a><a href="#topic-sparse-attention">稀疏 attention</a><a href="#series-data">训练数据</a><a href="#topic-knowledge-maps">知识地图与指南</a></div></nav>
-<main class="page"><header><h1>大模型专题知识</h1><p>MTP / speculative decoding、稀疏 attention、训练数据、低精度与 OPD 的论文译文、知识地图和上手指南。</p><p>现有 <span id="report-stats" data-label="篇论文译文">论文译文（统计中）</span>，另有 3 篇专题整理与指南。模型技术报告请见 <a href="index.html">LLM 技术报告</a>。</p><p class="muted">整理日期：2026-10-20。各专题内按原文首次提交日期排列；图表保留原文。离线阅读请一并保留 assets 目录。</p></header>
+<body class="directory"><nav aria-label="文档导航" class="document-nav"><div class="nav-links"><a href="index.html">LLM 技术报告</a><a href="topics.html" aria-current="page">专题知识</a><a href="#series-mtp-speculative">MTP / speculative decoding</a><a href="#topic-sparse-attention">稀疏 attention</a><a href="#series-data">训练数据</a><a href="#topic-agent-memory">Agent 记忆</a><a href="#topic-knowledge-maps">知识地图与指南</a></div></nav>
+<main class="page"><header><h1>大模型专题知识</h1><p>MTP / speculative decoding、稀疏 attention、训练数据等论文译文，以及低精度、OPD 与 agent 记忆的知识地图和上手指南。</p><p>现有 <span id="report-stats" data-label="篇论文译文">论文译文（统计中）</span>，另有 4 篇专题整理与指南。模型技术报告请见 <a href="index.html">LLM 技术报告</a>。</p><p class="muted">整理日期：2026-10-20。各专题内按原文首次提交日期排列；图表保留原文。离线阅读请一并保留 assets 目录。</p></header>
 <p class="muted" id="version-check-status" role="status">arXiv 版本检查：读取中（每日自动检查）</p><p class="muted" id="citation-check-status" role="status">Semantic Scholar 引用量：读取缓存中（每天自动更新）</p>
 <section id="series-mtp-speculative"><h2>MTP / speculative decoding 专题</h2><p>另见 <a href="deepseek-v3-zh.html">DeepSeek-V3 技术报告</a>（53 页，保留于 DeepSeek 系列）。</p>
 <h3>综述与基础算法</h3><ul>
@@ -40,6 +40,7 @@
               FineWeb 数据集：从网络中大规模提炼最优质的文本数据
             </a>
 <small><span class="citation-count" data-arxiv="2406.17557">引用量：待查询</span> · 首次提交：2024-06-25 · 译文版本：arXiv:2406.17557v2（2024-10-31） · 页码覆盖 38/38 页</small></li><li data-date="2024-07-01"><a href="regmix-zh.html">RegMix：将语言模型预训练的数据混合建模为回归</a><small><span class="citation-count" data-arxiv="2407.01492">引用量：待查询</span> · 首次提交：2024-07-01 · 译文版本：arXiv:2407.01492v2（2025-01-23） · 页码覆盖 36/36 页</small></li><li data-date="2024-12-03"><a href="nemotron-cc-zh.html">Nemotron-CC：将 Common Crawl 转化为精炼的长训练周期预训练数据集</a><small><span class="citation-count" data-arxiv="2412.02595">引用量：待查询</span> · 首次提交：2024-12-03 · 译文版本：ACL 2025（2459–2475） · 关联论文：arXiv:2412.02595v1 · 页码覆盖 17/17 页</small></li><li data-date="2025-06-26"><a href="fineweb2-zh.html">FineWeb2：用一条流水线扩展所有语言——让预训练数据处理适配每种语言</a><small><span class="citation-count" data-arxiv="2506.20920">引用量：待查询</span> · 首次提交：2025-06-26 · 译文版本：arXiv:2506.20920v1（2025-06-26） · 页码覆盖 59/59 页</small></li></ul></section>
+<section id="topic-agent-memory"><h2>Agent 记忆专题</h2><p>跨会话状态、记忆读写、时间关系与上下文管理；覆盖 Mem0、MemGPT / Letta、Zep / Graphiti、A-MEM，以及 LoCoMo、LongMemEval 评估。</p><ul><li data-date="2026-10-20"><a href="agent-memory-map-zh.html">Agent 记忆：Mem0 等方案到底在解决哪一层问题？</a><small>专题导读 · 整理日期：2026-10-20 · 问题分层、方案对照、原论文目录与阅读路线 · 论文原文入口，尚非全文译文</small></li></ul></section>
 <section id="topic-knowledge-maps"><h2>专题知识地图</h2><p>跨模型的原理、工程方案与上手指南。</p><ul>
 
 
