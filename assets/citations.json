@@ -1,10 +1,10 @@
 {
-  "checkedAt": "2026-10-20T06:56:37.458096+00:00",
+  "checkedAt": "2026-10-22T06:57:51.669488+00:00",
   "reports": {
     "2310.06825": {
-      "citationCount": 4019,
+      "citationCount": 4064,
       "url": "https://www.semanticscholar.org/paper/db633c6b1c286c0386f0078d8a2e6224e03a6227",
-      "checkedAt": "2026-10-11T13:12:56.920764+00:00",
+      "checkedAt": "2026-10-22T06:57:49.298426+00:00",
       "paperId": "db633c6b1c286c0386f0078d8a2e6224e03a6227",
       "title": "Mistral 7B",
       "externalIds": {
@@ -15,9 +15,9 @@
       }
     },
     "2401.04088": {
-      "citationCount": 2203,
+      "citationCount": 2233,
       "url": "https://www.semanticscholar.org/paper/411114f989a3d1083d90afd265103132fee94ebe",
-      "checkedAt": "2026-10-11T13:12:59.684987+00:00",
+      "checkedAt": "2026-10-22T06:57:51.669488+00:00",
       "paperId": "411114f989a3d1083d90afd265103132fee94ebe",
       "title": "Mixtral of Experts",
       "externalIds": {
@@ -815,9 +815,9 @@
       }
     },
     "2212.10560": {
-      "citationCount": 3739,
+      "citationCount": 3797,
       "url": "https://www.semanticscholar.org/paper/e65b346d442e9962a4276dc1c1af2956d9d5f1eb",
-      "checkedAt": "2026-10-11T13:21:02.879613+00:00",
+      "checkedAt": "2026-10-22T06:53:56.352048+00:00",
       "paperId": "e65b346d442e9962a4276dc1c1af2956d9d5f1eb",
       "title": "Self-Instruct: Aligning Language Models with Self-Generated Instructions",
       "externalIds": {
@@ -829,9 +829,9 @@
       }
     },
     "2306.11644": {
-      "citationCount": 677,
+      "citationCount": 684,
       "url": "https://www.semanticscholar.org/paper/2922768fd451ecdb45f48c1a83eb57f54a91221b",
-      "checkedAt": "2026-10-11T13:21:02.879613+00:00",
+      "checkedAt": "2026-10-22T06:56:44.058190+00:00",
       "paperId": "2922768fd451ecdb45f48c1a83eb57f54a91221b",
       "title": "Textbooks Are All You Need",
       "externalIds": {
@@ -909,9 +909,112 @@
         "ArXiv": "2609.26368",
         "CorpusId": 292227449
       }
+    },
+    "2203.15556": {
+      "citationCount": 3936,
+      "url": "https://www.semanticscholar.org/paper/8342b592fe238f3d230e4959b06fd10153c45db1",
+      "checkedAt": "2026-10-22T06:53:41.562154+00:00",
+      "paperId": "8342b592fe238f3d230e4959b06fd10153c45db1",
+      "title": "Training Compute-Optimal Large Language Models",
+      "externalIds": {
+        "DBLP": "journals/corr/abs-2203-15556",
+        "ArXiv": "2203.15556",
+        "DOI": "10.52202/068431-2176",
+        "CorpusId": 247778764
+      }
+    },
+    "2204.02311": {
+      "citationCount": 8503,
+      "url": "https://www.semanticscholar.org/paper/094ff971d6a8b8ff870946c9b3ce5aa173617bfb",
+      "checkedAt": "2026-10-22T06:53:53.998225+00:00",
+      "paperId": "094ff971d6a8b8ff870946c9b3ce5aa173617bfb",
+      "title": "PaLM: Scaling Language Modeling with Pathways",
+      "externalIds": {
+        "ArXiv": "2204.02311",
+        "DBLP": "journals/corr/abs-2204-02311",
+        "CorpusId": 247951931
+      }
+    },
+    "2302.01318": {
+      "citationCount": 1219,
+      "url": "https://www.semanticscholar.org/paper/a1f8082505c7e90b0a033e1b9da0a97d67aad66c",
+      "checkedAt": "2026-10-22T06:54:59.125253+00:00",
+      "paperId": "a1f8082505c7e90b0a033e1b9da0a97d67aad66c",
+      "title": "Accelerating Large Language Model Decoding with Speculative Sampling",
+      "externalIds": {
+        "DBLP": "journals/corr/abs-2302-01318",
+        "ArXiv": "2302.01318",
+        "DOI": "10.48550/arXiv.2302.01318",
+        "CorpusId": 256503945
+      }
+    },
+    "2303.13506": {
+      "citationCount": 182,
+      "url": "https://www.semanticscholar.org/paper/9e4980cb927b803d375c5796f4a2eb3a7fe0555d",
+      "checkedAt": "2026-10-22T06:55:11.477572+00:00",
+      "paperId": "9e4980cb927b803d375c5796f4a2eb3a7fe0555d",
+      "title": "The Quantization Model of Neural Scaling",
+      "externalIds": {
+        "DBLP": "conf/nips/MichaudLGT23",
+        "ArXiv": "2303.13506",
+        "DOI": "10.48550/arXiv.2303.13506",
+        "CorpusId": 257687665
+      }
+    },
+    "2305.09781": {
+      "citationCount": 500,
+      "url": "https://www.semanticscholar.org/paper/f0c31511134abdd23f990310e8a2f2eb3a629b62",
+      "checkedAt": "2026-10-22T06:55:13.828211+00:00",
+      "paperId": "f0c31511134abdd23f990310e8a2f2eb3a629b62",
+      "title": "SpecInfer: Accelerating Large Language Model Serving with Tree-based Speculative Inference and Verification",
+      "externalIds": {
+        "ArXiv": "2305.09781",
+        "DBLP": "conf/asplos/MiaoOZCWZWZYSSC24",
+        "DOI": "10.1145/3620666.3651335",
+        "CorpusId": 267094734
+      }
+    },
+    "2305.10429": {
+      "citationCount": 477,
+      "url": "https://www.semanticscholar.org/paper/9b4f7c97c0b83a80c32bc0b93595cbcfb4ecb16d",
+      "checkedAt": "2026-10-22T06:55:26.201760+00:00",
+      "paperId": "9b4f7c97c0b83a80c32bc0b93595cbcfb4ecb16d",
+      "title": "DoReMi: Optimizing Data Mixtures Speeds Up Language Model Pretraining",
+      "externalIds": {
+        "ArXiv": "2305.10429",
+        "DBLP": "conf/nips/Xie0DDLLLL0Y23",
+        "DOI": "10.48550/arXiv.2305.10429",
+        "CorpusId": 258741043
+      }
+    },
+    "2305.16264": {
+      "citationCount": 490,
+      "url": "https://www.semanticscholar.org/paper/9e16d8cc6096ec0d2733a4ecf41ce09d9a4bd19c",
+      "checkedAt": "2026-10-22T06:55:38.657312+00:00",
+      "paperId": "9e16d8cc6096ec0d2733a4ecf41ce09d9a4bd19c",
+      "title": "Scaling Data-Constrained Language Models",
+      "externalIds": {
+        "DBLP": "journals/jmlr/MuennighoffRBSP25",
+        "ArXiv": "2305.16264",
+        "DOI": "10.48550/arXiv.2305.16264",
+        "CorpusId": 258888192
+      }
+    },
+    "2305.19466": {
+      "citationCount": 458,
+      "url": "https://www.semanticscholar.org/paper/6f6e2e0311589a9af045f6acd00b7dee6d19fce4",
+      "checkedAt": "2026-10-22T06:56:11.204556+00:00",
+      "paperId": "6f6e2e0311589a9af045f6acd00b7dee6d19fce4",
+      "title": "The Impact of Positional Encoding on Length Generalization in Transformers",
+      "externalIds": {
+        "ArXiv": "2305.19466",
+        "DBLP": "conf/nips/KazemnejadPRDR23",
+        "DOI": "10.48550/arXiv.2305.19466",
+        "CorpusId": 258987259
+      }
     }
   },
-  "resumeFrom": "2203.15556",
-  "rateLimitedAt": "2026-10-20T06:57:38.931876+00:00",
-  "rateLimitedTitle": "2203.15556"
+  "resumeFrom": "2401.06066",
+  "rateLimitedAt": "2026-10-22T06:58:54.421013+00:00",
+  "rateLimitedTitle": "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models"
 }
