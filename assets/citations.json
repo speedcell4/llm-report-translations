@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-22T06:57:51.669488+00:00",
+  "checkedAt": "2026-10-24T06:42:40.849282+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4064,
@@ -28,9 +28,9 @@
       }
     },
     "2401.06066": {
-      "citationCount": 1197,
+      "citationCount": 1238,
       "url": "https://www.semanticscholar.org/paper/16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
-      "checkedAt": "2026-10-11T13:13:47.143206+00:00",
+      "checkedAt": "2026-10-24T06:42:40.849282+00:00",
       "paperId": "16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
       "title": "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models",
       "externalIds": {
@@ -1014,7 +1014,7 @@
       }
     }
   },
-  "resumeFrom": "2401.06066",
-  "rateLimitedAt": "2026-10-23T06:48:13.053044+00:00",
-  "rateLimitedTitle": "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models"
+  "resumeFrom": "2401.07851",
+  "rateLimitedAt": "2026-10-24T06:43:42.472062+00:00",
+  "rateLimitedTitle": "2401.07851"
 }
