@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-28T07:49:40.392005+00:00",
+  "checkedAt": "2026-10-30T07:59:10.131477+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4064,
@@ -143,9 +143,9 @@
       }
     },
     "2408.15664": {
-      "citationCount": 229,
+      "citationCount": 244,
       "url": "https://www.semanticscholar.org/paper/3574c479f248b83a01035c5fafb01793013cc467",
-      "checkedAt": "2026-10-11T14:20:50.387649+00:00",
+      "checkedAt": "2026-10-30T07:57:31.934048+00:00",
       "paperId": "3574c479f248b83a01035c5fafb01793013cc467",
       "title": "Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts",
       "externalIds": {
@@ -156,9 +156,9 @@
       }
     },
     "2409.02060": {
-      "citationCount": 352,
+      "citationCount": 375,
       "url": "https://www.semanticscholar.org/paper/817632c42e735911e14b89e851ceaf54ba2ad25f",
-      "checkedAt": "2026-10-11T14:20:52.564950+00:00",
+      "checkedAt": "2026-10-30T07:58:04.555238+00:00",
       "paperId": "817632c42e735911e14b89e851ceaf54ba2ad25f",
       "title": "OLMoE: Open Mixture-of-Experts Language Models",
       "externalIds": {
@@ -169,9 +169,9 @@
       }
     },
     "2409.12122": {
-      "citationCount": 1172,
+      "citationCount": 1226,
       "url": "https://www.semanticscholar.org/paper/9fb201282f53a4ce89f28cbe5026af78912aa8c1",
-      "checkedAt": "2026-10-11T14:21:55.052145+00:00",
+      "checkedAt": "2026-10-30T07:58:37.240085+00:00",
       "paperId": "9fb201282f53a4ce89f28cbe5026af78912aa8c1",
       "title": "Qwen2.5-Math Technical Report: Toward Mathematical Expert Model via Self-Improvement",
       "externalIds": {
@@ -182,9 +182,9 @@
       }
     },
     "2412.19437": {
-      "citationCount": 4229,
+      "citationCount": 4355,
       "url": "https://www.semanticscholar.org/paper/5b6fdb2aea424d02c141da81d62b04d739d62b96",
-      "checkedAt": "2026-10-11T14:22:19.680872+00:00",
+      "checkedAt": "2026-10-30T07:58:52.465325+00:00",
       "paperId": "5b6fdb2aea424d02c141da81d62b04d739d62b96",
       "title": "DeepSeek-V3 Technical Report",
       "externalIds": {
@@ -193,9 +193,9 @@
       }
     },
     "2501.00656": {
-      "citationCount": 286,
+      "citationCount": 305,
       "url": "https://www.semanticscholar.org/paper/685418141037ca44bb60b0b09d40fe521ec9e734",
-      "checkedAt": "2026-10-11T14:22:52.015610+00:00",
+      "checkedAt": "2026-10-30T07:58:54.807760+00:00",
       "paperId": "685418141037ca44bb60b0b09d40fe521ec9e734",
       "title": "2 OLMo 2 Furious",
       "externalIds": {
@@ -206,15 +206,15 @@
       }
     },
     "2501.12948": {
-      "citationCount": 5852,
+      "citationCount": 5962,
       "url": "https://www.semanticscholar.org/paper/2eed1fad9bbf887d4395de40f20144c4fafefd7f",
-      "checkedAt": "2026-10-11T14:23:04.349761+00:00",
+      "checkedAt": "2026-10-30T07:59:10.131477+00:00",
       "paperId": "2eed1fad9bbf887d4395de40f20144c4fafefd7f",
       "title": "DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning",
       "externalIds": {
-        "ArXiv": "2501.12948",
-        "PubMedCentral": "12443585",
         "DBLP": "journals/nature/GuoYZSWZXZMBZY025",
+        "PubMedCentral": "12443585",
+        "ArXiv": "2501.12948",
         "DOI": "10.1038/s41586-025-09422-z",
         "CorpusId": 275789950,
         "PubMed": "40962978"
@@ -775,9 +775,9 @@
       }
     },
     "2412.02595": {
-      "citationCount": 164,
+      "citationCount": 176,
       "url": "https://www.semanticscholar.org/paper/9b032d641fed0cb33af71f06a40fdf8ac27c5dfe",
-      "checkedAt": "2026-10-11T14:22:07.426274+00:00",
+      "checkedAt": "2026-10-30T07:58:49.870251+00:00",
       "paperId": "9b032d641fed0cb33af71f06a40fdf8ac27c5dfe",
       "title": "Nemotron-CC: Transforming Common Crawl into a Refined Long-Horizon Pretraining Dataset",
       "externalIds": {
@@ -1116,9 +1116,20 @@
         "DOI": "10.48550/arXiv.2407.01492",
         "CorpusId": 270870508
       }
+    },
+    "2501.08313": {
+      "citationCount": 188,
+      "url": "https://www.semanticscholar.org/paper/b4d0f1237431cbc73db16685771790541c8c246a",
+      "checkedAt": "2026-10-30T07:59:07.829240+00:00",
+      "paperId": "b4d0f1237431cbc73db16685771790541c8c246a",
+      "title": "MiniMax-01: Scaling Foundation Models with Lightning Attention",
+      "externalIds": {
+        "ArXiv": "2501.08313",
+        "CorpusId": 275515682
+      }
     }
   },
-  "resumeFrom": "2408.15664",
-  "rateLimitedAt": "2026-10-29T07:53:24.737831+00:00",
-  "rateLimitedTitle": "Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts"
+  "resumeFrom": "2501.15383",
+  "rateLimitedAt": "2026-10-30T08:00:11.637341+00:00",
+  "rateLimitedTitle": "Qwen2.5-1M Technical Report"
 }
