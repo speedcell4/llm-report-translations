@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-31T08:06:02.751852+00:00",
+  "checkedAt": "2026-11-01T08:28:42.868778+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4064,
@@ -1464,7 +1464,22 @@
         "ArXiv": "2610.13990",
         "CorpusId": 292859156
       }
+    },
+    "2001.08361": {
+      "citationCount": 9532,
+      "url": "https://www.semanticscholar.org/paper/e6c561d02500b2596a230b341a8eb8b921ca5bf2",
+      "checkedAt": "2026-11-01T08:28:42.868778+00:00",
+      "paperId": "e6c561d02500b2596a230b341a8eb8b921ca5bf2",
+      "title": "Scaling Laws for Neural Language Models",
+      "externalIds": {
+        "MAG": "3001279689",
+        "DBLP": "journals/corr/abs-2001-08361",
+        "ArXiv": "2001.08361",
+        "CorpusId": 210861095
+      }
     }
   },
-  "resumeFrom": null
+  "resumeFrom": "2101.00027",
+  "rateLimitedAt": "2026-11-01T08:29:44.511206+00:00",
+  "rateLimitedTitle": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling"
 }
