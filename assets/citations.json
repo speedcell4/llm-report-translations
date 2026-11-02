@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-01T08:28:42.868778+00:00",
+  "checkedAt": "2026-11-02T10:24:08.552490+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4064,
@@ -750,9 +750,9 @@
       }
     },
     "2101.00027": {
-      "citationCount": 3121,
+      "citationCount": 3159,
       "url": "https://www.semanticscholar.org/paper/db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
-      "checkedAt": "2026-10-18T06:50:35.468840+00:00",
+      "checkedAt": "2026-11-02T10:21:25.292045+00:00",
       "paperId": "db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
       "title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
       "externalIds": {
@@ -801,9 +801,9 @@
       }
     },
     "2107.06499": {
-      "citationCount": 1019,
+      "citationCount": 1042,
       "url": "https://www.semanticscholar.org/paper/4566c0d22ebf3c31180066ab23b6c445aeec78d5",
-      "checkedAt": "2026-10-20T06:56:37.458096+00:00",
+      "checkedAt": "2026-11-02T10:21:27.766969+00:00",
       "paperId": "4566c0d22ebf3c31180066ab23b6c445aeec78d5",
       "title": "Deduplicating Training Data Makes Language Models Better",
       "externalIds": {
@@ -815,9 +815,9 @@
       }
     },
     "2212.10560": {
-      "citationCount": 3797,
+      "citationCount": 3858,
       "url": "https://www.semanticscholar.org/paper/e65b346d442e9962a4276dc1c1af2956d9d5f1eb",
-      "checkedAt": "2026-10-22T06:53:56.352048+00:00",
+      "checkedAt": "2026-11-02T10:22:45.895926+00:00",
       "paperId": "e65b346d442e9962a4276dc1c1af2956d9d5f1eb",
       "title": "Self-Instruct: Aligning Language Models with Self-Generated Instructions",
       "externalIds": {
@@ -911,9 +911,9 @@
       }
     },
     "2203.15556": {
-      "citationCount": 3936,
+      "citationCount": 3994,
       "url": "https://www.semanticscholar.org/paper/8342b592fe238f3d230e4959b06fd10153c45db1",
-      "checkedAt": "2026-10-22T06:53:41.562154+00:00",
+      "checkedAt": "2026-11-02T10:21:30.108735+00:00",
       "paperId": "8342b592fe238f3d230e4959b06fd10153c45db1",
       "title": "Training Compute-Optimal Large Language Models",
       "externalIds": {
@@ -924,9 +924,9 @@
       }
     },
     "2204.02311": {
-      "citationCount": 8503,
+      "citationCount": 8570,
       "url": "https://www.semanticscholar.org/paper/094ff971d6a8b8ff870946c9b3ce5aa173617bfb",
-      "checkedAt": "2026-10-22T06:53:53.998225+00:00",
+      "checkedAt": "2026-11-02T10:21:42.824083+00:00",
       "paperId": "094ff971d6a8b8ff870946c9b3ce5aa173617bfb",
       "title": "PaLM: Scaling Language Modeling with Pathways",
       "externalIds": {
@@ -936,9 +936,9 @@
       }
     },
     "2302.01318": {
-      "citationCount": 1219,
+      "citationCount": 1258,
       "url": "https://www.semanticscholar.org/paper/a1f8082505c7e90b0a033e1b9da0a97d67aad66c",
-      "checkedAt": "2026-10-22T06:54:59.125253+00:00",
+      "checkedAt": "2026-11-02T10:22:48.297617+00:00",
       "paperId": "a1f8082505c7e90b0a033e1b9da0a97d67aad66c",
       "title": "Accelerating Large Language Model Decoding with Speculative Sampling",
       "externalIds": {
@@ -949,9 +949,9 @@
       }
     },
     "2303.13506": {
-      "citationCount": 182,
+      "citationCount": 186,
       "url": "https://www.semanticscholar.org/paper/9e4980cb927b803d375c5796f4a2eb3a7fe0555d",
-      "checkedAt": "2026-10-22T06:55:11.477572+00:00",
+      "checkedAt": "2026-11-02T10:23:01.092685+00:00",
       "paperId": "9e4980cb927b803d375c5796f4a2eb3a7fe0555d",
       "title": "The Quantization Model of Neural Scaling",
       "externalIds": {
@@ -962,9 +962,9 @@
       }
     },
     "2305.09781": {
-      "citationCount": 500,
+      "citationCount": 514,
       "url": "https://www.semanticscholar.org/paper/f0c31511134abdd23f990310e8a2f2eb3a629b62",
-      "checkedAt": "2026-10-22T06:55:13.828211+00:00",
+      "checkedAt": "2026-11-02T10:23:33.634549+00:00",
       "paperId": "f0c31511134abdd23f990310e8a2f2eb3a629b62",
       "title": "SpecInfer: Accelerating Large Language Model Serving with Tree-based Speculative Inference and Verification",
       "externalIds": {
@@ -975,9 +975,9 @@
       }
     },
     "2305.10429": {
-      "citationCount": 477,
+      "citationCount": 492,
       "url": "https://www.semanticscholar.org/paper/9b4f7c97c0b83a80c32bc0b93595cbcfb4ecb16d",
-      "checkedAt": "2026-10-22T06:55:26.201760+00:00",
+      "checkedAt": "2026-11-02T10:23:35.988679+00:00",
       "paperId": "9b4f7c97c0b83a80c32bc0b93595cbcfb4ecb16d",
       "title": "DoReMi: Optimizing Data Mixtures Speeds Up Language Model Pretraining",
       "externalIds": {
@@ -988,9 +988,9 @@
       }
     },
     "2305.16264": {
-      "citationCount": 490,
+      "citationCount": 502,
       "url": "https://www.semanticscholar.org/paper/9e16d8cc6096ec0d2733a4ecf41ce09d9a4bd19c",
-      "checkedAt": "2026-10-22T06:55:38.657312+00:00",
+      "checkedAt": "2026-11-02T10:24:08.552490+00:00",
       "paperId": "9e16d8cc6096ec0d2733a4ecf41ce09d9a4bd19c",
       "title": "Scaling Data-Constrained Language Models",
       "externalIds": {
@@ -1479,7 +1479,7 @@
       }
     }
   },
-  "resumeFrom": "2101.00027",
-  "rateLimitedAt": "2026-11-01T08:29:44.511206+00:00",
-  "rateLimitedTitle": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling"
+  "resumeFrom": "2305.19466",
+  "rateLimitedAt": "2026-11-02T10:25:10.431840+00:00",
+  "rateLimitedTitle": "The Impact of Positional Encoding on Length Generalization in Transformers"
 }
