@@ -1,10 +1,10 @@
 {
-  "checkedAt": "2026-11-02T10:24:08.552490+00:00",
+  "checkedAt": "2026-11-05T10:07:14.496570+00:00",
   "reports": {
     "2310.06825": {
-      "citationCount": 4064,
+      "citationCount": 4153,
       "url": "https://www.semanticscholar.org/paper/db633c6b1c286c0386f0078d8a2e6224e03a6227",
-      "checkedAt": "2026-10-22T06:57:49.298426+00:00",
+      "checkedAt": "2026-11-05T10:06:39.407004+00:00",
       "paperId": "db633c6b1c286c0386f0078d8a2e6224e03a6227",
       "title": "Mistral 7B",
       "externalIds": {
@@ -15,9 +15,9 @@
       }
     },
     "2401.04088": {
-      "citationCount": 2233,
+      "citationCount": 2272,
       "url": "https://www.semanticscholar.org/paper/411114f989a3d1083d90afd265103132fee94ebe",
-      "checkedAt": "2026-10-22T06:57:51.669488+00:00",
+      "checkedAt": "2026-11-05T10:07:12.249659+00:00",
       "paperId": "411114f989a3d1083d90afd265103132fee94ebe",
       "title": "Mixtral of Experts",
       "externalIds": {
@@ -28,9 +28,9 @@
       }
     },
     "2401.06066": {
-      "citationCount": 1238,
+      "citationCount": 1284,
       "url": "https://www.semanticscholar.org/paper/16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
-      "checkedAt": "2026-10-24T06:42:40.849282+00:00",
+      "checkedAt": "2026-11-05T10:07:14.496570+00:00",
       "paperId": "16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
       "title": "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models",
       "externalIds": {
@@ -829,9 +829,9 @@
       }
     },
     "2306.11644": {
-      "citationCount": 684,
+      "citationCount": 691,
       "url": "https://www.semanticscholar.org/paper/2922768fd451ecdb45f48c1a83eb57f54a91221b",
-      "checkedAt": "2026-10-22T06:56:44.058190+00:00",
+      "checkedAt": "2026-11-05T10:06:24.658832+00:00",
       "paperId": "2922768fd451ecdb45f48c1a83eb57f54a91221b",
       "title": "Textbooks Are All You Need",
       "externalIds": {
@@ -1001,9 +1001,9 @@
       }
     },
     "2305.19466": {
-      "citationCount": 458,
+      "citationCount": 470,
       "url": "https://www.semanticscholar.org/paper/6f6e2e0311589a9af045f6acd00b7dee6d19fce4",
-      "checkedAt": "2026-10-22T06:56:11.204556+00:00",
+      "checkedAt": "2026-11-05T10:06:11.228548+00:00",
       "paperId": "6f6e2e0311589a9af045f6acd00b7dee6d19fce4",
       "title": "The Impact of Positional Encoding on Length Generalization in Transformers",
       "externalIds": {
@@ -1479,7 +1479,7 @@
       }
     }
   },
-  "resumeFrom": "2305.19466",
-  "rateLimitedAt": "2026-11-04T10:14:47.093125+00:00",
-  "rateLimitedTitle": "The Impact of Positional Encoding on Length Generalization in Transformers"
+  "resumeFrom": "2401.07851",
+  "rateLimitedAt": "2026-11-05T10:08:47.576429+00:00",
+  "rateLimitedTitle": "Unlocking Efficiency in Large Language Model Inference: A Comprehensive Survey of Speculative Decoding"
 }
