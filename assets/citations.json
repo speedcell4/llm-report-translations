@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-05T10:07:14.496570+00:00",
+  "checkedAt": "2026-11-07T09:28:17.267013+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4153,
@@ -1014,9 +1014,9 @@
       }
     },
     "2401.07851": {
-      "citationCount": 359,
+      "citationCount": 371,
       "url": "https://www.semanticscholar.org/paper/0cee098244c9978032702862a43a09f468f691a4",
-      "checkedAt": "2026-10-28T07:46:09.732303+00:00",
+      "checkedAt": "2026-11-07T09:28:17.267013+00:00",
       "paperId": "0cee098244c9978032702862a43a09f468f691a4",
       "title": "Unlocking Efficiency in Large Language Model Inference: A Comprehensive Survey of Speculative Decoding",
       "externalIds": {
@@ -1479,7 +1479,7 @@
       }
     }
   },
-  "resumeFrom": "2401.07851",
-  "rateLimitedAt": "2026-11-06T10:12:10.589929+00:00",
-  "rateLimitedTitle": "Unlocking Efficiency in Large Language Model Inference: A Comprehensive Survey of Speculative Decoding"
+  "resumeFrom": "2401.10774",
+  "rateLimitedAt": "2026-11-07T09:29:19.120767+00:00",
+  "rateLimitedTitle": "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"
 }
