@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-07T09:28:17.267013+00:00",
+  "checkedAt": "2026-11-08T09:45:45.292701+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4153,
@@ -1027,9 +1027,9 @@
       }
     },
     "2401.10774": {
-      "citationCount": 1047,
+      "citationCount": 1082,
       "url": "https://www.semanticscholar.org/paper/57e7af0b69325fafb371ef5d502e39ef9c90ef7e",
-      "checkedAt": "2026-10-28T07:46:22.673058+00:00",
+      "checkedAt": "2026-11-08T09:44:31.781074+00:00",
       "paperId": "57e7af0b69325fafb371ef5d502e39ef9c90ef7e",
       "title": "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads",
       "externalIds": {
@@ -1040,9 +1040,9 @@
       }
     },
     "2401.15077": {
-      "citationCount": 726,
+      "citationCount": 754,
       "url": "https://www.semanticscholar.org/paper/1b5db3170c195508ff24fee8eda0d4987e806f0b",
-      "checkedAt": "2026-10-28T07:46:25.084011+00:00",
+      "checkedAt": "2026-11-08T09:45:45.292701+00:00",
       "paperId": "1b5db3170c195508ff24fee8eda0d4987e806f0b",
       "title": "EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty",
       "externalIds": {
@@ -1479,7 +1479,7 @@
       }
     }
   },
-  "resumeFrom": "2401.10774",
-  "rateLimitedAt": "2026-11-07T09:29:19.120767+00:00",
-  "rateLimitedTitle": "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"
+  "resumeFrom": "2402.00159",
+  "rateLimitedAt": "2026-11-08T09:46:47.142257+00:00",
+  "rateLimitedTitle": "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research"
 }
