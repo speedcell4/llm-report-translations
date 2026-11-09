@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-08T09:45:45.292701+00:00",
+  "checkedAt": "2026-11-09T10:54:21.158805+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4153,
@@ -41,9 +41,9 @@
       }
     },
     "2402.03300": {
-      "citationCount": 10463,
+      "citationCount": 10848,
       "url": "https://www.semanticscholar.org/paper/35b142ea69598e6241f0011312128031df55895c",
-      "checkedAt": "2026-10-28T07:46:50.284438+00:00",
+      "checkedAt": "2026-11-09T10:42:00.348584+00:00",
       "paperId": "35b142ea69598e6241f0011312128031df55895c",
       "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
       "externalIds": {
@@ -54,9 +54,9 @@
       }
     },
     "2402.04617": {
-      "citationCount": 243,
+      "citationCount": 251,
       "url": "https://www.semanticscholar.org/paper/26e13e1da4f47c93c9ad0daf9cc9e2bb4ffd063d",
-      "checkedAt": "2026-10-28T07:47:02.984541+00:00",
+      "checkedAt": "2026-11-09T10:42:02.648595+00:00",
       "paperId": "26e13e1da4f47c93c9ad0daf9cc9e2bb4ffd063d",
       "title": "InfLLM: Training-Free Long-Context Extrapolation for LLMs with an Efficient Context Memory",
       "externalIds": {
@@ -67,9 +67,9 @@
       }
     },
     "2402.06332": {
-      "citationCount": 139,
+      "citationCount": 140,
       "url": "https://www.semanticscholar.org/paper/af1d4a4141eaf52384ca85f1d468443f8f3d5c06",
-      "checkedAt": "2026-10-28T07:47:05.256388+00:00",
+      "checkedAt": "2026-11-09T10:42:04.984208+00:00",
       "paperId": "af1d4a4141eaf52384ca85f1d468443f8f3d5c06",
       "title": "InternLM-Math: Open Math Large Language Models Toward Verifiable Reasoning",
       "externalIds": {
@@ -80,9 +80,9 @@
       }
     },
     "2403.17297": {
-      "citationCount": 447,
+      "citationCount": 451,
       "url": "https://www.semanticscholar.org/paper/75b2ae5ee35611ecfbd3dc2c3d0799cfb4fd98e4",
-      "checkedAt": "2026-10-28T07:47:07.559352+00:00",
+      "checkedAt": "2026-11-09T10:42:07.239726+00:00",
       "paperId": "75b2ae5ee35611ecfbd3dc2c3d0799cfb4fd98e4",
       "title": "InternLM2 Technical Report",
       "externalIds": {
@@ -93,9 +93,9 @@
       }
     },
     "2406.11704": {
-      "citationCount": 139,
+      "citationCount": 142,
       "url": "https://www.semanticscholar.org/paper/d0e7353189feb4501c637b7008ff993de603c3f0",
-      "checkedAt": "2026-10-28T07:49:05.909414+00:00",
+      "checkedAt": "2026-11-09T10:42:14.918173+00:00",
       "paperId": "d0e7353189feb4501c637b7008ff993de603c3f0",
       "title": "Nemotron-4 340B Technical Report",
       "externalIds": {
@@ -106,9 +106,9 @@
       }
     },
     "2406.11794": {
-      "citationCount": 464,
+      "citationCount": 476,
       "url": "https://www.semanticscholar.org/paper/874e957f6bcbfeb9f69d4475456abb13335ec05b",
-      "checkedAt": "2026-10-28T07:49:08.259792+00:00",
+      "checkedAt": "2026-11-09T10:42:17.226477+00:00",
       "paperId": "874e957f6bcbfeb9f69d4475456abb13335ec05b",
       "title": "DataComp-LM: In search of the next generation of training sets for language models",
       "externalIds": {
@@ -119,9 +119,9 @@
       }
     },
     "2406.17557": {
-      "citationCount": 1403,
+      "citationCount": 1477,
       "url": "https://www.semanticscholar.org/paper/b83a9e35c3aeeb37708e362473c7617d59b815b5",
-      "checkedAt": "2026-10-28T07:49:23.126286+00:00",
+      "checkedAt": "2026-11-09T10:42:41.959134+00:00",
       "paperId": "b83a9e35c3aeeb37708e362473c7617d59b815b5",
       "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
       "externalIds": {
@@ -132,9 +132,9 @@
       }
     },
     "2407.21783": {
-      "citationCount": 20280,
+      "citationCount": 20834,
       "url": "https://www.semanticscholar.org/paper/9da8ea6466d7142703d8771d8dcea44e19304abb",
-      "checkedAt": "2026-10-28T07:49:40.392005+00:00",
+      "checkedAt": "2026-11-09T10:43:39.446408+00:00",
       "paperId": "9da8ea6466d7142703d8771d8dcea44e19304abb",
       "title": "The Llama 3 Herd of Models",
       "externalIds": {
@@ -143,9 +143,9 @@
       }
     },
     "2408.15664": {
-      "citationCount": 244,
+      "citationCount": 252,
       "url": "https://www.semanticscholar.org/paper/3574c479f248b83a01035c5fafb01793013cc467",
-      "checkedAt": "2026-10-30T07:57:31.934048+00:00",
+      "checkedAt": "2026-11-09T10:43:41.745030+00:00",
       "paperId": "3574c479f248b83a01035c5fafb01793013cc467",
       "title": "Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts",
       "externalIds": {
@@ -156,9 +156,9 @@
       }
     },
     "2409.02060": {
-      "citationCount": 375,
+      "citationCount": 392,
       "url": "https://www.semanticscholar.org/paper/817632c42e735911e14b89e851ceaf54ba2ad25f",
-      "checkedAt": "2026-10-30T07:58:04.555238+00:00",
+      "checkedAt": "2026-11-09T10:43:43.995536+00:00",
       "paperId": "817632c42e735911e14b89e851ceaf54ba2ad25f",
       "title": "OLMoE: Open Mixture-of-Experts Language Models",
       "externalIds": {
@@ -169,9 +169,9 @@
       }
     },
     "2409.12122": {
-      "citationCount": 1226,
+      "citationCount": 1243,
       "url": "https://www.semanticscholar.org/paper/9fb201282f53a4ce89f28cbe5026af78912aa8c1",
-      "checkedAt": "2026-10-30T07:58:37.240085+00:00",
+      "checkedAt": "2026-11-09T10:43:46.246496+00:00",
       "paperId": "9fb201282f53a4ce89f28cbe5026af78912aa8c1",
       "title": "Qwen2.5-Math Technical Report: Toward Mathematical Expert Model via Self-Improvement",
       "externalIds": {
@@ -182,9 +182,9 @@
       }
     },
     "2412.19437": {
-      "citationCount": 4355,
+      "citationCount": 4429,
       "url": "https://www.semanticscholar.org/paper/5b6fdb2aea424d02c141da81d62b04d739d62b96",
-      "checkedAt": "2026-10-30T07:58:52.465325+00:00",
+      "checkedAt": "2026-11-09T10:44:21.422777+00:00",
       "paperId": "5b6fdb2aea424d02c141da81d62b04d739d62b96",
       "title": "DeepSeek-V3 Technical Report",
       "externalIds": {
@@ -193,9 +193,9 @@
       }
     },
     "2501.00656": {
-      "citationCount": 305,
+      "citationCount": 317,
       "url": "https://www.semanticscholar.org/paper/685418141037ca44bb60b0b09d40fe521ec9e734",
-      "checkedAt": "2026-10-30T07:58:54.807760+00:00",
+      "checkedAt": "2026-11-09T10:44:54.096913+00:00",
       "paperId": "685418141037ca44bb60b0b09d40fe521ec9e734",
       "title": "2 OLMo 2 Furious",
       "externalIds": {
@@ -206,24 +206,24 @@
       }
     },
     "2501.12948": {
-      "citationCount": 5962,
+      "citationCount": 6033,
       "url": "https://www.semanticscholar.org/paper/2eed1fad9bbf887d4395de40f20144c4fafefd7f",
-      "checkedAt": "2026-10-30T07:59:10.131477+00:00",
+      "checkedAt": "2026-11-09T10:44:58.759373+00:00",
       "paperId": "2eed1fad9bbf887d4395de40f20144c4fafefd7f",
       "title": "DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning",
       "externalIds": {
+        "ArXiv": "2501.12948",
         "DBLP": "journals/nature/GuoYZSWZXZMBZY025",
         "PubMedCentral": "12443585",
-        "ArXiv": "2501.12948",
         "DOI": "10.1038/s41586-025-09422-z",
         "CorpusId": 275789950,
         "PubMed": "40962978"
       }
     },
     "2501.15383": {
-      "citationCount": 208,
+      "citationCount": 213,
       "url": "https://www.semanticscholar.org/paper/71b7a18e75dc540c889be080f4206460359ea20d",
-      "checkedAt": "2026-10-31T07:48:12.789237+00:00",
+      "checkedAt": "2026-11-09T10:45:01.019080+00:00",
       "paperId": "71b7a18e75dc540c889be080f4206460359ea20d",
       "title": "Qwen2.5-1M Technical Report",
       "externalIds": {
@@ -234,9 +234,9 @@
       }
     },
     "2502.02737": {
-      "citationCount": 427,
+      "citationCount": 439,
       "url": "https://www.semanticscholar.org/paper/54145fcb714653b1143bef312fdac821cccbfb62",
-      "checkedAt": "2026-10-31T07:48:15.078859+00:00",
+      "checkedAt": "2026-11-09T10:45:13.499096+00:00",
       "paperId": "54145fcb714653b1143bef312fdac821cccbfb62",
       "title": "SmolLM2: When Smol Goes Big - Data-Centric Training of a Small Language Model",
       "externalIds": {
@@ -247,9 +247,9 @@
       }
     },
     "2502.11089": {
-      "citationCount": 594,
+      "citationCount": 620,
       "url": "https://www.semanticscholar.org/paper/23c2e21b6a5789724715f2986fdc586a517ffe57",
-      "checkedAt": "2026-10-31T07:48:17.631630+00:00",
+      "checkedAt": "2026-11-09T10:45:15.870844+00:00",
       "paperId": "23c2e21b6a5789724715f2986fdc586a517ffe57",
       "title": "Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention",
       "externalIds": {
@@ -260,9 +260,9 @@
       }
     },
     "2502.13189": {
-      "citationCount": 241,
+      "citationCount": 251,
       "url": "https://www.semanticscholar.org/paper/d281440cd94ed477c4a07e63d3149c377eaa0798",
-      "checkedAt": "2026-10-31T07:48:20.037083+00:00",
+      "checkedAt": "2026-11-09T10:46:18.543101+00:00",
       "paperId": "d281440cd94ed477c4a07e63d3149c377eaa0798",
       "title": "MoBA: Mixture of Block Attention for Long-Context LLMs",
       "externalIds": {
@@ -273,9 +273,9 @@
       }
     },
     "2502.16982": {
-      "citationCount": 480,
+      "citationCount": 498,
       "url": "https://www.semanticscholar.org/paper/1d239507d99278b79b85c04eab7b59fd7e3e3216",
-      "checkedAt": "2026-10-31T07:48:22.569145+00:00",
+      "checkedAt": "2026-11-09T10:46:51.443723+00:00",
       "paperId": "1d239507d99278b79b85c04eab7b59fd7e3e3216",
       "title": "Muon is Scalable for LLM Training",
       "externalIds": {
@@ -286,9 +286,9 @@
       }
     },
     "2503.19786": {
-      "citationCount": 2156,
+      "citationCount": 2199,
       "url": "https://www.semanticscholar.org/paper/adac25c0aebd013f1225ec02636edfcc0bf4cf7c",
-      "checkedAt": "2026-10-31T07:48:37.574100+00:00",
+      "checkedAt": "2026-11-09T10:47:26.127975+00:00",
       "paperId": "adac25c0aebd013f1225ec02636edfcc0bf4cf7c",
       "title": "Gemma 3 Technical Report",
       "externalIds": {
@@ -299,9 +299,9 @@
       }
     },
     "2504.03624": {
-      "citationCount": 104,
+      "citationCount": 109,
       "url": "https://www.semanticscholar.org/paper/8729f7e0711ab94b7276fdd2117ee0e514a56ddd",
-      "checkedAt": "2026-10-31T07:49:10.776062+00:00",
+      "checkedAt": "2026-11-09T10:47:38.588896+00:00",
       "paperId": "8729f7e0711ab94b7276fdd2117ee0e514a56ddd",
       "title": "Nemotron-H: A Family of Accurate and Efficient Hybrid Mamba-Transformer Models",
       "externalIds": {
@@ -310,9 +310,9 @@
       }
     },
     "2505.06708": {
-      "citationCount": 367,
+      "citationCount": 388,
       "url": "https://www.semanticscholar.org/paper/a295e71055248f4145257ed88f25503a75a78406",
-      "checkedAt": "2026-10-31T07:49:13.307219+00:00",
+      "checkedAt": "2026-11-09T10:47:51.223733+00:00",
       "paperId": "a295e71055248f4145257ed88f25503a75a78406",
       "title": "Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free",
       "externalIds": {
@@ -323,9 +323,9 @@
       }
     },
     "2505.09388": {
-      "citationCount": 9814,
+      "citationCount": 10089,
       "url": "https://www.semanticscholar.org/paper/d2d84d56f730f81d276a02b48d5d44db5bde0b4a",
-      "checkedAt": "2026-10-31T07:49:25.965072+00:00",
+      "checkedAt": "2026-11-09T10:47:53.611638+00:00",
       "paperId": "d2d84d56f730f81d276a02b48d5d44db5bde0b4a",
       "title": "Qwen3 Technical Report",
       "externalIds": {
@@ -334,9 +334,9 @@
       }
     },
     "2505.17667": {
-      "citationCount": 58,
+      "citationCount": 61,
       "url": "https://www.semanticscholar.org/paper/86284d0046d2746f1403f56053f369baf4f18168",
-      "checkedAt": "2026-10-31T07:49:38.470965+00:00",
+      "checkedAt": "2026-11-09T10:48:06.040372+00:00",
       "paperId": "86284d0046d2746f1403f56053f369baf4f18168",
       "title": "QwenLong-L1: Towards Long-Context Large Reasoning Models with Reinforcement Learning",
       "externalIds": {
@@ -347,9 +347,9 @@
       }
     },
     "2506.07900": {
-      "citationCount": 65,
+      "citationCount": 67,
       "url": "https://www.semanticscholar.org/paper/77572987c6a9b72d0b61e7b01f4c28727a78113e",
-      "checkedAt": "2026-10-31T07:49:50.981884+00:00",
+      "checkedAt": "2026-11-09T10:48:08.291162+00:00",
       "paperId": "77572987c6a9b72d0b61e7b01f4c28727a78113e",
       "title": "MiniCPM4: Ultra-Efficient LLMs on End Devices",
       "externalIds": {
@@ -362,7 +362,7 @@
     "2506.10910": {
       "citationCount": 47,
       "url": "https://www.semanticscholar.org/paper/568dde53ebd55103129eb9cdbe86014d34d8a47d",
-      "checkedAt": "2026-10-31T07:50:00.908333+00:00",
+      "checkedAt": "2026-11-09T10:49:30.127762+00:00",
       "paperId": "568dde53ebd55103129eb9cdbe86014d34d8a47d",
       "title": "Magistral",
       "externalIds": {
@@ -373,9 +373,9 @@
       }
     },
     "2507.20534": {
-      "citationCount": 445,
+      "citationCount": 453,
       "url": "https://www.semanticscholar.org/paper/0307bd5ec17c146a0cb8f8592f3027196bdb3f44",
-      "checkedAt": "2026-10-31T07:51:36.517266+00:00",
+      "checkedAt": "2026-11-09T10:50:14.699806+00:00",
       "paperId": "0307bd5ec17c146a0cb8f8592f3027196bdb3f44",
       "title": "Kimi K2: Open Agentic Intelligence",
       "externalIds": {
@@ -384,9 +384,9 @@
       }
     },
     "2508.14444": {
-      "citationCount": 103,
+      "citationCount": 105,
       "url": "https://www.semanticscholar.org/paper/9e06fa16e44f663faf4ad6cd91e6e4248628f016",
-      "checkedAt": "2026-10-31T07:51:53.916155+00:00",
+      "checkedAt": "2026-11-09T10:50:51.787779+00:00",
       "paperId": "9e06fa16e44f663faf4ad6cd91e6e4248628f016",
       "title": "NVIDIA Nemotron Nano 2: An Accurate and Efficient Hybrid Mamba-Transformer Reasoning Model",
       "externalIds": {
@@ -399,7 +399,7 @@
     "2509.01322": {
       "citationCount": 56,
       "url": "https://www.semanticscholar.org/paper/4f947224264117cc32b1c2cb3dc719ba7f6af3da",
-      "checkedAt": "2026-10-31T07:52:06.244450+00:00",
+      "checkedAt": "2026-11-09T10:51:04.314908+00:00",
       "paperId": "4f947224264117cc32b1c2cb3dc719ba7f6af3da",
       "title": "LongCat-Flash Technical Report",
       "externalIds": {
@@ -410,9 +410,9 @@
       }
     },
     "2510.26692": {
-      "citationCount": 218,
+      "citationCount": 233,
       "url": "https://www.semanticscholar.org/paper/fc6412d9ec7a6a07ce9ef15273279a0021d09422",
-      "checkedAt": "2026-10-31T07:53:20.547898+00:00",
+      "checkedAt": "2026-11-09T10:51:58.999754+00:00",
       "paperId": "fc6412d9ec7a6a07ce9ef15273279a0021d09422",
       "title": "Kimi Linear: An Expressive, Efficient Attention Architecture",
       "externalIds": {
@@ -423,9 +423,9 @@
       }
     },
     "2511.22570": {
-      "citationCount": 83,
+      "citationCount": 82,
       "url": "https://www.semanticscholar.org/paper/1567c020a4fe5e1780a53288f1f54778298ca36b",
-      "checkedAt": "2026-10-31T07:53:22.807239+00:00",
+      "checkedAt": "2026-11-09T10:52:31.622874+00:00",
       "paperId": "1567c020a4fe5e1780a53288f1f54778298ca36b",
       "title": "DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning",
       "externalIds": {
@@ -436,9 +436,9 @@
       }
     },
     "2512.02556": {
-      "citationCount": 886,
+      "citationCount": 918,
       "url": "https://www.semanticscholar.org/paper/1dc2281d4df5bd34f66aeb10e5b4741a27e23a9a",
-      "checkedAt": "2026-10-31T07:53:35.221729+00:00",
+      "checkedAt": "2026-11-09T10:52:54.121655+00:00",
       "paperId": "1dc2281d4df5bd34f66aeb10e5b4741a27e23a9a",
       "title": "DeepSeek-V3.2: Pushing the Frontier of Open Large Language Models",
       "externalIds": {
@@ -449,9 +449,9 @@
       }
     },
     "2512.13607": {
-      "citationCount": 52,
+      "citationCount": 53,
       "url": "https://www.semanticscholar.org/paper/62e7b57f93821405fe66a5648534a80d5dea29af",
-      "checkedAt": "2026-10-31T07:54:07.795683+00:00",
+      "checkedAt": "2026-11-09T10:53:26.682363+00:00",
       "paperId": "62e7b57f93821405fe66a5648534a80d5dea29af",
       "title": "Nemotron-Cascade: Scaling Cascaded Reinforcement Learning for General-Purpose Reasoning Models",
       "externalIds": {
@@ -464,7 +464,7 @@
     "2512.13961": {
       "citationCount": 0,
       "url": "https://www.semanticscholar.org/paper/babb9e91496e8b348decc1b3af65b46d000fd6b0",
-      "checkedAt": "2026-10-31T07:54:40.416601+00:00",
+      "checkedAt": "2026-11-09T10:53:29.201722+00:00",
       "paperId": "babb9e91496e8b348decc1b3af65b46d000fd6b0",
       "title": "Olmo 3",
       "externalIds": {
@@ -473,9 +473,9 @@
       }
     },
     "2512.20848": {
-      "citationCount": 109,
+      "citationCount": 112,
       "url": "https://www.semanticscholar.org/paper/c94545504f2dc1757e972118ca774be38d1674ce",
-      "checkedAt": "2026-10-31T07:54:45.138419+00:00",
+      "checkedAt": "2026-11-09T10:54:04.088197+00:00",
       "paperId": "c94545504f2dc1757e972118ca774be38d1674ce",
       "title": "Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning",
       "externalIds": {
@@ -486,9 +486,9 @@
       }
     },
     "2512.24880": {
-      "citationCount": 102,
+      "citationCount": 108,
       "url": "https://www.semanticscholar.org/paper/b87f0beefef060d4a343249bf32e94a918a21ace",
-      "checkedAt": "2026-10-31T07:54:47.419458+00:00",
+      "checkedAt": "2026-11-09T10:54:16.494053+00:00",
       "paperId": "b87f0beefef060d4a343249bf32e94a918a21ace",
       "title": "mHC: Manifold-Constrained Hyper-Connections",
       "externalIds": {
@@ -499,9 +499,9 @@
       }
     },
     "2601.02780": {
-      "citationCount": 175,
+      "citationCount": 181,
       "url": "https://www.semanticscholar.org/paper/38bfb955426702f1bfc9888e52c9cd48b2f8757b",
-      "checkedAt": "2026-10-31T07:54:59.882569+00:00",
+      "checkedAt": "2026-11-09T10:54:18.891495+00:00",
       "paperId": "38bfb955426702f1bfc9888e52c9cd48b2f8757b",
       "title": "MiMo-V2-Flash Technical Report",
       "externalIds": {
@@ -512,9 +512,9 @@
       }
     },
     "2601.07372": {
-      "citationCount": 94,
+      "citationCount": 99,
       "url": "https://www.semanticscholar.org/paper/c283116f911bb7457e595656a28d3b500744a495",
-      "checkedAt": "2026-10-31T07:55:32.436289+00:00",
+      "checkedAt": "2026-11-09T10:54:21.158805+00:00",
       "paperId": "c283116f911bb7457e595656a28d3b500744a495",
       "title": "Conditional Memory via Scalable Lookup: A New Axis of Sparsity for Large Language Models",
       "externalIds": {
@@ -762,9 +762,9 @@
       }
     },
     "2402.00159": {
-      "citationCount": 589,
+      "citationCount": 600,
       "url": "https://www.semanticscholar.org/paper/ad1bb59e3e18a0dd8503c3961d6074f162baf710",
-      "checkedAt": "2026-10-28T07:46:37.733876+00:00",
+      "checkedAt": "2026-11-09T10:41:27.407768+00:00",
       "paperId": "ad1bb59e3e18a0dd8503c3961d6074f162baf710",
       "title": "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research",
       "externalIds": {
@@ -775,9 +775,9 @@
       }
     },
     "2412.02595": {
-      "citationCount": 176,
+      "citationCount": 181,
       "url": "https://www.semanticscholar.org/paper/9b032d641fed0cb33af71f06a40fdf8ac27c5dfe",
-      "checkedAt": "2026-10-30T07:58:49.870251+00:00",
+      "checkedAt": "2026-11-09T10:44:18.967241+00:00",
       "paperId": "9b032d641fed0cb33af71f06a40fdf8ac27c5dfe",
       "title": "Nemotron-CC: Transforming Common Crawl into a Refined Long-Horizon Pretraining Dataset",
       "externalIds": {
@@ -788,9 +788,9 @@
       }
     },
     "2506.20920": {
-      "citationCount": 195,
+      "citationCount": 203,
       "url": "https://www.semanticscholar.org/paper/8a0dfcf10bce3a46e2cf4876890edc61a4f9688d",
-      "checkedAt": "2026-10-31T07:51:19.540643+00:00",
+      "checkedAt": "2026-11-09T10:49:47.284847+00:00",
       "paperId": "8a0dfcf10bce3a46e2cf4876890edc61a4f9688d",
       "title": "FineWeb2: One Pipeline to Scale Them All - Adapting Pre-Training Data Processing to Every Language",
       "externalIds": {
@@ -1055,7 +1055,7 @@
     "2404.10102": {
       "citationCount": 73,
       "url": "https://www.semanticscholar.org/paper/2cfe76f2fcb272fd0dde67b5468cdc462416fd38",
-      "checkedAt": "2026-10-28T07:48:10.557140+00:00",
+      "checkedAt": "2026-11-09T10:42:10.068198+00:00",
       "paperId": "2cfe76f2fcb272fd0dde67b5468cdc462416fd38",
       "title": "Chinchilla Scaling: A replication attempt",
       "externalIds": {
@@ -1066,9 +1066,9 @@
       }
     },
     "2404.19737": {
-      "citationCount": 446,
+      "citationCount": 467,
       "url": "https://www.semanticscholar.org/paper/b9c289f141c54ab465a885fb7be7936d98e8c853",
-      "checkedAt": "2026-10-28T07:48:23.054848+00:00",
+      "checkedAt": "2026-11-09T10:42:12.543994+00:00",
       "paperId": "b9c289f141c54ab465a885fb7be7936d98e8c853",
       "title": "Better & Faster Large Language Models via Multi-token Prediction",
       "externalIds": {
@@ -1079,9 +1079,9 @@
       }
     },
     "2406.12907": {
-      "citationCount": 43,
+      "citationCount": 44,
       "url": "https://www.semanticscholar.org/paper/df6227869dd72951c9c46f02cd65f6b588f129ab",
-      "checkedAt": "2026-10-28T07:49:20.854786+00:00",
+      "checkedAt": "2026-11-09T10:42:29.605670+00:00",
       "paperId": "df6227869dd72951c9c46f02cd65f6b588f129ab",
       "title": "Reconciling Kaplan and Chinchilla Scaling Laws",
       "externalIds": {
@@ -1092,9 +1092,9 @@
       }
     },
     "2406.19146": {
-      "citationCount": 98,
+      "citationCount": 100,
       "url": "https://www.semanticscholar.org/paper/5585191b1b479346ecf173be3b35c8313b77d457",
-      "checkedAt": "2026-10-28T07:49:35.599418+00:00",
+      "checkedAt": "2026-11-09T10:43:04.485916+00:00",
       "paperId": "5585191b1b479346ecf173be3b35c8313b77d457",
       "title": "Resolving Discrepancies in Compute-Optimal Scaling of Language Models",
       "externalIds": {
@@ -1105,9 +1105,9 @@
       }
     },
     "2407.01492": {
-      "citationCount": 203,
+      "citationCount": 208,
       "url": "https://www.semanticscholar.org/paper/e8053a7b234d2936cbc993a4f2b13ec63eb6ec90",
-      "checkedAt": "2026-10-28T07:49:37.871355+00:00",
+      "checkedAt": "2026-11-09T10:43:37.129486+00:00",
       "paperId": "e8053a7b234d2936cbc993a4f2b13ec63eb6ec90",
       "title": "RegMix: Data Mixture as Regression for Language Model Pre-training",
       "externalIds": {
@@ -1118,9 +1118,9 @@
       }
     },
     "2501.08313": {
-      "citationCount": 188,
+      "citationCount": 194,
       "url": "https://www.semanticscholar.org/paper/b4d0f1237431cbc73db16685771790541c8c246a",
-      "checkedAt": "2026-10-30T07:59:07.829240+00:00",
+      "checkedAt": "2026-11-09T10:44:56.484049+00:00",
       "paperId": "b4d0f1237431cbc73db16685771790541c8c246a",
       "title": "MiniMax-01: Scaling Foundation Models with Lightning Attention",
       "externalIds": {
@@ -1131,7 +1131,7 @@
     "2502.19732": {
       "citationCount": 29,
       "url": "https://www.semanticscholar.org/paper/adb0c91669f211d3e99590d8efb1a6d06aabf016",
-      "checkedAt": "2026-10-31T07:48:35.064862+00:00",
+      "checkedAt": "2026-11-09T10:47:23.888281+00:00",
       "paperId": "adb0c91669f211d3e99590d8efb1a6d06aabf016",
       "title": "Speculative Decoding and Beyond: An In-Depth Survey of Techniques",
       "externalIds": {
@@ -1142,9 +1142,9 @@
       }
     },
     "2506.13585": {
-      "citationCount": 249,
+      "citationCount": 253,
       "url": "https://www.semanticscholar.org/paper/91360031e430be76c20c4b02f3da08c3052d54af",
-      "checkedAt": "2026-10-31T07:50:03.315450+00:00",
+      "checkedAt": "2026-11-09T10:49:32.446117+00:00",
       "paperId": "91360031e430be76c20c4b02f3da08c3052d54af",
       "title": "MiniMax-M1: Scaling Test-Time Compute Efficiently with Lightning Attention",
       "externalIds": {
@@ -1157,7 +1157,7 @@
     "2506.14731": {
       "citationCount": 11,
       "url": "https://www.semanticscholar.org/paper/0a168c38959a8bdb5f5cf8b91b06e64e3a77f27a",
-      "checkedAt": "2026-10-31T07:50:16.682815+00:00",
+      "checkedAt": "2026-11-09T10:49:45.010629+00:00",
       "paperId": "0a168c38959a8bdb5f5cf8b91b06e64e3a77f27a",
       "title": "Ring-lite: Scalable Reasoning via C3PO-Stabilized Reinforcement Learning for LLMs",
       "externalIds": {
@@ -1170,7 +1170,7 @@
     "2507.13575": {
       "citationCount": 85,
       "url": "https://www.semanticscholar.org/paper/f501a69e0469aa0341120342986260d5adbabddf",
-      "checkedAt": "2026-10-31T07:51:21.828042+00:00",
+      "checkedAt": "2026-11-09T10:49:59.659934+00:00",
       "paperId": "f501a69e0469aa0341120342986260d5adbabddf",
       "title": "Apple Intelligence Foundation Language Models: Tech Report 2025",
       "externalIds": {
@@ -1183,20 +1183,20 @@
     "2507.17634": {
       "citationCount": 23,
       "url": "https://www.semanticscholar.org/paper/ca31807d39af3f491940f62053bde0b976566fc6",
-      "checkedAt": "2026-10-31T07:51:34.166275+00:00",
+      "checkedAt": "2026-11-09T10:50:12.307769+00:00",
       "paperId": "ca31807d39af3f491940f62053bde0b976566fc6",
       "title": "WSM: Decay-Free Learning Rate Schedule via Checkpoint Merging for LLM Pre-training",
       "externalIds": {
-        "ArXiv": "2507.17634",
         "DBLP": "journals/corr/abs-2507-17634",
+        "ArXiv": "2507.17634",
         "DOI": "10.48550/arXiv.2507.17634",
         "CorpusId": 280228484
       }
     },
     "2508.06471": {
-      "citationCount": 499,
+      "citationCount": 505,
       "url": "https://www.semanticscholar.org/paper/e05795cdb5b0c11e72016c79122777c5b3a7ed48",
-      "checkedAt": "2026-10-31T07:51:39.109858+00:00",
+      "checkedAt": "2026-11-09T10:50:47.208995+00:00",
       "paperId": "e05795cdb5b0c11e72016c79122777c5b3a7ed48",
       "title": "GLM-4.5: Agentic, Reasoning, and Coding (ARC) Foundation Models",
       "externalIds": {
@@ -1207,9 +1207,9 @@
       }
     },
     "2508.10925": {
-      "citationCount": 1603,
+      "citationCount": 1649,
       "url": "https://www.semanticscholar.org/paper/2a609a89709d353d0b67be2babaafb5ee9e1188a",
-      "checkedAt": "2026-10-31T07:51:51.590176+00:00",
+      "checkedAt": "2026-11-09T10:50:49.539339+00:00",
       "paperId": "2a609a89709d353d0b67be2babaafb5ee9e1188a",
       "title": "gpt-oss-120b&gpt-oss-20b Model Card",
       "externalIds": {
@@ -1218,9 +1218,9 @@
       }
     },
     "2509.03505": {
-      "citationCount": 88,
+      "citationCount": 94,
       "url": "https://www.semanticscholar.org/paper/115c0d359a32607049641efcf6709901ab2b116d",
-      "checkedAt": "2026-10-31T07:52:38.743038+00:00",
+      "checkedAt": "2026-11-09T10:51:27.215727+00:00",
       "paperId": "115c0d359a32607049641efcf6709901ab2b116d",
       "title": "LimiX: Unleashing Structured-Data Modeling Capability for Generalist Intelligence",
       "externalIds": {
@@ -1231,9 +1231,9 @@
       }
     },
     "2510.11370": {
-      "citationCount": 85,
+      "citationCount": 88,
       "url": "https://www.semanticscholar.org/paper/b44b63dfb75a12bebbb98904d0cc4250bf4ba8a0",
-      "checkedAt": "2026-10-31T07:52:50.995444+00:00",
+      "checkedAt": "2026-11-09T10:51:29.528585+00:00",
       "paperId": "b44b63dfb75a12bebbb98904d0cc4250bf4ba8a0",
       "title": "Stabilizing MoE Reinforcement Learning by Aligning Training and Inference Routers",
       "externalIds": {
@@ -1244,9 +1244,9 @@
       }
     },
     "2510.18855": {
-      "citationCount": 51,
+      "citationCount": 52,
       "url": "https://www.semanticscholar.org/paper/0a524f4d2c76088a4d4fb815f95b63d2d40270e5",
-      "checkedAt": "2026-10-31T07:53:03.472624+00:00",
+      "checkedAt": "2026-11-09T10:51:31.866206+00:00",
       "paperId": "0a524f4d2c76088a4d4fb815f95b63d2d40270e5",
       "title": "Every Step Evolves: Scaling Reinforcement Learning for Trillion-Scale Thinking Model",
       "externalIds": {
@@ -1257,22 +1257,22 @@
       }
     },
     "2510.19338": {
-      "citationCount": 11,
+      "citationCount": 10,
       "url": "https://www.semanticscholar.org/paper/39b51797fabc661dedf7c753f2e20474927315bf",
-      "checkedAt": "2026-10-31T07:53:05.784972+00:00",
+      "checkedAt": "2026-11-09T10:51:44.254331+00:00",
       "paperId": "39b51797fabc661dedf7c753f2e20474927315bf",
       "title": "Every Attention Matters: An Efficient Hybrid Architecture for Long-Context Reasoning",
       "externalIds": {
-        "DBLP": "journals/corr/abs-2510-19338",
         "ArXiv": "2510.19338",
+        "DBLP": "journals/corr/abs-2510-19338",
         "DOI": "10.48550/arXiv.2510.19338",
         "CorpusId": 282272452
       }
     },
     "2510.22115": {
-      "citationCount": 45,
+      "citationCount": 44,
       "url": "https://www.semanticscholar.org/paper/242e2a445091d04480b5bbe7c374f27255615546",
-      "checkedAt": "2026-10-31T07:53:08.107717+00:00",
+      "checkedAt": "2026-11-09T10:51:56.606073+00:00",
       "paperId": "242e2a445091d04480b5bbe7c374f27255615546",
       "title": "Every Activation Boosted: Scaling General Reasoner to 1 Trillion Open Language Foundation",
       "externalIds": {
@@ -1283,7 +1283,7 @@
     "2512.20491": {
       "citationCount": 14,
       "url": "https://www.semanticscholar.org/paper/2c1c2a3d540f6e09874db921c914c431ee8dbe51",
-      "checkedAt": "2026-10-31T07:54:42.753298+00:00",
+      "checkedAt": "2026-11-09T10:54:01.752589+00:00",
       "paperId": "2c1c2a3d540f6e09874db921c914c431ee8dbe51",
       "title": "Step-DeepResearch Technical Report",
       "externalIds": {
@@ -1479,7 +1479,7 @@
       }
     }
   },
-  "resumeFrom": "2402.00159",
-  "rateLimitedAt": "2026-11-08T09:46:47.142257+00:00",
-  "rateLimitedTitle": "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research"
+  "resumeFrom": "2601.08584",
+  "rateLimitedAt": "2026-11-09T10:55:23.968096+00:00",
+  "rateLimitedTitle": "Ministral 3"
 }
