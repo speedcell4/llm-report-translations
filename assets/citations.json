@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-09T10:54:21.158805+00:00",
+  "checkedAt": "2026-11-10T10:42:46.939321+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4153,
@@ -525,9 +525,9 @@
       }
     },
     "2601.08584": {
-      "citationCount": 80,
+      "citationCount": 81,
       "url": "https://www.semanticscholar.org/paper/6aa88dc32e65da7e530d8ba274fac6e13edfce9c",
-      "checkedAt": "2026-10-31T07:55:44.885244+00:00",
+      "checkedAt": "2026-11-10T10:38:43.406467+00:00",
       "paperId": "6aa88dc32e65da7e530d8ba274fac6e13edfce9c",
       "title": "Ministral 3",
       "externalIds": {
@@ -540,7 +540,7 @@
     "2601.16725": {
       "citationCount": 28,
       "url": "https://www.semanticscholar.org/paper/d281ff4fe5ae3790908e294b0c7c2bc5d06cb0ae",
-      "checkedAt": "2026-10-31T07:56:09.844783+00:00",
+      "checkedAt": "2026-11-10T10:38:58.343120+00:00",
       "paperId": "d281ff4fe5ae3790908e294b0c7c2bc5d06cb0ae",
       "title": "LongCat-Flash-Thinking-2601 Technical Report",
       "externalIds": {
@@ -553,7 +553,7 @@
     "2601.22966": {
       "citationCount": 22,
       "url": "https://www.semanticscholar.org/paper/fa35ca3519cfdf5ce0085f4aa8b379e06ef23148",
-      "checkedAt": "2026-10-31T07:56:22.322393+00:00",
+      "checkedAt": "2026-11-10T10:39:00.618526+00:00",
       "paperId": "fa35ca3519cfdf5ce0085f4aa8b379e06ef23148",
       "title": "A Unified View of Attention and Residual Sinks: Outlier-Driven Rescaling is Essential for Transformer Training",
       "externalIds": {
@@ -564,9 +564,9 @@
       }
     },
     "2602.02276": {
-      "citationCount": 490,
+      "citationCount": 508,
       "url": "https://www.semanticscholar.org/paper/e1c32d718ad38e17d66b1ffb91744a169b592be7",
-      "checkedAt": "2026-10-31T07:56:24.672847+00:00",
+      "checkedAt": "2026-11-10T10:39:03.124430+00:00",
       "paperId": "e1c32d718ad38e17d66b1ffb91744a169b592be7",
       "title": "Kimi K2.5: Visual Agentic Intelligence",
       "externalIds": {
@@ -575,9 +575,9 @@
       }
     },
     "2602.15763": {
-      "citationCount": 657,
+      "citationCount": 689,
       "url": "https://www.semanticscholar.org/paper/e0db747ad65d72559e583ff92f729d68949e9daf",
-      "checkedAt": "2026-10-31T07:57:55.147192+00:00",
+      "checkedAt": "2026-11-10T10:40:24.293825+00:00",
       "paperId": "e0db747ad65d72559e583ff92f729d68949e9daf",
       "title": "GLM-5: from Vibe Coding to Agentic Engineering",
       "externalIds": {
@@ -588,9 +588,9 @@
       }
     },
     "2603.00729": {
-      "citationCount": 92,
+      "citationCount": 95,
       "url": "https://www.semanticscholar.org/paper/630f18308e963f0c667a0bc7c698191ddf1f5e73",
-      "checkedAt": "2026-10-31T07:58:09.382445+00:00",
+      "checkedAt": "2026-11-10T10:41:27.169153+00:00",
       "paperId": "630f18308e963f0c667a0bc7c698191ddf1f5e73",
       "title": "Qwen3-Coder-Next Technical Report",
       "externalIds": {
@@ -601,9 +601,9 @@
       }
     },
     "2603.15031": {
-      "citationCount": 76,
+      "citationCount": 82,
       "url": "https://www.semanticscholar.org/paper/101549ed507f18e10044d127c99a495bb176956f",
-      "checkedAt": "2026-10-31T07:58:13.702248+00:00",
+      "checkedAt": "2026-11-10T10:42:12.035411+00:00",
       "paperId": "101549ed507f18e10044d127c99a495bb176956f",
       "title": "Attention Residuals",
       "externalIds": {
@@ -614,9 +614,9 @@
       }
     },
     "2603.19220": {
-      "citationCount": 58,
+      "citationCount": 63,
       "url": "https://www.semanticscholar.org/paper/2a119aa94ea1f0b7a9f48fb2718eaa1f1f821bf8",
-      "checkedAt": "2026-10-31T07:58:26.274552+00:00",
+      "checkedAt": "2026-11-10T10:42:14.377037+00:00",
       "paperId": "2a119aa94ea1f0b7a9f48fb2718eaa1f1f821bf8",
       "title": "Nemotron-Cascade 2: Post-Training LLMs with Cascade RL and Multi-Domain On-Policy Distillation",
       "externalIds": {
@@ -627,9 +627,9 @@
       }
     },
     "2604.12374": {
-      "citationCount": 48,
+      "citationCount": 54,
       "url": "https://www.semanticscholar.org/paper/cd1f4580a1260e73bf73f438bd7afa247dd794ce",
-      "checkedAt": "2026-10-31T07:58:38.859998+00:00",
+      "checkedAt": "2026-11-10T10:42:46.939321+00:00",
       "paperId": "cd1f4580a1260e73bf73f438bd7afa247dd794ce",
       "title": "Nemotron 3 Super: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning",
       "externalIds": {
@@ -1294,9 +1294,9 @@
       }
     },
     "2601.11580": {
-      "citationCount": 18,
+      "citationCount": 20,
       "url": "https://www.semanticscholar.org/paper/f5a9ae08b63873314c1defa0b121fe54962df741",
-      "checkedAt": "2026-10-31T07:56:07.539557+00:00",
+      "checkedAt": "2026-11-10T10:38:56.017353+00:00",
       "paperId": "f5a9ae08b63873314c1defa0b121fe54962df741",
       "title": "Speculative Decoding: Performance or Illusion?",
       "externalIds": {
@@ -1307,9 +1307,9 @@
       }
     },
     "2602.03560": {
-      "citationCount": 11,
+      "citationCount": 13,
       "url": "https://www.semanticscholar.org/paper/005a364e958afe4e7899beb8269b5dc74543432e",
-      "checkedAt": "2026-10-31T07:56:37.001365+00:00",
+      "checkedAt": "2026-11-10T10:39:25.943310+00:00",
       "paperId": "005a364e958afe4e7899beb8269b5dc74543432e",
       "title": "HySparse: A Hybrid Sparse Attention Architecture with Oracle Token Selection and KV Cache Sharing",
       "externalIds": {
@@ -1320,9 +1320,9 @@
       }
     },
     "2602.06036": {
-      "citationCount": 168,
+      "citationCount": 193,
       "url": "https://www.semanticscholar.org/paper/fd3e5f474f033acba872b87638a79cae6be37ecf",
-      "checkedAt": "2026-10-31T07:56:39.327060+00:00",
+      "checkedAt": "2026-11-10T10:39:38.565242+00:00",
       "paperId": "fd3e5f474f033acba872b87638a79cae6be37ecf",
       "title": "DFlash: Block Diffusion for Flash Speculative Decoding",
       "externalIds": {
@@ -1333,9 +1333,9 @@
       }
     },
     "2602.10604": {
-      "citationCount": 33,
+      "citationCount": 35,
       "url": "https://www.semanticscholar.org/paper/24f25a13a9c1077a6635da1aced5be4f1ffe697a",
-      "checkedAt": "2026-10-31T07:57:11.855275+00:00",
+      "checkedAt": "2026-11-10T10:40:11.578739+00:00",
       "paperId": "24f25a13a9c1077a6635da1aced5be4f1ffe697a",
       "title": "Step 3.5 Flash: Open Frontier-Level Intelligence with 11B Active Parameters",
       "externalIds": {
@@ -1479,7 +1479,7 @@
       }
     }
   },
-  "resumeFrom": "2601.08584",
-  "rateLimitedAt": "2026-11-09T10:55:23.968096+00:00",
-  "rateLimitedTitle": "Ministral 3"
+  "resumeFrom": "2605.01640",
+  "rateLimitedAt": "2026-11-10T10:43:49.818977+00:00",
+  "rateLimitedTitle": "Prescriptive Scaling Laws for Data Constrained Training"
 }
