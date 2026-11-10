@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nanbeige4.3-33B · 官方模型卡中文翻译</title><link rel="stylesheet" href="assets/document.css?v=9037c79583a5"></head><body class="translation"><nav class="document-nav"><div class="nav-links"><a href="index.html#series-nanbeige">Nanbeige 系列</a></div><div class="document-title">Nanbeige4.3-33B · 官方模型卡</div><div class="document-meta">作者：Nanbeige LLM Lab<br>模型仓库创建：2026-10-24 · 原文核查：2026-11-10<br><a href="https://huggingface.co/Nanbeige/Nanbeige4.3-33B">官方模型卡</a> · <a href="https://huggingface.co/Nanbeige/Nanbeige4.3-33B/blob/df919e1e2cf077a22204c78b6c826bf3db18bc08/README.md">原文固定版本</a> · <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a><br>本页为官方模型卡逐句中文翻译；图表保留原文，代码保持原样。</div><div class="page-links">原文章节：<a href="#Introduction">1</a> <a href="#Model-Performance">2</a> <a href="#Quickstart">3</a> <a href="#Contact">4</a> <a href="#Citation">5</a></div></nav><main class="document-content"><section class="page" id="Introduction"><figure><a href="assets/images/nanbeige4.3/nbg.png"><img src="assets/images/nanbeige4.3/nbg.png" width="200" height="200" loading="lazy" decoding="async" alt="Nanbeige 标志"></a></figure><h1>1. 引言</h1>
+<p>在 Nanbeige4.3 中，我们朝着拓展轻量级 agent 的边界迈出了基础性的一步。我们的策略以首先构建一个高容量教师 agent 为核心，随后以它为基础，将先进的 agent 能力蒸馏到更小的模型中。</p>
+<p>为此，我们首先推出 Nanbeige4.3-33B，将其设计为 Nanbeige4.3 系列的旗舰教师模型。在约 30B 参数级别的开放模型中，Nanbeige4.3-33B 取得了最先进的 agent 性能，擅长复杂编码和专业协同办公任务。它既为立即开展现实部署提供了强大、高性价比的选择，也为我们即将开展的小模型蒸馏流程（例如 Nanbeige4.3-3B）奠定了必要基础。</p><figure><a href="assets/images/nanbeige4.3/nanbeige43-benchmarks.png"><img src="assets/images/nanbeige4.3/nanbeige43-benchmarks.png" width="2800" height="1310" loading="lazy" decoding="async" alt="原文 Nanbeige4.3 基准比较图，保留英文与数值"></a></figure></section><section class="page" id="Model-Performance"><h1>2. 模型性能</h1>
+<p>我们将 Nanbeige4.3-33B 与近期发布的约 30B 参数规模的前沿模型比较：Qwen3.8-27B、Muse-Glimmer-30B 和 Gemma4-31B。所有模型均在最高思考强度下评估。对于每个基准，各模型均使用相同的推理超参数和评测框架。</p><figure><a href="assets/images/nanbeige4.3/table-1.png"><img src="assets/images/nanbeige4.3/table-1.png" width="1400" height="1928" loading="lazy" decoding="async" alt="官方模型卡原文基准表，保留英文、数值及脚注编号"></a></figure>
+<p class="footnote"><sup>1</sup> 评估 Nanbeige4.3-33B 时，在聊天模板中设置 <code>preserve_thinking=true</code>。</p>
+<p class="footnote"><sup>2</sup> Terminal-Bench 2.1 使用 Terminus 2 评估。</p>
+<p class="footnote"><sup>3</sup> Terminal-Bench 4 和 DeepSWE 使用 mini-swe-agent v2.4.6 评估。</p>
+<p class="footnote"><sup>4</sup> SWE-Atlas-QnA 使用 mini-swe-agent v2.4.6 评估。答案依据 1,304 条任务专用评分细则进行评估，由采用中等推理强度的 GPT-6 Sol 担任评判模型。</p>
+<p class="footnote"><sup>5</sup> NL2Repo 使用 Claude Code 评估。</p>
+<p class="footnote"><sup>6</sup> Automation Bench v1.0.6 包含 600 个公开发布的任务。</p>
+<p class="footnote"><sup>7</sup> JobBench 使用配备搜索工具的 Claude Code 评测框架评估。</p>
+<p class="footnote"><sup>8</sup> GDPval 使用修订后的评分细则评分。</p>
+<p class="footnote"><sup>9</sup> Claw-Eval 仅在 Claw-Eval General 子集上评估，该子集包含 157 个单轮用户交互任务。</p>
+<p class="footnote"><sup>10</sup> Toolathlon-Verified 不为单次模型请求设置 <code>max_tokens</code> 限制。</p>
+<p class="footnote"><sup>11</sup> 每次模型调用前，YC-bench 仅保留最近 10 轮用户对话作为历史上下文。</p>
+<p class="footnote"><sup>12</sup> DeepPlanning、EnterpriseOps-Gym、Tau3-Bench 使用各自的官方仓库评估。</p>
+<p>Nanbeige4.3-33B 在大多数基准上领先，在 agent 编码和协同办公任务中均展现出强劲性能。</p>
+<p>除了覆盖广泛的基准，Nanbeige4.3-33B 在<strong>涵盖众多职业和行业的 agent 任务</strong>上也表现出色。例如，在 JobBench 评估的 35 种职业中，它在大多数职业上超越基线。</p><figure><a href="assets/images/nanbeige4.3/occupation.png"><img src="assets/images/nanbeige4.3/occupation.png" width="2722" height="3406" loading="lazy" decoding="async" alt="原文 JobBench 职业表现图，保留英文和数值"></a></figure></section><section class="page" id="Quickstart"><h1>3. 快速开始</h1>
+<p>tokenizer 为推理和工具使用场景提供可配置的聊天模板：</p>
+<ul><li><code>enable_thinking</code> 控制模型是否为当前回答生成推理。它默认启用；设置为 <code>False</code> 可使用非思考模式。</li>
+<li><code>preserve_thinking</code> 控制多轮对话中是否保留助手先前轮次的推理。对于通用聊天和问答，我们推荐 <code>False</code>；对于多轮工具使用、办公任务和代码 agent 工作流，推荐 <code>True</code>。</li>
+<li>传入 <code>tools</code> 可启用工具使用模板。为获得最佳工具调用性能，我们推荐 <code>tool_call_format="xml"</code>；为兼容性也支持 <code>json</code>。</li></ul>
+<p>模型支持最长 524,288 token（512K）的上下文。</p>
+<p>我们建议根据目标场景调整推理设置：</p><figure><a href="assets/images/nanbeige4.3/table-2.png"><img src="assets/images/nanbeige4.3/table-2.png" width="908" height="258" loading="lazy" decoding="async" alt="官方模型卡原文推理参数表，保留英文和数值"></a></figure>
+<p>你可以使用 Transformers、SGLang 或 vLLM 运行模型：</p>
+<h2>Transformers</h2><pre><code class="language-python">from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_id = &#x27;Nanbeige/Nanbeige4.3-33B&#x27;
+tokenizer = AutoTokenizer.from_pretrained(
+  model_id,
+  use_fast=False,
+  trust_remote_code=True
+)
+model = AutoModelForCausalLM.from_pretrained(
+  model_id,
+  torch_dtype=&#x27;auto&#x27;,
+  device_map=&#x27;auto&#x27;,
+  trust_remote_code=True
+)
+
+messages = [{&#x27;role&#x27;: &#x27;user&#x27;, &#x27;content&#x27;: &#x27;Which number is bigger, 9.11 or 9.8?&#x27;}]
+inputs = tokenizer.apply_chat_template(
+  messages,
+  add_generation_prompt=True,
+  return_tensors=&#x27;pt&#x27;
+).to(model.device)
+output_ids = model.generate(inputs, max_new_tokens=1024)
+response = tokenizer.decode(output_ids[0][inputs.shape[-1]:], skip_special_tokens=True)
+print(response)
+</code></pre><h2>SGLang</h2><pre><code class="language-bash">MODEL_PATH=/path/to/your/Nanbeige4.3-33B
+python -m sglang.launch_server \
+  --model-path ${MODEL_PATH} \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --tp-size 4 \
+  --mem-fraction-static 0.8 \
+  --reasoning-parser qwen3 \
+  --tool-call-parser qwen3_coder
+</code></pre><h2>vLLM</h2><pre><code class="language-bash">MODEL_PATH=/path/to/your/Nanbeige4.3-33B
+vllm serve ${MODEL_PATH} \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --tensor-parallel-size 4 \
+  --gpu-memory-utilization 0.8 \
+  --enable-auto-tool-choice \
+  --reasoning-parser qwen3 \
+  --tool-call-parser qwen3_coder
+</code></pre></section><section class="page" id="Contact"><h1>4. 联系方式</h1>
+<p>如有任何问题，请在本仓库提出 issue，或通过 <a href="mailto:nanbeige@kanzhun.com">nanbeige@kanzhun.com</a> 联系我们。</p>
+<p>我们也欢迎合作构建面向特定领域和行业的 agent，包括在数据与训练方面开展联合工作。</p></section><section class="page" id="Citation"><h1>5. 引用</h1>
+<p>如果你认为我们的模型有用，或者希望在自己的工作中使用它，请引用本 Hugging Face 项目：</p><pre><code class="language-bibtex">@misc{nanbeige43chat2026,
+  title        = {Nanbeige4.3-33B},
+  author       = {Nanbeige Team},
+  year         = {2026},
+  publisher    = {Hugging Face},
+  howpublished = {\url{https://huggingface.co/Nanbeige/Nanbeige4.3-33B}}
+}
+</code></pre></section></main></body></html>
