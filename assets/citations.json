@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-10T10:42:46.939321+00:00",
+  "checkedAt": "2026-11-11T10:07:00.003820+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4153,
@@ -1346,12 +1346,12 @@
     "2605.01640": {
       "citationCount": 12,
       "url": "https://www.semanticscholar.org/paper/169c050e207f2768c6ed4d7b3a267f70e46d3363",
-      "checkedAt": "2026-10-31T07:58:51.390252+00:00",
+      "checkedAt": "2026-11-11T10:07:00.003820+00:00",
       "paperId": "169c050e207f2768c6ed4d7b3a267f70e46d3363",
       "title": "Prescriptive Scaling Laws for Data Constrained Training",
       "externalIds": {
-        "ArXiv": "2605.01640",
         "DBLP": "journals/corr/abs-2605-01640",
+        "ArXiv": "2605.01640",
         "DOI": "10.48550/arXiv.2605.01640",
         "CorpusId": 287949777
       }
@@ -1479,7 +1479,7 @@
       }
     }
   },
-  "resumeFrom": "2605.01640",
-  "rateLimitedAt": "2026-11-10T10:43:49.818977+00:00",
-  "rateLimitedTitle": "Prescriptive Scaling Laws for Data Constrained Training"
+  "resumeFrom": "2605.26494",
+  "rateLimitedAt": "2026-11-11T10:08:01.802681+00:00",
+  "rateLimitedTitle": "The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence"
 }
