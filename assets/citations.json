@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-11T10:07:00.003820+00:00",
+  "checkedAt": "2026-11-12T10:33:12.592271+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4153,
@@ -638,9 +638,9 @@
       }
     },
     "2606.15079": {
-      "citationCount": 8,
+      "citationCount": 9,
       "url": "https://www.semanticscholar.org/paper/5ef7aa7efaf62e28fe9402f4d31da8190257403f",
-      "checkedAt": "2026-10-31T08:00:36.020709+00:00",
+      "checkedAt": "2026-11-12T10:31:59.474823+00:00",
       "paperId": "5ef7aa7efaf62e28fe9402f4d31da8190257403f",
       "title": "Ling and Ring 2.6 Technical Report: Efficient and Instant Agentic Intelligence at Trillion-Parameter Scale",
       "externalIds": {
@@ -649,9 +649,9 @@
       }
     },
     "2606.19348": {
-      "citationCount": 1380,
+      "citationCount": 1486,
       "url": "https://www.semanticscholar.org/paper/c055403632ddca2292e8cb62e5e60ba12e65dd25",
-      "checkedAt": "2026-10-31T08:00:38.343246+00:00",
+      "checkedAt": "2026-11-12T10:32:02.051765+00:00",
       "paperId": "c055403632ddca2292e8cb62e5e60ba12e65dd25",
       "title": "DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence",
       "externalIds": {
@@ -660,9 +660,9 @@
       }
     },
     "2607.02770": {
-      "citationCount": 319,
+      "citationCount": 369,
       "url": "https://www.semanticscholar.org/paper/bae8d2f66cd289f690db7d3f89e2951e34229d8e",
-      "checkedAt": "2026-10-31T08:01:23.405667+00:00",
+      "checkedAt": "2026-11-12T10:32:27.024092+00:00",
       "paperId": "bae8d2f66cd289f690db7d3f89e2951e34229d8e",
       "title": "Gemma 4 Technical Report",
       "externalIds": {
@@ -841,9 +841,9 @@
       }
     },
     "2606.04485": {
-      "citationCount": 13,
+      "citationCount": 14,
       "url": "https://www.semanticscholar.org/paper/e2fb872aeae2587e804282e7c55396cb7d60ed38",
-      "checkedAt": "2026-10-31T07:59:38.647852+00:00",
+      "checkedAt": "2026-11-12T10:30:21.143374+00:00",
       "paperId": "e2fb872aeae2587e804282e7c55396cb7d60ed38",
       "title": "LimiX-2M: Mitigating Low-Rank Collapse and Attention Bottlenecks in Tabular Foundation Models",
       "externalIds": {
@@ -854,9 +854,9 @@
       }
     },
     "2606.30406": {
-      "citationCount": 84,
+      "citationCount": 95,
       "url": "https://www.semanticscholar.org/paper/c005c0cab28d02c214b821878fd9dad76b3f715f",
-      "checkedAt": "2026-10-31T08:01:10.816682+00:00",
+      "checkedAt": "2026-11-12T10:32:14.616663+00:00",
       "paperId": "c005c0cab28d02c214b821878fd9dad76b3f715f",
       "title": "MOPD: Multi-Teacher On-Policy Distillation for Capability Integration in LLM Post-Training",
       "externalIds": {
@@ -1357,9 +1357,9 @@
       }
     },
     "2605.26494": {
-      "citationCount": 66,
+      "citationCount": 69,
       "url": "https://www.semanticscholar.org/paper/b2432a7626bd0a4e1f427a59e32b87f75b67204e",
-      "checkedAt": "2026-10-31T07:58:53.649616+00:00",
+      "checkedAt": "2026-11-12T10:29:56.072963+00:00",
       "paperId": "b2432a7626bd0a4e1f427a59e32b87f75b67204e",
       "title": "The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence",
       "externalIds": {
@@ -1372,7 +1372,7 @@
     "2605.26579": {
       "citationCount": 5,
       "url": "https://www.semanticscholar.org/paper/b00e2b10cb17e215fc6f0d869a286537875b24da",
-      "checkedAt": "2026-10-31T07:59:06.040245+00:00",
+      "checkedAt": "2026-11-12T10:30:08.545869+00:00",
       "paperId": "b00e2b10cb17e215fc6f0d869a286537875b24da",
       "title": "Focal Reward: Balanced Reinforcement Learning under Rubric-Based Rewards",
       "externalIds": {
@@ -1383,9 +1383,9 @@
       }
     },
     "2606.13392": {
-      "citationCount": 42,
+      "citationCount": 50,
       "url": "https://www.semanticscholar.org/paper/f67a29537aa3f04aae5aac40f6b4e02972b4be27",
-      "checkedAt": "2026-10-31T07:59:51.110151+00:00",
+      "checkedAt": "2026-11-12T10:30:54.040440+00:00",
       "paperId": "f67a29537aa3f04aae5aac40f6b4e02972b4be27",
       "title": "MiniMax Sparse Attention",
       "externalIds": {
@@ -1398,7 +1398,7 @@
     "2606.13473": {
       "citationCount": 3,
       "url": "https://www.semanticscholar.org/paper/33a1741fb2d3e7ac05649ef34c1b0a111fd8d5cf",
-      "checkedAt": "2026-10-31T08:00:23.601035+00:00",
+      "checkedAt": "2026-11-12T10:31:36.895330+00:00",
       "paperId": "33a1741fb2d3e7ac05649ef34c1b0a111fd8d5cf",
       "title": "MaxProof: Scaling Mathematical Proof with Generative-Verifier RL and Population-Level Test-Time Scaling",
       "externalIds": {
@@ -1409,9 +1409,9 @@
       }
     },
     "2607.12395": {
-      "citationCount": 1,
+      "citationCount": 2,
       "url": "https://www.semanticscholar.org/paper/3a080768d0555574cb1d9b4d566b2c516d3536e5",
-      "checkedAt": "2026-10-31T08:01:25.828063+00:00",
+      "checkedAt": "2026-11-12T10:33:10.198032+00:00",
       "paperId": "3a080768d0555574cb1d9b4d566b2c516d3536e5",
       "title": "Ring-Zero: Scaling Zero RL to a Trillion Parameters for Emergent Reasoning",
       "externalIds": {
@@ -1477,9 +1477,22 @@
         "ArXiv": "2001.08361",
         "CorpusId": 210861095
       }
+    },
+    "2607.22083": {
+      "citationCount": 14,
+      "url": "https://www.semanticscholar.org/paper/41c52aa8781b6f49999968299c46acf58b3c8ce8",
+      "checkedAt": "2026-11-12T10:33:12.592271+00:00",
+      "paperId": "41c52aa8781b6f49999968299c46acf58b3c8ce8",
+      "title": "Nanbeige4.2-3B: Unlocking Agentic Capabilities in a Compact Model",
+      "externalIds": {
+        "DBLP": "journals/corr/abs-2607-22083",
+        "ArXiv": "2607.22083",
+        "DOI": "10.48550/arXiv.2607.22083",
+        "CorpusId": 290583771
+      }
     }
   },
-  "resumeFrom": "2605.26494",
-  "rateLimitedAt": "2026-11-11T10:08:01.802681+00:00",
-  "rateLimitedTitle": "The MiniMax-M2 Series: Mini Activations Unleashing Max Real-World Intelligence"
+  "resumeFrom": "2607.24653",
+  "rateLimitedAt": "2026-11-12T10:34:14.392879+00:00",
+  "rateLimitedTitle": "Kimi K3: Open Frontier Intelligence"
 }
