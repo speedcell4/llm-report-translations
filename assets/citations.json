@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-12T10:33:12.592271+00:00",
+  "checkedAt": "2026-11-13T10:25:08.142783+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4153,
@@ -673,9 +673,9 @@
       }
     },
     "2607.24653": {
-      "citationCount": 129,
+      "citationCount": 149,
       "url": "https://www.semanticscholar.org/paper/4ba72bcb0510a905480e79e318cda842d2b0bff1",
-      "checkedAt": "2026-10-31T08:01:28.207136+00:00",
+      "checkedAt": "2026-11-13T10:23:16.631527+00:00",
       "paperId": "4ba72bcb0510a905480e79e318cda842d2b0bff1",
       "title": "Kimi K3: Open Frontier Intelligence",
       "externalIds": {
@@ -684,42 +684,48 @@
       }
     },
     "2608.13505": {
-      "citationCount": 7,
+      "citationCount": 9,
       "url": "https://www.semanticscholar.org/paper/71137b650641f2fc16d1fc094913ab557582d0b8",
-      "checkedAt": "2026-10-31T08:01:40.613811+00:00",
+      "checkedAt": "2026-11-13T10:23:18.845445+00:00",
       "paperId": "71137b650641f2fc16d1fc094913ab557582d0b8",
       "title": "Intern-S2-Preview: Scientific Agentic Foundation Model",
       "externalIds": {
+        "DBLP": "journals/corr/abs-2608-13505",
         "ArXiv": "2608.13505",
+        "DOI": "10.48550/arXiv.2608.13505",
         "CorpusId": 291084427
       }
     },
     "2608.30320": {
-      "citationCount": 65,
+      "citationCount": 82,
       "url": "https://www.semanticscholar.org/paper/8f38affde080c4b41ef4540363e4eebfffa26253",
-      "checkedAt": "2026-10-31T08:01:45.166373+00:00",
+      "checkedAt": "2026-11-13T10:23:53.705230+00:00",
       "paperId": "8f38affde080c4b41ef4540363e4eebfffa26253",
       "title": "On the Design of Qwen3.8-Next Architecture: Evaluation, Efficiency, and Training Stability",
       "externalIds": {
         "ArXiv": "2608.30320",
+        "DBLP": "journals/corr/abs-2608-30320",
+        "DOI": "10.48550/arXiv.2608.30320",
         "CorpusId": 291542228
       }
     },
     "2609.13356": {
       "citationCount": 0,
       "url": "https://www.semanticscholar.org/paper/5b21150a5fc8704990fcefef09bc12a7cb4e71c3",
-      "checkedAt": "2026-10-31T08:02:32.786236+00:00",
+      "checkedAt": "2026-11-13T10:24:40.520403+00:00",
       "paperId": "5b21150a5fc8704990fcefef09bc12a7cb4e71c3",
       "title": "ZGCM-1: A Fully Open and Extremely Efficient Foundation Model for Math and Agentic Search",
       "externalIds": {
+        "DBLP": "journals/corr/abs-2609-13356",
         "ArXiv": "2609.13356",
+        "DOI": "10.48550/arXiv.2609.13356",
         "CorpusId": 292012036
       }
     },
     "2609.19969": {
-      "citationCount": 158,
+      "citationCount": 210,
       "url": "https://www.semanticscholar.org/paper/e79f9541258bb9fc026c129f8a0920cfac7a2063",
-      "checkedAt": "2026-10-31T08:04:08.052061+00:00",
+      "checkedAt": "2026-11-13T10:24:54.979811+00:00",
       "paperId": "e79f9541258bb9fc026c129f8a0920cfac7a2063",
       "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression",
       "externalIds": {
@@ -730,18 +736,20 @@
     "2609.39137": {
       "citationCount": 1,
       "url": "https://www.semanticscholar.org/paper/2b121e54f5b1dc7d70330e28cbb387b931050cad",
-      "checkedAt": "2026-10-31T08:04:35.207324+00:00",
+      "checkedAt": "2026-11-13T10:25:01.621891+00:00",
       "paperId": "2b121e54f5b1dc7d70330e28cbb387b931050cad",
       "title": "ID Balancing: Stable Training of Extremely Sparse MoE via PID-Based Load Control",
       "externalIds": {
+        "DBLP": "journals/corr/abs-2609-39137",
         "ArXiv": "2609.39137",
+        "DOI": "10.48550/arXiv.2609.39137",
         "CorpusId": 292487499
       }
     },
     "2610.11959": {
-      "citationCount": 12,
+      "citationCount": 15,
       "url": "https://www.semanticscholar.org/paper/ca78769b3bef2fba556fac63b6a9cc2abe7fbb75",
-      "checkedAt": "2026-10-31T08:05:40.102032+00:00",
+      "checkedAt": "2026-11-13T10:25:05.938384+00:00",
       "paperId": "ca78769b3bef2fba556fac63b6a9cc2abe7fbb75",
       "title": "MiMo-V2.6: Scaling Reinforcement Learning Towards Self-Improvement",
       "externalIds": {
@@ -869,44 +877,52 @@
     "2608.14290": {
       "citationCount": 1,
       "url": "https://www.semanticscholar.org/paper/70bbabcab5f8f6cd7d8d9ea3c2bfe5f1d2d85da0",
-      "checkedAt": "2026-10-31T08:01:42.886668+00:00",
+      "checkedAt": "2026-11-13T10:23:31.258803+00:00",
       "paperId": "70bbabcab5f8f6cd7d8d9ea3c2bfe5f1d2d85da0",
       "title": "Intern-S2-Mobius: Foundation Model with Decoupled Knowledge and Reasoning",
       "externalIds": {
         "ArXiv": "2608.14290",
+        "DBLP": "journals/corr/abs-2608-14290",
+        "DOI": "10.48550/arXiv.2608.14290",
         "CorpusId": 291167384
       }
     },
     "2609.10715": {
       "citationCount": 1,
       "url": "https://www.semanticscholar.org/paper/d26701f78f38ffaa0108d36e9dbc6b04c9706a9d",
-      "checkedAt": "2026-10-31T08:02:20.309362+00:00",
+      "checkedAt": "2026-11-13T10:24:38.271012+00:00",
       "paperId": "d26701f78f38ffaa0108d36e9dbc6b04c9706a9d",
       "title": "NCP-ArchPreview Technical Report: Moving towards Latent Space Language Models through Next Concept Prediction",
       "externalIds": {
+        "DBLP": "journals/corr/abs-2609-10715",
         "ArXiv": "2609.10715",
+        "DOI": "10.48550/arXiv.2609.10715",
         "CorpusId": 291902052
       }
     },
     "2609.17488": {
-      "citationCount": 13,
+      "citationCount": 14,
       "url": "https://www.semanticscholar.org/paper/9e5fc979a813f2ccdac5a600ce19408c7f8cc2d4",
-      "checkedAt": "2026-10-31T08:03:35.482315+00:00",
+      "checkedAt": "2026-11-13T10:24:52.767892+00:00",
       "paperId": "9e5fc979a813f2ccdac5a600ce19408c7f8cc2d4",
       "title": "LimiX-2: A Contextual Mechanism Network Towards General Structured-Data Intelligence",
       "externalIds": {
+        "DBLP": "journals/corr/abs-2609-17488",
         "ArXiv": "2609.17488",
+        "DOI": "10.48550/arXiv.2609.17488",
         "CorpusId": 292033361
       }
     },
     "2609.26368": {
-      "citationCount": 1,
+      "citationCount": 2,
       "url": "https://www.semanticscholar.org/paper/4bf5d757d16d7dc5ce19032a4c401909bd1764e2",
-      "checkedAt": "2026-10-31T08:04:22.790027+00:00",
+      "checkedAt": "2026-11-13T10:24:59.346351+00:00",
       "paperId": "4bf5d757d16d7dc5ce19032a4c401909bd1764e2",
       "title": "HySparse2: Hybrid Sparse Attention with Two-Level KV Sharing",
       "externalIds": {
+        "DBLP": "journals/corr/abs-2609-26368",
         "ArXiv": "2609.26368",
+        "DOI": "10.48550/arXiv.2609.26368",
         "CorpusId": 292227449
       }
     },
@@ -1424,29 +1440,33 @@
     "2608.30703": {
       "citationCount": 0,
       "url": "https://www.semanticscholar.org/paper/d3cefd20777c4d69d6d2230733b13a7573461f35",
-      "checkedAt": "2026-10-31T08:01:57.648723+00:00",
+      "checkedAt": "2026-11-13T10:24:26.015398+00:00",
       "paperId": "d3cefd20777c4d69d6d2230733b13a7573461f35",
       "title": "SingProbe Technical Report",
       "externalIds": {
         "ArXiv": "2608.30703",
+        "DBLP": "journals/corr/abs-2608-30703",
+        "DOI": "10.48550/arXiv.2608.30703",
         "CorpusId": 291542105
       }
     },
     "2609.24197": {
-      "citationCount": 2,
+      "citationCount": 3,
       "url": "https://www.semanticscholar.org/paper/26342a73ff54fa5e9a3fc72616d778ff969e23cc",
-      "checkedAt": "2026-10-31T08:04:20.465338+00:00",
+      "checkedAt": "2026-11-13T10:24:57.186507+00:00",
       "paperId": "26342a73ff54fa5e9a3fc72616d778ff969e23cc",
       "title": "H-Spec: Parallel Speculative Decoding Without a Drafter-Side KV Cache",
       "externalIds": {
+        "DBLP": "journals/corr/abs-2609-24197",
         "ArXiv": "2609.24197",
+        "DOI": "10.48550/arXiv.2609.24197",
         "CorpusId": 292218431
       }
     },
     "2610.00888": {
       "citationCount": 0,
       "url": "https://www.semanticscholar.org/paper/2a572870af817f283bece43d35cf8fe21ed27701",
-      "checkedAt": "2026-10-31T08:05:37.723780+00:00",
+      "checkedAt": "2026-11-13T10:25:03.781130+00:00",
       "paperId": "2a572870af817f283bece43d35cf8fe21ed27701",
       "title": "Match the Distribution, Not the Compute: Post-Training Multi-Token Prediction Heads",
       "externalIds": {
@@ -1457,7 +1477,7 @@
     "2610.13990": {
       "citationCount": 1,
       "url": "https://www.semanticscholar.org/paper/dc56c39ddbaa1ce6195f051e5c444d3e670cb74d",
-      "checkedAt": "2026-10-31T08:06:02.751852+00:00",
+      "checkedAt": "2026-11-13T10:25:08.142783+00:00",
       "paperId": "dc56c39ddbaa1ce6195f051e5c444d3e670cb74d",
       "title": "DoSA: Dots Sparse Attention",
       "externalIds": {
@@ -1492,7 +1512,5 @@
       }
     }
   },
-  "resumeFrom": "2607.24653",
-  "rateLimitedAt": "2026-11-12T10:34:14.392879+00:00",
-  "rateLimitedTitle": "Kimi K3: Open Frontier Intelligence"
+  "resumeFrom": null
 }
