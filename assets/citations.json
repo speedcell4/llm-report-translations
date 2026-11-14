@@ -1,10 +1,10 @@
 {
-  "checkedAt": "2026-11-13T10:25:08.142783+00:00",
+  "checkedAt": "2026-11-14T09:50:22.574709+00:00",
   "reports": {
     "2310.06825": {
-      "citationCount": 4153,
+      "citationCount": 4201,
       "url": "https://www.semanticscholar.org/paper/db633c6b1c286c0386f0078d8a2e6224e03a6227",
-      "checkedAt": "2026-11-05T10:06:39.407004+00:00",
+      "checkedAt": "2026-11-14T09:42:44.723091+00:00",
       "paperId": "db633c6b1c286c0386f0078d8a2e6224e03a6227",
       "title": "Mistral 7B",
       "externalIds": {
@@ -15,9 +15,9 @@
       }
     },
     "2401.04088": {
-      "citationCount": 2272,
+      "citationCount": 2297,
       "url": "https://www.semanticscholar.org/paper/411114f989a3d1083d90afd265103132fee94ebe",
-      "checkedAt": "2026-11-05T10:07:12.249659+00:00",
+      "checkedAt": "2026-11-14T09:42:57.212546+00:00",
       "paperId": "411114f989a3d1083d90afd265103132fee94ebe",
       "title": "Mixtral of Experts",
       "externalIds": {
@@ -28,9 +28,9 @@
       }
     },
     "2401.06066": {
-      "citationCount": 1284,
+      "citationCount": 1320,
       "url": "https://www.semanticscholar.org/paper/16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
-      "checkedAt": "2026-11-05T10:07:14.496570+00:00",
+      "checkedAt": "2026-11-14T09:43:09.616160+00:00",
       "paperId": "16d6e1ed1cf72212f6154644f3aa59d18bc95fda",
       "title": "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models",
       "externalIds": {
@@ -41,9 +41,9 @@
       }
     },
     "2402.03300": {
-      "citationCount": 10848,
+      "citationCount": 10989,
       "url": "https://www.semanticscholar.org/paper/35b142ea69598e6241f0011312128031df55895c",
-      "checkedAt": "2026-11-09T10:42:00.348584+00:00",
+      "checkedAt": "2026-11-14T09:44:42.809470+00:00",
       "paperId": "35b142ea69598e6241f0011312128031df55895c",
       "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
       "externalIds": {
@@ -54,9 +54,9 @@
       }
     },
     "2402.04617": {
-      "citationCount": 251,
+      "citationCount": 256,
       "url": "https://www.semanticscholar.org/paper/26e13e1da4f47c93c9ad0daf9cc9e2bb4ffd063d",
-      "checkedAt": "2026-11-09T10:42:02.648595+00:00",
+      "checkedAt": "2026-11-14T09:45:26.060256+00:00",
       "paperId": "26e13e1da4f47c93c9ad0daf9cc9e2bb4ffd063d",
       "title": "InfLLM: Training-Free Long-Context Extrapolation for LLMs with an Efficient Context Memory",
       "externalIds": {
@@ -67,9 +67,9 @@
       }
     },
     "2402.06332": {
-      "citationCount": 140,
+      "citationCount": 141,
       "url": "https://www.semanticscholar.org/paper/af1d4a4141eaf52384ca85f1d468443f8f3d5c06",
-      "checkedAt": "2026-11-09T10:42:04.984208+00:00",
+      "checkedAt": "2026-11-14T09:46:08.874611+00:00",
       "paperId": "af1d4a4141eaf52384ca85f1d468443f8f3d5c06",
       "title": "InternLM-Math: Open Math Large Language Models Toward Verifiable Reasoning",
       "externalIds": {
@@ -80,14 +80,14 @@
       }
     },
     "2403.17297": {
-      "citationCount": 451,
+      "citationCount": 452,
       "url": "https://www.semanticscholar.org/paper/75b2ae5ee35611ecfbd3dc2c3d0799cfb4fd98e4",
-      "checkedAt": "2026-11-09T10:42:07.239726+00:00",
+      "checkedAt": "2026-11-14T09:46:41.613983+00:00",
       "paperId": "75b2ae5ee35611ecfbd3dc2c3d0799cfb4fd98e4",
       "title": "InternLM2 Technical Report",
       "externalIds": {
-        "DBLP": "journals/corr/abs-2403-17297",
         "ArXiv": "2403.17297",
+        "DBLP": "journals/corr/abs-2403-17297",
         "DOI": "10.48550/arXiv.2403.17297",
         "CorpusId": 268691939
       }
@@ -95,7 +95,7 @@
     "2406.11704": {
       "citationCount": 142,
       "url": "https://www.semanticscholar.org/paper/d0e7353189feb4501c637b7008ff993de603c3f0",
-      "checkedAt": "2026-11-09T10:42:14.918173+00:00",
+      "checkedAt": "2026-11-14T09:47:29.100400+00:00",
       "paperId": "d0e7353189feb4501c637b7008ff993de603c3f0",
       "title": "Nemotron-4 340B Technical Report",
       "externalIds": {
@@ -106,9 +106,9 @@
       }
     },
     "2406.11794": {
-      "citationCount": 476,
+      "citationCount": 480,
       "url": "https://www.semanticscholar.org/paper/874e957f6bcbfeb9f69d4475456abb13335ec05b",
-      "checkedAt": "2026-11-09T10:42:17.226477+00:00",
+      "checkedAt": "2026-11-14T09:48:01.632948+00:00",
       "paperId": "874e957f6bcbfeb9f69d4475456abb13335ec05b",
       "title": "DataComp-LM: In search of the next generation of training sets for language models",
       "externalIds": {
@@ -119,9 +119,9 @@
       }
     },
     "2406.17557": {
-      "citationCount": 1477,
+      "citationCount": 1503,
       "url": "https://www.semanticscholar.org/paper/b83a9e35c3aeeb37708e362473c7617d59b815b5",
-      "checkedAt": "2026-11-09T10:42:41.959134+00:00",
+      "checkedAt": "2026-11-14T09:49:06.949778+00:00",
       "paperId": "b83a9e35c3aeeb37708e362473c7617d59b815b5",
       "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
       "externalIds": {
@@ -758,21 +758,22 @@
       }
     },
     "2101.00027": {
-      "citationCount": 3159,
+      "citationCount": 3188,
       "url": "https://www.semanticscholar.org/paper/db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
-      "checkedAt": "2026-11-02T10:21:25.292045+00:00",
+      "checkedAt": "2026-11-14T09:39:52.805232+00:00",
       "paperId": "db1afe3b3cd4cd90e41fbba65d3075dd5aebb61e",
       "title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
       "externalIds": {
         "DBLP": "journals/corr/abs-2101-00027",
         "ArXiv": "2101.00027",
+        "DOI": "10.48550/arXiv.2101.00027",
         "CorpusId": 230435736
       }
     },
     "2402.00159": {
-      "citationCount": 600,
+      "citationCount": 604,
       "url": "https://www.semanticscholar.org/paper/ad1bb59e3e18a0dd8503c3961d6074f162baf710",
-      "checkedAt": "2026-11-09T10:41:27.407768+00:00",
+      "checkedAt": "2026-11-14T09:44:40.488082+00:00",
       "paperId": "ad1bb59e3e18a0dd8503c3961d6074f162baf710",
       "title": "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research",
       "externalIds": {
@@ -809,23 +810,23 @@
       }
     },
     "2107.06499": {
-      "citationCount": 1042,
+      "citationCount": 1067,
       "url": "https://www.semanticscholar.org/paper/4566c0d22ebf3c31180066ab23b6c445aeec78d5",
-      "checkedAt": "2026-11-02T10:21:27.766969+00:00",
+      "checkedAt": "2026-11-14T09:39:55.303478+00:00",
       "paperId": "4566c0d22ebf3c31180066ab23b6c445aeec78d5",
       "title": "Deduplicating Training Data Makes Language Models Better",
       "externalIds": {
         "ACL": "2022.acl-long.577",
         "DBLP": "journals/corr/abs-2107-06499",
         "ArXiv": "2107.06499",
-        "DOI": "10.18653/v1/2022.acl-long.577",
+        "DOI": "10.48550/arXiv.2107.06499",
         "CorpusId": 235829052
       }
     },
     "2212.10560": {
-      "citationCount": 3858,
+      "citationCount": 3916,
       "url": "https://www.semanticscholar.org/paper/e65b346d442e9962a4276dc1c1af2956d9d5f1eb",
-      "checkedAt": "2026-11-02T10:22:45.895926+00:00",
+      "checkedAt": "2026-11-14T09:41:23.099115+00:00",
       "paperId": "e65b346d442e9962a4276dc1c1af2956d9d5f1eb",
       "title": "Self-Instruct: Aligning Language Models with Self-Generated Instructions",
       "externalIds": {
@@ -837,9 +838,9 @@
       }
     },
     "2306.11644": {
-      "citationCount": 691,
+      "citationCount": 695,
       "url": "https://www.semanticscholar.org/paper/2922768fd451ecdb45f48c1a83eb57f54a91221b",
-      "checkedAt": "2026-11-05T10:06:24.658832+00:00",
+      "checkedAt": "2026-11-14T09:42:30.153197+00:00",
       "paperId": "2922768fd451ecdb45f48c1a83eb57f54a91221b",
       "title": "Textbooks Are All You Need",
       "externalIds": {
@@ -927,9 +928,9 @@
       }
     },
     "2203.15556": {
-      "citationCount": 3994,
+      "citationCount": 4068,
       "url": "https://www.semanticscholar.org/paper/8342b592fe238f3d230e4959b06fd10153c45db1",
-      "checkedAt": "2026-11-02T10:21:30.108735+00:00",
+      "checkedAt": "2026-11-14T09:40:07.737221+00:00",
       "paperId": "8342b592fe238f3d230e4959b06fd10153c45db1",
       "title": "Training Compute-Optimal Large Language Models",
       "externalIds": {
@@ -940,9 +941,9 @@
       }
     },
     "2204.02311": {
-      "citationCount": 8570,
+      "citationCount": 8625,
       "url": "https://www.semanticscholar.org/paper/094ff971d6a8b8ff870946c9b3ce5aa173617bfb",
-      "checkedAt": "2026-11-02T10:21:42.824083+00:00",
+      "checkedAt": "2026-11-14T09:40:40.466429+00:00",
       "paperId": "094ff971d6a8b8ff870946c9b3ce5aa173617bfb",
       "title": "PaLM: Scaling Language Modeling with Pathways",
       "externalIds": {
@@ -952,9 +953,9 @@
       }
     },
     "2302.01318": {
-      "citationCount": 1258,
+      "citationCount": 1315,
       "url": "https://www.semanticscholar.org/paper/a1f8082505c7e90b0a033e1b9da0a97d67aad66c",
-      "checkedAt": "2026-11-02T10:22:48.297617+00:00",
+      "checkedAt": "2026-11-14T09:41:25.403258+00:00",
       "paperId": "a1f8082505c7e90b0a033e1b9da0a97d67aad66c",
       "title": "Accelerating Large Language Model Decoding with Speculative Sampling",
       "externalIds": {
@@ -965,9 +966,9 @@
       }
     },
     "2303.13506": {
-      "citationCount": 186,
+      "citationCount": 189,
       "url": "https://www.semanticscholar.org/paper/9e4980cb927b803d375c5796f4a2eb3a7fe0555d",
-      "checkedAt": "2026-11-02T10:23:01.092685+00:00",
+      "checkedAt": "2026-11-14T09:41:58.024577+00:00",
       "paperId": "9e4980cb927b803d375c5796f4a2eb3a7fe0555d",
       "title": "The Quantization Model of Neural Scaling",
       "externalIds": {
@@ -978,9 +979,9 @@
       }
     },
     "2305.09781": {
-      "citationCount": 514,
+      "citationCount": 536,
       "url": "https://www.semanticscholar.org/paper/f0c31511134abdd23f990310e8a2f2eb3a629b62",
-      "checkedAt": "2026-11-02T10:23:33.634549+00:00",
+      "checkedAt": "2026-11-14T09:42:00.353936+00:00",
       "paperId": "f0c31511134abdd23f990310e8a2f2eb3a629b62",
       "title": "SpecInfer: Accelerating Large Language Model Serving with Tree-based Speculative Inference and Verification",
       "externalIds": {
@@ -991,9 +992,9 @@
       }
     },
     "2305.10429": {
-      "citationCount": 492,
+      "citationCount": 506,
       "url": "https://www.semanticscholar.org/paper/9b4f7c97c0b83a80c32bc0b93595cbcfb4ecb16d",
-      "checkedAt": "2026-11-02T10:23:35.988679+00:00",
+      "checkedAt": "2026-11-14T09:42:02.879828+00:00",
       "paperId": "9b4f7c97c0b83a80c32bc0b93595cbcfb4ecb16d",
       "title": "DoReMi: Optimizing Data Mixtures Speeds Up Language Model Pretraining",
       "externalIds": {
@@ -1004,9 +1005,9 @@
       }
     },
     "2305.16264": {
-      "citationCount": 502,
+      "citationCount": 514,
       "url": "https://www.semanticscholar.org/paper/9e16d8cc6096ec0d2733a4ecf41ce09d9a4bd19c",
-      "checkedAt": "2026-11-02T10:24:08.552490+00:00",
+      "checkedAt": "2026-11-14T09:42:15.316848+00:00",
       "paperId": "9e16d8cc6096ec0d2733a4ecf41ce09d9a4bd19c",
       "title": "Scaling Data-Constrained Language Models",
       "externalIds": {
@@ -1017,9 +1018,9 @@
       }
     },
     "2305.19466": {
-      "citationCount": 470,
+      "citationCount": 480,
       "url": "https://www.semanticscholar.org/paper/6f6e2e0311589a9af045f6acd00b7dee6d19fce4",
-      "checkedAt": "2026-11-05T10:06:11.228548+00:00",
+      "checkedAt": "2026-11-14T09:42:17.708536+00:00",
       "paperId": "6f6e2e0311589a9af045f6acd00b7dee6d19fce4",
       "title": "The Impact of Positional Encoding on Length Generalization in Transformers",
       "externalIds": {
@@ -1030,9 +1031,9 @@
       }
     },
     "2401.07851": {
-      "citationCount": 371,
+      "citationCount": 374,
       "url": "https://www.semanticscholar.org/paper/0cee098244c9978032702862a43a09f468f691a4",
-      "checkedAt": "2026-11-07T09:28:17.267013+00:00",
+      "checkedAt": "2026-11-14T09:43:12.106543+00:00",
       "paperId": "0cee098244c9978032702862a43a09f468f691a4",
       "title": "Unlocking Efficiency in Large Language Model Inference: A Comprehensive Survey of Speculative Decoding",
       "externalIds": {
@@ -1043,9 +1044,9 @@
       }
     },
     "2401.10774": {
-      "citationCount": 1082,
+      "citationCount": 1097,
       "url": "https://www.semanticscholar.org/paper/57e7af0b69325fafb371ef5d502e39ef9c90ef7e",
-      "checkedAt": "2026-11-08T09:44:31.781074+00:00",
+      "checkedAt": "2026-11-14T09:44:15.183653+00:00",
       "paperId": "57e7af0b69325fafb371ef5d502e39ef9c90ef7e",
       "title": "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads",
       "externalIds": {
@@ -1056,9 +1057,9 @@
       }
     },
     "2401.15077": {
-      "citationCount": 754,
+      "citationCount": 765,
       "url": "https://www.semanticscholar.org/paper/1b5db3170c195508ff24fee8eda0d4987e806f0b",
-      "checkedAt": "2026-11-08T09:45:45.292701+00:00",
+      "checkedAt": "2026-11-14T09:44:38.064424+00:00",
       "paperId": "1b5db3170c195508ff24fee8eda0d4987e806f0b",
       "title": "EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty",
       "externalIds": {
@@ -1069,9 +1070,9 @@
       }
     },
     "2404.10102": {
-      "citationCount": 73,
+      "citationCount": 74,
       "url": "https://www.semanticscholar.org/paper/2cfe76f2fcb272fd0dde67b5468cdc462416fd38",
-      "checkedAt": "2026-11-09T10:42:10.068198+00:00",
+      "checkedAt": "2026-11-14T09:46:43.891332+00:00",
       "paperId": "2cfe76f2fcb272fd0dde67b5468cdc462416fd38",
       "title": "Chinchilla Scaling: A replication attempt",
       "externalIds": {
@@ -1082,9 +1083,9 @@
       }
     },
     "2404.19737": {
-      "citationCount": 467,
+      "citationCount": 477,
       "url": "https://www.semanticscholar.org/paper/b9c289f141c54ab465a885fb7be7936d98e8c853",
-      "checkedAt": "2026-11-09T10:42:12.543994+00:00",
+      "checkedAt": "2026-11-14T09:47:16.608899+00:00",
       "paperId": "b9c289f141c54ab465a885fb7be7936d98e8c853",
       "title": "Better & Faster Large Language Models via Multi-token Prediction",
       "externalIds": {
@@ -1097,7 +1098,7 @@
     "2406.12907": {
       "citationCount": 44,
       "url": "https://www.semanticscholar.org/paper/df6227869dd72951c9c46f02cd65f6b588f129ab",
-      "checkedAt": "2026-11-09T10:42:29.605670+00:00",
+      "checkedAt": "2026-11-14T09:48:34.304995+00:00",
       "paperId": "df6227869dd72951c9c46f02cd65f6b588f129ab",
       "title": "Reconciling Kaplan and Chinchilla Scaling Laws",
       "externalIds": {
@@ -1108,9 +1109,9 @@
       }
     },
     "2406.19146": {
-      "citationCount": 100,
+      "citationCount": 102,
       "url": "https://www.semanticscholar.org/paper/5585191b1b479346ecf173be3b35c8313b77d457",
-      "checkedAt": "2026-11-09T10:43:04.485916+00:00",
+      "checkedAt": "2026-11-14T09:49:49.740482+00:00",
       "paperId": "5585191b1b479346ecf173be3b35c8313b77d457",
       "title": "Resolving Discrepancies in Compute-Optimal Scaling of Language Models",
       "externalIds": {
@@ -1121,9 +1122,9 @@
       }
     },
     "2407.01492": {
-      "citationCount": 208,
+      "citationCount": 209,
       "url": "https://www.semanticscholar.org/paper/e8053a7b234d2936cbc993a4f2b13ec63eb6ec90",
-      "checkedAt": "2026-11-09T10:43:37.129486+00:00",
+      "checkedAt": "2026-11-14T09:50:22.574709+00:00",
       "paperId": "e8053a7b234d2936cbc993a4f2b13ec63eb6ec90",
       "title": "RegMix: Data Mixture as Regression for Language Model Pre-training",
       "externalIds": {
@@ -1486,15 +1487,16 @@
       }
     },
     "2001.08361": {
-      "citationCount": 9532,
+      "citationCount": 9657,
       "url": "https://www.semanticscholar.org/paper/e6c561d02500b2596a230b341a8eb8b921ca5bf2",
-      "checkedAt": "2026-11-01T08:28:42.868778+00:00",
+      "checkedAt": "2026-11-14T09:39:50.481193+00:00",
       "paperId": "e6c561d02500b2596a230b341a8eb8b921ca5bf2",
       "title": "Scaling Laws for Neural Language Models",
       "externalIds": {
         "MAG": "3001279689",
         "DBLP": "journals/corr/abs-2001-08361",
         "ArXiv": "2001.08361",
+        "DOI": "10.48550/arXiv.2001.08361",
         "CorpusId": 210861095
       }
     },
@@ -1512,5 +1514,7 @@
       }
     }
   },
-  "resumeFrom": null
+  "resumeFrom": "2407.21783",
+  "rateLimitedAt": "2026-11-14T09:51:24.208394+00:00",
+  "rateLimitedTitle": "The Llama 3 Herd of Models"
 }
