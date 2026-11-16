@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-15T10:19:03.730788+00:00",
+  "checkedAt": "2026-11-16T10:25:04.131209+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4201,
@@ -286,9 +286,9 @@
       }
     },
     "2503.19786": {
-      "citationCount": 2199,
+      "citationCount": 2241,
       "url": "https://www.semanticscholar.org/paper/adac25c0aebd013f1225ec02636edfcc0bf4cf7c",
-      "checkedAt": "2026-11-09T10:47:26.127975+00:00",
+      "checkedAt": "2026-11-16T10:25:04.131209+00:00",
       "paperId": "adac25c0aebd013f1225ec02636edfcc0bf4cf7c",
       "title": "Gemma 3 Technical Report",
       "externalIds": {
@@ -1514,7 +1514,7 @@
       }
     }
   },
-  "resumeFrom": "2503.19786",
-  "rateLimitedAt": "2026-11-15T10:20:05.307096+00:00",
-  "rateLimitedTitle": "Gemma 3 Technical Report"
+  "resumeFrom": "2504.03624",
+  "rateLimitedAt": "2026-11-16T10:26:05.494251+00:00",
+  "rateLimitedTitle": "Nemotron-H: A Family of Accurate and Efficient Hybrid Mamba-Transformer Models"
 }
