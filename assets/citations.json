@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-18T11:01:56.371756+00:00",
+  "checkedAt": "2026-11-19T10:59:01.363083+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4201,
@@ -473,22 +473,22 @@
       }
     },
     "2512.20848": {
-      "citationCount": 112,
+      "citationCount": 119,
       "url": "https://www.semanticscholar.org/paper/c94545504f2dc1757e972118ca774be38d1674ce",
-      "checkedAt": "2026-11-09T10:54:04.088197+00:00",
+      "checkedAt": "2026-11-19T10:58:17.546177+00:00",
       "paperId": "c94545504f2dc1757e972118ca774be38d1674ce",
       "title": "Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning",
       "externalIds": {
-        "DBLP": "journals/corr/abs-2512-20848",
         "ArXiv": "2512.20848",
+        "DBLP": "journals/corr/abs-2512-20848",
         "DOI": "10.48550/arXiv.2512.20848",
         "CorpusId": 283936671
       }
     },
     "2512.24880": {
-      "citationCount": 108,
+      "citationCount": 114,
       "url": "https://www.semanticscholar.org/paper/b87f0beefef060d4a343249bf32e94a918a21ace",
-      "checkedAt": "2026-11-09T10:54:16.494053+00:00",
+      "checkedAt": "2026-11-19T10:58:20.020564+00:00",
       "paperId": "b87f0beefef060d4a343249bf32e94a918a21ace",
       "title": "mHC: Manifold-Constrained Hyper-Connections",
       "externalIds": {
@@ -499,9 +499,9 @@
       }
     },
     "2601.02780": {
-      "citationCount": 181,
+      "citationCount": 189,
       "url": "https://www.semanticscholar.org/paper/38bfb955426702f1bfc9888e52c9cd48b2f8757b",
-      "checkedAt": "2026-11-09T10:54:18.891495+00:00",
+      "checkedAt": "2026-11-19T10:58:32.347617+00:00",
       "paperId": "38bfb955426702f1bfc9888e52c9cd48b2f8757b",
       "title": "MiMo-V2-Flash Technical Report",
       "externalIds": {
@@ -512,9 +512,9 @@
       }
     },
     "2601.07372": {
-      "citationCount": 99,
+      "citationCount": 105,
       "url": "https://www.semanticscholar.org/paper/c283116f911bb7457e595656a28d3b500744a495",
-      "checkedAt": "2026-11-09T10:54:21.158805+00:00",
+      "checkedAt": "2026-11-19T10:58:44.818928+00:00",
       "paperId": "c283116f911bb7457e595656a28d3b500744a495",
       "title": "Conditional Memory via Scalable Lookup: A New Axis of Sparsity for Large Language Models",
       "externalIds": {
@@ -525,9 +525,9 @@
       }
     },
     "2601.08584": {
-      "citationCount": 81,
+      "citationCount": 88,
       "url": "https://www.semanticscholar.org/paper/6aa88dc32e65da7e530d8ba274fac6e13edfce9c",
-      "checkedAt": "2026-11-10T10:38:43.406467+00:00",
+      "checkedAt": "2026-11-19T10:58:57.055797+00:00",
       "paperId": "6aa88dc32e65da7e530d8ba274fac6e13edfce9c",
       "title": "Ministral 3",
       "externalIds": {
@@ -538,9 +538,9 @@
       }
     },
     "2601.16725": {
-      "citationCount": 28,
+      "citationCount": 30,
       "url": "https://www.semanticscholar.org/paper/d281ff4fe5ae3790908e294b0c7c2bc5d06cb0ae",
-      "checkedAt": "2026-11-10T10:38:58.343120+00:00",
+      "checkedAt": "2026-11-19T10:59:01.363083+00:00",
       "paperId": "d281ff4fe5ae3790908e294b0c7c2bc5d06cb0ae",
       "title": "LongCat-Flash-Thinking-2601 Technical Report",
       "externalIds": {
@@ -1311,9 +1311,9 @@
       }
     },
     "2601.11580": {
-      "citationCount": 20,
+      "citationCount": 22,
       "url": "https://www.semanticscholar.org/paper/f5a9ae08b63873314c1defa0b121fe54962df741",
-      "checkedAt": "2026-11-10T10:38:56.017353+00:00",
+      "checkedAt": "2026-11-19T10:58:59.194943+00:00",
       "paperId": "f5a9ae08b63873314c1defa0b121fe54962df741",
       "title": "Speculative Decoding: Performance or Illusion?",
       "externalIds": {
@@ -1527,7 +1527,7 @@
       }
     }
   },
-  "resumeFrom": "2512.20848",
-  "rateLimitedAt": "2026-11-18T11:02:59.007914+00:00",
-  "rateLimitedTitle": "Nemotron 3 Nano: Open, Efficient Mixture-of-Experts Hybrid Mamba-Transformer Model for Agentic Reasoning"
+  "resumeFrom": "2601.22966",
+  "rateLimitedAt": "2026-11-19T11:00:13.740866+00:00",
+  "rateLimitedTitle": "A Unified View of Attention and Residual Sinks: Outlier-Driven Rescaling is Essential for Transformer Training"
 }
