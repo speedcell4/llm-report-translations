@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-19T10:59:01.363083+00:00",
+  "checkedAt": "2026-11-20T10:47:04.598114+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4201,
@@ -551,9 +551,9 @@
       }
     },
     "2601.22966": {
-      "citationCount": 22,
+      "citationCount": 23,
       "url": "https://www.semanticscholar.org/paper/fa35ca3519cfdf5ce0085f4aa8b379e06ef23148",
-      "checkedAt": "2026-11-10T10:39:00.618526+00:00",
+      "checkedAt": "2026-11-20T10:46:27.577264+00:00",
       "paperId": "fa35ca3519cfdf5ce0085f4aa8b379e06ef23148",
       "title": "A Unified View of Attention and Residual Sinks: Outlier-Driven Rescaling is Essential for Transformer Training",
       "externalIds": {
@@ -564,9 +564,9 @@
       }
     },
     "2602.02276": {
-      "citationCount": 508,
+      "citationCount": 526,
       "url": "https://www.semanticscholar.org/paper/e1c32d718ad38e17d66b1ffb91744a169b592be7",
-      "checkedAt": "2026-11-10T10:39:03.124430+00:00",
+      "checkedAt": "2026-11-20T10:46:29.834628+00:00",
       "paperId": "e1c32d718ad38e17d66b1ffb91744a169b592be7",
       "title": "Kimi K2.5: Visual Agentic Intelligence",
       "externalIds": {
@@ -1326,7 +1326,7 @@
     "2602.03560": {
       "citationCount": 13,
       "url": "https://www.semanticscholar.org/paper/005a364e958afe4e7899beb8269b5dc74543432e",
-      "checkedAt": "2026-11-10T10:39:25.943310+00:00",
+      "checkedAt": "2026-11-20T10:46:32.176731+00:00",
       "paperId": "005a364e958afe4e7899beb8269b5dc74543432e",
       "title": "HySparse: A Hybrid Sparse Attention Architecture with Oracle Token Selection and KV Cache Sharing",
       "externalIds": {
@@ -1337,9 +1337,9 @@
       }
     },
     "2602.06036": {
-      "citationCount": 193,
+      "citationCount": 216,
       "url": "https://www.semanticscholar.org/paper/fd3e5f474f033acba872b87638a79cae6be37ecf",
-      "checkedAt": "2026-11-10T10:39:38.565242+00:00",
+      "checkedAt": "2026-11-20T10:47:04.598114+00:00",
       "paperId": "fd3e5f474f033acba872b87638a79cae6be37ecf",
       "title": "DFlash: Block Diffusion for Flash Speculative Decoding",
       "externalIds": {
@@ -1527,7 +1527,7 @@
       }
     }
   },
-  "resumeFrom": "2601.22966",
-  "rateLimitedAt": "2026-11-19T11:00:13.740866+00:00",
-  "rateLimitedTitle": "A Unified View of Attention and Residual Sinks: Outlier-Driven Rescaling is Essential for Transformer Training"
+  "resumeFrom": "2602.10604",
+  "rateLimitedAt": "2026-11-20T10:48:07.129506+00:00",
+  "rateLimitedTitle": "Step 3.5 Flash: Open Frontier-Level Intelligence with 11B Active Parameters"
 }
