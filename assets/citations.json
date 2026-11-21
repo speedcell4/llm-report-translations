@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-20T10:47:04.598114+00:00",
+  "checkedAt": "2026-11-21T10:30:00.943570+00:00",
   "reports": {
     "2310.06825": {
       "citationCount": 4201,
@@ -575,9 +575,9 @@
       }
     },
     "2602.15763": {
-      "citationCount": 689,
+      "citationCount": 721,
       "url": "https://www.semanticscholar.org/paper/e0db747ad65d72559e583ff92f729d68949e9daf",
-      "checkedAt": "2026-11-10T10:40:24.293825+00:00",
+      "checkedAt": "2026-11-21T10:30:00.943570+00:00",
       "paperId": "e0db747ad65d72559e583ff92f729d68949e9daf",
       "title": "GLM-5: from Vibe Coding to Agentic Engineering",
       "externalIds": {
@@ -1350,9 +1350,9 @@
       }
     },
     "2602.10604": {
-      "citationCount": 35,
+      "citationCount": 36,
       "url": "https://www.semanticscholar.org/paper/24f25a13a9c1077a6635da1aced5be4f1ffe697a",
-      "checkedAt": "2026-11-10T10:40:11.578739+00:00",
+      "checkedAt": "2026-11-21T10:29:58.592744+00:00",
       "paperId": "24f25a13a9c1077a6635da1aced5be4f1ffe697a",
       "title": "Step 3.5 Flash: Open Frontier-Level Intelligence with 11B Active Parameters",
       "externalIds": {
@@ -1527,7 +1527,7 @@
       }
     }
   },
-  "resumeFrom": "2602.10604",
-  "rateLimitedAt": "2026-11-20T10:48:07.129506+00:00",
-  "rateLimitedTitle": "Step 3.5 Flash: Open Frontier-Level Intelligence with 11B Active Parameters"
+  "resumeFrom": "2603.00729",
+  "rateLimitedAt": "2026-11-21T10:31:02.436272+00:00",
+  "rateLimitedTitle": "Qwen3-Coder-Next Technical Report"
 }
